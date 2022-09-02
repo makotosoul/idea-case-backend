@@ -1,0 +1,9 @@
+USE siba;
+
+DROP TABLE IF EXISTS space;
+DROP TABLE IF EXISTS building;
+DROP TABLE IF EXISTS campus;
+DROP TABLE IF EXISTS equipment;
+DROP TABLE IF EXISTS requirement;
+DROP TABLE IF EXISTS program;
+DROP TABLE IF EXISTS department;
