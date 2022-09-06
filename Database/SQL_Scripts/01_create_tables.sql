@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS Equipment (
     PRIMARY KEY (id)
 );
 /* --- CREATE SPACE --- */
-CREATE TABLE IF NOT EXISTS Space (
+CREATE TABLE IF NOT EXISTS ´Space´ (
     id          MEDIUMINT       NOT NULL AUTO_INCREMENT,
     name        VARCHAR(60)     UNIQUE NOT NULL,
     description VARCHAR(255)    NOT NULL,
