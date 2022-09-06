@@ -18,11 +18,6 @@ DROP DATABASE IF EXISTS `sibammjj`;
 CREATE DATABASE IF NOT EXISTS `sibammjj` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
 USE `sibammjj`;
 
-DROP TABLE IF EXISTS `equipmentspace`;
-DROP TABLE IF EXISTS `equipment`;
-DROP TABLE IF EXISTS `space`;
-DROP TABLE IF EXISTS `building`;
-
 -- Dumping structure for table sibammjj.building
 
 CREATE TABLE IF NOT EXISTS `building` (
