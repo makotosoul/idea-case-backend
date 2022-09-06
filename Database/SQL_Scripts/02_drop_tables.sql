@@ -1,20 +1,20 @@
 /* --- DROP BUILDING --- */
-DROP TABLE building;
+DROP TABLE IF EXISTS Building;
 
 /* --- DROP CAMPUS --- */
-DROP TABLE campus;
+DROP TABLE IF EXISTS Campus;
 
 /* --- DROP DEPARTMENT --- */
-DROP TABLE department;
+DROP TABLE IF EXISTS Department;
 
 /* --- DROP EQUIPMENT --- */
-DROP TABLE equipment;
+DROP TABLE IF EXISTS Equipment;
 
 /* --- DROP PROGRAM --- */
-DROP TABLE program;
+DROP TABLE IF EXISTS Program;
 
 /* --- DROP REQUIREMENT --- */
-DROP TABLE requirement;
+DROP TABLE IF EXISTS Requirement;
 
 /* --- DROP SPACE --- */
-DROP TABLE space;
+DROP TABLE IF EXISTS Space;
