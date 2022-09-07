@@ -3,7 +3,6 @@
 
 USE `casedb`;
 
-
 DROP TABLE IF EXISTS SubjectEquipment;
 DROP TABLE IF EXISTS Subject;  -- "Jazz-rummunlyöjien yksilöopetus" 120ryhmää a 1, "Musiikin teoria", 3ryhmää a 20
 DROP TABLE IF EXISTS Program;  -- "Jazz-rummunlyöjä"

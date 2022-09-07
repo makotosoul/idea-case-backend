@@ -1,3 +1,5 @@
+USE casedb;
+
 /* INSERTS */
 /* --- Insert: Department ---
 

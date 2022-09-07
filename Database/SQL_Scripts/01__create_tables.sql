@@ -1,3 +1,4 @@
+USE casedb;
 /* --- 01 CREATE TABLES --- */
 CREATE TABLE IF NOT EXISTS Department (
     id          INTEGER         NOT NULL AUTO_INCREMENT,
@@ -47,7 +48,7 @@ CREATE TABLE IF NOT EXISTS Building (
     PRIMARY KEY (id),
 
     CONSTRAINT FK_Building_Campus FOREIGN KEY (campusId) REFERENCES Campus(id)
-    
+
 ) ENGINE=InnoDB AUTO_INCREMENT=401 DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS Space (
