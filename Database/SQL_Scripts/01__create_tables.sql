@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS Space (
 
     CONSTRAINT AK_UNIQUE_name_in_building UNIQUE(buildingId, name),
 
-    CONSTRAINT PK_Space PRIMARY KEY (`id`),
+    PRIMARY KEY (`id`),
 
     CONSTRAINT FK_space_building
     	FOREIGN KEY (buildingId) REFERENCES Building(id)
@@ -124,7 +124,7 @@ CREATE TABLE IF NOT EXISTS Subject (
 
     CONSTRAINT AK_Subject_unique_name_in_program UNIQUE (programId, name),
   
-    CONSTRAINT PK_Subject PRIMARY KEY (`id`),
+    PRIMARY KEY (`id`),
 
     CONSTRAINT `FK_Subject_Program` FOREIGN KEY (`programId`) 
         REFERENCES `Program`(`id`) 
