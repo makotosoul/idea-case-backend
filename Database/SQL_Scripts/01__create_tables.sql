@@ -44,7 +44,10 @@ CREATE TABLE IF NOT EXISTS Building (
     description VARCHAR(16000)  NOT NULL,
     campusId    INTEGER         NOT NULL, 
 
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+
+    CONSTRAINT FK_Building_Campus FOREIGN KEY (campusId) REFERENCES Campus(id)
+    
 ) ENGINE=InnoDB AUTO_INCREMENT=401 DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS Space (
