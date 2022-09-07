@@ -30,13 +30,13 @@ CREATE TABLE IF NOT EXISTS Equipment (
 );
 
 -- Campus / Kampus
-CREATE TABLE IF NOT EXISTS campus (
+CREATE TABLE IF NOT EXISTS Campus (
     id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL
 );
 
 -- Building / Rakennus
-CREATE TABLE IF NOT EXISTS building (
+CREATE TABLE IF NOT EXISTS Building (
     id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL
 );
@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS Space (
     people_capasity SMALLINT UNSIGNED,
     building_id INT UNSIGNED NOT NULL,
     CONSTRAINT fk_space_building
-    	FOREIGN KEY (building_id) REFERENCES building(id)
+    	FOREIGN KEY (building_id) REFERENCES Building(id)
     	ON DELETE CASCADE
     	ON UPDATE CASCADE
 );

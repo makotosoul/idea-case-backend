@@ -1,7 +1,7 @@
-/* --- SELECT BUILDING --- */
+/* --- SELECT Building --- */
 SELECT * FROM Building;
 
-/* --- SELECT CAMPUS --- */
+/* --- SELECT Campus --- */
 SELECT * FROM Campus;
 
 /* --- SELECT DEPARTMENT --- */

@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS ´Space´ (
 
     PRIMARY KEY (id)
 );
-/* --- CREATE BUILDING --- */
+/* --- CREATE Building --- */
 CREATE TABLE IF NOT EXISTS Building (
     id          INTEGER       NOT NULL AUTO_INCREMENT,
     name        VARCHAR(60)     UNIQUE NOT NULL,
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS Building (
     PRIMARY KEY (id)
 );
 
-/* --- CREATE CAMPUS --- */
+/* --- CREATE Campus --- */
 CREATE TABLE IF NOT EXISTS Campus (
     id          INTEGER       NOT NULL AUTO_INCREMENT,
     name        VARCHAR(60)     UNIQUE NOT NULL,

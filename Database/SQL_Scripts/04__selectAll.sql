@@ -6,4 +6,4 @@ SELECT * FROM casedb.Equipment;
 SELECT * FROM Space;
 SELECT * FROM SpaceEquipment;
 SELECT * FROM User;
-SELECT * FROM DepartmentUser;
+SELECT * FROM DepartmentPlanner;

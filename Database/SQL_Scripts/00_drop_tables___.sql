@@ -1,7 +1,7 @@
-/* --- DROP BUILDING --- */
+/* --- DROP Building --- */
 DROP TABLE IF EXISTS Building;
 
-/* --- DROP CAMPUS --- */
+/* --- DROP Campus --- */
 DROP TABLE IF EXISTS Campus;
 
 /* --- DROP DEPARTMENT --- */

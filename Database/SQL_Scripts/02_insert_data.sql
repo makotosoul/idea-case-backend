@@ -33,14 +33,14 @@ VALUES
     ('Tila2', 'Tämä on tilan testisyöttöä 2'),
     ('Tila3', 'Tämä on tilan testisyöttöä 3');
 
-/* --- INSERT BUILDING --- */
+/* --- INSERT Building --- */
 INSERT INTO Building (name, description)
 VALUES
     ('Rakennus1', 'Tämä on rakennuksen testisyöttöä'),
     ('Rakennus2', 'Tämä on rakennuksen testisyöttöä 2'),
     ('Rakennus3', 'Tämä on rakennuksen testisyöttöä 3');
 
-/* --- INSERT CAMPUS --- */
+/* --- INSERT Campus --- */
 INSERT INTO Campus (name, description)
 VALUES
     ('Kampus1', 'Tämä on kampuksen testisyöttöä'),

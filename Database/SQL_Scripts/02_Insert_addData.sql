@@ -55,8 +55,8 @@ INSERT INTO `User` (`Id`, `Role`) VALUES
 	(1, 'ADMIN'),
 	(2, 'PLANNER');
 
--- Dumping data for table casedb.DepartmentUser: ~0 rows (suunnilleen)
-INSERT INTO `DepartmentUser` (`Id`, `user_id`, `department_id`) VALUES
+-- Dumping data for table casedb.DepartmentPlanner: ~0 rows (suunnilleen)
+INSERT INTO `DepartmentPlanner` (`Id`, `user_id`, `department_id`) VALUES
 	(1, 2, 1);
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;

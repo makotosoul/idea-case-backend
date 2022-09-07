@@ -113,8 +113,8 @@ CREATE TABLE IF NOT EXISTS `User` (
 
 -- Tietojen vientiä ei oltu valittu.
 
--- Dumping structure for taulu casedb.DepartmentUser
-CREATE TABLE IF NOT EXISTS `DepartmentUser` (
+-- Dumping structure for taulu casedb.DepartmentPlanner
+CREATE TABLE IF NOT EXISTS `DepartmentPlanner` (
   `Id` INTEGER NOT NULL AUTO_INCREMENT,
   `user_id` INTEGER NOT NULL,
   `department_id` INTEGER NOT NULL,
