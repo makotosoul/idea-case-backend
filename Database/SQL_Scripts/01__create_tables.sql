@@ -95,15 +95,18 @@ CREATE TABLE IF NOT EXISTS SpaceEquipment (
 CREATE TABLE IF NOT EXISTS Program (
   id            INTEGER         NOT NULL AUTO_INCREMENT,
   name          VARCHAR(255)    NOT NULL UNIQUE,
-  -- participants INT(4),
+  
   departmentId  INTEGER         NOT NULL,
 
   PRIMARY KEY (id),
   
   CONSTRAINT FOREIGN KEY (departmentId) REFERENCES Department(id) 
-    ON DELETE NO ACTION       -- DNA
-    ON UPDATE NO ACTION       -- UNA
+    ON DELETE NO ACTION       
+    ON UPDATE NO ACTION       
 ) ENGINE=InnoDB AUTO_INCREMENT=3001 DEFAULT CHARSET=latin1;
+
+-- Tarvitaanko Program-taulussa tätä:
+-- participants INT(4),
 
 CREATE TABLE IF NOT EXISTS Subject (
     id              INTEGER         NOT NULL AUTO_INCREMENT,
