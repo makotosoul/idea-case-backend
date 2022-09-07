@@ -1,3 +1,4 @@
+/* INSERTS */
 /* --- Insert: Department ---
 
 /* --- Insert: `User` ---
@@ -19,3 +20,5 @@
 /* --- Insert: Subject * ---
 
 /* --- Insert: SubjectEquipment * ---
+
+/* END */
