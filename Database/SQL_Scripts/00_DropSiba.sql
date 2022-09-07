@@ -13,13 +13,13 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 
--- Dumping database structure for sibammjj
-DROP DATABASE IF EXISTS `sibammjj`;
-CREATE DATABASE IF NOT EXISTS `sibammjj` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
-USE `sibammjj`;
+-- Dumping database structure for casedb
+DROP DATABASE IF EXISTS `casedb`;
+CREATE DATABASE IF NOT EXISTS `casedb` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
+USE `casedb`;
 
 DROP TABLE IF EXISTS `equipmentspace`;
-DROP TABLE IF EXISTS `equipment`;
-DROP TABLE IF EXISTS `space`;
+DROP TABLE IF EXISTS `Equipment`;
+DROP TABLE IF EXISTS `Space`;
 DROP TABLE IF EXISTS `building`;
 

@@ -13,16 +13,16 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 
--- Dumping database structure for sibammjj
-DROP DATABASE IF EXISTS `sibammjj`;
-CREATE DATABASE IF NOT EXISTS `sibammjj` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
-USE `sibammjj`;
+-- Dumping database structure for casedb
+DROP DATABASE IF EXISTS `casedb`;
+CREATE DATABASE IF NOT EXISTS `casedb` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
+USE `casedb`;
 
--- Dumping structure for table sibammjj.building
+-- Dumping structure for table casedb.building
 
 CREATE TABLE IF NOT EXISTS `building` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(40) NOT NULL,
+  `id` INTEGER NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(60) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -30,21 +30,21 @@ CREATE TABLE IF NOT EXISTS `building` (
 
 
 
--- Dumping structure for table sibammjj.equipment
+-- Dumping structure for table casedb.Equipment
 
-CREATE TABLE IF NOT EXISTS `equipment` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(40) NOT NULL,
+CREATE TABLE IF NOT EXISTS `Equipment` (
+  `id` INTEGER NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(60) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Data exporting was unselected.
 
-CREATE TABLE IF NOT EXISTS `space` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `buildingId` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `Space` (
+  `id` INTEGER NOT NULL AUTO_INCREMENT,
+  `buildingId` INTEGER NOT NULL,
   `area` double NOT NULL,
-  `maxParticipants` int(11) NOT NULL,
+  `maxParticipants` INTEGER NOT NULL,
   `startingHour` TIME NULL DEFAULT NULL,
   `endingHour` TIME NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -53,20 +53,20 @@ CREATE TABLE IF NOT EXISTS `space` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
--- Dumping structure for table sibammjj.equipmentspace
+-- Dumping structure for table casedb.equipmentspace
 
 CREATE TABLE IF NOT EXISTS `equipmentspace` (
-  `spaceId` int(11) NOT NULL,
-  `equipmentId` int(11) NOT NULL,
+  `spaceId` INTEGER NOT NULL,
+  `equipmentId` INTEGER NOT NULL,
   KEY `FK__space` (`spaceId`),
   KEY `FK__equipment` (`equipmentId`),
-  CONSTRAINT `FK__equipment` FOREIGN KEY (`equipmentId`) REFERENCES `equipment` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `FK__space` FOREIGN KEY (`spaceId`) REFERENCES `space` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `FK__equipment` FOREIGN KEY (`equipmentId`) REFERENCES `Equipment` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `FK__space` FOREIGN KEY (`spaceId`) REFERENCES `Space` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Data exporting was unselected.
 
--- Dumping structure for table sibammjj.space
+-- Dumping structure for table casedb.Space
 
 -- Data exporting was unselected.
 

@@ -1,6 +1,6 @@
 CREATE TABLE Program (
 programId INT NOT NULL AUTO_INCREMENT,
-name VARCHAR(40) NOT NULL,
+name VARCHAR(60) NOT NULL,
 participants INT(4),
 numberOfGroups INT(2),
 practiceHours INT(4),
@@ -10,10 +10,10 @@ PRIMARY KEY (programId)
 
 CREATE TABLE Subject (
 subjectId INT NOT NULL AUTO_INCREMENT,
-name VARCHAR(40),
-groupType VARCHAR(40),
+name VARCHAR(60),
+groupType VARCHAR(60),
 maxParticipants INT(3),
-subjectType VARCHAR(40),
+subjectType VARCHAR(60),
 studyTime INT(3),
 duration VARCHAR(15),
 PRIMARY KEY (subjectId)
@@ -23,7 +23,7 @@ PRIMARY KEY (subjectId)
 CREATE TABLE Space (
 spaceId INT NOT NULL AUTO_INCREMENT,
 roomNumber INT,
-name VARCHAR(40),
+name VARCHAR(60),
 size CHAR(5),
 capacity INT(3),
 PRIMARY KEY (spaceId)
@@ -32,9 +32,9 @@ PRIMARY KEY (spaceId)
 
 CREATE TABLE Equipment (
 equipmentId INT NOT NULL AUTO_INCREMENT,
-name VARCHAR(40),
+name VARCHAR(60),
 movable BOOLEAN,
-intendedUse VARCHAR(40),
+intendedUse VARCHAR(60),
 quantity INT(3),
 spaceId INT,
 PRIMARY KEY (equipmentId),

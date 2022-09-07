@@ -15,114 +15,114 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 
--- Dumping database structure for siba
-CREATE DATABASE IF NOT EXISTS `siba` /*!40100 DEFAULT CHARACTER SET latin1 */;
-USE `siba`;
+-- Dumping database structure for casedb
+CREATE DATABASE IF NOT EXISTS `casedb` /*!40100 DEFAULT CHARACTER SET latin1 */;
+USE `casedb`;
 
--- Dumping structure for taulu siba.department
-CREATE TABLE IF NOT EXISTS `department` (
-  `Id` int(11) NOT NULL AUTO_INCREMENT,
-  `dep_name` varchar(50) NOT NULL DEFAULT '0',
+-- Dumping structure for taulu casedb.Department
+CREATE TABLE IF NOT EXISTS `Department` (
+  `Id` INTEGER NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(60) NOT NULL DEFAULT '0',
   PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
 -- Tietojen vientiä ei oltu valittu.
 
--- Dumping structure for taulu siba.equipment
-CREATE TABLE IF NOT EXISTS `equipment` (
-  `Id` int(11) NOT NULL AUTO_INCREMENT,
-  `equipment_name` varchar(50) DEFAULT NULL,
-  `priority` int(11) DEFAULT NULL,
+-- Dumping structure for taulu casedb.Equipment
+CREATE TABLE IF NOT EXISTS `Equipment` (
+  `Id` INTEGER NOT NULL AUTO_INCREMENT,
+  `equipment_name` VARCHAR(60) DEFAULT NULL,
+  `priority` INTEGER DEFAULT NULL,
   PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 -- Tietojen vientiä ei oltu valittu.
 
--- Dumping structure for taulu siba.program
-CREATE TABLE IF NOT EXISTS `program` (
-  `Id` int(11) NOT NULL AUTO_INCREMENT,
-  `prog_name` varchar(50) NOT NULL DEFAULT '0',
-  `dep_id` int(11) NOT NULL DEFAULT 0,
+-- Dumping structure for taulu casedb.Program
+CREATE TABLE IF NOT EXISTS `Program` (
+  `Id` INTEGER NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(60) NOT NULL DEFAULT '0',
+  `dep_id` INTEGER NOT NULL DEFAULT 0,
   PRIMARY KEY (`Id`),
   KEY `FK__department` (`dep_id`),
-  CONSTRAINT `FK__department` FOREIGN KEY (`dep_id`) REFERENCES `department` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `FK__department` FOREIGN KEY (`dep_id`) REFERENCES `Department` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
 -- Tietojen vientiä ei oltu valittu.
 
--- Dumping structure for taulu siba.requirement
-CREATE TABLE IF NOT EXISTS `requirement` (
-  `Id` int(11) NOT NULL AUTO_INCREMENT,
-  `type` int(11) NOT NULL DEFAULT 0,
-  `subject_id` int(11) NOT NULL,
-  `equipment_id` int(11) DEFAULT NULL,
-  `participants` int(11) DEFAULT NULL,
+-- Dumping structure for taulu casedb.Requirement
+CREATE TABLE IF NOT EXISTS `Requirement` (
+  `Id` INTEGER NOT NULL AUTO_INCREMENT,
+  `type` INTEGER NOT NULL DEFAULT 0,
+  `subject_id` INTEGER NOT NULL,
+  `equipment_id` INTEGER DEFAULT NULL,
+  `participants` INTEGER DEFAULT NULL,
   `area` decimal(20,6) DEFAULT NULL,
-  `hours` int(11) DEFAULT NULL,
+  `hours` INTEGER DEFAULT NULL,
   PRIMARY KEY (`Id`),
   KEY `FK_requirement_program` (`subject_id`) USING BTREE,
   KEY `FK_requirement_instrument` (`equipment_id`) USING BTREE,
-  CONSTRAINT `FK_requirement_instrument` FOREIGN KEY (`equipment_id`) REFERENCES `equipment` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `FK_requirement_subject` FOREIGN KEY (`subject_id`) REFERENCES `subject` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `FK_requirement_instrument` FOREIGN KEY (`equipment_id`) REFERENCES `Equipment` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `FK_requirement_subject` FOREIGN KEY (`subject_id`) REFERENCES `Subject` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
 -- Tietojen vientiä ei oltu valittu.
 
--- Dumping structure for taulu siba.space
-CREATE TABLE IF NOT EXISTS `space` (
-  `Id` int(11) NOT NULL AUTO_INCREMENT,
+-- Dumping structure for taulu casedb.Space
+CREATE TABLE IF NOT EXISTS `Space` (
+  `Id` INTEGER NOT NULL AUTO_INCREMENT,
   `area` double DEFAULT NULL,
-  `maximum_pariticipants` int(11) DEFAULT NULL,
-  `available_hours` int(11) DEFAULT NULL,
+  `maximum_pariticipants` INTEGER DEFAULT NULL,
+  `available_hours` INTEGER DEFAULT NULL,
   PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
 -- Tietojen vientiä ei oltu valittu.
 
--- Dumping structure for taulu siba.spaces_equipment
-CREATE TABLE IF NOT EXISTS `spaces_equipment` (
-  `Id` int(11) NOT NULL AUTO_INCREMENT,
-  `space_id` int(11) NOT NULL DEFAULT 0,
-  `equipment_id` int(11) NOT NULL DEFAULT 0,
+-- Dumping structure for taulu casedb.SpaceEquipment
+CREATE TABLE IF NOT EXISTS `SpaceEquipment` (
+  `Id` INTEGER NOT NULL AUTO_INCREMENT,
+  `space_id` INTEGER NOT NULL DEFAULT 0,
+  `equipment_id` INTEGER NOT NULL DEFAULT 0,
   PRIMARY KEY (`Id`),
   KEY `FK__space` (`space_id`),
   KEY `FK__equipment` (`equipment_id`),
-  CONSTRAINT `FK__equipment` FOREIGN KEY (`equipment_id`) REFERENCES `equipment` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `FK__space` FOREIGN KEY (`space_id`) REFERENCES `space` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `FK__equipment` FOREIGN KEY (`equipment_id`) REFERENCES `Equipment` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `FK__space` FOREIGN KEY (`space_id`) REFERENCES `Space` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
 -- Tietojen vientiä ei oltu valittu.
 
--- Dumping structure for taulu siba.subject
-CREATE TABLE IF NOT EXISTS `subject` (
-  `Id` int(11) NOT NULL AUTO_INCREMENT,
-  `program_id` int(11) NOT NULL,
+-- Dumping structure for taulu casedb.Subject
+CREATE TABLE IF NOT EXISTS `Subject` (
+  `Id` INTEGER NOT NULL AUTO_INCREMENT,
+  `program_id` INTEGER NOT NULL,
   PRIMARY KEY (`Id`),
   KEY `FK__program` (`program_id`),
-  CONSTRAINT `FK__program` FOREIGN KEY (`program_id`) REFERENCES `program` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `FK__program` FOREIGN KEY (`program_id`) REFERENCES `Program` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 -- Tietojen vientiä ei oltu valittu.
 
--- Dumping structure for taulu siba.user
-CREATE TABLE IF NOT EXISTS `user` (
-  `Id` int(11) NOT NULL AUTO_INCREMENT,
-  `Role` varchar(50) DEFAULT NULL,
+-- Dumping structure for taulu casedb.User
+CREATE TABLE IF NOT EXISTS `User` (
+  `Id` INTEGER NOT NULL AUTO_INCREMENT,
+  `Role` VARCHAR(60) DEFAULT NULL,
   PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Tietojen vientiä ei oltu valittu.
 
--- Dumping structure for taulu siba.users_departments
-CREATE TABLE IF NOT EXISTS `users_departments` (
-  `Id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
-  `department_id` int(11) NOT NULL,
+-- Dumping structure for taulu casedb.DepartmentUser
+CREATE TABLE IF NOT EXISTS `DepartmentUser` (
+  `Id` INTEGER NOT NULL AUTO_INCREMENT,
+  `user_id` INTEGER NOT NULL,
+  `department_id` INTEGER NOT NULL,
   PRIMARY KEY (`Id`),
   KEY `FK__user` (`user_id`),
   KEY `FK_users_departments_department` (`department_id`),
-  CONSTRAINT `FK__user` FOREIGN KEY (`user_id`) REFERENCES `user` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `FK_users_departments_department` FOREIGN KEY (`department_id`) REFERENCES `department` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `FK__user` FOREIGN KEY (`user_id`) REFERENCES `User` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `FK_users_departments_department` FOREIGN KEY (`department_id`) REFERENCES `Department` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Tietojen vientiä ei oltu valittu.

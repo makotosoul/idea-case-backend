@@ -14,49 +14,49 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
--- Dumping data for table siba.department: ~3 rows (suunnilleen)
-INSERT INTO `department` (`Id`, `dep_name`) VALUES
+-- Dumping data for table casedb.Department: ~3 rows (suunnilleen)
+INSERT INTO `Department` (`Id`, `name`) VALUES
 	(1, 'urunsoitto'),
 	(2, 'urunsoitto'),
 	(3, 'lyomasoittimet');
 
--- Dumping data for table siba.equipment: ~2 rows (suunnilleen)
-INSERT INTO `equipment` (`Id`, `equipment_name`, `priority`) VALUES
+-- Dumping data for table casedb.Equipment: ~2 rows (suunnilleen)
+INSERT INTO `Equipment` (`Id`, `equipment_name`, `priority`) VALUES
 	(1, 'bongo', 110),
 	(2, 'urut', 60);
 
--- Dumping data for table siba.program: ~3 rows (suunnilleen)
-INSERT INTO `program` (`Id`, `prog_name`, `dep_id`) VALUES
+-- Dumping data for table casedb.Program: ~3 rows (suunnilleen)
+INSERT INTO `Program` (`Id`, `name`, `dep_id`) VALUES
 	(1, 'urku', 1),
 	(2, 'vasara', 3),
 	(3, 'rumpu', 3);
 
--- Dumping data for table siba.requirement: ~3 rows (suunnilleen)
-INSERT INTO `requirement` (`Id`, `type`, `subject_id`, `equipment_id`, `participants`, `area`, `hours`) VALUES
+-- Dumping data for table casedb.Requirement: ~3 rows (suunnilleen)
+INSERT INTO `Requirement` (`Id`, `type`, `subject_id`, `equipment_id`, `participants`, `area`, `hours`) VALUES
 	(1, 7, 1, NULL, NULL, NULL, 20),
 	(2, 6, 1, NULL, NULL, 40.100000, NULL),
 	(3, 4, 1, 1, NULL, NULL, NULL);
 
--- Dumping data for table siba.space: ~1 rows (suunnilleen)
-INSERT INTO `space` (`Id`, `area`, `maximum_pariticipants`, `available_hours`) VALUES
+-- Dumping data for table casedb.Space: ~1 rows (suunnilleen)
+INSERT INTO `Space` (`Id`, `area`, `maximum_pariticipants`, `available_hours`) VALUES
 	(1, 30, 10, 37);
 
--- Dumping data for table siba.spaces_equipment: ~1 rows (suunnilleen)
-INSERT INTO `spaces_equipment` (`Id`, `space_id`, `equipment_id`) VALUES
+-- Dumping data for table casedb.SpaceEquipment: ~1 rows (suunnilleen)
+INSERT INTO `SpaceEquipment` (`Id`, `space_id`, `equipment_id`) VALUES
 	(1, 1, 2);
 
--- Dumping data for table siba.subject: ~2 rows (suunnilleen)
-INSERT INTO `subject` (`Id`, `program_id`) VALUES
+-- Dumping data for table casedb.Subject: ~2 rows (suunnilleen)
+INSERT INTO `Subject` (`Id`, `program_id`) VALUES
 	(2, 1),
 	(1, 3);
 
--- Dumping data for table siba.user: ~0 rows (suunnilleen)
-INSERT INTO `user` (`Id`, `Role`) VALUES
+-- Dumping data for table casedb.User: ~0 rows (suunnilleen)
+INSERT INTO `User` (`Id`, `Role`) VALUES
 	(1, 'ADMIN'),
 	(2, 'PLANNER');
 
--- Dumping data for table siba.users_departments: ~0 rows (suunnilleen)
-INSERT INTO `users_departments` (`Id`, `user_id`, `department_id`) VALUES
+-- Dumping data for table casedb.DepartmentUser: ~0 rows (suunnilleen)
+INSERT INTO `DepartmentUser` (`Id`, `user_id`, `department_id`) VALUES
 	(1, 2, 1);
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;

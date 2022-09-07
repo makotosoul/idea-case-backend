@@ -1,12 +1,12 @@
-USE siba;
+USE casedb;
 
-INSERT INTO department (name) VALUES 
+INSERT INTO Department (name) VALUES 
 	('Piano, Harmonikka, Kitara ja Kantele'), 
 	('Puhaltimet, Lyömäsoittimet ja Harput'),
 	('Laulumusiikki')
 ; 
 
-INSERT INTO program(name, department_id) VALUES
+INSERT INTO Program(name, department_id) VALUES
 	('Piano', 1),
     ('Kantele', 1),
     ('Trumpetti', 2),
