@@ -2,20 +2,20 @@
 
 /* --- Insert: `User` ---
 
-/* --- Insert: DepartmentPlanner ---
+/* --- Insert: DepartmentPlanner * ---
 
 /* --- Insert: Campus ---
 
-/* --- Insert: Building ---
+/* --- Insert: Building * ---
 
-/* --- Insert: Space ---
+/* --- Insert: Space * ---
 
 /* --- Insert: Equipment ---
 
-/* --- Insert: SpaceEquipment ---
+/* --- Insert: SpaceEquipment * ---
 
-/* --- Insert: Program ---
+/* --- Insert: Program * ---
 
-/* --- Insert: Subject ---
+/* --- Insert: Subject * ---
 
-/* --- Insert: SubjectEquipment ---
+/* --- Insert: SubjectEquipment * ---
