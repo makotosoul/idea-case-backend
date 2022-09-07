@@ -6,7 +6,7 @@ INSERT INTO Department (name) VALUES
 	('Laulumusiikki')
 ; 
 
-INSERT INTO Program(name, department_id) VALUES
+INSERT INTO Program(name, departmentId) VALUES
 	('Piano', 1),
     ('Kantele', 1),
     ('Trumpetti', 2),
