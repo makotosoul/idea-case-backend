@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS DepartmentPlanner (
     CONSTRAINT FOREIGN KEY (departmentId) REFERENCES Department(id) 
         ON DELETE CASCADE 
         ON UPDATE NO ACTION,
-    CONSTRAINT FOREIGN KEY (userId) REFERENCES User(id) 
+    CONSTRAINT FOREIGN KEY (userId) REFERENCES `User`(id) 
         ON DELETE CASCADE 
         ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS Building (
 
 ) ENGINE=InnoDB AUTO_INCREMENT=401 DEFAULT CHARSET=latin1;
 
-CREATE TABLE IF NOT EXISTS Space (
+CREATE TABLE IF NOT EXISTS `Space` (
     id              INTEGER NOT NULL AUTO_INCREMENT,
     name            VARCHAR(255) NOT NULL,
     area            DECIMAL(5,1),
@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS Space (
 
     CONSTRAINT AK_UNIQUE_name_in_building UNIQUE(buildingId, name),
 
-    CONSTRAINT PK_Space PRIMARY KEY (`id`),
+    PRIMARY KEY (id),
 
     CONSTRAINT FK_space_building
     	FOREIGN KEY (buildingId) REFERENCES Building(id)
@@ -79,20 +79,20 @@ CREATE TABLE IF NOT EXISTS Equipment (
     priority      INTEGER             NOT NULL DEFAULT 0,
     description     VARCHAR(16000),
 
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (id)
 ) ENGINE=InnoDB AUTO_INCREMENT=2001 DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS SpaceEquipment (
     spaceId       INTEGER     NOT NULL,
     equipmentId   INTEGER     NOT NULL,
     
-    CONSTRAINT PK_SpaceEquipment PRIMARY KEY(spaceId,equipmentId),
+    PRIMARY KEY(spaceId,equipmentId),
 
     CONSTRAINT `FK_SpaceEquipment_Equipment` 
-        FOREIGN KEY (`equipmentId`) REFERENCES `Equipment` (`id`) 
+        FOREIGN KEY (`equipmentId`) REFERENCES `Equipment` (id) 
         ON DELETE NO ACTION ON UPDATE NO ACTION,
     CONSTRAINT `FK_SpaceEquipment_Space` 
-        FOREIGN KEY (`spaceId`) REFERENCES `Space` (`id`) 
+        FOREIGN KEY (`spaceId`) REFERENCES `Space` (id) 
         ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE = InnoDB DEFAULT CHARSET=latin1;
 
@@ -112,7 +112,7 @@ CREATE TABLE IF NOT EXISTS Program (
 -- Tarvitaanko Program-taulussa tätä:
 -- participants INT(4),
 
-CREATE TABLE IF NOT EXISTS Subject (
+CREATE TABLE IF NOT EXISTS `Subject` (
     id              INTEGER         NOT NULL AUTO_INCREMENT,
     name            VARCHAR(255)    UNIQUE,
     groupSize       INTEGER,
@@ -124,10 +124,10 @@ CREATE TABLE IF NOT EXISTS Subject (
 
     CONSTRAINT AK_Subject_unique_name_in_program UNIQUE (programId, name),
   
-    CONSTRAINT PK_Subject PRIMARY KEY (`id`),
+    PRIMARY KEY (id),
 
     CONSTRAINT `FK_Subject_Program` FOREIGN KEY (`programId`) 
-        REFERENCES `Program`(`id`) 
+        REFERENCES `Program`(id) 
         ON DELETE NO ACTION 
         ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=4001 DEFAULT CHARSET=latin1;
@@ -139,9 +139,9 @@ CREATE TABLE IF NOT EXISTS SubjectEquipment (
 
     PRIMARY KEY (subjectId, equipmentId),
 
-    CONSTRAINT `FK_SubjectEquipment_Subject` FOREIGN KEY (`subjectId`) REFERENCES `Subject`(`id`) 
+    CONSTRAINT `FK_SubjectEquipment_Subject` FOREIGN KEY (`subjectId`) REFERENCES `Subject`(id) 
         ON DELETE NO ACTION ON UPDATE NO ACTION,
 
-    CONSTRAINT `FK_SubjectEquipment_Equipment` FOREIGN KEY (`equipmentId`) REFERENCES `Equipment`(`id`) 
+    CONSTRAINT `FK_SubjectEquipment_Equipment` FOREIGN KEY (`equipmentId`) REFERENCES `Equipment`(id) 
         ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
