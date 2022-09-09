@@ -4,7 +4,7 @@ USE casedb;
 CREATE TABLE IF NOT EXISTS Department (
     id          INTEGER         NOT NULL AUTO_INCREMENT,
     name        VARCHAR(255)    UNIQUE NOT NULL,
-    description VARCHAR(16000)  NOT NULL,
+    description VARCHAR(16000)  ,
 
     PRIMARY KEY (id)
 ) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=latin1;
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS DepartmentPlanner (
 CREATE TABLE IF NOT EXISTS Campus (
     id          INTEGER         NOT NULL AUTO_INCREMENT,
     name        VARCHAR(255)    UNIQUE NOT NULL,
-    description VARCHAR(16000)  NOT NULL,
+    description VARCHAR(16000)  ,
 
     PRIMARY KEY (id)
 ) ENGINE=InnoDB AUTO_INCREMENT=301 DEFAULT CHARSET=latin1;
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS Campus (
 CREATE TABLE IF NOT EXISTS Building (
     id          INTEGER         NOT NULL AUTO_INCREMENT,
     name        VARCHAR(255)    UNIQUE NOT NULL,
-    description VARCHAR(16000)  NOT NULL,
+    description VARCHAR(16000)  ,
     campusId    INTEGER         NOT NULL, 
 
     PRIMARY KEY (id),
@@ -76,9 +76,9 @@ CREATE TABLE IF NOT EXISTS `Space` (
 CREATE TABLE IF NOT EXISTS Equipment (
     id            INTEGER             NOT NULL AUTO_INCREMENT,
     name          VARCHAR(255)        UNIQUE NOT NULL,
-    isMovable       BOOLEAN             NOT NULL,
+    isMovable     BOOLEAN             NOT NULL,
     priority      INTEGER             NOT NULL DEFAULT 0,
-    description     VARCHAR(16000),
+    description   VARCHAR(16000),
 
     PRIMARY KEY (id)
 ) ENGINE=InnoDB AUTO_INCREMENT=2001 DEFAULT CHARSET=latin1;

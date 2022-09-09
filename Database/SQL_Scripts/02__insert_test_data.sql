@@ -80,9 +80,9 @@ INSERT INTO Subject(name, groupSize, groupCount, sessionLength, sessionCount, ar
 /* --- Insert: SubjectEquipment * --- */
 INSERT INTO SubjectEquipment(subjectId, equipmentId, priority) VALUES
 (4001, 2001, 5),
-(4002, 2002, 3),
-(4003, 2003, 1),
-(4004, 2004, 1),
+(4001, 2002, 3),
+(4001, 2003, 1),
+(4001, 2004, 1),
 (4005, 2005, 2),
 (4006, 2001, 5),
 (4007, 2006, 2);
