@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS SpaceEquipment (
     spaceId       INTEGER     NOT NULL,
     equipmentId   INTEGER     NOT NULL,
     
-    CONSTRAINT PK_SpaceEquipment PRIMARY KEY(spaceId,equipmentId),
+    PRIMARY KEY(spaceId,equipmentId),
 
     CONSTRAINT `FK_SpaceEquipment_Equipment` 
         FOREIGN KEY (`equipmentId`) REFERENCES `Equipment` (`id`) 
