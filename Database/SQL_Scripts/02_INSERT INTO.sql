@@ -3,7 +3,7 @@ INSERT INTO Department (name) VALUES
     ('Laulumusiikin aineryhmä'),
     ('Pianon, harmonikan, kitaran ja kanteleen aineryhmä');
 
-INSERT INTO User (name, isAdmin, email) VALUES
+INSERT INTO `User` (name, isAdmin, email) VALUES
     ('admin', 1, 'e@e.e'),
     ('planner', 0, 'e@e.e');
 

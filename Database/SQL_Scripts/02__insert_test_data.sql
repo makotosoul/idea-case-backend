@@ -15,7 +15,7 @@ INSERT INTO Department(name, description) VALUES
     ('Avoin Kampus', 'Aineryhmän kuvaus');
 
 /* --- Insert: `User` --- */
-INSERT INTO User(name, isAdmin, email) VALUES
+INSERT INTO `User`(name, isAdmin, email) VALUES
     ('sa1001', 1, 'fake_admin@test.co'),
     ('sa1002', 0, 'fake_planner@test.co'),
     ('sa1003', 0, 'fake_planner2@test.co');
@@ -36,7 +36,7 @@ INSERT INTO `Building` (`name`, `description`, `campusId`) VALUES
 	('Musiikkitalo', 'Sibeliusakatemian päärakennus', 301),
 	('N-talo', 'Sibeliusakatemian opetus ja harjoittelu talo ', 301),
 	('R-talo', 'Sibeliusakatemian konserttitalo', 301);
-/* --- Insert: Space * --- */
+/* --- Insert: `Space` * --- */
 INSERT INTO `Space` (`name`, `area`, `people_capasity`, `buildingId`, `availableFrom`, `availableTo`, `classesFrom`, `classesTo`) VALUES
 	('S6117', 31.0, 10, 401, '08:00:00', '21:00:00', '09:00:00', '16:00:00'),
 	('S6104 ', 63.0, 50, 401, '08:00:00', '21:00:00', '10:00:00', '17:00:00'),
@@ -64,7 +64,7 @@ INSERT INTO Program (name , departmentId) VALUES
     ('Fortepiano', 103),
     ('Avoin Kampus', 110);
 
-/* --- Insert: Subject * --- */
+/* --- Insert: `Subject` * --- */
 
 /* --- Insert: SubjectEquipment * --- */
 

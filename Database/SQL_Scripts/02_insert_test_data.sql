@@ -20,7 +20,7 @@ INSERT INTO Program (
         practiceHours
     )
 VALUES ("Kitara pääinstrumenttina", 45, 3, 405);
-INSERT INTO Subject (
+INSERT INTO `Subject` (
         subjectId,
         name,
         groupType,
@@ -38,7 +38,7 @@ VALUES (
         90,
         "3x viikossa"
     );
-INSERT INTO Subject (
+INSERT INTO `Subject` (
         name,
         groupType,
         maxParticipants,
@@ -54,9 +54,9 @@ VALUES (
         60,
         "2x viikossa"
     );
-INSERT INTO Space (spaceId, roomNumber, name, size, capacity)
+INSERT INTO `Space` (spaceId, roomNumber, name, size, capacity)
 VALUES (1, 301, "Teorialuokka", "55m2", 30);
-INSERT INTO Space (roomNumber, name, size, capacity)
+INSERT INTO `Space` (roomNumber, name, size, capacity)
 VALUES (440, "Organo sali", "175m2", 140);
 INSERT INTO Equipment (equipmentId, name, movable, quantity, spaceId)
 VALUES (1, "Tuolit ja pöydät", 0, 30, 1);

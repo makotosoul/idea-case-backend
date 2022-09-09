@@ -17,7 +17,7 @@ FROM Need n
     INNER JOIN Equipment e USING (equipmentId)
     INNER JOIN Program p USING (programId)
     INNER JOIN Class c USING (classId)
-    INNER JOIN Subject su USING (subjectId);
+    INNER JOIN `Subject` su USING (subjectId);
 
 # Laskennan jälkeen
 SELECT c.participants AS "Osallistuja määrä",
@@ -29,5 +29,5 @@ SELECT c.participants AS "Osallistuja määrä",
     s.roomNumber AS "Huone",
     s.name AS "Huoneen nimi"
 FROM Class c
-    INNER JOIN Subject su USING (subjectId)
-    INNER JOIN Space s USING (spaceId);
+    INNER JOIN `Subject` su USING (subjectId)
+    INNER JOIN `Space` s USING (spaceId);

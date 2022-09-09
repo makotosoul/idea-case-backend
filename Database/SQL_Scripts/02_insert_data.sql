@@ -27,7 +27,7 @@ VALUES
     ('Varuste3', 'Tämä on varusteen testisyöttöä 3');
 
 /* --- INSERT SPACE --- */
-INSERT INTO Space (name, description)
+INSERT INTO `Space` (name, description)
 VALUES
     ('Tila1', 'Tämä on tilan testisyöttöä'),
     ('Tila2', 'Tämä on tilan testisyöttöä 2'),

@@ -15,48 +15,48 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 -- Dumping data for table casedb.Department: ~3 rows (suunnilleen)
-INSERT INTO `Department` (`id`, `name`) VALUES
+INSERT INTO `Department` (id, `name`) VALUES
 	(1, 'urunsoitto'),
 	(2, 'urunsoitto'),
 	(3, 'lyomasoittimet');
 
 -- Dumping data for table casedb.Equipment: ~2 rows (suunnilleen)
-INSERT INTO `Equipment` (`id`, `name`, `priority`) VALUES
+INSERT INTO `Equipment` (id, `name`, `priority`) VALUES
 	(1, 'bongo', 110),
 	(2, 'urut', 60);
 
 -- Dumping data for table casedb.Program: ~3 rows (suunnilleen)
-INSERT INTO `Program` (`id`, `name`, `departmentId`) VALUES
+INSERT INTO `Program` (id, `name`, `departmentId`) VALUES
 	(1, 'urku', 1),
 	(2, 'vasara', 3),
 	(3, 'rumpu', 3);
 
 -- Dumping data for table casedb.Requirement: ~3 rows (suunnilleen)
-INSERT INTO `Requirement` (`id`, `type`, `subjectId`, `equipmentId`, `participants`, `area`, `hours`) VALUES
+INSERT INTO `Requirement` (id, `type`, `subjectId`, `equipmentId`, `participants`, `area`, `hours`) VALUES
 	(1, 7, 1, NULL, NULL, NULL, 20),
 	(2, 6, 1, NULL, NULL, 40.100000, NULL),
 	(3, 4, 1, 1, NULL, NULL, NULL);
 
--- Dumping data for table casedb.Space: ~1 rows (suunnilleen)
-INSERT INTO `Space` (`id`, `area`, `maximum_pariticipants`, `available_hours`) VALUES
+-- Dumping data for table casedb.`Space`: ~1 rows (suunnilleen)
+INSERT INTO `Space` (id, `area`, `maximum_pariticipants`, `available_hours`) VALUES
 	(1, 30, 10, 37);
 
 -- Dumping data for table casedb.SpaceEquipment: ~1 rows (suunnilleen)
-INSERT INTO `SpaceEquipment` (`id`, `spaceId`, `equipmentid`) VALUES
+INSERT INTO `SpaceEquipment` (id, `spaceId`, `equipmentid`) VALUES
 	(1, 1, 2);
 
--- Dumping data for table casedb.Subject: ~2 rows (suunnilleen)
-INSERT INTO `Subject` (`id`, `programId`) VALUES
+-- Dumping data for table casedb.`Subject`: ~2 rows (suunnilleen)
+INSERT INTO `Subject` (id, `programId`) VALUES
 	(2, 1),
 	(1, 3);
 
--- Dumping data for table casedb.User: ~0 rows (suunnilleen)
-INSERT INTO `User` (`id`, `isAdmin`) VALUES
+-- Dumping data for table casedb.`User`: ~0 rows (suunnilleen)
+INSERT INTO `User` (id, `isAdmin`) VALUES
 	(1, 'ADMIN'),
 	(2, 'PLANNER');
 
 -- Dumping data for table casedb.DepartmentPlanner: ~0 rows (suunnilleen)
-INSERT INTO `DepartmentPlanner` (`id`, `userId`, `departmentId`) VALUES
+INSERT INTO `DepartmentPlanner` (id, `userId`, `departmentId`) VALUES
 	(1, 2, 1);
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;

@@ -14,13 +14,13 @@
 
 -- Dumping data for table casedb.Building: ~1 rows (approximately)
 /*!40000 ALTER TABLE `Building` DISABLE KEYS */;
-INSERT INTO `Building` (`id`, `name`) VALUES
+INSERT INTO `Building` (id, `name`) VALUES
 	(1, 'Musiikkitalo');
 /*!40000 ALTER TABLE `Building` ENABLE KEYS */;
 
 -- Dumping data for table casedb.Equipment: ~1 rows (approximately)
 /*!40000 ALTER TABLE `Equipment` DISABLE KEYS */;
-INSERT INTO `Equipment` (`id`, `name`) VALUES
+INSERT INTO `Equipment` (id, `name`) VALUES
 	(1, 'Flyygeli');
 /*!40000 ALTER TABLE `Equipment` ENABLE KEYS */;
 
@@ -30,9 +30,9 @@ INSERT INTO `SpaceEquipment` (`spaceId`, `equipmentId`) VALUES
 	(1, 1);
 /*!40000 ALTER TABLE `SpaceEquipment` ENABLE KEYS */;
 
--- Dumping data for table casedb.Space: ~0 rows (approximately)
+-- Dumping data for table casedb.`Space`: ~0 rows (approximately)
 /*!40000 ALTER TABLE `Space` DISABLE KEYS */;
-INSERT INTO `Space` (`id`, `buildingId`, `area`, `maxParticipants`, `startingHour`, `endingHour`) VALUES
+INSERT INTO `Space` (id, `buildingId`, `area`, `maxParticipants`, `startingHour`, `endingHour`) VALUES
 	(1, 1, 40.5, 2, NULL, NULL);
 /*!40000 ALTER TABLE `Space` ENABLE KEYS */;
 
