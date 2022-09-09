@@ -45,7 +45,10 @@ INSERT INTO `Space` (`name`, `area`, `people_capasity`, `buildingId`, `available
 INSERT INTO `Equipment` (`name`, `isMovable`, `priority`, `description`) VALUES
 	('Kontrabasso', 1, 110, 'Kaunis puinen soitin, jolla on neljä kieltä.'),
 	('Urut', 0, 600, 'Valtavan kokoinen soitin'),
-	('Kantele', 1, 50, 'Väinämöisen soitin');
+	('Kantele', 1, 50, 'Väinämöisen soitin'),
+    ('Nokkahuilu', 1, 50, 'Kaikki rakastaa'),
+    ('Rumpusetti, Jazz', 1, 250, 'Ääntä riittää'),
+    ('Äänityslaitteisto Xyz', 0, 900, '8 kanavaa');
 /* --- Insert: SpaceEquipment * --- */
 INSERT INTO `SpaceEquipment` (`spaceId`, `equipmentId`) VALUES
 	(1001, 2001),

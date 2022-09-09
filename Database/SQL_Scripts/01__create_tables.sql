@@ -1,4 +1,5 @@
 USE casedb;
+
 /* --- 01 CREATE TABLES --- */
 CREATE TABLE IF NOT EXISTS Department (
     id          INTEGER         NOT NULL AUTO_INCREMENT,

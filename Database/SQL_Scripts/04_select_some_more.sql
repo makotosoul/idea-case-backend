@@ -1,3 +1,5 @@
+USE casedb;
+
 # Vaatimukset / tarve
 SELECT n.requirementId,
     p.programId,

@@ -1,4 +1,4 @@
-USE `casedb`;
+USE casedb;
 
 DELETE FROM SubjectEquipment;
 
