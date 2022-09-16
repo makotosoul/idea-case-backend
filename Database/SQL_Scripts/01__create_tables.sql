@@ -1,6 +1,17 @@
 USE casedb;
 
 /* --- 01 CREATE TABLES --- */
+
+CREATE TABLE IF NOT EXISTS GlobalSetting (
+    id          INTEGER        NOT NULL AUTO_INCREMENT,
+    name        VARCHAR(255)   UNIQUE NOT NULL,
+    description VARCHAR(16000),
+    numberValue INTEGER,
+    textValue   VARCHAR(255),
+    
+    PRIMARY KEY (id)
+)   ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
 CREATE TABLE IF NOT EXISTS Department (
     id          INTEGER         NOT NULL AUTO_INCREMENT,
     name        VARCHAR(255)    UNIQUE NOT NULL,
@@ -11,7 +22,6 @@ CREATE TABLE IF NOT EXISTS Department (
 
 CREATE TABLE IF NOT EXISTS `User` (
     id          INTEGER         NOT NULL AUTO_INCREMENT,
-    name        VARCHAR(255)    UNIQUE NOT NULL,
     email       VARCHAR(255)    UNIQUE NOT NULL,
     isAdmin     BOOLEAN         NOT NULL,
 
@@ -52,6 +62,13 @@ CREATE TABLE IF NOT EXISTS Building (
 
 ) ENGINE=InnoDB AUTO_INCREMENT=401 DEFAULT CHARSET=latin1;
 
+CREATE TABLE IF NOT EXISTS SubjectType (
+	id				INTEGER NOT NULL AUTO_INCREMENT,
+	name			VARCHAR(255) NOT NULL,
+
+	PRIMARY KEY (id)
+) ENGINE=InnoDB AUTO_INCREMENT=801 DEFAULT CHARSET=latin1;
+
 CREATE TABLE IF NOT EXISTS `Space` (
     id              INTEGER NOT NULL AUTO_INCREMENT,
     name            VARCHAR(255) NOT NULL,
@@ -62,10 +79,17 @@ CREATE TABLE IF NOT EXISTS `Space` (
     availableTo     TIME,
     classesFrom     TIME,
     classesTo       TIME,
+	inUse			BOOLEAN,
+    subjectTypeId   INTEGER,
 
     CONSTRAINT AK_UNIQUE_name_in_building UNIQUE(buildingId, name),
 
     PRIMARY KEY (id),
+
+    CONSTRAINT FK_space_subjectType
+        FOREIGN KEY (subjectTypeId) REFERENCES SubjectType(id)
+            ON DELETE SET NULL
+            ON UPDATE CASCADE,
 
     CONSTRAINT FK_space_building
     	FOREIGN KEY (buildingId) REFERENCES Building(id)
@@ -122,6 +146,7 @@ CREATE TABLE IF NOT EXISTS `Subject` (
     sessionCount    INTEGER,
     area            DECIMAL(5,1) DEFAULT NULL,         
     programId       INTEGER NOT NULL,
+	subjectTypeId	INTEGER,
 
     CONSTRAINT AK_Subject_unique_name_in_program UNIQUE (programId, name),
   
@@ -130,13 +155,19 @@ CREATE TABLE IF NOT EXISTS `Subject` (
     CONSTRAINT `FK_Subject_Program` FOREIGN KEY (`programId`) 
         REFERENCES `Program`(id) 
         ON DELETE NO ACTION 
-        ON UPDATE NO ACTION
+        ON UPDATE NO ACTION,
+
+	CONSTRAINT `FK_Subject_SubjectType` FOREIGN KEY (`subjectTypeId`) 
+        REFERENCES `SubjectType`(id) 
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=4001 DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS SubjectEquipment (
     subjectId      INTEGER     NOT NULL,
     equipmentId    INTEGER     NOT NULL,
     priority       INTEGER     NOT NULL,
+    obligatory     BOOLEAN     DEFAULT 0,
 
     PRIMARY KEY (subjectId, equipmentId),
 
