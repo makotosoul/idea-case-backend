@@ -2,6 +2,11 @@ const express = require("express");
 const subject = express.Router();
 const db = require("../db/index");
 const logger = require("../utils/logger");
+const {
+  dbErrorHandler,
+  succsessHandler,
+  requestErrorHandler,
+} = require("../responseHandler/index");
 
 // Aineen kaikki tiedot sekä pääaineen id ja nimi
 subject.get("/getAll", (req, res) => {
@@ -9,10 +14,9 @@ subject.get("/getAll", (req, res) => {
     "SELECT subject.id, subject.name AS subjectName, subject.groupSize, subject.groupCount, subject.sessionLength, subject.sessionCount, subject.area, subject.programId, program.name FROM Subject  JOIN Program ON subject.programId = program.id";
   db.query(sqlSelectSubjectProgram, (err, result) => {
     if (err) {
-      logger.error("Oops! Nothing came through - Subject.");
+      dbErrorHandler(res, err, "Oops! Nothing came through - Subject");
     } else {
-      logger.http("getAll succsesfull - Subject");
-      res.send(result);
+      succsessHandler(res, result, "getAll succsesfull - Subject");
     }
   });
 });
@@ -32,12 +36,13 @@ subject.post("/post", (req, res) => {
     sqlInsert,
     [name, groupSize, groupCount, sessionLength, sessionCount, area, programId],
     (err, result) => {
-      if (err) {
-        logger.error("Oops! Create failed at - Subject");
+      if (!result) {
+        requestErrorHandler(res, "Nothing to insert");
+      } else if (err) {
+        dbErrorHandler(res, err, "Oops! Create failed - Subject");
       } else {
-        logger.http("Create succsesfull - Subject");
+        succsessHandler(res, result, "Create succsesfull - Subject");
         logger.info("Subject created");
-        res.send(result);
       }
     },
   );
@@ -50,11 +55,10 @@ subject.delete("/delete/:id", (req, res) => {
   const sqlDelete = "DELETE FROM Subject WHERE id = ?;";
   db.query(sqlDelete, id, (err, result) => {
     if (err) {
-      logger.error("Oops! Delete failed - Subject");
+      dbErrorHandler(res, err, "Oops! Delete failed - Subject");
     } else {
-      logger.http("Delete succsesfull - Subject");
+      succsessHandler(res, result, "Delete succsesfull - Subject");
       logger.info("Subject deleted");
-      res.send(result);
     }
   });
 });
@@ -73,12 +77,13 @@ subject.put("/update", (req, res) => {
     sqlUpdate,
     [name, groupSize, groupCount, sessionLength, sessionCount, area],
     (err, result) => {
-      if (err) {
-        logger.error("Oops! Update failed at - Subject");
+      if (!result) {
+        requestErrorHandler(res, "Nothing to update");
+      } else if (err) {
+        dbErrorHandler(res, err, "Oops! Update failed - Subject");
       } else {
-        logger.http("Update succsesfull - Subject");
+        succsessHandler(res, result, "Update succsesfull - Subject");
         logger.info("Subject updated");
-        res.send(result);
       }
     },
   );
