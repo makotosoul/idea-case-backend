@@ -1,5 +1,12 @@
 USE casedb;
 
+DELETE FROM AllocCurrentRoundUser;
+
+DELETE FROM AllocSubject;
+
+DELETE FROM AllocRound;
+ALTER TABLE AllocRound AUTO_INCREMENT=10001;
+
 DELETE FROM SubjectEquipment;
 
 DELETE FROM `Subject`;

@@ -177,3 +177,63 @@ CREATE TABLE IF NOT EXISTS SubjectEquipment (
     CONSTRAINT `FK_SubjectEquipment_Equipment` FOREIGN KEY (`equipmentId`) REFERENCES `Equipment`(id) 
         ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+/* CREATE ALLOC TABLES */
+
+CREATE TABLE IF NOT EXISTS AllocRound (
+    id              INTEGER     NOT NULL AUTO_INCREMENT,
+    date            TIMESTAMP   NOT NULL DEFAULT current_timestamp(),
+    name            VARCHAR(255) NOT NULL,
+    isSeasonAlloc   BOOLEAN,
+    userId          INTEGER     NOT NULL,
+    description     VARCHAR(16000),
+    lastModified    TIMESTAMP   NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+
+    PRIMARY KEY(id),
+    
+    CONSTRAINT `FK_AllocRound_User` FOREIGN KEY (`userId`)
+        REFERENCES `User`(id)
+        ON DELETE NO ACTION
+        ON UPDATE CASCADE
+
+)ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS AllocSubject (
+    subjectId       INTEGER     NOT NULL,
+    allocRound      INTEGER     NOT NULL,
+    isAlloc         BOOLEAN     DEFAULT 0,
+    allocatedDate   DATE, 
+    
+    PRIMARY KEY(subjectId, allocRound), 
+
+    CONSTRAINT `FK_AllocSubject_Subject` FOREIGN KEY (`subjectId`)
+        REFERENCES `Subject`(id)
+        ON DELETE NO ACTION 
+        ON UPDATE NO ACTION,
+
+    CONSTRAINT `FK_AllocSubject_AllocRound` FOREIGN KEY (`allocRound`)
+        REFERENCES `AllocRound`(id)
+        ON DELETE NO ACTION
+        ON UPDATE NO ACTION  
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+CREATE TABLE IF NOT EXISTS AllocCurrentRoundUser (
+    allocId     INTEGER     NOT NULL,
+    userId      INTEGER,
+    
+    PRIMARY KEY(allocId, userId),
+    
+    CONSTRAINT `FK_AllocCurrentRoundUser_AllocRound` 
+        FOREIGN KEY (`allocId`) 
+        REFERENCES `AllocRound` (id)
+        ON DELETE CASCADE 
+        ON UPDATE CASCADE,
+        
+    CONSTRAINT `FK_AllocCurrentRoundUser_User` 
+        FOREIGN KEY (`userId`) 
+        REFERENCES `User` (id)
+        ON DELETE NO ACTION
+        ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
