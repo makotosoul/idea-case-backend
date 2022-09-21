@@ -16,7 +16,7 @@ subject.get("/getAll", (req, res) => {
     if (err) {
       dbErrorHandler(res, err, "Oops! Nothing came through - Subject");
     } else {
-      succsessHandler(res, result, "getAll succsesfull - Subject");
+      succsessHandler(res, result, "getAll successful - Subject");
     }
   });
 });
@@ -37,11 +37,11 @@ subject.post("/post", (req, res) => {
     [name, groupSize, groupCount, sessionLength, sessionCount, area, programId],
     (err, result) => {
       if (!result) {
-        requestErrorHandler(res, "Nothing to insert");
+        requestErrorHandler(res, err, "Nothing to insert");
       } else if (err) {
         dbErrorHandler(res, err, "Oops! Create failed - Subject");
       } else {
-        succsessHandler(res, result, "Create succsesfull - Subject");
+        succsessHandler(res, result, "Create successful - Subject");
         logger.info("Subject created");
       }
     },
@@ -57,7 +57,7 @@ subject.delete("/delete/:id", (req, res) => {
     if (err) {
       dbErrorHandler(res, err, "Oops! Delete failed - Subject");
     } else {
-      succsessHandler(res, result, "Delete succsesfull - Subject");
+      succsessHandler(res, result, "Delete successful - Subject");
       logger.info("Subject deleted");
     }
   });
@@ -78,11 +78,11 @@ subject.put("/update", (req, res) => {
     [name, groupSize, groupCount, sessionLength, sessionCount, area],
     (err, result) => {
       if (!result) {
-        requestErrorHandler(res, "Nothing to update");
+        requestErrorHandler(res, err, "Nothing to update");
       } else if (err) {
         dbErrorHandler(res, err, "Oops! Update failed - Subject");
       } else {
-        succsessHandler(res, result, "Update succsesfull - Subject");
+        succsessHandler(res, result, "Update successful - Subject");
         logger.info("Subject updated");
       }
     },

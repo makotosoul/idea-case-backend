@@ -11,7 +11,7 @@ program.get("/getNames", (req, res) => {
     if (err) {
       dbErrorHandler(res, err, "Oops! Nothing came through - Program");
     } else {
-      succsessHandler(res, result, "getNames succsesfull - Program");
+      succsessHandler(res, result, "getNames successful - Program");
     }
   });
 });
