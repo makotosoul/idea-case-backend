@@ -4,6 +4,7 @@ const serverErrorMessage = "Server error.";
 const requestErrorMessage = "Request error";
 const dbErrorMessage = serverErrorMessage;
 const succsessMessage = "OK";
+const validationErrorMessage = "Formatting error";
 
 const dbErrorHandler = (res, error, message) => {
   if (!message) {
@@ -31,4 +32,17 @@ const requestErrorHandler = (res, message) => {
   res.status(400).send(requestErrorMessage);
 };
 
-module.exports = { dbErrorHandler, succsessHandler, requestErrorHandler };
+const validationErrorHandler = (res, message) => {
+  if (!message) {
+    message = validationErrorMessage;
+  }
+  logger.error(message);
+  res.status(400).send(validationErrorMessage);
+};
+
+module.exports = {
+  dbErrorHandler,
+  succsessHandler,
+  requestErrorHandler,
+  validationErrorHandler,
+};

@@ -6,7 +6,9 @@ const {
   dbErrorHandler,
   succsessHandler,
   requestErrorHandler,
+  validationErrorHandler,
 } = require("../responseHandler/index");
+const { body, validationResult } = require("express-validator");
 
 // Aineen kaikki tiedot sekä pääaineen id ja nimi
 subject.get("/getAll", (req, res) => {
@@ -22,31 +24,89 @@ subject.get("/getAll", (req, res) => {
 });
 
 // Aineen lisäys
-subject.post("/post", (req, res) => {
-  const name = req.body.name;
-  const groupSize = req.body.groupSize;
-  const groupCount = req.body.groupCount;
-  const sessionLength = req.body.sessionLength;
-  const sessionCount = req.body.sessionCount;
-  const area = req.body.area;
-  const programId = req.body.programId;
-  const sqlInsert =
-    "INSERT INTO Subject (name, groupSize, groupCount, sessionLength, sessionCount, area, programId) VALUES (?,?,?,?,?,?,?)";
-  db.query(
-    sqlInsert,
-    [name, groupSize, groupCount, sessionLength, sessionCount, area, programId],
-    (err, result) => {
-      if (!result) {
-        requestErrorHandler(res, err, "Nothing to insert");
-      } else if (err) {
-        dbErrorHandler(res, err, "Oops! Create failed - Subject");
-      } else {
-        succsessHandler(res, result, "Create successful - Subject");
-        logger.info("Subject created");
-      }
-    },
-  );
-});
+subject.post(
+  "/post",
+  body("name")
+    .toLowerCase()
+    .isLength({ min: 2, max: 255 })
+    .withMessage("Must be between 2-255 characters long")
+    .bail()
+    .matches(/^[a-zAz\u00c0-\u017e]{1,255}$/)
+    .withMessage("Must contain only letters")
+    .bail()
+    .notEmpty()
+    .withMessage("Cannot be empty")
+    .bail(),
+  body("groupSize")
+    .matches(/\d/)
+    .withMessage("Must be a number")
+    .bail()
+    .notEmpty()
+    .withMessage("Cannot be empty")
+    .bail(),
+  body("groupCount")
+    .matches(/\d/)
+    .withMessage("Must be a number")
+    .bail()
+    .notEmpty()
+    .withMessage("Cannot be empty")
+    .bail(),
+  body("sessionLength")
+    .matches(/^([0-1][0-9]|[2][0-3]):([0-5][0-9])$/)
+    .withMessage("Accepted format: 00:00")
+    .bail()
+    .notEmpty()
+    .withMessage("Cannot be empty")
+    .bail(),
+  body("area")
+    .matches(/\d/)
+    .withMessage("Must be a number")
+    .bail()
+    .isFloat()
+    .notEmpty()
+    .withMessage("Cannot be empty")
+    .bail(),
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      logger.error("Validation error:  %O", errors);
+    }
+    if (!errors.isEmpty()) {
+      return validationErrorHandler(res, "Formatting problem");
+    }
+    const name = req.body.name;
+    const groupSize = req.body.groupSize;
+    const groupCount = req.body.groupCount;
+    const sessionLength = req.body.sessionLength;
+    const sessionCount = req.body.sessionCount;
+    const area = req.body.area;
+    const programId = req.body.programId;
+    const sqlInsert =
+      "INSERT INTO Subject (name, groupSize, groupCount, sessionLength, sessionCount, area, programId) VALUES (?,?,?,?,?,?,?)";
+    db.query(
+      sqlInsert,
+      [
+        name,
+        groupSize,
+        groupCount,
+        sessionLength,
+        sessionCount,
+        area,
+        programId,
+      ],
+      (err, result) => {
+        if (!result) {
+          requestErrorHandler(res, err, "Nothing to insert");
+        } else if (err) {
+          dbErrorHandler(res, err, "Oops! Create failed - Subject");
+        } else {
+          succsessHandler(res, result, "Create successful - Subject");
+          logger.info("Subject created");
+        }
+      },
+    );
+  },
+);
 
 // Aineen poisto
 subject.delete("/delete/:id", (req, res) => {
@@ -64,29 +124,80 @@ subject.delete("/delete/:id", (req, res) => {
 });
 
 // Aineen päivitys
-subject.put("/update", (req, res) => {
-  const name = req.body.name;
-  const groupSize = req.body.groupSize;
-  const groupCount = req.body.groupCount;
-  const sessionLength = req.body.sessionLength;
-  const sessionCount = req.body.sessionCount;
-  const area = req.body.area;
-  const sqlUpdate =
-    "UPDATE Subject SET name = ?, groupSize = ?, groupCount = ?, sessionLength = ?, sessionCount = ?, area = ? WHERE id = ?";
-  db.query(
-    sqlUpdate,
-    [name, groupSize, groupCount, sessionLength, sessionCount, area],
-    (err, result) => {
-      if (!result) {
-        requestErrorHandler(res, err, "Nothing to update");
-      } else if (err) {
-        dbErrorHandler(res, err, "Oops! Update failed - Subject");
-      } else {
-        succsessHandler(res, result, "Update successful - Subject");
-        logger.info("Subject updated");
-      }
-    },
-  );
-});
+subject.put(
+  "/update",
+  body("name")
+    .toLowerCase()
+    .isLength({ min: 2, max: 255 })
+    .withMessage("Must be between 2-255 characters long")
+    .bail()
+    .matches(/^[a-zAz\u00c0-\u017e]{1,255}$/)
+    .withMessage("Must contain only letters")
+    .bail()
+    .notEmpty()
+    .withMessage("Cannot be empty")
+    .bail(),
+  body("groupSize")
+    .matches(/\d/)
+    .withMessage("Must be a number")
+    .bail()
+    .notEmpty()
+    .withMessage("Cannot be empty")
+    .bail(),
+  body("groupCount")
+    .matches(/\d/)
+    .withMessage("Must be a number")
+    .bail()
+    .notEmpty()
+    .withMessage("Cannot be empty")
+    .bail(),
+  body("sessionLength")
+    .matches(/^([0-1][0-9]|[2][0-3]):([0-5][0-9])$/)
+    .withMessage("Accepted format: 00:00")
+    .bail()
+    .notEmpty()
+    .withMessage("Cannot be empty")
+    .bail(),
+  body("area")
+    .matches(/\d/)
+    .withMessage("Must be a number")
+    .bail()
+    .isFloat()
+    .notEmpty()
+    .withMessage("Cannot be empty")
+    .bail(),
+
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      logger.error("Validation error:  %O", errors);
+    }
+    if (!errors.isEmpty()) {
+      return validationErrorHandler(res, "Formatting problem");
+    }
+    const name = req.body.name;
+    const groupSize = req.body.groupSize;
+    const groupCount = req.body.groupCount;
+    const sessionLength = req.body.sessionLength;
+    const sessionCount = req.body.sessionCount;
+    const area = req.body.area;
+    const sqlUpdate =
+      "UPDATE Subject SET name = ?, groupSize = ?, groupCount = ?, sessionLength = ?, sessionCount = ?, area = ? WHERE id = ?";
+    db.query(
+      sqlUpdate,
+      [name, groupSize, groupCount, sessionLength, sessionCount, area],
+      (err, result) => {
+        if (!result) {
+          requestErrorHandler(res, err, "Nothing to update");
+        } else if (err) {
+          dbErrorHandler(res, err, "Oops! Update failed - Subject");
+        } else {
+          succsessHandler(res, result, "Update successful - Subject");
+          logger.info("Subject updated");
+        }
+      },
+    );
+  },
+);
 
 module.exports = subject;
