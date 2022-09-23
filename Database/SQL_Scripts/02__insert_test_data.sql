@@ -102,4 +102,28 @@ INSERT INTO SubjectEquipment(subjectId, equipmentId, priority) VALUES
 (4006, 2001, 5),
 (4007, 2006, 2);
 
+/* --- Insert: AllocRound * --- */
+INSERT INTO AllocRound(name, isSeasonAlloc, userId) VALUES
+("Testikierros", 0, 201),
+("Kevät 2023", 1, 201);
+
+/* --- Insert: AllocSubject * --- */
+INSERT INTO AllocSubject(subjectId, allocRound, isAlloc, allocatedDate) VALUES
+(4001, 10001, 1, '2022-09-21'),
+(4002, 10001, 1, '2022-09-21'),
+(4003, 10001, 1, '2022-09-21'),
+(4004, 10001, 1, '2022-09-21'),
+(4005, 10001, 1, '2022-09-21'),
+(4006, 10001, 1, '2022-09-21'),
+(4007, 10001, 1, '2022-09-21'),
+(4001, 10002, 1, '2022-09-21'),
+(4002, 10002, 0, '2022-09-21');
+
+
+/* --- Insert: AllocCurrentRoundUser * --- */
+INSERT INTO AllocCurrentRoundUser(allocId, userId) VALUES
+(10001, 201),
+(10001, 202),
+(10002, 201);
+
 /* END */
