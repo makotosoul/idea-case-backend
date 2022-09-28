@@ -16,6 +16,12 @@ INSERT INTO Department(name, description) VALUES
     ('Musiikkiteknologia', 'Aineryhmän kuvaus'),
     ('Musiikinjohtaminen sekä orkesteri- ja kuorotoiminta', 'Aineryhmän kuvaus'),
     ('Taidejohtaminen ja yrittäjyys', 'Aineryhmän kuvaus'),
+    ('DocMus', 'Aineryhmän kuvaus'),
+    ('Kansanmusiikki ja Global music & GLOMAS', 'Aineryhmän kuvaus'),
+    ('Kirkkomusiikki ja urut', 'Aineryhmän kuvaus'),
+    ('Jouset ja kamarimusiikki', 'Aineryhmän kuvaus'),
+    ('Puhaltimet, lyömäsoittimet ja harppu', 'Aineryhmän kuvaus'),
+    ('Sävellys ja musiikinteoria', 'Aineryhmän kuvaus'),
     ('Avoin Kampus', 'Aineryhmän kuvaus');
 
 /* --- Insert: `User` --- */
@@ -56,12 +62,22 @@ INSERT INTO `Space` (`name`, `area`, `people_capasity`, `buildingId`, `available
 
 /* --- Insert: Equipment --- */
 INSERT INTO `Equipment` (`name`, `isMovable`, `priority`, `description`) VALUES
-	('Kontrabasso', 1, 110, 'Kaunis puinen soitin, jolla on neljä kieltä.'),
 	('Urut', 0, 600, 'Valtavan kokoinen soitin'),
 	('Kantele', 1, 50, 'Väinämöisen soitin'),
     ('Nokkahuilu', 1, 50, 'Kaikki rakastaa'),
     ('Rumpusetti, Jazz', 1, 250, 'Ääntä riittää'),
-    ('Äänityslaitteisto Xyz', 0, 900, '8 kanavaa');
+    ('Äänityslaitteisto Xyz', 0, 900, '8 kanavaa'),
+    ('Viulu', 1, 50, 'Jousisoitin, 4-kieltä'),
+    ('Alttoviulu', 1, 50, 'Jousisoitin, suurempi kuin viulu'),
+    ('Sello', 1, 100, 'Suuri, 4-kielinen jousisoitin'),
+    ('Kontrabasso', 1, 100, 'Suurin jousisoitin'),
+    ('Piano', 0, 900, 'Piano-opetus vaatii kaksi flyygeliä'),
+    ('Kitara', 1, 100, '6-kielinen soitin'),
+    ('Harmonikka', 1, 200, 'Hanuri'),
+    ('Fortepiano', 0, 500, 'Pianon varhaismuoto'),
+    ('Huilu', 1, 50, 'puhallinsoitin'),
+    ('Oboe', 1, 100, 'puupuhallinsoitin'),
+    ('Tuuba', 1, 100, 'Suurehko puhallinsoitin');
     
 /* --- Insert: SpaceEquipment * --- */
 INSERT INTO `SpaceEquipment` (`spaceId`, `equipmentId`) VALUES
@@ -80,27 +96,60 @@ INSERT INTO Program (name , departmentId) VALUES
     ('Musiikinteoria pääaineena', 104),
     ('Jazzmusiikin instrumentti- tai lauluopinnot pääaineena', 102),
     ('Fortepiano', 103),
+    ('Global Music', 112),
+    ('Harmonikka', 103),
+    ('Harppu', 114),
+    ('Jousisoitin', 113),
+    ('Kansanmusiikki', 111),
+    ('Kirkkomusiikki', 112),
+    ('Korrepetitio', 102),
+    ('Lyömäsoitin', 114),
+    ('Musiikin johtaminen', 108),
+    ('Musiikin tohtorikoulutus', 110),
+    ('Musiikkikasvatus', 104),
+    ('Musiikkiteknologia', 107),
+    ('Nordic Master in Folk Music', 111),
+    ('Nordic Master in Jazz', 101),
+    ('Oopperalaulu', 102),
+    ('Pianokamarimusiikki ja lied', 103),
+    ('Puhallinsoitin', 114),
+    ('Sävellys', 115),
+    ('Taidejohtaminen ja yrittäjyys', 109),
+    ('Urut', 112),
+    ('Vanha musiikki', 106),
     ('Avoin Kampus', 110);
 
 /* --- Insert: Subject * --- */
 INSERT INTO Subject(name, groupSize, groupCount, sessionLength, sessionCount, area, programId, subjectTypeId) VALUES
 ('Saksan kielen perusteet', 10, 2, '01:30:00', 2, 100.5, 3002, 801),
-('Viulistien kehonhallinta', 20, 1, '00:30:00', 2, 200, 3003, 801),
-('Piano yksilöopetus', 1, 1, '02:30:00', 2, 40, 3004, 802),
+('Viulistien kehonhallinta', 20, 1, '00:30:00', 2, 200, 3013, 801),
+('Piano yksilöopetus', 1, 1, '02:30:00', 2, 40, 3001, 802),
 ('Trumpetin ryhmäsoitto', 10, 1,'01:30:00', 3, 80, 3002, 804),
-('Kirkkomusiikin ryhmäsoittoa', 15, 4, '02:30:00', 2, 300, 3005, 804),
-('Ruotsin kielen oppintunti', 40, 2, '01:45:00', 1, 100, 3006, 801),
-('Kitaran soiton perusteet', 15, 1, '01:30:00', 2, 60, 3007, 804);
+('Kirkkomusiikin ryhmäsoittoa', 15, 4, '02:30:00', 2, 30, 3015, 804),
+('Ruotsin kielen oppintunti', 40, 2, '01:45:00', 1, 100, 3031, 801),
+('Kitaran soiton perusteet', 15, 1, '01:30:00', 2, 60, 3003, 804),
+('Kontrabassonsoitto, taso A', 1, 3, '01:00:00', 2, 10, 3013, 802),
+('Kanteleensoitto (musiikin kandidaatti)', 1, 4, '01:00:00', 1, 10, 3004, 802),
+('Yhteissoitto / kantele', 16, 1, '01:30:00', 1, 20, 3004, 804),
+('Urkujensoitto (musiikin kandidaatti)', 1, 3, '01:30:00', 1, 20, 3029, 802),
+('Yhteissoitto / kitara', 34, 1, '01:30:00', 1, 35, 3003, 804),
+('Huilunsoitto, taso A', 1, 5, '01:00:00', 1, 10, 3026, 802),
+('Fortepianonsoitto 1', 1, 7, '01:10:00', 2, 30, 3001, 802),
+('Nokkahuilunsoitto, taso B', 1, 3, '01:00:00', 1, 10, 3026, 802),
+('Viulunsoitto, taso D', 1, 12, '01:00:00', 1, 10, 3013, 802 ),
+('Tuubansoitto, taso C', 1, 5, '01:00:00', 1, 15, 3026, 802 ),
+('Harmonikansoitto (musiikin kandidaatti)', 1, 2, '01:00:00', 1, 15, 3011, 802),
+('Jazz, rumpujensoitto, taso B', 1, 4, '01:00:00', 1, 15, 3017, 802);
 
 /* --- Insert: SubjectEquipment * --- */
 INSERT INTO SubjectEquipment(subjectId, equipmentId, priority) VALUES
-(4001, 2001, 5),
-(4001, 2002, 3),
-(4001, 2003, 1),
-(4001, 2004, 1),
-(4005, 2005, 2),
-(4006, 2001, 5),
-(4007, 2006, 2);
+(4001, 2001, 90),
+(4001, 2002, 900),
+(4001, 2003, 90),
+(4001, 2004, 40),
+(4005, 2005, 170),
+(4006, 2001, 90),
+(4007, 2006, 900);
 
 /* --- Insert: AllocRound * --- */
 INSERT INTO AllocRound(name, isSeasonAlloc, userId) VALUES
