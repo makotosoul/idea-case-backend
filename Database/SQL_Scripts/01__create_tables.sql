@@ -80,7 +80,7 @@ CREATE TABLE IF NOT EXISTS `Space` (
     availableTo     TIME,
     classesFrom     TIME,
     classesTo       TIME,
-	inUse			BOOLEAN,
+	inUse			BOOLEAN DEFAULT 1,
     subjectTypeId   INTEGER,
 
     CONSTRAINT AK_UNIQUE_name_in_building UNIQUE(buildingId, name),
