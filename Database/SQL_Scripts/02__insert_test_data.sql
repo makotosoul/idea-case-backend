@@ -86,11 +86,11 @@ INSERT INTO `Space` (`name`, `area`, `people_capasity`, `buildingId`, `available
 
 /* --- Insert: SpaceDepartment --- */
 INSERT INTO SpaceDepartment (spaceId , departmentId) VALUES
-(1011, 106),
-(1006, 101),
-(1001, 113),
-(1008, 114),
-(1005, 107);
+    (1011, 106),
+    (1006, 101),
+    (1001, 113),
+    (1008, 114),
+    (1005, 107);
 
 /* --- Insert: Equipment --- */
 INSERT INTO `Equipment` (`name`, `isMovable`, `priority`, `description`) VALUES

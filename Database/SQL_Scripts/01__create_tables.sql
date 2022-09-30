@@ -175,10 +175,12 @@ CREATE TABLE IF NOT EXISTS SubjectEquipment (
     PRIMARY KEY (subjectId, equipmentId),
 
     CONSTRAINT `FK_SubjectEquipment_Subject` FOREIGN KEY (`subjectId`) REFERENCES `Subject`(id) 
-        ON DELETE NO ACTION ON UPDATE NO ACTION,
+        ON DELETE CASCADE 
+        ON UPDATE CASCADE,
 
     CONSTRAINT `FK_SubjectEquipment_Equipment` FOREIGN KEY (`equipmentId`) REFERENCES `Equipment`(id) 
-        ON DELETE NO ACTION ON UPDATE NO ACTION
+        ON DELETE CASCADE 
+        ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS SpaceDepartment (
