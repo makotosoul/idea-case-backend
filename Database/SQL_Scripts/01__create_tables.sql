@@ -223,6 +223,7 @@ CREATE TABLE IF NOT EXISTS AllocRound (
 CREATE TABLE IF NOT EXISTS AllocSubject (
     subjectId       INTEGER     NOT NULL,
     allocRound      INTEGER     NOT NULL,
+    spaceId         INTEGER     NOT NULL,
     isAlloc         BOOLEAN     DEFAULT 0,
     allocatedDate   DATE, 
     
@@ -230,13 +231,18 @@ CREATE TABLE IF NOT EXISTS AllocSubject (
 
     CONSTRAINT `FK_AllocSubject_Subject` FOREIGN KEY (`subjectId`)
         REFERENCES `Subject`(id)
-        ON DELETE NO ACTION 
-        ON UPDATE NO ACTION,
+        ON DELETE CASCADE 
+        ON UPDATE CASCADE,
+
+    CONSTRAINT `FK_AllocSubject_Space` FOREIGN KEY (`spaceId`)
+        REFERENCES `Space`(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
 
     CONSTRAINT `FK_AllocSubject_AllocRound` FOREIGN KEY (`allocRound`)
         REFERENCES `AllocRound`(id)
-        ON DELETE NO ACTION
-        ON UPDATE NO ACTION  
+        ON DELETE CASCADE
+        ON UPDATE CASCADE  
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
