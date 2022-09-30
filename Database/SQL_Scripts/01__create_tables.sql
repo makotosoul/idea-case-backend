@@ -80,7 +80,7 @@ CREATE TABLE IF NOT EXISTS `Space` (
     availableTo     TIME,
     classesFrom     TIME,
     classesTo       TIME,
-	inUse			BOOLEAN,
+	inUse			BOOLEAN DEFAULT 1,
     subjectTypeId   INTEGER,
 
     CONSTRAINT AK_UNIQUE_name_in_building UNIQUE(buildingId, name),
@@ -116,10 +116,12 @@ CREATE TABLE IF NOT EXISTS SpaceEquipment (
 
     CONSTRAINT `FK_SpaceEquipment_Equipment` 
         FOREIGN KEY (`equipmentId`) REFERENCES `Equipment` (id) 
-        ON DELETE NO ACTION ON UPDATE NO ACTION,
+            ON DELETE CASCADE 
+            ON UPDATE CASCADE,
     CONSTRAINT `FK_SpaceEquipment_Space` 
         FOREIGN KEY (`spaceId`) REFERENCES `Space` (id) 
-        ON DELETE NO ACTION ON UPDATE NO ACTION
+            ON DELETE CASCADE 
+            ON UPDATE CASCADE
 ) ENGINE = InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS Program (
@@ -173,12 +175,30 @@ CREATE TABLE IF NOT EXISTS SubjectEquipment (
     PRIMARY KEY (subjectId, equipmentId),
 
     CONSTRAINT `FK_SubjectEquipment_Subject` FOREIGN KEY (`subjectId`) REFERENCES `Subject`(id) 
-        ON DELETE NO ACTION ON UPDATE NO ACTION,
+        ON DELETE CASCADE 
+        ON UPDATE CASCADE,
 
     CONSTRAINT `FK_SubjectEquipment_Equipment` FOREIGN KEY (`equipmentId`) REFERENCES `Equipment`(id) 
-        ON DELETE NO ACTION ON UPDATE NO ACTION
+        ON DELETE CASCADE 
+        ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+CREATE TABLE IF NOT EXISTS SpaceDepartment (
+    spaceId         INTEGER NOT NULL,
+    departmentId    INTEGER NOT NULL,
+
+    PRIMARY KEY(spaceId,departmentId),
+
+    CONSTRAINT `FK_SpaceDepartment_space` 
+        FOREIGN KEY (`spaceId`) REFERENCES `Space` (id) 
+            ON DELETE CASCADE 
+            ON UPDATE CASCADE,
+    CONSTRAINT `FK_SpaceDepartment_department` 
+        FOREIGN KEY (`departmentId`) REFERENCES `Department` (id) 
+            ON DELETE CASCADE 
+            ON UPDATE CASCADE
+
+) ENGINE=InnoDB AUTO_INCREMENT=20001 DEFAULT CHARSET=latin1;
 
 /* CREATE ALLOC TABLES */
 
@@ -203,6 +223,7 @@ CREATE TABLE IF NOT EXISTS AllocRound (
 CREATE TABLE IF NOT EXISTS AllocSubject (
     subjectId       INTEGER     NOT NULL,
     allocRound      INTEGER     NOT NULL,
+    spaceId         INTEGER     NOT NULL,
     isAlloc         BOOLEAN     DEFAULT 0,
     allocatedDate   DATE, 
     
@@ -210,13 +231,18 @@ CREATE TABLE IF NOT EXISTS AllocSubject (
 
     CONSTRAINT `FK_AllocSubject_Subject` FOREIGN KEY (`subjectId`)
         REFERENCES `Subject`(id)
-        ON DELETE NO ACTION 
-        ON UPDATE NO ACTION,
+        ON DELETE CASCADE 
+        ON UPDATE CASCADE,
+
+    CONSTRAINT `FK_AllocSubject_Space` FOREIGN KEY (`spaceId`)
+        REFERENCES `Space`(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
 
     CONSTRAINT `FK_AllocSubject_AllocRound` FOREIGN KEY (`allocRound`)
         REFERENCES `AllocRound`(id)
-        ON DELETE NO ACTION
-        ON UPDATE NO ACTION  
+        ON DELETE CASCADE
+        ON UPDATE CASCADE  
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 

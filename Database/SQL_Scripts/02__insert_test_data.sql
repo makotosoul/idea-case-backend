@@ -59,31 +59,39 @@ INSERT INTO SubjectType(name) VALUES
 INSERT INTO `Space` (`name`, `area`, `people_capasity`, `buildingId`, `availableFrom`, `availableTo`, `classesFrom`, `classesTo`, `subjectTypeId`, `info`) VALUES
 	('S6117 Jouset/Kontrabasso', 31.9, 7, 401, '08:00:00', '21:00:00', '09:00:00', '16:00:00', 801, 'ONLY FOR BASSISTS'),
 	('S6104 Didaktiikkaluokka Inkeri', 62.5, 30, 401, '08:00:00', '21:00:00', '10:00:00', '17:00:00', 804, 'Musiikkikasvatus'),
-	('S7106 Kansanmusiikki/AOV', 63.7, 22, 401, '08:00:00', '21:00:00', '08:00:00', '18:00:00', 802, 'Yhtyeluokka'), 
-    ('S6114 Perkussioluokka/Marimbaluokka', 33.3, 4, 401, '08:00:00', '22:00:00', '09:00:00', '15:00:00', 802, 'Vain lyömäsoittajat'),
-    ('S1111 Studio Erkki', 36.0, 15, 401, '08:00:00', '22:00:00', '11:00:00', '15:00:00', 802, 'Tilatyyppi: Studio'),
+	('S7106 Kansanmusiikki/AOV', 63.7, 22, 401, '08:00:00', '21:00:00', '08:00:00', '18:00:00', 804, 'Yhtyeluokka'), 
+    ('S6114 Perkussioluokka/Marimbaluokka', 33.3, 4, 401, '08:00:00', '22:00:00', '09:00:00', '15:00:00', 804, 'Vain lyömäsoittajat'),
+    ('S1111 Studio Erkki', 36.0, 15, 401, '08:00:00', '22:00:00', '11:00:00', '15:00:00', 804, 'Tilatyyppi: Studio'),
     ('S5109 Jazz/Bändiluokka', 17.5, 2, 401, '08:00:00', '20:00:00', '08:00:00', '16:00:00', 802, 'ONLY FOR JAZZ DEPARTMENT'),
     ('S6112 Harppuluokka', 28.8, 4, 401, '08:00:00', '17:00:00', '11:00:00', '16:00:00', 802, 'Vain harpistit'),
     ('S6113 Puhaltimet/Klarinetti/Harppu', 18.1, 4, 401, '08:00:00', '19:00:00', '08:00:00', '19:00:00', 802, 'Tilatyyppi: Musiikkiluokka'),
     
-    ('R312 Opetusluokka', 16.6, 6, 403, '08:00:00', '21:00:00', '08:00:00', '18:00:00', 802, 'Tilatyyppi: Musiikkiluokka'), 
-    ('R530 Opetusluokka', 50.0, 18, 403, '08:00:00', '21:00:00', '08:00:00', '19:00:00', 802, 'Luentoluokka'),
-    ('R213 Harjoitushuone', 20.0, 4, 403, '08:00:00', '21:00:00', '10:00:00', '16:00:00', 802, 'Ensisijainen varausoikeus vanhan musiikin aineryhmällä'),
-    ('R510 Opetusluokka', 81.0, 30, 403, '08:00:00', '21:00:00', '09:00:00', '15:00:00', 802, 'Luentoluokka'),
-    ('R416 Opetusluokka', 23.0, 9, 403, '08:00:00', '21:00:00', '10:00:00', '17:00:00', 802, 'Tilatyyppi: Musiikkiluokka'),
-    ('R422 Opetusluokka', 23.0, 11, 403, '08:00:00', '19:00:00', '08:00:00', '22:00:00', 802, 'Kitara'),
-    ('R410 Opetusluokka', 42.4, 20, 403, '08:00:00', '19:00:00', '08:00:00', '20:00:00', 802, 'Pianopedagogiikka'),
-    ('R531 Opetusluokka', 53.0, 17, 403, '09:00:00', '20:00:00', '10:00:00', '14:00:00', 802, 'Tilatyyppi: Musiikkiluokka'),
+    ('R312 Opetusluokka', 16.6, 6, 403, '08:00:00', '21:00:00', '08:00:00', '18:00:00', 801, 'Tilatyyppi: Musiikkiluokka'), 
+    ('R530 Opetusluokka', 50.0, 18, 403, '08:00:00', '21:00:00', '08:00:00', '19:00:00', 801, 'Luentoluokka'),
+    ('R213 Harjoitushuone', 20.0, 4, 403, '08:00:00', '21:00:00', '10:00:00', '16:00:00', 803, 'Ensisijainen varausoikeus vanhan musiikin aineryhmällä'),
+    ('R510 Opetusluokka', 81.0, 30, 403, '08:00:00', '21:00:00', '09:00:00', '15:00:00', 801, 'Luentoluokka'),
+    ('R416 Opetusluokka', 23.0, 9, 403, '08:00:00', '21:00:00', '10:00:00', '17:00:00', 801, 'Tilatyyppi: Musiikkiluokka'),
+    ('R422 Opetusluokka', 23.0, 11, 403, '08:00:00', '19:00:00', '08:00:00', '22:00:00', 801, 'Kitara'),
+    ('R410 Opetusluokka', 42.4, 20, 403, '08:00:00', '19:00:00', '08:00:00', '20:00:00', 801, 'Pianopedagogiikka'),
+    ('R531 Opetusluokka', 53.0, 17, 403, '09:00:00', '20:00:00', '10:00:00', '14:00:00', 801, 'Tilatyyppi: Musiikkiluokka'),
 
-    ('N522 Säestysluokka', 33.0, 8, 402, '08:00:00', '21:00:00', '08:00:00', '19:00:00', 802, 'Tilatyyppi: Musiikkiluokka'),
-    ('N319 Jazz/Lyomäsoittimet, piano ja yhtyeet', 34.0, 5, 402, '08:00:00', '19:00:00', '08:00:00', '17:00:00', 802, 'Varaukset Jukkis Uotilan kautta'),
+    ('N522 Säestysluokka', 33.0, 8, 402, '08:00:00', '21:00:00', '08:00:00', '19:00:00', 804, 'Tilatyyppi: Musiikkiluokka'),
+    ('N319 Jazz/Lyomäsoittimet, piano ja yhtyeet', 34.0, 5, 402, '08:00:00', '19:00:00', '08:00:00', '17:00:00', 804, 'Varaukset Jukkis Uotilan kautta'),
     ('N315 Jouset', 15.5, 4, 402, '08:00:00', '21:00:00', '08:00:00', '14:00:00', 802, 'Tilatyyppi: Musiikkiluokka'),
     ('N419 Kirkkomusiikki/Urkuluokka', 34.0, 5, 402, '09:00:00', '20:00:00', '08:00:00', '18:00:00', 802, 'Tilatyyppi: Musiikkiluokka'),
-    ('N517 Opetusluokka', 15.5, 3, 402, '08:00:00', '21:00:00', '08:00:00', '15:00:00', 802, 'Tilatyyppi: Musiikkiluokka'),
-    ('N425 Jouset/Sello', 33.0, 8, 402, '08:00:00', '22:00:00', '09:00:00', '15:00:00', 802, 'Tilatyyppi: Musiikkiluokka'),
-    ('N312 Musiikkikasvatus/Vapaasäestys', 34.0, 8, 402, '08:00:00', '22:00:00', '08:00:00', '15:00:00', 802, 'Tilatyyppi: Musiikkiluokka'),
-    ('N220 Tohtorikoulut', 49.5, 20, 402, '08:00:00', '19:00:00', '08:00:00', '17:00:00', 802, 'Tilatyyppi: Luentoluokka');
-    
+    ('N517 Opetusluokka', 15.5, 3, 402, '08:00:00', '21:00:00', '08:00:00', '15:00:00', 801, 'Tilatyyppi: Musiikkiluokka'),
+    ('N425 Jouset/Sello', 33.0, 8, 402, '08:00:00', '22:00:00', '09:00:00', '15:00:00', 804, 'Tilatyyppi: Musiikkiluokka'),
+    ('N312 Musiikkikasvatus/Vapaasäestys', 34.0, 8, 402, '08:00:00', '22:00:00', '08:00:00', '15:00:00', 804, 'Tilatyyppi: Musiikkiluokka'),
+    ('N220 Tohtorikoulut', 49.5, 20, 402, '08:00:00', '19:00:00', '08:00:00', '17:00:00', 801, 'Tilatyyppi: Luentoluokka');
+
+/* --- Insert: SpaceDepartment --- */
+INSERT INTO SpaceDepartment (spaceId , departmentId) VALUES
+    (1011, 106),
+    (1006, 101),
+    (1001, 113),
+    (1008, 114),
+    (1005, 107);
+
 /* --- Insert: Equipment --- */
 INSERT INTO `Equipment` (`name`, `isMovable`, `priority`, `description`) VALUES
 	('Urut', 0, 600, 'Valtavan kokoinen soitin'),
@@ -225,16 +233,16 @@ INSERT INTO AllocRound(name, isSeasonAlloc, userId) VALUES
 ("Kevät 2023", 1, 201);
 
 /* --- Insert: AllocSubject * --- */
-INSERT INTO AllocSubject(subjectId, allocRound, isAlloc, allocatedDate) VALUES
-(4001, 10001, 1, '2022-09-21'),
-(4002, 10001, 1, '2022-09-21'),
-(4003, 10001, 1, '2022-09-21'),
-(4004, 10001, 1, '2022-09-21'),
-(4005, 10001, 1, '2022-09-21'),
-(4006, 10001, 1, '2022-09-21'),
-(4007, 10001, 1, '2022-09-21'),
-(4001, 10002, 1, '2022-09-21'),
-(4002, 10002, 0, '2022-09-21');
+INSERT INTO AllocSubject(subjectId, allocRound, isAlloc, allocatedDate, spaceId) VALUES
+(4001, 10001, 1, '2022-09-21', 1010),
+(4002, 10001, 1, '2022-09-21', 1010),
+(4003, 10001, 1, '2022-09-21', 1010),
+(4004, 10001, 1, '2022-09-21', 1010),
+(4005, 10001, 1, '2022-09-21', 1010),
+(4006, 10001, 1, '2022-09-21', 1010),
+(4007, 10001, 1, '2022-09-21', 1010),
+(4001, 10002, 1, '2022-09-21', 1010),
+(4002, 10002, 0, '2022-09-21', 1010);
 
 
 /* --- Insert: AllocCurrentRoundUser * --- */
