@@ -116,10 +116,12 @@ CREATE TABLE IF NOT EXISTS SpaceEquipment (
 
     CONSTRAINT `FK_SpaceEquipment_Equipment` 
         FOREIGN KEY (`equipmentId`) REFERENCES `Equipment` (id) 
-        ON DELETE NO ACTION ON UPDATE NO ACTION,
+            ON DELETE CASCADE 
+            ON UPDATE CASCADE,
     CONSTRAINT `FK_SpaceEquipment_Space` 
         FOREIGN KEY (`spaceId`) REFERENCES `Space` (id) 
-        ON DELETE NO ACTION ON UPDATE NO ACTION
+            ON DELETE CASCADE 
+            ON UPDATE CASCADE
 ) ENGINE = InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS Program (
@@ -179,6 +181,22 @@ CREATE TABLE IF NOT EXISTS SubjectEquipment (
         ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+CREATE TABLE IF NOT EXISTS SpaceDepartment (
+    spaceId         INTEGER NOT NULL,
+    departmentId    INTEGER NOT NULL,
+
+    PRIMARY KEY(spaceId,departmentId),
+
+    CONSTRAINT `FK_SpaceDepartment_space` 
+        FOREIGN KEY (`spaceId`) REFERENCES `Space` (id) 
+            ON DELETE CASCADE 
+            ON UPDATE CASCADE,
+    CONSTRAINT `FK_SpaceDepartment_department` 
+        FOREIGN KEY (`departmentId`) REFERENCES `Department` (id) 
+            ON DELETE CASCADE 
+            ON UPDATE CASCADE
+
+) ENGINE=InnoDB AUTO_INCREMENT=20001 DEFAULT CHARSET=latin1;
 
 /* CREATE ALLOC TABLES */
 
