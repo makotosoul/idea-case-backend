@@ -186,69 +186,69 @@ INSERT INTO Program (name , departmentId) VALUES
 
 /* --- Insert: Subject * --- */
 INSERT INTO Subject(name, groupSize, groupCount, sessionLength, sessionCount, area, programId, subjectTypeId) VALUES
-('Saksan kielen perusteet', 10, 2, '01:30:00', 2, 100.5, 3002, 801),
-('Viulistien kehonhallinta', 20, 1, '00:30:00', 2, 200, 3013, 801),
-('Piano yksilöopetus', 1, 1, '02:30:00', 2, 40, 3001, 802),
-('Trumpetin ryhmäsoitto', 10, 1,'01:30:00', 3, 80, 3002, 804),
-('Kirkkomusiikin ryhmäsoittoa', 15, 4, '02:30:00', 2, 30, 3015, 804),
-('Ruotsin kielen oppintunti', 40, 2, '01:45:00', 1, 100, 3031, 801),
-('Kitaran soiton perusteet', 15, 1, '01:30:00', 2, 60, 3003, 804),
-('Kontrabassonsoitto, taso A', 1, 3, '01:00:00', 2, 10, 3013, 802),
-('Kanteleensoitto (musiikin kandidaatti)', 1, 4, '01:00:00', 1, 10, 3004, 802),
-('Yhteissoitto / kantele', 16, 1, '01:30:00', 1, 20, 3004, 804),
-('Urkujensoitto (musiikin kandidaatti)', 1, 3, '01:30:00', 1, 20, 3029, 802),
-('Yhteissoitto / kitara', 34, 1, '01:30:00', 1, 35, 3003, 804),
-('Huilunsoitto, taso A', 1, 5, '01:00:00', 1, 10, 3026, 802),
-('Fortepianonsoitto 1', 1, 7, '01:10:00', 2, 30, 3001, 802),
-('Nokkahuilunsoitto, taso B', 1, 3, '01:00:00', 1, 10, 3026, 802),
-('Viulunsoitto, taso D', 1, 12, '01:00:00', 1, 10, 3013, 802 ),
-('Tuubansoitto, taso C', 1, 5, '01:00:00', 1, 15, 3026, 802 ),
-('Harmonikansoitto (musiikin kandidaatti)', 1, 2, '01:00:00', 1, 15, 3011, 802),
-('Jazz, rumpujensoitto, taso B', 1, 4, '01:00:00', 1, 15, 3017, 802),
-('Kansanmusiikkiteoria 1', 1, 20, '01:00:00', 2, 40, 3014, 801);
+    ('Saksan kielen perusteet', 10, 2, '01:30:00', 2, 100.5, 3002, 801),
+    ('Viulistien kehonhallinta', 20, 1, '00:30:00', 2, 200, 3013, 801),
+    ('Piano yksilöopetus', 1, 1, '02:30:00', 2, 40, 3001, 802),
+    ('Trumpetin ryhmäsoitto', 10, 1,'01:30:00', 3, 80, 3002, 804),
+    ('Kirkkomusiikin ryhmäsoittoa', 15, 4, '02:30:00', 2, 30, 3015, 804),
+    ('Ruotsin kielen oppintunti', 40, 2, '01:45:00', 1, 100, 3031, 801),
+    ('Kitaran soiton perusteet', 15, 1, '01:30:00', 2, 60, 3003, 804),
+    ('Kontrabassonsoitto, taso A', 1, 3, '01:00:00', 2, 10, 3013, 802),
+    ('Kanteleensoitto (musiikin kandidaatti)', 1, 4, '01:00:00', 1, 10, 3004, 802),
+    ('Yhteissoitto / kantele', 16, 1, '01:30:00', 1, 20, 3004, 804),
+    ('Urkujensoitto (musiikin kandidaatti)', 1, 3, '01:30:00', 1, 20, 3029, 802),
+    ('Yhteissoitto / kitara', 34, 1, '01:30:00', 1, 35, 3003, 804),
+    ('Huilunsoitto, taso A', 1, 5, '01:00:00', 1, 10, 3026, 802),
+    ('Fortepianonsoitto 1', 1, 7, '01:10:00', 2, 30, 3001, 802),
+    ('Nokkahuilunsoitto, taso B', 1, 3, '01:00:00', 1, 10, 3026, 802),
+    ('Viulunsoitto, taso D', 1, 12, '01:00:00', 1, 10, 3013, 802 ),
+    ('Tuubansoitto, taso C', 1, 5, '01:00:00', 1, 15, 3026, 802 ),
+    ('Harmonikansoitto (musiikin kandidaatti)', 1, 2, '01:00:00', 1, 15, 3011, 802),
+    ('Jazz, rumpujensoitto, taso B', 1, 4, '01:00:00', 1, 15, 3017, 802),
+    ('Kansanmusiikkiteoria 1', 1, 20, '01:00:00', 2, 40, 3014, 801);
 
 /* --- Insert: SubjectEquipment * --- */
 INSERT INTO SubjectEquipment(subjectId, equipmentId, priority) VALUES
-(4003, 2021, 900),
-(4004, 2017, 50),
-(4005, 2001, 900),
-(4007, 2011, 100),
-(4008, 2009, 90),
-(4009, 2002, 50),
-(4010, 2002, 90),
-(4011, 2001, 900),
-(4012, 2011, 90),
-(4013, 2012, 50),
-(4014, 2013, 900),
-(4015, 2003, 50),
-(4016, 2006, 90),
-(4017, 2016, 90),
-(4018, 2012, 90),
-(4019, 2014, 800),
-(4020, 2010, 400);
+    (4003, 2021, 900),
+    (4004, 2017, 50),
+    (4005, 2001, 900),
+    (4007, 2011, 100),
+    (4008, 2009, 90),
+    (4009, 2002, 50),
+    (4010, 2002, 90),
+    (4011, 2001, 900),
+    (4012, 2011, 90),
+    (4013, 2012, 50),
+    (4014, 2013, 900),
+    (4015, 2003, 50),
+    (4016, 2006, 90),
+    (4017, 2016, 90),
+    (4018, 2012, 90),
+    (4019, 2014, 800),
+    (4020, 2010, 400);
 
 /* --- Insert: AllocRound * --- */
 INSERT INTO AllocRound(name, isSeasonAlloc, userId) VALUES
-("Testikierros", 0, 201),
-("Kevät 2023", 1, 201);
+    ("Testikierros", 0, 201),
+    ("Kevät 2023", 1, 201);
 
 /* --- Insert: AllocSubject * --- */
 INSERT INTO AllocSubject(subjectId, allocRound, isAlloc, allocatedDate, spaceId) VALUES
-(4001, 10001, 1, '2022-09-21', 1010),
-(4002, 10001, 1, '2022-09-21', 1010),
-(4003, 10001, 1, '2022-09-21', 1010),
-(4004, 10001, 1, '2022-09-21', 1010),
-(4005, 10001, 1, '2022-09-21', 1010),
-(4006, 10001, 1, '2022-09-21', 1010),
-(4007, 10001, 1, '2022-09-21', 1010),
-(4001, 10002, 1, '2022-09-21', 1010),
-(4002, 10002, 0, '2022-09-21', 1010);
+    (4001, 10001, 1, '2022-09-21', 1010),
+    (4002, 10001, 1, '2022-09-21', 1010),
+    (4003, 10001, 1, '2022-09-21', 1010),
+    (4004, 10001, 1, '2022-09-21', 1010),
+    (4005, 10001, 1, '2022-09-21', 1010),
+    (4006, 10001, 1, '2022-09-21', 1010),
+    (4007, 10001, 1, '2022-09-21', 1010),
+    (4001, 10002, 1, '2022-09-21', 1010),
+    (4002, 10002, 0, '2022-09-21', 1010);
 
 
 /* --- Insert: AllocCurrentRoundUser * --- */
 INSERT INTO AllocCurrentRoundUser(allocId, userId) VALUES
-(10001, 201),
-(10001, 202),
-(10002, 201);
+    (10001, 201),
+    (10001, 202),
+    (10002, 201);
 
 /* END */
