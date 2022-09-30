@@ -73,6 +73,7 @@ CREATE TABLE IF NOT EXISTS `Space` (
     id              INTEGER NOT NULL AUTO_INCREMENT,
     name            VARCHAR(255) NOT NULL,
     area            DECIMAL(5,1),
+    info            VARCHAR(16000),
     people_capasity INTEGER UNSIGNED,
     buildingId      INTEGER NOT NULL,
     availableFrom   TIME,
