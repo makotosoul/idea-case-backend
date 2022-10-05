@@ -233,16 +233,20 @@ INSERT INTO AllocRound(name, isSeasonAlloc, userId) VALUES
     ("Kevät 2023", 1, 201);
 
 /* --- Insert: AllocSubject * --- */
-INSERT INTO AllocSubject(subjectId, allocRound, isAlloc, allocatedDate, spaceId) VALUES
-    (4001, 10001, 1, '2022-09-21', 1010),
-    (4002, 10001, 1, '2022-09-21', 1010),
-    (4003, 10001, 1, '2022-09-21', 1010),
-    (4004, 10001, 1, '2022-09-21', 1010),
-    (4005, 10001, 1, '2022-09-21', 1010),
-    (4006, 10001, 1, '2022-09-21', 1010),
-    (4007, 10001, 1, '2022-09-21', 1010),
-    (4001, 10002, 1, '2022-09-21', 1010),
-    (4002, 10002, 0, '2022-09-21', 1010);
+INSERT INTO AllocSubject(subjectId, allocRound, isAllocated, allocatedDate) VALUES
+    (4001, 10001, 1, '2022-09-21'),
+    (4002, 10001, 1, '2022-09-21'),
+    (4003, 10001, 1, '2022-09-21'),
+    (4004, 10001, 1, '2022-09-21'),
+    (4005, 10001, 1, '2022-09-21'),
+    (4006, 10001, 1, '2022-09-21'),
+    (4007, 10001, 1, '2022-09-21'),
+    (4001, 10002, 1, '2022-09-21'),
+    (4002, 10002, 0, '2022-09-21');
+
+INSERT INTO AllocSpace(allocSubjectId, spaceId, sessionAmount, totalTime) VALUES
+    (90005, 1020, 1, '02:30:00'),
+    (90005, 1016, 3, '07:30:00');
 
 
 /* --- Insert: AllocCurrentRoundUser * --- */

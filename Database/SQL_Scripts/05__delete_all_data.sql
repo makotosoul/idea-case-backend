@@ -2,7 +2,10 @@ USE casedb;
 
 DELETE FROM AllocCurrentRoundUser;
 
+DELETE FROM AllocSpace;
+
 DELETE FROM AllocSubject;
+ALTER TABLE AllocSubject AUTO_INCREMENT=90001;
 
 DELETE FROM AllocRound;
 ALTER TABLE AllocRound AUTO_INCREMENT=10001;

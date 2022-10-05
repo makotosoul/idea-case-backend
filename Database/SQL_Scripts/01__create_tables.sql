@@ -221,30 +221,46 @@ CREATE TABLE IF NOT EXISTS AllocRound (
 )ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS AllocSubject (
+    id              INTEGER     NOT NULL AUTO_INCREMENT,
     subjectId       INTEGER     NOT NULL,
     allocRound      INTEGER     NOT NULL,
-    spaceId         INTEGER     DEFAULT NULL,
-    isAlloc         BOOLEAN     DEFAULT 0,
+    isAllocated     BOOLEAN     DEFAULT 0,
     allocatedDate   DATE, 
     
-    PRIMARY KEY(subjectId, allocRound), 
+    PRIMARY KEY(id), 
 
     CONSTRAINT `FK_AllocSubject_Subject` FOREIGN KEY (`subjectId`)
         REFERENCES `Subject`(id)
         ON DELETE CASCADE 
         ON UPDATE CASCADE,
 
-    CONSTRAINT `FK_AllocSubject_Space` FOREIGN KEY (`spaceId`)
-        REFERENCES `Space`(id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE,
-
     CONSTRAINT `FK_AllocSubject_AllocRound` FOREIGN KEY (`allocRound`)
         REFERENCES `AllocRound`(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE  
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=90001 CHARSET=latin1;
 
+CREATE TABLE IF NOT EXISTS AllocSpace (
+    allocSubjectId  INTEGER     NOT NULL,
+    spaceId         INTEGER     NOT NULL,
+    sessionAmount   INTEGER,
+    totalTime       TIME,
+
+    PRIMARY KEY(allocSubjectId, spaceId),
+
+    CONSTRAINT `FK_AllocSpace_AllocSubject`
+        FOREIGN KEY (`allocSubjectId`)
+        REFERENCES `AllocSubject` (id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    CONSTRAINT `FK_AllocSpace_Space`
+        FOREIGN KEY (`spaceId`)
+        REFERENCES `Space` (id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS AllocCurrentRoundUser (
     allocId     INTEGER     NOT NULL,
@@ -261,6 +277,6 @@ CREATE TABLE IF NOT EXISTS AllocCurrentRoundUser (
     CONSTRAINT `FK_AllocCurrentRoundUser_User` 
         FOREIGN KEY (`userId`) 
         REFERENCES `User` (id)
-        ON DELETE SET NULL
+        ON DELETE CASCADE
         ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

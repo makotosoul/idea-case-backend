@@ -4,6 +4,7 @@
 USE casedb;
 
 DROP TABLE IF EXISTS AllocCurrentRoundUser;
+DROP TABLE IF EXISTS AllocSpace;
 DROP TABLE IF EXISTS AllocSubject;
 DROP TABLE IF EXISTS AllocRound;
 DROP TABLE IF EXISTS SpaceDepartment;
