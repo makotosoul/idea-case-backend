@@ -187,11 +187,11 @@ INSERT INTO Program (name , departmentId) VALUES
 /* --- Insert: Subject * --- */
 INSERT INTO Subject(name, groupSize, groupCount, sessionLength, sessionCount, area, programId, subjectTypeId) VALUES
     ('Saksan kielen perusteet', 10, 2, '01:30:00', 2, 100.5, 3002, 801),
-    ('Viulistien kehonhallinta', 20, 1, '00:30:00', 2, 200, 3013, 801),
+    ('Viulistien kehonhallinta', 20, 1, '00:30:00', 2, 50, 3013, 801),
     ('Piano yksilöopetus', 1, 1, '02:30:00', 2, 40, 3001, 802),
     ('Trumpetin ryhmäsoitto', 10, 1,'01:30:00', 3, 80, 3002, 804),
     ('Kirkkomusiikin ryhmäsoittoa', 15, 4, '02:30:00', 2, 30, 3015, 804),
-    ('Ruotsin kielen oppintunti', 40, 2, '01:45:00', 1, 100, 3031, 801),
+    ('Ruotsin kielen oppintunti', 40, 2, '01:45:00', 1, 40, 3031, 801),
     ('Kitaran soiton perusteet', 15, 1, '01:30:00', 2, 60, 3003, 804),
     ('Kontrabassonsoitto, taso A', 1, 3, '01:00:00', 2, 10, 3013, 802),
     ('Kanteleensoitto (musiikin kandidaatti)', 1, 4, '01:00:00', 1, 10, 3004, 802),

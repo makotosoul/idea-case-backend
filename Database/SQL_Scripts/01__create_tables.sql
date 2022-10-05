@@ -225,6 +225,7 @@ CREATE TABLE IF NOT EXISTS AllocSubject (
     subjectId       INTEGER     NOT NULL,
     allocRound      INTEGER     NOT NULL,
     isAllocated     BOOLEAN     DEFAULT 0,
+    priority        INTEGER,
     allocatedDate   DATE, 
     
     PRIMARY KEY(id), 
