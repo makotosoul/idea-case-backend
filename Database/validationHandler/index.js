@@ -26,19 +26,20 @@ let validateAddUpdateSubject = [
     .withMessage("Cannot be empty")
     .bail(),
   check("sessionLength")
-    .matches(/^([0-1][0-9]|[2][0-3]):([0-5][0-9])$/)
+    .matches(/^([0-1][0-9]|[2][0-3]):([0-5][0-9]):([0-5][0-9])$/)
     .withMessage("Accepted format: 00:00")
     .bail()
     .notEmpty()
     .withMessage("Cannot be empty")
     .bail(),
   check("area")
-    .matches(/^[0-9]{0,2}(.[0-9]{1,2})?$/)
+    .matches(/^[0-9]*(.[0-9]{1,2})?$/)
     .withMessage("Must be a number")
     .bail()
     .isFloat()
     .notEmpty()
     .withMessage("Cannot be empty")
     .bail(),
+  check("programId").notEmpty().withMessage("Cannot be empty").bail(),
 ];
 module.exports = { validateAddUpdateSubject };
