@@ -24,7 +24,7 @@ subject.get("/getAll", (req, res) => {
   });
 });
 
-// Aineen lisäys
+// Opetuksen lisäys
 subject.post("/post", validateAddUpdateSubject, (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -58,7 +58,7 @@ subject.post("/post", validateAddUpdateSubject, (req, res) => {
   );
 });
 
-// Aineen poisto
+// Opetuksen poisto
 subject.delete("/delete/:id", (req, res) => {
   const id = req.params.id;
   console.log("id", id);
@@ -73,7 +73,7 @@ subject.delete("/delete/:id", (req, res) => {
   });
 });
 
-// Aineen päivitys
+// Opetuksen muokkaus
 subject.put("/update", validateAddUpdateSubject, (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -82,17 +82,30 @@ subject.put("/update", validateAddUpdateSubject, (req, res) => {
   if (!errors.isEmpty()) {
     return validationErrorHandler(res, "Formatting problem");
   }
+  // console.log("body", req.body);
+  const id = req.body.id;
   const name = req.body.name;
   const groupSize = req.body.groupSize;
   const groupCount = req.body.groupCount;
   const sessionLength = req.body.sessionLength;
   const sessionCount = req.body.sessionCount;
   const area = req.body.area;
+  const programId = req.body.programId;
   const sqlUpdate =
-    "UPDATE Subject SET name = ?, groupSize = ?, groupCount = ?, sessionLength = ?, sessionCount = ?, area = ? WHERE id = ?";
+    "UPDATE Subject SET name = ?, groupSize = ?, groupCount = ?, sessionLength = ?, sessionCount = ?, area = ?,  programId = ? WHERE id = ?";
   db.query(
     sqlUpdate,
-    [name, groupSize, groupCount, sessionLength, sessionCount, area],
+    [
+      name,
+      groupSize,
+      groupCount,
+      sessionLength,
+      sessionCount,
+      area,
+      programId,
+      id,
+    ],
+
     (err, result) => {
       if (!result) {
         requestErrorHandler(res, err, "Nothing to update");
