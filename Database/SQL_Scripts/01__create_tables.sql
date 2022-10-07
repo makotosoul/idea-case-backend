@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS Department (
 CREATE TABLE IF NOT EXISTS `User` (
     id          INTEGER         NOT NULL AUTO_INCREMENT,
     email       VARCHAR(255)    UNIQUE NOT NULL,
-    isAdmin     BOOLEAN         NOT NULL,
+    isAdmin     BOOLEAN         NOT NULL DEFAULT 0,
 
     PRIMARY KEY (id)
 ) ENGINE=InnoDB AUTO_INCREMENT=201 DEFAULT CHARSET=latin1;
@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS `Space` (
     name            VARCHAR(255) NOT NULL,
     area            DECIMAL(5,1),
     info            VARCHAR(16000),
-    people_capasity INTEGER UNSIGNED,
+    people_capasity INTEGER,
     buildingId      INTEGER NOT NULL,
     availableFrom   TIME,
     availableTo     TIME,
@@ -221,30 +221,47 @@ CREATE TABLE IF NOT EXISTS AllocRound (
 )ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS AllocSubject (
+    id              INTEGER     NOT NULL AUTO_INCREMENT,
     subjectId       INTEGER     NOT NULL,
     allocRound      INTEGER     NOT NULL,
-    spaceId         INTEGER     NOT NULL,
-    isAlloc         BOOLEAN     DEFAULT 0,
+    isAllocated     BOOLEAN     DEFAULT 0,
+    priority        INTEGER,
     allocatedDate   DATE, 
     
-    PRIMARY KEY(subjectId, allocRound), 
+    PRIMARY KEY(id), 
 
     CONSTRAINT `FK_AllocSubject_Subject` FOREIGN KEY (`subjectId`)
         REFERENCES `Subject`(id)
         ON DELETE CASCADE 
         ON UPDATE CASCADE,
 
-    CONSTRAINT `FK_AllocSubject_Space` FOREIGN KEY (`spaceId`)
-        REFERENCES `Space`(id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE,
-
     CONSTRAINT `FK_AllocSubject_AllocRound` FOREIGN KEY (`allocRound`)
         REFERENCES `AllocRound`(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE  
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=90001 CHARSET=latin1;
 
+CREATE TABLE IF NOT EXISTS AllocSpace (
+    allocSubjectId  INTEGER     NOT NULL,
+    spaceId         INTEGER     NOT NULL,
+    sessionAmount   INTEGER,
+    totalTime       TIME,
+
+    PRIMARY KEY(allocSubjectId, spaceId),
+
+    CONSTRAINT `FK_AllocSpace_AllocSubject`
+        FOREIGN KEY (`allocSubjectId`)
+        REFERENCES `AllocSubject` (id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    CONSTRAINT `FK_AllocSpace_Space`
+        FOREIGN KEY (`spaceId`)
+        REFERENCES `Space` (id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS AllocCurrentRoundUser (
     allocId     INTEGER     NOT NULL,
@@ -261,6 +278,6 @@ CREATE TABLE IF NOT EXISTS AllocCurrentRoundUser (
     CONSTRAINT `FK_AllocCurrentRoundUser_User` 
         FOREIGN KEY (`userId`) 
         REFERENCES `User` (id)
-        ON DELETE NO ACTION
+        ON DELETE CASCADE
         ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

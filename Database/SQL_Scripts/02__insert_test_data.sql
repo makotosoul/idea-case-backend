@@ -187,11 +187,11 @@ INSERT INTO Program (name , departmentId) VALUES
 /* --- Insert: Subject * --- */
 INSERT INTO Subject(name, groupSize, groupCount, sessionLength, sessionCount, area, programId, subjectTypeId) VALUES
     ('Saksan kielen perusteet', 10, 2, '01:30:00', 2, 100.5, 3002, 801),
-    ('Viulistien kehonhallinta', 20, 1, '00:30:00', 2, 200, 3013, 801),
+    ('Viulistien kehonhallinta', 20, 1, '00:30:00', 2, 50, 3013, 801),
     ('Piano yksilöopetus', 1, 1, '02:30:00', 2, 40, 3001, 802),
     ('Trumpetin ryhmäsoitto', 10, 1,'01:30:00', 3, 80, 3002, 804),
     ('Kirkkomusiikin ryhmäsoittoa', 15, 4, '02:30:00', 2, 30, 3015, 804),
-    ('Ruotsin kielen oppintunti', 40, 2, '01:45:00', 1, 100, 3031, 801),
+    ('Ruotsin kielen oppintunti', 40, 2, '01:45:00', 1, 40, 3031, 801),
     ('Kitaran soiton perusteet', 15, 1, '01:30:00', 2, 60, 3003, 804),
     ('Kontrabassonsoitto, taso A', 1, 3, '01:00:00', 2, 10, 3013, 802),
     ('Kanteleensoitto (musiikin kandidaatti)', 1, 4, '01:00:00', 1, 10, 3004, 802),
@@ -233,16 +233,20 @@ INSERT INTO AllocRound(name, isSeasonAlloc, userId) VALUES
     ("Kevät 2023", 1, 201);
 
 /* --- Insert: AllocSubject * --- */
-INSERT INTO AllocSubject(subjectId, allocRound, isAlloc, allocatedDate, spaceId) VALUES
-    (4001, 10001, 1, '2022-09-21', 1010),
-    (4002, 10001, 1, '2022-09-21', 1010),
-    (4003, 10001, 1, '2022-09-21', 1010),
-    (4004, 10001, 1, '2022-09-21', 1010),
-    (4005, 10001, 1, '2022-09-21', 1010),
-    (4006, 10001, 1, '2022-09-21', 1010),
-    (4007, 10001, 1, '2022-09-21', 1010),
-    (4001, 10002, 1, '2022-09-21', 1010),
-    (4002, 10002, 0, '2022-09-21', 1010);
+INSERT INTO AllocSubject(subjectId, allocRound, isAllocated, allocatedDate) VALUES
+    (4001, 10001, 1, '2022-09-21'),
+    (4002, 10001, 1, '2022-09-21'),
+    (4003, 10001, 1, '2022-09-21'),
+    (4004, 10001, 1, '2022-09-21'),
+    (4005, 10001, 1, '2022-09-21'),
+    (4006, 10001, 1, '2022-09-21'),
+    (4007, 10001, 1, '2022-09-21'),
+    (4001, 10002, 1, '2022-09-21'),
+    (4002, 10002, 0, '2022-09-21');
+
+INSERT INTO AllocSpace(allocSubjectId, spaceId, sessionAmount, totalTime) VALUES
+    (90005, 1020, 1, '02:30:00'),
+    (90005, 1016, 3, '07:30:00');
 
 
 /* --- Insert: AllocCurrentRoundUser * --- */
