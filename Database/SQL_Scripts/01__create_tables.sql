@@ -166,6 +166,23 @@ CREATE TABLE IF NOT EXISTS `Subject` (
         ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=4001 DEFAULT CHARSET=latin1;
 
+CREATE TABLE IF NOT EXISTS SubjectProgram (
+    subjectId       INTEGER     NOT NULL,
+    programId       INTEGER     NOT NULL,
+
+    PRIMARY KEY(subjectId, programId),
+
+    CONSTRAINT `FK_Subject_SubjectProgram` FOREIGN KEY (`subjectId`)
+        REFERENCES `Subject` (id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    CONSTRAINT `FK_Program_SubjectProgram` FOREIGN KEY (`programId`)
+        REFERENCES `Program` (id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 CREATE TABLE IF NOT EXISTS SubjectEquipment (
     subjectId      INTEGER     NOT NULL,
     equipmentId    INTEGER     NOT NULL,

@@ -200,6 +200,11 @@ INSERT INTO Subject(name, groupSize, groupCount, sessionLength, sessionCount, ar
     ('Jazz, rumpujensoitto, taso B', 1, 4, '01:00:00', 1, 15, 3017, 802),
     ('Kansanmusiikkiteoria 1', 1, 20, '01:00:00', 2, 40, 3014, 801);
 
+/* --- Insert: SubjectProgram  */
+INSERT INTO SubjectProgram(subjectId, programId) VALUES
+    (4003, 3001),
+    (4003, 3005);
+
 /* --- Insert: SubjectEquipment * --- */
 INSERT INTO SubjectEquipment(subjectId, equipmentId, priority) VALUES
     (4003, 2021, 900),
