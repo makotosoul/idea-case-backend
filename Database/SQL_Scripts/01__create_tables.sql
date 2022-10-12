@@ -69,6 +69,15 @@ CREATE TABLE IF NOT EXISTS SubjectType (
 	PRIMARY KEY (id)
 ) ENGINE=InnoDB AUTO_INCREMENT=801 DEFAULT CHARSET=latin1;
 
+CREATE TABLE IF NOT EXISTS SpaceType (
+    id      INTEGER NOT NULL AUTO_INCREMENT,
+    name    VARCHAR(255) NOT NULL,
+    description VARCHAR(16000),
+
+    PRIMARY KEY(id)
+
+) ENGINE=InnoDB AUTO_INCREMENT=5001 DEFAULT CHARSET=latin1;
+
 CREATE TABLE IF NOT EXISTS `Space` (
     id              INTEGER NOT NULL AUTO_INCREMENT,
     name            VARCHAR(255) NOT NULL,
@@ -82,20 +91,26 @@ CREATE TABLE IF NOT EXISTS `Space` (
     classesTo       TIME,
 	inUse			BOOLEAN DEFAULT 1,
     subjectTypeId   INTEGER,
+    spaceTypeId     INTEGER,
 
     CONSTRAINT AK_UNIQUE_name_in_building UNIQUE(buildingId, name),
 
     PRIMARY KEY (id),
 
-    CONSTRAINT FK_space_subjectType
-        FOREIGN KEY (subjectTypeId) REFERENCES SubjectType(id)
-            ON DELETE SET NULL
-            ON UPDATE CASCADE,
+    CONSTRAINT `FK_space_subjectType`
+        FOREIGN KEY (`subjectTypeId`) REFERENCES `SubjectType`(id)
+                ON DELETE SET NULL
+                ON UPDATE CASCADE,
 
-    CONSTRAINT FK_space_building
-    	FOREIGN KEY (buildingId) REFERENCES Building(id)
-    	ON DELETE CASCADE
-    	ON UPDATE CASCADE
+    CONSTRAINT `FK_space_building`
+    	FOREIGN KEY (`buildingId`) REFERENCES `Building`(id)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE,
+    
+    CONSTRAINT `FK_space_spaceType`
+    	FOREIGN KEY (`spaceTypeId`) REFERENCES `SpaceType`(id)
+            ON DELETE SET NULL
+            ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=1001 DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS Equipment (
@@ -150,6 +165,7 @@ CREATE TABLE IF NOT EXISTS `Subject` (
     area            DECIMAL(5,1) DEFAULT NULL,         
     programId       INTEGER NOT NULL,
 	subjectTypeId	INTEGER,
+    spaceTypeId     INTEGER,
 
     CONSTRAINT AK_Subject_unique_name_in_program UNIQUE (programId, name),
   
@@ -162,6 +178,11 @@ CREATE TABLE IF NOT EXISTS `Subject` (
 
 	CONSTRAINT `FK_Subject_SubjectType` FOREIGN KEY (`subjectTypeId`) 
         REFERENCES `SubjectType`(id) 
+        ON DELETE SET NULL
+        ON UPDATE CASCADE,
+
+    CONSTRAINT `FK_Subject_SpaceType` FOREIGN KEY (`SpaceTypeId`)
+        REFERENCES `SpaceType`(id)
         ON DELETE SET NULL
         ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=4001 DEFAULT CHARSET=latin1;
@@ -200,6 +221,7 @@ CREATE TABLE IF NOT EXISTS SubjectEquipment (
         ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+
 /* CREATE ALLOC TABLES */
 
 CREATE TABLE IF NOT EXISTS AllocRound (
@@ -225,6 +247,7 @@ CREATE TABLE IF NOT EXISTS AllocSubject (
     subjectId       INTEGER     NOT NULL,
     allocRound      INTEGER     NOT NULL,
     isAllocated     BOOLEAN     DEFAULT 0,
+    cantAllocate    BOOLEAN     DEFAULT 0,
     priority        INTEGER,
     allocatedDate   DATE, 
     
