@@ -183,23 +183,6 @@ CREATE TABLE IF NOT EXISTS SubjectEquipment (
         ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE TABLE IF NOT EXISTS SpaceDepartment (
-    spaceId         INTEGER NOT NULL,
-    departmentId    INTEGER NOT NULL,
-
-    PRIMARY KEY(spaceId,departmentId),
-
-    CONSTRAINT `FK_SpaceDepartment_space` 
-        FOREIGN KEY (`spaceId`) REFERENCES `Space` (id) 
-            ON DELETE CASCADE 
-            ON UPDATE CASCADE,
-    CONSTRAINT `FK_SpaceDepartment_department` 
-        FOREIGN KEY (`departmentId`) REFERENCES `Department` (id) 
-            ON DELETE CASCADE 
-            ON UPDATE CASCADE
-
-) ENGINE=InnoDB AUTO_INCREMENT=20001 DEFAULT CHARSET=latin1;
-
 /* CREATE ALLOC TABLES */
 
 CREATE TABLE IF NOT EXISTS AllocRound (

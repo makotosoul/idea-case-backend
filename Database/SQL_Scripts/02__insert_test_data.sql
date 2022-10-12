@@ -84,13 +84,6 @@ INSERT INTO `Space` (`name`, `area`, `people_capasity`, `buildingId`, `available
     ('N312 Musiikkikasvatus/Vapaasäestys', 34.0, 8, 402, '08:00:00', '22:00:00', '08:00:00', '15:00:00', 804, 'Tilatyyppi: Musiikkiluokka'),
     ('N220 Tohtorikoulut', 49.5, 20, 402, '08:00:00', '19:00:00', '08:00:00', '17:00:00', 801, 'Tilatyyppi: Luentoluokka');
 
-/* --- Insert: SpaceDepartment --- */
-INSERT INTO SpaceDepartment (spaceId , departmentId) VALUES
-    (1011, 106),
-    (1006, 101),
-    (1001, 113),
-    (1008, 114),
-    (1005, 107);
 
 /* --- Insert: Equipment --- */
 INSERT INTO `Equipment` (`name`, `isMovable`, `priority`, `description`) VALUES
