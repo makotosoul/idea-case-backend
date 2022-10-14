@@ -55,42 +55,42 @@ INSERT INTO SubjectType(name) VALUES
     ('Yksilöharjoitustunti'),
     ('Ryhmäsoitto');
 
+/* --- Insert: SpaceType --- */
+INSERT INTO SpaceType (name) VALUES
+    ("Studio"),
+    ("Luentoluokka"),
+    ("Esitystila"),
+    ("Musiikkiluokka");
+
 /* --- Insert: `Space` * --- */
-INSERT INTO `Space` (`name`, `area`, `people_capasity`, `buildingId`, `availableFrom`, `availableTo`, `classesFrom`, `classesTo`, `subjectTypeId`, `info`) VALUES
-	('S6117 Jouset/Kontrabasso', 31.9, 7, 401, '08:00:00', '21:00:00', '09:00:00', '16:00:00', 801, 'ONLY FOR BASSISTS'),
-	('S6104 Didaktiikkaluokka Inkeri', 62.5, 30, 401, '08:00:00', '21:00:00', '10:00:00', '17:00:00', 804, 'Musiikkikasvatus'),
-	('S7106 Kansanmusiikki/AOV', 63.7, 22, 401, '08:00:00', '21:00:00', '08:00:00', '18:00:00', 804, 'Yhtyeluokka'), 
-    ('S6114 Perkussioluokka/Marimbaluokka', 33.3, 4, 401, '08:00:00', '22:00:00', '09:00:00', '15:00:00', 804, 'Vain lyömäsoittajat'),
-    ('S1111 Studio Erkki', 36.0, 15, 401, '08:00:00', '22:00:00', '11:00:00', '15:00:00', 804, 'Tilatyyppi: Studio'),
-    ('S5109 Jazz/Bändiluokka', 17.5, 2, 401, '08:00:00', '20:00:00', '08:00:00', '16:00:00', 802, 'ONLY FOR JAZZ DEPARTMENT'),
-    ('S6112 Harppuluokka', 28.8, 4, 401, '08:00:00', '17:00:00', '11:00:00', '16:00:00', 802, 'Vain harpistit'),
-    ('S6113 Puhaltimet/Klarinetti/Harppu', 18.1, 4, 401, '08:00:00', '19:00:00', '08:00:00', '19:00:00', 802, 'Tilatyyppi: Musiikkiluokka'),
+INSERT INTO `Space` (`name`, `area`, `people_capasity`, `buildingId`, `availableFrom`, `availableTo`, `classesFrom`, `classesTo`, `subjectTypeId`, `info`, `spaceTypeId`) VALUES
+	('S6117 Jouset/Kontrabasso', 31.9, 7, 401, '08:00:00', '21:00:00', '09:00:00', '16:00:00', 801, 'ONLY FOR BASSISTS', 5004),
+	('S6104 Didaktiikkaluokka Inkeri', 62.5, 30, 401, '08:00:00', '21:00:00', '10:00:00', '17:00:00', 804, 'Musiikkikasvatus', 5004),
+	('S7106 Kansanmusiikki/AOV', 63.7, 22, 401, '08:00:00', '21:00:00', '08:00:00', '18:00:00', 804, 'Yhtyeluokka', 5004), 
+    ('S6114 Perkussioluokka/Marimbaluokka', 33.3, 4, 401, '08:00:00', '22:00:00', '09:00:00', '15:00:00', 804, 'Vain lyömäsoittajat', 5004),
+    ('S1111 Studio Erkki', 36.0, 15, 401, '08:00:00', '22:00:00', '11:00:00', '15:00:00', 804, 'Tilatyyppi: Studio', 5001),
+    ('S5109 Jazz/Bändiluokka', 17.5, 2, 401, '08:00:00', '20:00:00', '08:00:00', '16:00:00', 802, 'ONLY FOR JAZZ DEPARTMENT', 5004),
+    ('S6112 Harppuluokka', 28.8, 4, 401, '08:00:00', '17:00:00', '11:00:00', '16:00:00', 802, 'Vain harpistit', 5004),
+    ('S6113 Puhaltimet/Klarinetti/Harppu', 18.1, 4, 401, '08:00:00', '19:00:00', '08:00:00', '19:00:00', 802, 'Tilatyyppi: Musiikkiluokka', 5004),
     
-    ('R312 Opetusluokka', 16.6, 6, 403, '08:00:00', '21:00:00', '08:00:00', '18:00:00', 801, 'Tilatyyppi: Musiikkiluokka'), 
-    ('R530 Opetusluokka', 50.0, 18, 403, '08:00:00', '21:00:00', '08:00:00', '19:00:00', 801, 'Luentoluokka'),
-    ('R213 Harjoitushuone', 20.0, 4, 403, '08:00:00', '21:00:00', '10:00:00', '16:00:00', 803, 'Ensisijainen varausoikeus vanhan musiikin aineryhmällä'),
-    ('R510 Opetusluokka', 81.0, 30, 403, '08:00:00', '21:00:00', '09:00:00', '15:00:00', 801, 'Luentoluokka'),
-    ('R416 Opetusluokka', 23.0, 9, 403, '08:00:00', '21:00:00', '10:00:00', '17:00:00', 801, 'Tilatyyppi: Musiikkiluokka'),
-    ('R422 Opetusluokka', 23.0, 11, 403, '08:00:00', '19:00:00', '08:00:00', '22:00:00', 801, 'Kitara'),
-    ('R410 Opetusluokka', 42.4, 20, 403, '08:00:00', '19:00:00', '08:00:00', '20:00:00', 801, 'Pianopedagogiikka'),
-    ('R531 Opetusluokka', 53.0, 17, 403, '09:00:00', '20:00:00', '10:00:00', '14:00:00', 801, 'Tilatyyppi: Musiikkiluokka'),
+    ('R312 Opetusluokka', 16.6, 6, 403, '08:00:00', '21:00:00', '08:00:00', '18:00:00', 801, 'Tilatyyppi: Musiikkiluokka', 5004), 
+    ('R530 Opetusluokka', 50.0, 18, 403, '08:00:00', '21:00:00', '08:00:00', '19:00:00', 801, 'Luentoluokka', 5002),
+    ('R213 Harjoitushuone', 20.0, 4, 403, '08:00:00', '21:00:00', '10:00:00', '16:00:00', 803, 'Ensisijainen varausoikeus vanhan musiikin aineryhmällä', 5004),
+    ('R510 Opetusluokka', 81.0, 30, 403, '08:00:00', '21:00:00', '09:00:00', '15:00:00', 801, 'Luentoluokka', 5002),
+    ('R416 Opetusluokka', 23.0, 9, 403, '08:00:00', '21:00:00', '10:00:00', '17:00:00', 801, 'Tilatyyppi: Musiikkiluokka', 5004),
+    ('R422 Opetusluokka', 23.0, 11, 403, '08:00:00', '19:00:00', '08:00:00', '22:00:00', 801, 'Kitara', 5004),
+    ('R410 Opetusluokka', 42.4, 20, 403, '08:00:00', '19:00:00', '08:00:00', '20:00:00', 801, 'Pianopedagogiikka', 5004),
+    ('R531 Opetusluokka', 53.0, 17, 403, '09:00:00', '20:00:00', '10:00:00', '14:00:00', 801, 'Tilatyyppi: Musiikkiluokka', 5004),
 
-    ('N522 Säestysluokka', 33.0, 8, 402, '08:00:00', '21:00:00', '08:00:00', '19:00:00', 804, 'Tilatyyppi: Musiikkiluokka'),
-    ('N319 Jazz/Lyomäsoittimet, piano ja yhtyeet', 34.0, 5, 402, '08:00:00', '19:00:00', '08:00:00', '17:00:00', 804, 'Varaukset Jukkis Uotilan kautta'),
-    ('N315 Jouset', 15.5, 4, 402, '08:00:00', '21:00:00', '08:00:00', '14:00:00', 802, 'Tilatyyppi: Musiikkiluokka'),
-    ('N419 Kirkkomusiikki/Urkuluokka', 34.0, 5, 402, '09:00:00', '20:00:00', '08:00:00', '18:00:00', 802, 'Tilatyyppi: Musiikkiluokka'),
-    ('N517 Opetusluokka', 15.5, 3, 402, '08:00:00', '21:00:00', '08:00:00', '15:00:00', 801, 'Tilatyyppi: Musiikkiluokka'),
-    ('N425 Jouset/Sello', 33.0, 8, 402, '08:00:00', '22:00:00', '09:00:00', '15:00:00', 804, 'Tilatyyppi: Musiikkiluokka'),
-    ('N312 Musiikkikasvatus/Vapaasäestys', 34.0, 8, 402, '08:00:00', '22:00:00', '08:00:00', '15:00:00', 804, 'Tilatyyppi: Musiikkiluokka'),
-    ('N220 Tohtorikoulut', 49.5, 20, 402, '08:00:00', '19:00:00', '08:00:00', '17:00:00', 801, 'Tilatyyppi: Luentoluokka');
+    ('N522 Säestysluokka', 33.0, 8, 402, '08:00:00', '21:00:00', '08:00:00', '19:00:00', 804, 'Tilatyyppi: Musiikkiluokka', 5004),
+    ('N319 Jazz/Lyomäsoittimet, piano ja yhtyeet', 34.0, 5, 402, '08:00:00', '19:00:00', '08:00:00', '17:00:00', 804, 'Varaukset Jukkis Uotilan kautta', 5004),
+    ('N315 Jouset', 15.5, 4, 402, '08:00:00', '21:00:00', '08:00:00', '14:00:00', 802, 'Tilatyyppi: Musiikkiluokka', 5004),
+    ('N419 Kirkkomusiikki/Urkuluokka', 34.0, 5, 402, '09:00:00', '20:00:00', '08:00:00', '18:00:00', 802, 'Tilatyyppi: Musiikkiluokka', 5004),
+    ('N517 Opetusluokka', 15.5, 3, 402, '08:00:00', '21:00:00', '08:00:00', '15:00:00', 801, 'Tilatyyppi: Musiikkiluokka', 5004),
+    ('N425 Jouset/Sello', 33.0, 8, 402, '08:00:00', '22:00:00', '09:00:00', '15:00:00', 804, 'Tilatyyppi: Musiikkiluokka', 5004),
+    ('N312 Musiikkikasvatus/Vapaasäestys', 34.0, 8, 402, '08:00:00', '22:00:00', '08:00:00', '15:00:00', 804, 'Tilatyyppi: Musiikkiluokka', 5004),
+    ('N220 Tohtorikoulut', 49.5, 20, 402, '08:00:00', '19:00:00', '08:00:00', '17:00:00', 801, 'Tilatyyppi: Luentoluokka', 5002);
 
-/* --- Insert: SpaceDepartment --- */
-INSERT INTO SpaceDepartment (spaceId , departmentId) VALUES
-    (1011, 106),
-    (1006, 101),
-    (1001, 113),
-    (1008, 114),
-    (1005, 107);
 
 /* --- Insert: Equipment --- */
 INSERT INTO `Equipment` (`name`, `isMovable`, `priority`, `description`) VALUES
@@ -185,27 +185,32 @@ INSERT INTO Program (name , departmentId) VALUES
     ('Avoin Kampus', 110);
 
 /* --- Insert: Subject * --- */
-INSERT INTO Subject(name, groupSize, groupCount, sessionLength, sessionCount, area, programId, subjectTypeId) VALUES
-    ('Saksan kielen perusteet', 10, 2, '01:30:00', 2, 100.5, 3002, 801),
-    ('Viulistien kehonhallinta', 20, 1, '00:30:00', 2, 50, 3013, 801),
-    ('Piano yksilöopetus', 1, 1, '02:30:00', 2, 40, 3001, 802),
-    ('Trumpetin ryhmäsoitto', 10, 1,'01:30:00', 3, 80, 3002, 804),
-    ('Kirkkomusiikin ryhmäsoittoa', 15, 4, '02:30:00', 2, 30, 3015, 804),
-    ('Ruotsin kielen oppintunti', 40, 2, '01:45:00', 1, 40, 3031, 801),
-    ('Kitaran soiton perusteet', 15, 1, '01:30:00', 2, 60, 3003, 804),
-    ('Kontrabassonsoitto, taso A', 1, 3, '01:00:00', 2, 10, 3013, 802),
-    ('Kanteleensoitto (musiikin kandidaatti)', 1, 4, '01:00:00', 1, 10, 3004, 802),
-    ('Yhteissoitto / kantele', 16, 1, '01:30:00', 1, 20, 3004, 804),
-    ('Urkujensoitto (musiikin kandidaatti)', 1, 3, '01:30:00', 1, 20, 3029, 802),
-    ('Yhteissoitto / kitara', 34, 1, '01:30:00', 1, 35, 3003, 804),
-    ('Huilunsoitto, taso A', 1, 5, '01:00:00', 1, 10, 3026, 802),
-    ('Fortepianonsoitto 1', 1, 7, '01:10:00', 2, 30, 3001, 802),
-    ('Nokkahuilunsoitto, taso B', 1, 3, '01:00:00', 1, 10, 3026, 802),
-    ('Viulunsoitto, taso D', 1, 12, '01:00:00', 1, 10, 3013, 802 ),
-    ('Tuubansoitto, taso C', 1, 5, '01:00:00', 1, 15, 3026, 802 ),
-    ('Harmonikansoitto (musiikin kandidaatti)', 1, 2, '01:00:00', 1, 15, 3011, 802),
-    ('Jazz, rumpujensoitto, taso B', 1, 4, '01:00:00', 1, 15, 3017, 802),
-    ('Kansanmusiikkiteoria 1', 1, 20, '01:00:00', 2, 40, 3014, 801);
+INSERT INTO Subject(name, groupSize, groupCount, sessionLength, sessionCount, area, programId, subjectTypeId, spaceTypeId) VALUES
+    ('Saksan kielen perusteet', 10, 2, '01:30:00', 2, 100.5, 3002, 801, 5002),
+    ('Viulistien kehonhallinta', 20, 1, '00:30:00', 2, 50, 3013, 801, NULL),
+    ('Piano yksilöopetus', 1, 1, '02:30:00', 2, 40, 3001, 802, 5004),
+    ('Trumpetin ryhmäsoitto', 10, 1,'01:30:00', 3, 80, 3002, 804, 5004),
+    ('Kirkkomusiikin ryhmäsoittoa', 15, 4, '02:30:00', 2, 30, 3015, 804, 5004),
+    ('Ruotsin kielen oppintunti', 40, 2, '01:45:00', 1, 40, 3031, 801, 5002),
+    ('Kitaran soiton perusteet', 15, 1, '01:30:00', 2, 60, 3003, 804, 5004),
+    ('Kontrabassonsoitto, taso A', 1, 3, '01:00:00', 2, 10, 3013, 802, 5004),
+    ('Kanteleensoitto (musiikin kandidaatti)', 1, 4, '01:00:00', 1, 10, 3004, 802, 5004),
+    ('Yhteissoitto / kantele', 16, 1, '01:30:00', 1, 20, 3004, 804, 5004),
+    ('Urkujensoitto (musiikin kandidaatti)', 1, 3, '01:30:00', 1, 20, 3029, 802, 5004),
+    ('Yhteissoitto / kitara', 34, 1, '01:30:00', 1, 35, 3003, 804, 5004),
+    ('Huilunsoitto, taso A', 1, 5, '01:00:00', 1, 10, 3026, 802, 5004),
+    ('Fortepianonsoitto 1', 1, 7, '01:10:00', 2, 30, 3001, 802, 5004),
+    ('Nokkahuilunsoitto, taso B', 1, 3, '01:00:00', 1, 10, 3026, 802, 5004),
+    ('Viulunsoitto, taso D', 1, 12, '01:00:00', 1, 10, 3013, 802, 5004),
+    ('Tuubansoitto, taso C', 1, 5, '01:00:00', 1, 15, 3026, 802, 5004),
+    ('Harmonikansoitto (musiikin kandidaatti)', 1, 2, '01:00:00', 1, 15, 3011, 802, 5004),
+    ('Jazz, rumpujensoitto, taso B', 1, 4, '01:00:00', 1, 15, 3017, 802, 5004),
+    ('Kansanmusiikkiteoria 1', 1, 20, '01:00:00', 2, 40, 3014, 801, 5002);
+
+/* --- Insert: SubjectProgram  */
+INSERT INTO SubjectProgram(subjectId, programId) VALUES
+    (4003, 3001),
+    (4003, 3005);
 
 /* --- Insert: SubjectEquipment * --- */
 INSERT INTO SubjectEquipment(subjectId, equipmentId, priority) VALUES

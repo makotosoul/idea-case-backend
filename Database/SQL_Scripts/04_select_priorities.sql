@@ -55,13 +55,6 @@ AND Subject.subjectTypeId=801;
 SELECT * FROM Space
 WHERE inUse=1;
 
-/* Space preserved to program or null */
-SELECT id, name, area, people_capasity 
-FROM Space 
-LEFT JOIN SpaceDepartment as sd ON Space.id=sd.spaceId 
-WHERE inUse=1 AND (sd.spaceId IS NULL OR id=1001)
-ORDER BY sd.spaceId DESC, people_capasity ASC, area ASC;
-
 /* People_capasity >= groupSize. DON'T USE THIS!!! */ 
 SELECT id, people_capasity, area 
 FROM Space 
