@@ -26,7 +26,7 @@ let validateAddUpdateSubject = [
     .withMessage("Cannot be empty")
     .bail(),
   check("sessionLength")
-    .matches(/^([0-1][0-9]|[2][0-3]):([0-5][0-9]):([0-5][0-9])$/)
+    .matches(/^(?:\d|[01]\d|2[0-3]):[0-5]\d$/)
     .withMessage("Accepted format: 00:00")
     .bail()
     .notEmpty()

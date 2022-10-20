@@ -1,10 +1,11 @@
 const express = require("express");
 const subject = express.Router();
+//import db from ("../db/index");
 const db = require("../db/index");
 const logger = require("../utils/logger");
 const {
   dbErrorHandler,
-  succsessHandler,
+  successHandler,
   requestErrorHandler,
   validationErrorHandler,
 } = require("../responseHandler/index");
@@ -19,7 +20,7 @@ subject.get("/getAll", (req, res) => {
     if (err) {
       dbErrorHandler(res, err, "Oops! Nothing came through - Subject");
     } else {
-      succsessHandler(res, result, "getAll successful - Subject");
+      successHandler(res, result, "getAll successful - Subject");
     }
   });
 });
@@ -51,7 +52,12 @@ subject.post("/post", validateAddUpdateSubject, (req, res) => {
       } else if (err) {
         dbErrorHandler(res, err, "Oops! Create failed - Subject");
       } else {
-        succsessHandler(res, result, "Create successful - Subject");
+        //console.log(result.insertId);
+        successHandler(
+          res,
+          { insertId: result.insertId },
+          "Create successful - Subject",
+        );
         logger.info("Subject created");
       }
     },
@@ -67,7 +73,7 @@ subject.delete("/delete/:id", (req, res) => {
     if (err) {
       dbErrorHandler(res, err, "Oops! Delete failed - Subject");
     } else {
-      succsessHandler(res, result, "Delete successful - Subject");
+      successHandler(res, result, "Delete successful - Subject");
       logger.info("Subject deleted");
     }
   });
@@ -112,7 +118,7 @@ subject.put("/update", validateAddUpdateSubject, (req, res) => {
       } else if (err) {
         dbErrorHandler(res, err, "Oops! Update failed - Subject");
       } else {
-        succsessHandler(res, result, "Update successful - Subject");
+        successHandler(res, result, "Update successful - Subject");
         logger.info("Subject updated");
       }
     },

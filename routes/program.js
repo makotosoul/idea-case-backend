@@ -2,7 +2,7 @@ const express = require("express");
 const program = express.Router();
 const db = require("../db/index");
 const logger = require("../utils/logger");
-const { dbErrorHandler, succsessHandler } = require("../responseHandler/index");
+const { dbErrorHandler, successHandler } = require("../responseHandler/index");
 
 // Pääaineitten nimet ja id, selectiin
 program.get("/getNames", (req, res) => {
@@ -11,7 +11,7 @@ program.get("/getNames", (req, res) => {
     if (err) {
       dbErrorHandler(res, err, "Oops! Nothing came through - Program");
     } else {
-      succsessHandler(res, result, "getNames successful - Program");
+      successHandler(res, result, "getNames successful - Program");
     }
   });
 });

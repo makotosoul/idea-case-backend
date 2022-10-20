@@ -3,8 +3,8 @@ const logger = require("../utils/logger");
 const serverErrorMessage = "Server error.";
 const requestErrorMessage = "Request error";
 const dbErrorMessage = serverErrorMessage;
-const succsessMessage = "OK";
-const validationErrorMessage = "Formatting error";
+const successMessage = "OK";
+const validationErrorMessage = "Formatting erroR";
 
 const dbErrorHandler = (res, error, message) => {
   if (!message) {
@@ -16,11 +16,12 @@ const dbErrorHandler = (res, error, message) => {
   res.status(500).send(dbErrorMessage);
 };
 
-const succsessHandler = (res, data, message) => {
+const successHandler = (res, data, message) => {
   if (!message) {
-    message = succsessMessage;
+    message = successMessage;
   }
   logger.http(message);
+  //logger.http("data: " +data);
   res.status(200).send(data);
 };
 
@@ -42,7 +43,7 @@ const validationErrorHandler = (res, message) => {
 
 module.exports = {
   dbErrorHandler,
-  succsessHandler,
+  successHandler,
   requestErrorHandler,
   validationErrorHandler,
 };
