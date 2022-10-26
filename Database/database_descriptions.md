@@ -4,10 +4,10 @@
 
 ***Ei ainakaan vielä käytössä**
 
-|Sarake			|	Tyyppi		|	Avaimet 	|	Kuvaus					|
-|:-----			| :------- 		| 	------- 	|	------ 					|
-|<u>allocId</u>	| INTEGER		| PK 			| Ei vielä käytössä			|
-|<u>UserId</u>	| INTEGER		| PK, FK   		| Viittaus User taulun Id	|
+|Sarake			|	Tyyppi		|	Avaimet 	|	Kuvaus					
+|:-----			| :------- 		| 	------- 	|	------ 					
+|<u>allocId</u>	| INTEGER		| PK 			| 			
+|<u>UserId</u>	| INTEGER		| PK, FK   		| Viittaus User taulun Id	
 
 </details>
 
@@ -16,7 +16,7 @@
 
 Sarake			|	Tyyppi		|	Avaimet		|	Kuvaus
 :-----			|	:---		|	-------		|	------
- <u>id</u>		| INTEGER		| PK			|
+ <u>id</u>		| INTEGER		| PK			| Yksilöivä pääavain
  date			| TIMESTAMP 	|				| Laskennan luontiaika
  name			| VARCHAR(255)	|				| Laskennan nimi. eg. "Syksyn 2022 virallinen"			
  isSeasonAlloc	| BOOLEAN 		|				| Onko kausi aktiviinen
@@ -29,27 +29,27 @@ Sarake			|	Tyyppi		|	Avaimet		|	Kuvaus
 <details><summary>AllocSpace</summary>
 <small> (Tilanvaraukset laskennassa) </small>
 
- Sarake			|	Tyyppi		|	Avaimet			|	Kuvaus
- :-----			|	:----		|	------			|	------
- allocSubjectId | INTEGER		| PK				| Viittaus Opetukseen *tulee muuttumaan
- spaceId 		| INTEGER		| PK, FK(space.id)	| Varattu tila
- sessionAmount	| INTEGER		| 					| Tilassa tapahtuvien oppituntien määrä
- totalTime		| TIME			|					| Opetusta varten varattu aika tilassa
+ Sarake			|	Tyyppi		|	Avaimet			            	|	Kuvaus
+ :-----			|	:----		|	------			            	|	------
+ allocSubjectId | INTEGER		| PK, FK(allocSubject.subjectId)	| Opetus
+ allocRound     | INTEGER		| PK, FK(allocSubject.allocRound)	| Laskenta esim. Syksy 2022
+ spaceId 		| INTEGER		| PK, FK(space.id)	            	| Varattu tila
+ sessionAmount	| INTEGER		| 					            	| Tilassa tapahtuvien opetuskertojen määrä
+ totalTime		| TIME			|					            	| Opetusta varten varattu aika tilassa
 
 </details>
 
 <details><summary>AllocSubject</summary>
 <small> (Opetukset laskentaa varten) </small>
 
-Sarake			|	Tyyppi		|	Avaimet		|	Kuvaus
-:-----			|	:----		|	------		|	------
-<u>id</u>		| INTEGER		| PK			| *Poistuu, subjectId+AllocRound tulee pääavaimeksi
-subjectId		| INTEGER		| FK(subject.id)| Laskentaan lisätty opetus
-allocRound		| INTEGER		| FK(allocRound)| Laskentatoteutus esim. Kevät 2022
-isAllocated 	| BOOLEAN		|				| Onko kurssitoteutus jo lisätty laskentaan/allocSpace tauluun (0/1)
-cantAllocate 	| BOOLEAN		|				| Merkitään True(1) kun kurssille ei löydy sopivia tiloja
-priority		| INTEGER		|				| Opetuksien prioriteetti (arvoasteikko) - Missä järjestyksessä opetukset lisätään allocSpace-tauluun
-allocatedDate 	| DATE			|				| Päivämäärä, jolloin opetus on lisätty laskentaan
+Sarake			    |	Tyyppi		|	Avaimet		    |	Kuvaus
+:-----			    |	:----		|	------		    |	------
+<u>subjectId</u>    | INTEGER		|PK,FK(subject.id)  | Laskentaan lisätty opetus
+<u>allocRound</u>   | INTEGER		|PK,FK(allocRound)  | Laskentatoteutus esim. Kevät 2022
+isAllocated 	    | BOOLEAN		|				    | Onko kurssitoteutus jo lisätty laskentaan/allocSpace tauluun (0/1)
+cantAllocate 	    | BOOLEAN		|				    | Merkitään True(1) kun kurssille ei löydy sopivia tiloja
+priority		    | INTEGER		|				    | Opetuksien prioriteetti (arvoasteikko) - Missä järjestyksessä opetukset lisätään allocSpace-tauluun
+allocatedDate 	    | DATE			|				    | Päivämäärä, jolloin opetus on lisätty laskentaan
 
 </details>
 
@@ -150,7 +150,6 @@ availableTo		| TIME			|					| Aika, mihin asti tila on käytettävissä
 classesFrom		| TIME			|					| Aika, mistä lähtien tila on käytettävissä opetusta varten
 classesTo		| TIME			|					| Aika, mihin asti tila on käytettävissä opetusta varten
 inUse			| BOOLEAN		|					| Onko tila käytettävissä vai pois käytöstä
-subjectTypeId	| INTEGER		|FK(subjectType.id)	| Minkälaisille opetuksille (yksilöopetus, ryhmäopetus jne.) ***Mahdollisesti poistetaan**
 spaceTypeId		| INTEGER		|FK(spaceType.id)	| Minkälainen opetustila kyseessä (Esim. Luentotila, soittotila, studio, jne.)
 
 </details>
@@ -189,7 +188,6 @@ sessionLength	| TIME			|					| Opetuksen yksittäisen opetuksen pituus
 sessionCount	| INTEGER		|					| Montako opetusta per viikko
 area			| DECIMAL(5,1)	|					| Opetukseen tarvittava tilan tilavuus (m²)
 programId		| INTEGER		|FK(program.id)		| Mihin pääaineeseen opetus kuuluu
-subjectTypeId	| INTEGER		|FK(subjectType.id)	| Minkälainen kurssityyppi (yksilö/ryhmä)
 spaceTypeId		| INTEGER		|FK(spaceType.id)	| Minkälaisen tilan opetus tarvitsee (soitto/luento)
 
 </details>
@@ -216,15 +214,6 @@ Sarake				| Tyyppi		| Avaimet			| Kuvaus
 
 </details>
 
-<details><summary>SubjectType</summary>
-<small> (Opetuksen tyyppi - yksilöopetus, yksilöharjoitus, ryhmäopetus jne.) </small>
-
-Sarake			| Tyyppi		| Avaimet		| Kuvaus
-:-----			| :----			| ------		| ------
-<u>id</u>		| INTEGER		| PK			|
-name			| VARCHAR(255)	|				| Tuntityypin nimi (esim.ryhmäsoitto)
-
-</details>
 <details><summary>User</summary>
 
 Sarake			| Tyyppi		| Avaimet		| Kuvaus

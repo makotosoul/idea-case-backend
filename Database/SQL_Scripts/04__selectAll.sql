@@ -1,5 +1,6 @@
 USE casedb;
 
+/* OUTDATED */
 SELECT * FROM Department;
 SELECT * FROM `User`;
 SELECT * FROM DepartmentPlanner;
