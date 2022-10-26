@@ -62,13 +62,6 @@ CREATE TABLE IF NOT EXISTS Building (
 
 ) ENGINE=InnoDB AUTO_INCREMENT=401 DEFAULT CHARSET=latin1;
 
-CREATE TABLE IF NOT EXISTS SubjectType (
-	id				INTEGER NOT NULL AUTO_INCREMENT,
-	name			VARCHAR(255) NOT NULL,
-
-	PRIMARY KEY (id)
-) ENGINE=InnoDB AUTO_INCREMENT=801 DEFAULT CHARSET=latin1;
-
 CREATE TABLE IF NOT EXISTS SpaceType (
     id      INTEGER NOT NULL AUTO_INCREMENT,
     name    VARCHAR(255) NOT NULL,
@@ -90,17 +83,11 @@ CREATE TABLE IF NOT EXISTS `Space` (
     classesFrom     TIME,
     classesTo       TIME,
 	inUse			BOOLEAN DEFAULT 1,
-    subjectTypeId   INTEGER,
     spaceTypeId     INTEGER,
 
     CONSTRAINT AK_UNIQUE_name_in_building UNIQUE(buildingId, name),
 
     PRIMARY KEY (id),
-
-    CONSTRAINT `FK_space_subjectType`
-        FOREIGN KEY (`subjectTypeId`) REFERENCES `SubjectType`(id)
-                ON DELETE SET NULL
-                ON UPDATE CASCADE,
 
     CONSTRAINT `FK_space_building`
     	FOREIGN KEY (`buildingId`) REFERENCES `Building`(id)
@@ -164,7 +151,6 @@ CREATE TABLE IF NOT EXISTS `Subject` (
     sessionCount    INTEGER,
     area            DECIMAL(5,1) DEFAULT NULL,         
     programId       INTEGER NOT NULL,
-	subjectTypeId	INTEGER,
     spaceTypeId     INTEGER,
 
     CONSTRAINT AK_Subject_unique_name_in_program UNIQUE (programId, name),
@@ -175,11 +161,6 @@ CREATE TABLE IF NOT EXISTS `Subject` (
         REFERENCES `Program`(id) 
         ON DELETE NO ACTION 
         ON UPDATE NO ACTION,
-
-	CONSTRAINT `FK_Subject_SubjectType` FOREIGN KEY (`subjectTypeId`) 
-        REFERENCES `SubjectType`(id) 
-        ON DELETE SET NULL
-        ON UPDATE CASCADE,
 
     CONSTRAINT `FK_Subject_SpaceType` FOREIGN KEY (`SpaceTypeId`)
         REFERENCES `SpaceType`(id)
@@ -243,7 +224,6 @@ CREATE TABLE IF NOT EXISTS AllocRound (
 )ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS AllocSubject (
-    id              INTEGER     NOT NULL AUTO_INCREMENT,
     subjectId       INTEGER     NOT NULL,
     allocRound      INTEGER     NOT NULL,
     isAllocated     BOOLEAN     DEFAULT 0,
@@ -251,7 +231,7 @@ CREATE TABLE IF NOT EXISTS AllocSubject (
     priority        INTEGER,
     allocatedDate   DATE, 
     
-    PRIMARY KEY(id), 
+    PRIMARY KEY(subjectId, allocRound), 
 
     CONSTRAINT `FK_AllocSubject_Subject` FOREIGN KEY (`subjectId`)
         REFERENCES `Subject`(id)
@@ -266,15 +246,22 @@ CREATE TABLE IF NOT EXISTS AllocSubject (
 
 CREATE TABLE IF NOT EXISTS AllocSpace (
     allocSubjectId  INTEGER     NOT NULL,
+    allocRound      INTEGER     NOT NULL,
     spaceId         INTEGER     NOT NULL,
     sessionAmount   INTEGER,
     totalTime       TIME,
 
-    PRIMARY KEY(allocSubjectId, spaceId),
+    PRIMARY KEY(allocSubjectId, allocRound, spaceId),
 
     CONSTRAINT `FK_AllocSpace_AllocSubject`
         FOREIGN KEY (`allocSubjectId`)
-        REFERENCES `AllocSubject` (id)
+        REFERENCES `AllocSubject` (subjectId)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    CONSTRAINT `FK_AllocSpace_AllocRound`
+        FOREIGN KEY (`allocRound`)
+        REFERENCES `AllocSubject` (allocRound)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
 
