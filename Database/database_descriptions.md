@@ -34,7 +34,6 @@ Sarake			|	Tyyppi		|	Avaimet		|	Kuvaus
  allocSubjectId | INTEGER		| PK, FK(allocSubject.subjectId)	| Opetus
  allocRound     | INTEGER		| PK, FK(allocSubject.allocRound)	| Laskenta esim. Syksy 2022
  spaceId 		| INTEGER		| PK, FK(space.id)	            	| Varattu tila
- sessionAmount	| INTEGER		| 					            	| Tilassa tapahtuvien opetuskertojen määrä
  totalTime		| TIME			|					            	| Opetusta varten varattu aika tilassa
 
 </details>
@@ -49,7 +48,7 @@ Sarake			    |	Tyyppi		|	Avaimet		    |	Kuvaus
 isAllocated 	    | BOOLEAN		|				    | Onko kurssitoteutus jo lisätty laskentaan/allocSpace tauluun (0/1)
 cantAllocate 	    | BOOLEAN		|				    | Merkitään True(1) kun kurssille ei löydy sopivia tiloja
 priority		    | INTEGER		|				    | Opetuksien prioriteetti (arvoasteikko) - Missä järjestyksessä opetukset lisätään allocSpace-tauluun
-allocatedDate 	    | DATE			|				    | Päivämäärä, jolloin opetus on lisätty laskentaan
+allocatedDate 	    | TIMESTAMP		|				    | Päivämäärä, jolloin opetus on lisätty laskentaan
 
 </details>
 
@@ -143,7 +142,7 @@ Sarake			|	Tyyppi		|	Avaimet			|	Kuvaus
 name			| VARCHAR(255)	|					| Nimi (Esim. R-5322 Musiikkiluokka)
 area			| DECIMAL(5,1)	|					| Tilan tilavuus (neliömetreissä/m²)
 info			| VARCHAR(16000)|					| Tilan lisätietoja / Kuvaus
-people_capasity	| INTEGER		|					| Tilan maksimi henkilömäärä
+personLimit 	| INTEGER		|					| Tilan maksimi henkilömäärä
 buildingId		| INTEGER		|FK(building.id)	| Missä rakennuksessa tila sijaitsee
 availableFrom	| TIME			|					| Aika, mistä lähtien tila on käytettävissä
 availableTo		| TIME			|					| Aika, mihin asti tila on käytettävissä

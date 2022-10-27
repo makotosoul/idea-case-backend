@@ -8,7 +8,6 @@ DROP TABLE IF EXISTS AllocSpace;
 DROP TABLE IF EXISTS AllocSubject;
 DROP TABLE IF EXISTS AllocRound;
 DROP TABLE IF EXISTS SubjectEquipment;
-DROP TABLE IF EXISTS `SubjectProgram`;
 DROP TABLE IF EXISTS `Subject`;
 DROP TABLE IF EXISTS Program; 
 DROP TABLE IF EXISTS SpaceEquipment;
@@ -26,7 +25,7 @@ DROP TABLE IF EXISTS GlobalSetting;
 
 USE casedb;
 
-/* --- 01 CREATE TABLES --- */
+/* --- CREATE TABLES --- */
 
 CREATE TABLE IF NOT EXISTS GlobalSetting (
     id          INTEGER        NOT NULL AUTO_INCREMENT,
@@ -102,7 +101,7 @@ CREATE TABLE IF NOT EXISTS `Space` (
     name            VARCHAR(255) NOT NULL,
     area            DECIMAL(5,1),
     info            VARCHAR(16000),
-    people_capasity INTEGER,
+    personLimit     INTEGER,
     buildingId      INTEGER NOT NULL,
     availableFrom   TIME,
     availableTo     TIME,
@@ -194,23 +193,6 @@ CREATE TABLE IF NOT EXISTS `Subject` (
         ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=4001 DEFAULT CHARSET=latin1;
 
-CREATE TABLE IF NOT EXISTS SubjectProgram (
-    subjectId       INTEGER     NOT NULL,
-    programId       INTEGER     NOT NULL,
-
-    PRIMARY KEY(subjectId, programId),
-
-    CONSTRAINT `FK_Subject_SubjectProgram` FOREIGN KEY (`subjectId`)
-        REFERENCES `Subject` (id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE,
-
-    CONSTRAINT `FK_Program_SubjectProgram` FOREIGN KEY (`programId`)
-        REFERENCES `Program` (id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
 CREATE TABLE IF NOT EXISTS SubjectEquipment (
     subjectId      INTEGER     NOT NULL,
     equipmentId    INTEGER     NOT NULL,
@@ -255,7 +237,7 @@ CREATE TABLE IF NOT EXISTS AllocSubject (
     isAllocated     BOOLEAN     DEFAULT 0,
     cantAllocate    BOOLEAN     DEFAULT 0,
     priority        INTEGER,
-    allocatedDate   DATE, 
+    allocatedDate   TIMESTAMP, 
     
     PRIMARY KEY(subjectId, allocRound), 
 
@@ -274,20 +256,13 @@ CREATE TABLE IF NOT EXISTS AllocSpace (
     allocSubjectId  INTEGER     NOT NULL,
     allocRound      INTEGER     NOT NULL,
     spaceId         INTEGER     NOT NULL,
-    sessionAmount   INTEGER,
     totalTime       TIME,
 
     PRIMARY KEY(allocSubjectId, allocRound, spaceId),
 
     CONSTRAINT `FK_AllocSpace_AllocSubject`
-        FOREIGN KEY (`allocSubjectId`)
-        REFERENCES `AllocSubject` (subjectId)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE,
-
-    CONSTRAINT `FK_AllocSpace_AllocRound`
-        FOREIGN KEY (`allocRound`)
-        REFERENCES `AllocSubject` (allocRound)
+        FOREIGN KEY (`allocSubjectId`, `allocRound`)
+        REFERENCES `AllocSubject` (subjectId, allocRound)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
 
@@ -378,7 +353,7 @@ INSERT INTO SpaceType (name) VALUES
     ("Musiikkiluokka");
 
 /* --- Insert: `Space` * --- */
-INSERT INTO `Space` (`name`, `area`, `people_capasity`, `buildingId`, `availableFrom`, `availableTo`, `classesFrom`, `classesTo`, `info`, `spaceTypeId`) VALUES
+INSERT INTO `Space` (`name`, `area`, `personLimit`, `buildingId`, `availableFrom`, `availableTo`, `classesFrom`, `classesTo`, `info`, `spaceTypeId`) VALUES
 	('S6117 Jouset/Kontrabasso', 31.9, 7, 401, '08:00:00', '21:00:00', '09:00:00', '16:00:00', 'ONLY FOR BASSISTS', 5004),
 	('S6104 Didaktiikkaluokka Inkeri', 62.5, 30, 401, '08:00:00', '21:00:00', '10:00:00', '17:00:00', 'Musiikkikasvatus', 5004),
 	('S7106 Kansanmusiikki/AOV', 63.7, 22, 401, '08:00:00', '21:00:00', '08:00:00', '18:00:00', 'Yhtyeluokka', 5004), 
@@ -522,11 +497,6 @@ INSERT INTO Subject(name, groupSize, groupCount, sessionLength, sessionCount, ar
     ('Jazz, rumpujensoitto, taso B', 1, 4, '01:00:00', 1, 15, 3017, 5004),
     ('Kansanmusiikkiteoria 1', 1, 20, '01:00:00', 2, 40, 3014, 5002);
 
-/* --- Insert: SubjectProgram  */
-INSERT INTO SubjectProgram(subjectId, programId) VALUES
-    (4003, 3001),
-    (4003, 3005);
-
 /* --- Insert: SubjectEquipment * --- */
 INSERT INTO SubjectEquipment(subjectId, equipmentId, priority) VALUES
     (4003, 2021, 900),
@@ -564,9 +534,9 @@ INSERT INTO AllocSubject(subjectId, allocRound, isAllocated, allocatedDate) VALU
     (4001, 10002, 1, '2022-09-21'),
     (4002, 10002, 0, '2022-09-21');
 
-INSERT INTO AllocSpace(allocSubjectId, allocRound, spaceId, sessionAmount, totalTime) VALUES
-    (4004, 10001, 1020, 1, '02:30:00'),
-    (4003, 10001, 1016, 3, '07:30:00');
+INSERT INTO AllocSpace(allocSubjectId, allocRound, spaceId, totalTime) VALUES
+    (4004, 10001, 1020, '02:30:00'),
+    (4003, 10001, 1016, '07:30:00');
 
 
 /* --- Insert: AllocCurrentRoundUser * --- */
@@ -575,4 +545,3 @@ INSERT INTO AllocCurrentRoundUser(allocId, userId) VALUES
     (10001, 202),
     (10002, 201);
 
-/* END */

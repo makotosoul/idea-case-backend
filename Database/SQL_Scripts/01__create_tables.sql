@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS `Space` (
     name            VARCHAR(255) NOT NULL,
     area            DECIMAL(5,1),
     info            VARCHAR(16000),
-    people_capasity INTEGER,
+    personLimit     INTEGER,
     buildingId      INTEGER NOT NULL,
     availableFrom   TIME,
     availableTo     TIME,
@@ -168,23 +168,6 @@ CREATE TABLE IF NOT EXISTS `Subject` (
         ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=4001 DEFAULT CHARSET=latin1;
 
-CREATE TABLE IF NOT EXISTS SubjectProgram (
-    subjectId       INTEGER     NOT NULL,
-    programId       INTEGER     NOT NULL,
-
-    PRIMARY KEY(subjectId, programId),
-
-    CONSTRAINT `FK_Subject_SubjectProgram` FOREIGN KEY (`subjectId`)
-        REFERENCES `Subject` (id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE,
-
-    CONSTRAINT `FK_Program_SubjectProgram` FOREIGN KEY (`programId`)
-        REFERENCES `Program` (id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
 CREATE TABLE IF NOT EXISTS SubjectEquipment (
     subjectId      INTEGER     NOT NULL,
     equipmentId    INTEGER     NOT NULL,
@@ -229,7 +212,7 @@ CREATE TABLE IF NOT EXISTS AllocSubject (
     isAllocated     BOOLEAN     DEFAULT 0,
     cantAllocate    BOOLEAN     DEFAULT 0,
     priority        INTEGER,
-    allocatedDate   DATE, 
+    allocatedDate   TIMESTAMP, 
     
     PRIMARY KEY(subjectId, allocRound), 
 
@@ -248,20 +231,13 @@ CREATE TABLE IF NOT EXISTS AllocSpace (
     allocSubjectId  INTEGER     NOT NULL,
     allocRound      INTEGER     NOT NULL,
     spaceId         INTEGER     NOT NULL,
-    sessionAmount   INTEGER,
     totalTime       TIME,
 
     PRIMARY KEY(allocSubjectId, allocRound, spaceId),
 
     CONSTRAINT `FK_AllocSpace_AllocSubject`
-        FOREIGN KEY (`allocSubjectId`)
-        REFERENCES `AllocSubject` (subjectId)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE,
-
-    CONSTRAINT `FK_AllocSpace_AllocRound`
-        FOREIGN KEY (`allocRound`)
-        REFERENCES `AllocSubject` (allocRound)
+        FOREIGN KEY (`allocSubjectId`, `allocRound`)
+        REFERENCES `AllocSubject` (subjectId, allocRound)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
 

@@ -57,23 +57,23 @@ AND Subject.subjectTypeId=801;
 SELECT * FROM Space
 WHERE inUse=1;
 
-/* People_capasity >= groupSize. DON'T USE THIS!!! */ 
-SELECT id, people_capasity, area 
+/* personLimit >= groupSize. DON'T USE THIS!!! */ 
+SELECT id, personLimit, area 
 FROM Space 
-WHERE people_capasity >= (SELECT groupSize FROM Subject WHERE id=4002)
+WHERE personLimit >= (SELECT groupSize FROM Subject WHERE id=4002)
 AND inUse=1;
 
 /* Enuff roomspace. DON'T USE THIS!!! */
-SELECT id, people_capasity, area 
+SELECT id, personLimit, area 
 FROM Space 
 WHERE area >= (SELECT area FROM Subject WHERE id=4003)
 AND inUse=1;
 
 /* Last 2 combined */
-/* People_capasity >= groupSize & area >= area */ 
-SELECT id, people_capasity, area 
+/* personLimit >= groupSize & area >= area */ 
+SELECT id, personLimit, area 
 FROM Space 
-WHERE people_capasity >= (SELECT groupSize FROM Subject WHERE id=4002)
+WHERE personLimit >= (SELECT groupSize FROM Subject WHERE id=4002)
 AND area >= (SELECT area FROM Subject WHERE id=4002)
 AND inUse=1;
 
