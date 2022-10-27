@@ -56,7 +56,7 @@ INSERT INTO SpaceType (name) VALUES
     ("Musiikkiluokka");
 
 /* --- Insert: `Space` * --- */
-INSERT INTO `Space` (`name`, `area`, `people_capasity`, `buildingId`, `availableFrom`, `availableTo`, `classesFrom`, `classesTo`, `info`, `spaceTypeId`) VALUES
+INSERT INTO `Space` (`name`, `area`, `personLimit`, `buildingId`, `availableFrom`, `availableTo`, `classesFrom`, `classesTo`, `info`, `spaceTypeId`) VALUES
 	('S6117 Jouset/Kontrabasso', 31.9, 7, 401, '08:00:00', '21:00:00', '09:00:00', '16:00:00', 'ONLY FOR BASSISTS', 5004),
 	('S6104 Didaktiikkaluokka Inkeri', 62.5, 30, 401, '08:00:00', '21:00:00', '10:00:00', '17:00:00', 'Musiikkikasvatus', 5004),
 	('S7106 Kansanmusiikki/AOV', 63.7, 22, 401, '08:00:00', '21:00:00', '08:00:00', '18:00:00', 'Yhtyeluokka', 5004), 
@@ -200,11 +200,6 @@ INSERT INTO Subject(name, groupSize, groupCount, sessionLength, sessionCount, ar
     ('Jazz, rumpujensoitto, taso B', 1, 4, '01:00:00', 1, 15, 3017, 5004),
     ('Kansanmusiikkiteoria 1', 1, 20, '01:00:00', 2, 40, 3014, 5002);
 
-/* --- Insert: SubjectProgram  */
-INSERT INTO SubjectProgram(subjectId, programId) VALUES
-    (4003, 3001),
-    (4003, 3005);
-
 /* --- Insert: SubjectEquipment * --- */
 INSERT INTO SubjectEquipment(subjectId, equipmentId, priority) VALUES
     (4003, 2021, 900),
@@ -242,9 +237,9 @@ INSERT INTO AllocSubject(subjectId, allocRound, isAllocated, allocatedDate) VALU
     (4001, 10002, 1, '2022-09-21'),
     (4002, 10002, 0, '2022-09-21');
 
-INSERT INTO AllocSpace(allocSubjectId, allocRound, spaceId, sessionAmount, totalTime) VALUES
-    (4004, 10001, 1020, 1, '02:30:00'),
-    (4003, 10001, 1016, 3, '07:30:00');
+INSERT INTO AllocSpace(allocSubjectId, allocRound, spaceId, totalTime) VALUES
+    (4004, 10001, 1020, '02:30:00'),
+    (4003, 10001, 1016, '07:30:00');
 
 
 /* --- Insert: AllocCurrentRoundUser * --- */
@@ -253,4 +248,3 @@ INSERT INTO AllocCurrentRoundUser(allocId, userId) VALUES
     (10001, 202),
     (10002, 201);
 
-/* END */
