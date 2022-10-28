@@ -38,15 +38,12 @@ INSERT INTO DepartmentPlanner(userId, departmentId) VALUES
     (203, 104),
     (202, 102);
 
-/* --- Insert: Campus --- */
-INSERT INTO `Campus` (`name`, `description`) VALUES
-	('Siba', 'Sibeliusakatemian kampus');
     
 /* --- Insert: Building * --- */
-INSERT INTO `Building` (`name`, `description`, `campusId`) VALUES
-	('Musiikkitalo', 'Sibeliusakatemian päärakennus', 301),
-	('N-talo', 'Sibeliusakatemian opetus ja harjoittelu talo ', 301),
-	('R-talo', 'Sibeliusakatemian konserttitalo', 301);
+INSERT INTO `Building` (`name`, `description`) VALUES
+	('Musiikkitalo', 'Sibeliusakatemian päärakennus'),
+	('N-talo', 'Sibeliusakatemian opetus ja harjoittelu talo '),
+	('R-talo', 'Sibeliusakatemian konserttitalo');
 
 /* --- Insert: SpaceType --- */
 INSERT INTO SpaceType (name) VALUES
@@ -221,25 +218,40 @@ INSERT INTO SubjectEquipment(subjectId, equipmentId, priority) VALUES
     (4020, 2010, 400);
 
 /* --- Insert: AllocRound * --- */
-INSERT INTO AllocRound(name, isSeasonAlloc, userId) VALUES
-    ("Testikierros", 0, 201),
-    ("Kevät 2023", 1, 201);
+INSERT INTO AllocRound(name, isSeasonAlloc, userId, description) VALUES
+    ("Testipriorisointi", 0, 201, "Testidata lisätään AllocSubject tauluun, mutta laskentaa ei vielä suoritettu eli opetuksille ei ole vielä merkitty tiloja"),
+    ("Testilaskenta", 0, 201, "Testidata lisätty ja huoneet merkitty"),
+    ("Kevät 2023", 1, 201, "");
 
 /* --- Insert: AllocSubject * --- */
-INSERT INTO AllocSubject(subjectId, allocRound, isAllocated, allocatedDate) VALUES
-    (4001, 10001, 1, '2022-09-21'),
-    (4002, 10001, 1, '2022-09-21'),
-    (4003, 10001, 1, '2022-09-21'),
-    (4004, 10001, 1, '2022-09-21'),
-    (4005, 10001, 1, '2022-09-21'),
-    (4006, 10001, 1, '2022-09-21'),
-    (4007, 10001, 1, '2022-09-21'),
-    (4001, 10002, 1, '2022-09-21'),
-    (4002, 10002, 0, '2022-09-21');
+INSERT INTO AllocSubject(subjectId, allocRound, isAllocated, allocatedDate, priority) VALUES
+    (4011, 10001, 0, '2022-10-28', 1),
+    (4014, 10001, 0, '2022-10-28', 2),
+    (4019, 10001, 0, '2022-10-28', 3),
+    (4013, 10001, 0, '2022-10-28', 4),
+    (4001, 10001, 0, '2022-10-28', 5),
+
+    (4011, 10002, 1, '2022-10-28', 1), -- urkujensoitto, 1ppl, 4:30, 20m2, musiikkiluokka
+    (4014, 10002, 1, '2022-10-28', 2), -- fortepianosoitto, 1ppl, 16:20, 30m2, musiikkiluokka, 
+    (4019, 10002, 1, '2022-10-28', 3), -- jazz rummut, 1ppl, 4:00, 15m2, musiikkiluokka
+    (4013, 10002, 1, '2022-10-28', 4), -- huilujensoitto taso a, 1ppl, 05:00, 10m2, musiikkiluokka
+    (4001, 10002, 1, '2022-10-28', 5), -- saksan kielen perusteet, 10ppl, 06:00, 60m2, teorialuokka
+
+    (4001, 10003, 0, '2022-09-21', 1),
+    (4002, 10003, 0, '2022-09-21', 2),
+    (4003, 10003, 0, '2022-09-21', 3),
+    (4004, 10003, 0, '2022-09-21', 4),
+    (4005, 10003, 0, '2022-09-21', 5),
+    (4006, 10003, 0, '2022-09-21', 6),
+    (4007, 10003, 0, '2022-09-21', 7);
 
 INSERT INTO AllocSpace(allocSubjectId, allocRound, spaceId, totalTime) VALUES
-    (4004, 10001, 1020, '02:30:00'),
-    (4003, 10001, 1016, '07:30:00');
+    (4011, 10002, 1020, '04:30:00'),
+    (4014, 10002, 1015, '08:10:00'),
+    (4014, 10002, 1009, '08:10:00'),
+    (4019, 10002, 1004, '04:00:00'),
+    (4013, 10002, 1013, '05:00:00'),
+    (4001, 10002, 1010, '06:00:00');
 
 
 /* --- Insert: AllocCurrentRoundUser * --- */
