@@ -42,23 +42,12 @@ CREATE TABLE IF NOT EXISTS DepartmentPlanner (
         ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE TABLE IF NOT EXISTS Campus (
-    id          INTEGER         NOT NULL AUTO_INCREMENT,
-    name        VARCHAR(255)    UNIQUE NOT NULL,
-    description VARCHAR(16000)  ,
-
-    PRIMARY KEY (id)
-) ENGINE=InnoDB AUTO_INCREMENT=301 DEFAULT CHARSET=latin1;
-
 CREATE TABLE IF NOT EXISTS Building (
     id          INTEGER         NOT NULL AUTO_INCREMENT,
     name        VARCHAR(255)    UNIQUE NOT NULL,
-    description VARCHAR(16000)  ,
-    campusId    INTEGER         NOT NULL, 
+    description VARCHAR(16000), 
 
-    PRIMARY KEY (id),
-
-    CONSTRAINT FK_Building_Campus FOREIGN KEY (campusId) REFERENCES Campus(id)
+    PRIMARY KEY (id)
 
 ) ENGINE=InnoDB AUTO_INCREMENT=401 DEFAULT CHARSET=latin1;
 
@@ -225,7 +214,7 @@ CREATE TABLE IF NOT EXISTS AllocSubject (
         REFERENCES `AllocRound`(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE  
-) ENGINE=InnoDB AUTO_INCREMENT=90001 CHARSET=latin1;
+) ENGINE=InnoDB CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS AllocSpace (
     allocSubjectId  INTEGER     NOT NULL,

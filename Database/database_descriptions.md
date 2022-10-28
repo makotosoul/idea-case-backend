@@ -60,20 +60,9 @@ Sarake			|	Tyyppi		|	Avaimet		|	Kuvaus
 <u>id</u>		| INTEGER		| PK			| 
 name			| VARCHAR(255)	|				| Rakennuksen nimi / Tunnus (Esim. N-Talo)
 description		| VARCHAR(16000)|				| Rakennuksen vapaaehtoinen kuvaus
-campusId		| INTEGER		| FK(Campus.id)	| Viittaus Campus-tauluun **Ehkä poistetaan**
 
 </details>
 
-<details><summary>Campus</summary>
-<small> (Kampus) </small>
-
-Sarake			|	Tyyppi		|	Avaimet		|	Kuvaus
-:-----			|	:----		|	------		|	------
-<u>id</u>		| INTEGER		| PK			|
-name			| VARCHAR(255)	|				| Kampuksen nimi (Esim. Sibelius Akatemia)
-description		| VARCHAR(16000)|				| Vapaaehtoinen kuvaus
-
-</details>
 
 <details><summary>Department</summary>
 Rakennus
