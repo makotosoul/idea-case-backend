@@ -57,41 +57,33 @@ allocation.get("/:id/rooms", (req, res) => {
 
 /* ALL BELOW THIS IN DEVELOPMENT */
 
-const getAllPrograms = () => {
-  return new Promise((resolve, reject) => {
-    const sqlSelectData = "SELECT p.id, p.name FROM Program p;";
-    db.query(sqlSelectData, (err, result) => {
-      if (err) {
-        return reject(err);
-      }
-      resolve(result);
-    });
-  });
-};
-
-allocation.get("/:id/getRoomsByProgram", (req, res) => {
+/* Allocation rooms by program */
+allocation.get("/:id/program/rooms", (req, res) => {
   const id = req.params.id;
-  getAllPrograms().then((programs) => {
-    const sqlFindRooms = `
-                    SELECT s.id, s.name, SUM(HOUR(totalTime)) AS allocatedHours
-                    FROM AllocSpace as2
-                    LEFT JOIN \`Space\` s ON as2.spaceId = s.id
-                    LEFT JOIN Subject s2 ON as2.allocSubjectId = s2.id
-                    LEFT JOIN Program p ON s2.programId = p.id
-                    WHERE p.id = ? AND as2.allocRound = ?
-                    GROUP BY s.id
-                    ;`;
-    programs.forEach((row, index) => {
-      const programId = row.id;
-      db.query(sqlFindRooms, [programId, id], (err, rooms) => {
-        if (err) {
-          dbErrorHandler(res, err, "Oops! Could not get rooms - Allocation");
-        } else {
-          programs[index] = { ...row, rooms: rooms };
-        }
-      });
-    });
-    successHandler(res, programs, "getPrograms successful - Allocation");
+  const sqlQuery = `SELECT 
+	p.id, 
+	p.name,
+	IF(COUNT(as2.totalTime) = 0, JSON_ARRAY(),
+	JSON_ARRAYAGG(
+	JSON_OBJECT(
+		'id', sp.id,
+		'name', sp.name,
+		'allocatedHours', HOUR(as2.totalTime)
+		)
+    )) AS rooms
+    FROM Program p
+    LEFT JOIN Subject s ON p.id = s.programId
+    LEFT JOIN AllocSpace as2 ON s.id = as2.allocSubjectId
+    LEFT JOIN Space sp ON as2.spaceId = sp.id
+    GROUP BY p.id
+    ;
+    `;
+  db.query(sqlQuery, (err, result) => {
+    if (err) {
+      dbErrorHandler(res, err, "Oops! Nothing came through - Allocation");
+    } else {
+      successHandler(res, result, "getRoomsByProgram succesful - Allocation");
+    }
   });
 });
 
