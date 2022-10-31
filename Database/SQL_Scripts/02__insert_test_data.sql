@@ -142,7 +142,7 @@ INSERT INTO `SpaceEquipment` (`spaceId`, `equipmentId`) VALUES
     
 /* --- Insert: Program * --- */
 INSERT INTO Program (name , departmentId) VALUES
-    ('Piano', 103),
+    ('Piano', 103), -- id 3001
     ('Laulutaide pääaineena', 102),
     ('Kitara', 103),
     ('Kantele', 103),
@@ -172,16 +172,16 @@ INSERT INTO Program (name , departmentId) VALUES
     ('Taidejohtaminen ja yrittäjyys', 109),
     ('Urut', 112),
     ('Vanha musiikki', 106),
-    ('Avoin Kampus', 110);
+    ('Avoin Kampus', 110); 
 
 /* --- Insert: Subject * --- */
 INSERT INTO Subject(name, groupSize, groupCount, sessionLength, sessionCount, area, programId, spaceTypeId) VALUES
-    ('Saksan kielen perusteet', 10, 2, '01:30:00', 2, 100.5, 3002, 5002),
-    ('Viulistien kehonhallinta', 20, 1, '00:30:00', 2, 50, 3013, NULL),
+    ('Saksan kielen perusteet', 20, 2, '01:30:00', 2, 100.5, 3002, 5002), 
+    ('Jazzimprovisoinnin ja -teorian perusteet', 20, 1, '02:30:00', 2, 35, 3005, 5004),
     ('Piano yksilöopetus', 1, 1, '02:30:00', 2, 40, 3001, 5004),
     ('Trumpetin ryhmäsoitto', 10, 1,'01:30:00', 3, 80, 3002, 5004),
     ('Kirkkomusiikin ryhmäsoittoa', 15, 4, '02:30:00', 2, 30, 3015, 5004),
-    ('Ruotsin kielen oppintunti', 40, 2, '01:45:00', 1, 40, 3031, 5002),
+    ('Ruotsin kielen oppitunti', 40, 2, '01:45:00', 1, 40, 3031, 5002),
     ('Kitaran soiton perusteet', 15, 1, '01:30:00', 2, 60, 3003, 5004),
     ('Kontrabassonsoitto, taso A', 1, 3, '01:00:00', 2, 10, 3013, 5004),
     ('Kanteleensoitto (musiikin kandidaatti)', 1, 4, '01:00:00', 1, 10, 3004, 5004),
@@ -195,7 +195,16 @@ INSERT INTO Subject(name, groupSize, groupCount, sessionLength, sessionCount, ar
     ('Tuubansoitto, taso C', 1, 5, '01:00:00', 1, 15, 3026, 5004),
     ('Harmonikansoitto (musiikin kandidaatti)', 1, 2, '01:00:00', 1, 15, 3011, 5004),
     ('Jazz, rumpujensoitto, taso B', 1, 4, '01:00:00', 1, 15, 3017, 5004),
-    ('Kansanmusiikkiteoria 1', 1, 20, '01:00:00', 2, 40, 3014, 5002);
+    ('Kansanmusiikkiteoria 1', 1, 20, '01:00:00', 2, 40, 3014, 5002),
+    ("Kirkkomusiikin käytännöt 1", 20, 1, '03:00:00', 1, 30, 3015, 5002),
+    ("Nuottikirjoitus", 15, 1, "02:00:00", 1, 25, 3031, 5002),
+    ("Harpun orkesterikirjallisuus", 15, 1, "03:00:00", 1, 25, 3012, 5002),
+    ("Global Orchestra", 12, 2, "02:30:00", 2, 35, 3010, 5004),
+    ("Populaarimusiikin historia", 20, 1, "03:00:00", 1, 30, 3020, 5002),
+    ("Oppimaan oppiminen", 15, 2, "02:30:00", 1, 25, 3031, 5002),
+    ("Body Mapping", 25, 2, "02:30:00", 2, 35, 3031, 5002),
+    ("Muusikon Terveys", 20, 1, "02:30:00", 1, 30, 3031, 5002);
+
 
 /* --- Insert: SubjectEquipment * --- */
 INSERT INTO SubjectEquipment(subjectId, equipmentId, priority) VALUES
@@ -237,7 +246,7 @@ INSERT INTO AllocSubject(subjectId, allocRound, isAllocated, allocatedDate, prio
     (4013, 10002, 1, '2022-10-28', 4), -- huilujensoitto taso a, 1ppl, 05:00, 10m2, musiikkiluokka
     (4001, 10002, 1, '2022-10-28', 5), -- saksan kielen perusteet, 10ppl, 06:00, 60m2, teorialuokka
 
-    (4001, 10003, 0, '2022-09-21', 1),
+    (4001, 10003, 0, '2022-09-21', 1), -- 
     (4002, 10003, 0, '2022-09-21', 2),
     (4003, 10003, 0, '2022-09-21', 3),
     (4004, 10003, 0, '2022-09-21', 4),
