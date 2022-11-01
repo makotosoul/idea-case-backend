@@ -48,7 +48,6 @@ const getRoomsByAllocId = (allocId) => {
   });
 };
 
-/* ALL BELOW THIS STILL IN PROGRESS */
 /* Get allocated rooms by Program.id and AllocRound.id */
 
 const getAllocatedRoomsByProgram = async (programId, allocId) => {
