@@ -60,7 +60,7 @@ allocation.get("/:id/rooms", (req, res) => {
 
 /* Get all allocated rooms by allocationId and program.id */
 
-allocation.get("/:id/program/rooms2", async (req, res) => {
+allocation.get("/:id/program/all/rooms", async (req, res) => {
   const id = req.params.id;
   programService
     .getAll()
