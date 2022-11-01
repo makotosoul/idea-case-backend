@@ -176,13 +176,13 @@ INSERT INTO Program (name , departmentId) VALUES
 
 /* --- Insert: Subject * --- */
 INSERT INTO Subject(name, groupSize, groupCount, sessionLength, sessionCount, area, programId, spaceTypeId) VALUES
-    ('Saksan kielen perusteet', 20, 2, '01:30:00', 2, 100.5, 3002, 5002), 
-    ('Jazzimprovisoinnin ja -teorian perusteet', 20, 1, '02:30:00', 2, 35, 3005, 5004),
-    ('Piano yksilöopetus', 1, 1, '02:30:00', 2, 40, 3001, 5004),
-    ('Trumpetin ryhmäsoitto', 10, 1,'01:30:00', 3, 80, 3002, 5004),
-    ('Kirkkomusiikin ryhmäsoittoa', 15, 4, '02:30:00', 2, 30, 3015, 5004),
+    ('Saksan kielen perusteet', 20, 2, '01:30:00', 2, 35, 3002, 5002), 
+    ('Jazzimprovisoinnin ja -teorian perusteet', 17, 1, '02:30:00', 2, 35, 3005, 5004),
+    ('Piano yksilöopetus', 1, 1, '02:30:00', 2, 10, 3001, 5004),
+    ('Trumpetin ryhmäsoitto', 10, 1,'01:30:00', 3, 40, 3002, 5004),
+    ('Kirkkomusiikin ryhmäsoittoa', 5, 2, '02:30:00', 2, 30, 3015, 5004),
     ('Ruotsin kielen oppitunti', 40, 2, '01:45:00', 1, 40, 3031, 5002),
-    ('Kitaran soiton perusteet', 15, 1, '01:30:00', 2, 60, 3003, 5004),
+    ('Kitaran soiton perusteet', 11, 1, '01:30:00', 2, 60, 3003, 5004),
     ('Kontrabassonsoitto, taso A', 1, 3, '01:00:00', 2, 10, 3013, 5004),
     ('Kanteleensoitto (musiikin kandidaatti)', 1, 4, '01:00:00', 1, 10, 3004, 5004),
     ('Yhteissoitto / kantele', 16, 1, '01:30:00', 1, 20, 3004, 5004),
@@ -195,7 +195,7 @@ INSERT INTO Subject(name, groupSize, groupCount, sessionLength, sessionCount, ar
     ('Tuubansoitto, taso C', 1, 5, '01:00:00', 1, 15, 3026, 5004),
     ('Harmonikansoitto (musiikin kandidaatti)', 1, 2, '01:00:00', 1, 15, 3011, 5004),
     ('Jazz, rumpujensoitto, taso B', 1, 4, '01:00:00', 1, 15, 3017, 5004),
-    ('Kansanmusiikkiteoria 1', 1, 20, '01:00:00', 2, 40, 3014, 5002),
+    ('Kansanmusiikkiteoria 1', 20, 1, '01:00:00', 2, 30, 3014, 5002),
     ("Kirkkomusiikin käytännöt 1", 20, 1, '03:00:00', 1, 30, 3015, 5002),
     ("Nuottikirjoitus", 15, 1, "02:00:00", 1, 25, 3031, 5002),
     ("Harpun orkesterikirjallisuus", 15, 1, "03:00:00", 1, 25, 3012, 5002),
@@ -229,8 +229,8 @@ INSERT INTO SubjectEquipment(subjectId, equipmentId, priority) VALUES
 /* --- Insert: AllocRound * --- */
 INSERT INTO AllocRound(name, isSeasonAlloc, userId, description) VALUES
     ("Testipriorisointi", 0, 201, "Testidata lisätään AllocSubject tauluun, mutta laskentaa ei vielä suoritettu eli opetuksille ei ole vielä merkitty tiloja"),
-    ("Testilaskenta", 0, 201, "Testidata lisätty ja huoneet merkitty"),
-    ("Kevät 2023", 1, 201, "");
+    ("Testilaskenta", 1, 201, "Testidata lisätty ja huoneet merkitty"),
+    ("Kevät 2023", 0, 201, "");
 
 /* --- Insert: AllocSubject * --- */
 INSERT INTO AllocSubject(subjectId, allocRound, isAllocated, allocatedDate, priority) VALUES
@@ -240,13 +240,30 @@ INSERT INTO AllocSubject(subjectId, allocRound, isAllocated, allocatedDate, prio
     (4013, 10001, 0, '2022-10-28', 4),
     (4001, 10001, 0, '2022-10-28', 5),
 
-    (4011, 10002, 1, '2022-10-28', 1), -- urkujensoitto, 1ppl, 4:30, 20m2, musiikkiluokka
-    (4014, 10002, 1, '2022-10-28', 2), -- fortepianosoitto, 1ppl, 16:20, 30m2, musiikkiluokka, 
-    (4019, 10002, 1, '2022-10-28', 3), -- jazz rummut, 1ppl, 4:00, 15m2, musiikkiluokka
-    (4013, 10002, 1, '2022-10-28', 4), -- huilujensoitto taso a, 1ppl, 05:00, 10m2, musiikkiluokka
-    (4001, 10002, 1, '2022-10-28', 5), -- saksan kielen perusteet, 10ppl, 06:00, 60m2, teorialuokka
+    (4011, 10002, 1, '2022-10-28', 1), -- Urkujensoitto, 1ppl, 1:30/4:30, 20m2, musiikkiluokka
+    (4003, 10002, 1, '2022-10-28', 2), -- Piano yksilöopetus, 1ppl, 2:30/05:00, 10m2, musiikkiluokka
+    (4005, 10002, 1, '2022-10-28', 3), -- Kirkkomusiikin ryhmäsoitto, 5ppl, 2:30/10:00, musiikkiluokka
+    (4024, 10002, 1, '2022-10-28', 4), -- Global Orchestra, 12ppl, 2:30/10:00, 35m2, musiikkiluokka
+    (4004, 10002, 1, '2022-10-28', 5), -- Trumpetin ryhmäsoitto, 10ppl, 1:30/4:30, 40m2 
+    (4014, 10002, 1, '2022-10-28', 6), -- fortepianosoitto, 1ppl, 16:20, 30m2, musiikkiluokka, 
+    (4019, 10002, 1, '2022-10-28', 7), -- jazz rummut, 1ppl, 4:00, 15m2, musiikkiluokka
+    (4013, 10002, 1, '2022-10-28', 8), -- huilujensoitto taso a, 1ppl, 05:00, 10m2, musiikkiluokka
+    (4002, 10002, 1, '2022-10-28', 9), -- jazz improvisoinnin perusteet, 17ppl, 2:30/5:00, 35m2, musiikkiluokka
+    (4016, 10002, 1, '2022-10-28', 10), -- Viulunsoitto taso D, 1ppl, 01:00/12:00, 10m2, musiikkiluokka
+    (4017, 10002, 1, '2022-10-28', 11), -- Tuubansoitto Taso C, 1ppl, 01:00/05:00, 15m2, musiikkiluokka
+    (4008, 10002, 1, '2022-10-28', 12), -- Kontrabassonsoitto Taso A, 1ppl, 01:00/06:00, 10m2, musiikkiluokka
+    (4007, 10002, 1, '2022-10-28', 13), -- Kitaran soiton perusteet, 11ppl, 1:30/03:00, 60m2, musiikkiluokka
+    (4023, 10002, 1, '2022-10-28', 14), -- Harpun orkesterikirjallisuus, 15ppl, 3:00, 25m2, teorialuokka
+    (4020, 10002, 1, '2022-10-28', 15), -- Kansanmusiikkiteoria 1, 20ppl, 1:00/2:00, 30m2, teorialuokka
+    (4027, 10002, 1, '2022-10-28', 16), -- Body mapping, 20, 2:30, 30m2, teorialuokka
+    (4028, 10002, 1, '2022-10-28', 17), -- Muusikon terveys, 20ppl, 2:30, 30m2, teorialuokka
+    (4021, 10002, 1, '2022-10-28', 18), -- Kirkkomusiikin käytännöt, 20ppl, 03:00, 30m2, teorialuokka
+    (4022, 10002, 1, '2022-10-28', 19), -- Nuottikirjoitus, 15ppl, 2:00, 25m2, teorialuokka
+    (4001, 10002, 1, '2022-10-28', 20), -- saksan kielen perusteet, 10ppl, 06:00, 35m2, teorialuokka
+    (4006, 10002, 1, '2022-10-28', 21), -- Ruotsin kielen oppintunti, 40ppl, 1:45/3:30, 40m2, teorialuokka
 
-    (4001, 10003, 0, '2022-09-21', 1), -- 
+
+    (4001, 10003, 0, '2022-09-21', 1),  
     (4002, 10003, 0, '2022-09-21', 2),
     (4003, 10003, 0, '2022-09-21', 3),
     (4004, 10003, 0, '2022-09-21', 4),
@@ -255,12 +272,28 @@ INSERT INTO AllocSubject(subjectId, allocRound, isAllocated, allocatedDate, prio
     (4007, 10003, 0, '2022-09-21', 7);
 
 INSERT INTO AllocSpace(allocSubjectId, allocRound, spaceId, totalTime) VALUES
+
     (4011, 10002, 1020, '04:30:00'),
-    (4014, 10002, 1015, '08:10:00'),
-    (4014, 10002, 1009, '08:10:00'),
+    (4003, 10002, 1009, '05:00:00'),
+    (4005, 10002, 1020, '10:00:00'),
+    (4024, 10002, 1016, '10:00:00'),
+    (4004, 10002, 1016, '04:30:00'),
+    (4014, 10002, 1009, '16:20:00'),
     (4019, 10002, 1004, '04:00:00'),
-    (4013, 10002, 1013, '05:00:00'),
-    (4001, 10002, 1010, '06:00:00');
+    (4013, 10002, 1009, '05:00:00'),
+    (4002, 10002, 1016, '05:00:00'),
+    (4016, 10002, 1009, '12:00:00'),
+    (4017, 10002, 1009, '05:00:00'),
+    (4008, 10002, 1009, '06:00:00'),
+    (4007, 10002, 1014, '03:00:00'),
+    (4023, 10002, 1010, '03:00:00'),
+    (4020, 10002, 1010, '02:00:00'),
+    (4027, 10002, 1010, '02:30:00'),
+    (4028, 10002, 1010, '02:30:00'),
+    (4021, 10002, 1010, '03:00:00'),
+    (4022, 10002, 1010, '02:00:00'),
+    (4001, 10002, 1010, '06:00:00'),
+    (4006, 10002, 1010, '03:30:00');
 
 
 /* --- Insert: AllocCurrentRoundUser * --- */
