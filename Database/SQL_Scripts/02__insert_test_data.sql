@@ -176,10 +176,10 @@ INSERT INTO Program (name , departmentId) VALUES
 
 /* --- Insert: Subject * --- */
 INSERT INTO Subject(name, groupSize, groupCount, sessionLength, sessionCount, area, programId, spaceTypeId) VALUES
-    ('Saksan kielen perusteet', 20, 2, '01:30:00', 2, 35, 3002, 5002), 
+    ('Saksan kielen perusteet', 20, 2, '01:30:00', 2, 35, 3031, 5002), 
     ('Jazzimprovisoinnin ja -teorian perusteet', 17, 1, '02:30:00', 2, 35, 3005, 5004),
     ('Piano yksilöopetus', 1, 1, '02:30:00', 2, 10, 3001, 5004),
-    ('Trumpetin ryhmäsoitto', 10, 1,'01:30:00', 3, 40, 3002, 5004),
+    ('Trumpetin ryhmäsoitto', 10, 1,'01:30:00', 3, 40, 3026, 5004),
     ('Kirkkomusiikin ryhmäsoittoa', 5, 2, '02:30:00', 2, 30, 3015, 5004),
     ('Ruotsin kielen oppitunti', 40, 2, '01:45:00', 1, 40, 3031, 5002),
     ('Kitaran soiton perusteet', 11, 1, '01:30:00', 2, 60, 3003, 5004),
