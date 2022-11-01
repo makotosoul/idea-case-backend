@@ -52,7 +52,7 @@ const getRoomsByAllocId = (allocId) => {
 /* Get allocated rooms by Program.id and AllocRound.id */
 
 const getAllocatedRoomsByProgram = async (programId, allocId) => {
-  const sqlQuery = `SELECT DISTINCT s.id, s.name, SUM(HOUR(as2.totalTime))
+  const sqlQuery = `SELECT DISTINCT s.id, s.name, SUM(HOUR(as2.totalTime)) AS allocatedHours
                     FROM AllocSpace as2
                     LEFT JOIN Space s ON as2.spaceId = s.id
                     LEFT JOIN Subject s2 ON as2.allocSubjectId = s2.id
@@ -63,7 +63,7 @@ const getAllocatedRoomsByProgram = async (programId, allocId) => {
   return new Promise((resolve, reject) => {
     db.query(sqlQuery, [programId, allocId], (err, result) => {
       if (err) {
-        reject(err);
+        throw reject(err);
       } else {
         resolve(result);
       }

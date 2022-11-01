@@ -1,6 +1,6 @@
 const express = require("express");
 const allocation = express.Router();
-const db = require("../db/index");
+// const db = require("../db/index");
 const { dbErrorHandler, successHandler } = require("../responseHandler/index");
 
 const programService = require("../services/program");
@@ -58,25 +58,55 @@ allocation.get("/:id/rooms", (req, res) => {
     });
 });
 
+/* Get all allocation rooms by allocationId and program.id */
+
+allocation.get("/:id/program/rooms2", async (req, res) => {
+  const id = req.params.id;
+  programService
+    .getAll()
+    .then(async (programs) => {
+      for (let [index, program] of programs.entries()) {
+        programs[index] = {
+          ...program,
+          rooms: await allocationService.getAllocatedRoomsByProgram(
+            program.id,
+            id,
+          ),
+        };
+      }
+      return programs;
+    })
+    .then((data) => {
+      successHandler(res, data, "getRoomsByProgram succesful - Allocation");
+    })
+    .catch((err) => {
+      dbErrorHandler(res, err, "Oops! Nothing came through - Allocation");
+    });
+});
+
 /* ALL BELOW THIS IN PROGRESS */
-
-/* Test parser with Json Object */
-
+/*
+// Test parser with Json Object 
 const jsonParser = (list, property) => {
-  try {
-    for (let [index, object] of list.entries()) {
-      list[index][property] = JSON.parse(object[property]);
+    try {
+        for (let [index, object] of list.entries()) {
+            list[index][property] = JSON.parse(object[property]);
+        }
+        return list
     }
-    return list;
-  } catch (err) {
-    console.error(err);
-  }
+    catch(err){
+        console.error(err);
+    }
 };
 
-/* Allocation rooms by program */
+
+
+
+// Allocation rooms by program 
 allocation.get("/:id/program/rooms", (req, res) => {
-  const id = req.params.id;
-  const sqlQuery = `SELECT 
+    const id = req.params.id;
+    const sqlQuery = 
+    `SELECT 
 	    p.id, 
 	    p.name,
 	    IF(COUNT(as2.totalTime) = 0, JSON_ARRAY(),
@@ -93,65 +123,45 @@ allocation.get("/:id/program/rooms", (req, res) => {
     LEFT JOIN Space sp ON as2.spaceId = sp.id
     GROUP BY p.id
     ;
-    `;
-  db.query(sqlQuery, (err, result) => {
-    if (err) {
-      dbErrorHandler(res, err, "Oops! Nothing came through - Allocation");
-    } else {
-      let parsedResult = jsonParser(result, "rooms");
-      successHandler(
-        res,
-        parsedResult,
-        "getRoomsByProgram succesful - Allocation",
-      );
-    }
-  });
+    `
+    db.query(sqlQuery, (err, result) => {
+        if(err){
+            dbErrorHandler(res, err, "Oops! Nothing came through - Allocation");
+        } else {
+            let parsedResult = jsonParser(result, 'rooms');
+            successHandler(res, parsedResult, "getRoomsByProgram succesful - Allocation");
+        }
+    })
+
 });
 
-/* TESTING */
+// TESTING 
+
 
 const getRoomsQuery = (program) => {
-  const sqlRoomsQuery = `SELECT DISTINCT s.id, s.name, SUM(HOUR(as2.totalTime)) AS allocatedHours
+    const sqlRoomsQuery = `SELECT DISTINCT s.id, s.name, SUM(HOUR(as2.totalTime)) AS allocatedHours
     FROM AllocSpace as2
     LEFT JOIN Space s ON as2.spaceId = s.id
     LEFT JOIN Subject s2 ON as2.allocSubjectId = s2.id
     LEFT JOIN Program p ON s2.programId = p.id 
     WHERE p.id = ? AND as2.allocRound = 10002
     GROUP BY s.id
-    ;`;
-  const id = program.id;
-  return new Promise((resolve, reject) => {
-    db.query(sqlRoomsQuery, id, (err, result) => {
-      if (err) throw reject(err);
-      resolve({ program, rooms: res });
-    });
-  });
-};
-
-allocation.get("/test2/2", async (req, res) => {
-  programService
-    .getAll()
-    .then((programs) => {
-      let returnData = [];
-      for (let [index, program] of programs.entries()) {
-        programs[index] = {
-          ...program,
-          rooms: allocationService.getAllocatedRoomsByProgram(3001, 10002),
-        };
-      }
-      console.log(returnData);
+    ;`
+    const id = program.id;
+    return new Promise((resolve, reject) => {
+        db.query(sqlRoomsQuery, id, (err, result) => {
+            if (err) throw reject(err)
+            resolve({program, 'rooms' : res});
+        })
     })
-    .catch((err) => {
-      dbErrorHandler(res, err, "Oops! Nothing came through - Allocation");
-    });
+}
 
-  res.status(200).send();
-});
 
-/* Allocation rooms by program - with json_object select */
+
+// Allocation rooms by program - with json_object select 
 
 allocation.get("/test/", (req, res) => {
-  const sqlQuery = `
+    const sqlQuery = `
         SELECT JSON_OBJECT(
         'id', p.id,
         'name', p.name,
@@ -168,20 +178,18 @@ allocation.get("/test/", (req, res) => {
     LEFT JOIN AllocSpace as2 ON s.id = as2.allocSubjectId
     LEFT JOIN Space sp ON as2.spaceId = sp.id
     GROUP BY p.id
-    ;`;
-  db.query(sqlQuery, (err, result) => {
-    if (err) {
-      dbErrorHandler(res, err, "Oops! Nothing came through - Allocation");
-    } else {
-      let parsedlist = jsonParser(result, "program");
-      console.log(parsedlist);
-      successHandler(
-        res,
-        parsedlist,
-        "getRoomsByProgram succesful - Allocation",
-      );
-    }
-  });
-});
+    ;`
+    db.query(sqlQuery, (err, result) => {
+        if(err){
+            dbErrorHandler(res, err, "Oops! Nothing came through - Allocation");
+        } else {
+            let parsedlist = jsonParser(result, 'program');
+            console.log(parsedlist);
+            successHandler(res, parsedlist, "getRoomsByProgram succesful - Allocation");
+        }
+    })
+})
+
+*/
 
 module.exports = allocation;
