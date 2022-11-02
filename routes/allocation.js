@@ -7,7 +7,7 @@ const allocationService = require("../services/allocation");
 
 /* Get all allocations */
 
-allocation.get("/all", (req, res) => {
+allocation.get("", (req, res) => {
   allocationService
     .getAll()
     .then((data) => {

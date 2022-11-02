@@ -217,15 +217,15 @@ CREATE TABLE IF NOT EXISTS AllocSubject (
 ) ENGINE=InnoDB CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS AllocSpace (
-    allocSubjectId  INTEGER     NOT NULL,
+    subjectId       INTEGER     NOT NULL,
     allocRound      INTEGER     NOT NULL,
     spaceId         INTEGER     NOT NULL,
     totalTime       TIME,
 
-    PRIMARY KEY(allocSubjectId, allocRound, spaceId),
+    PRIMARY KEY(subjectId, allocRound, spaceId),
 
     CONSTRAINT `FK_AllocSpace_AllocSubject`
-        FOREIGN KEY (`allocSubjectId`, `allocRound`)
+        FOREIGN KEY (`subjectId`, `allocRound`)
         REFERENCES `AllocSubject` (subjectId, allocRound)
         ON DELETE CASCADE
         ON UPDATE CASCADE,

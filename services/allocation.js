@@ -8,7 +8,7 @@ const getAll = () => {
 
   return new Promise((resolve, reject) => {
     db.query(sqlQuery, (err, result) => {
-      if (err) throw reject(err);
+      if (err) return reject(err);
       resolve(result);
     });
   });
@@ -21,7 +21,7 @@ const getById = (id) => {
     "SELECT id, name, isSeasonAlloc, description, lastmodified FROM AllocRound ar WHERE id=?;";
   return new Promise((resolve, reject) => {
     db.query(sqlQuery, id, (err, result) => {
-      if (err) throw reject(err);
+      if (err) return reject(err);
       resolve(result);
     });
   });
@@ -33,7 +33,7 @@ const getRoomsByAllocId = (allocId) => {
   const sqlQuery = `SELECT 
         id, 
         name, 
-        SUM(HOUR(AllocSpace.totalTime)) AS 'allocatedHours', 
+        CAST(SUM(TIME_TO_SEC(AllocSpace.totalTime))/3600 AS DECIMAL(10,1)) AS 'allocatedHours', 
         HOUR(TIMEDIFF(Space.availableTO, Space.availableFrom))*5 AS 'requiredHours' 
         FROM Space 
         LEFT JOIN AllocSpace ON Space.id = AllocSpace.spaceId 
@@ -42,7 +42,7 @@ const getRoomsByAllocId = (allocId) => {
     ;`;
   return new Promise((resolve, reject) => {
     db.query(sqlQuery, allocId, (err, result) => {
-      if (err) throw reject(err);
+      if (err) return reject(err);
       resolve(result);
     });
   });
@@ -51,18 +51,18 @@ const getRoomsByAllocId = (allocId) => {
 /* Get allocated rooms by Program.id and AllocRound.id */
 
 const getAllocatedRoomsByProgram = async (programId, allocId) => {
-  const sqlQuery = `SELECT DISTINCT s.id, s.name, SUM(HOUR(as2.totalTime)) AS allocatedHours
-                    FROM AllocSpace as2
-                    LEFT JOIN Space s ON as2.spaceId = s.id
-                    LEFT JOIN Subject s2 ON as2.allocSubjectId = s2.id
-                    LEFT JOIN Program p ON s2.programId = p.id 
-                    WHERE p.id = ? AND as2.allocRound = ?
-                    GROUP BY s.id
+  const sqlQuery = `SELECT DISTINCT s.id, s.name, CAST(SUM(TIME_TO_SEC(as2.totalTime)/3600) AS DECIMAL(10,1)) AS allocatedHours
+                        FROM AllocSpace as2
+                        LEFT JOIN Space s ON as2.spaceId = s.id
+                        LEFT JOIN Subject s2 ON as2.subjectId = s2.id
+                        LEFT JOIN Program p ON s2.programId = p.id 
+                        WHERE p.id = ? AND as2.allocRound = ?
+                        GROUP BY s.id
                     ;`;
   return new Promise((resolve, reject) => {
     db.query(sqlQuery, [programId, allocId], (err, result) => {
       if (err) {
-        throw reject(err);
+        return reject(err);
       } else {
         resolve(result);
       }
