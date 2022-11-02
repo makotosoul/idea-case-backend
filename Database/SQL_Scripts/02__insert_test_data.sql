@@ -11,8 +11,8 @@ INSERT INTO Department(name, description) VALUES
     ('Laulumusiikki', 'Aineryhmän kuvaus'),
     ('Piano, harmonikka, kitara ja kantele', 'Aineryhmän kuvaus'),
     ('Musiikkikasvatus', 'Aineryhmän kuvaus'),
-    ('MuTri', "Aineryhmän kuvaus"),
-    ('Vanha musiikki', "Aineryhmän kuvaus"),
+    ('MuTri', 'Aineryhmän kuvaus'),
+    ('Vanha musiikki', 'Aineryhmän kuvaus'),
     ('Musiikkiteknologia', 'Aineryhmän kuvaus'),
     ('Musiikinjohtaminen sekä orkesteri- ja kuorotoiminta', 'Aineryhmän kuvaus'),
     ('Taidejohtaminen ja yrittäjyys', 'Aineryhmän kuvaus'),
@@ -47,10 +47,10 @@ INSERT INTO `Building` (`name`, `description`) VALUES
 
 /* --- Insert: SpaceType --- */
 INSERT INTO SpaceType (name) VALUES
-    ("Studio"),
-    ("Luentoluokka"),
-    ("Esitystila"),
-    ("Musiikkiluokka");
+    ('Studio'),
+    ('Luentoluokka'),
+    ('Esitystila'),
+    ('Musiikkiluokka');
 
 /* --- Insert: `Space` * --- */
 INSERT INTO `Space` (`name`, `area`, `personLimit`, `buildingId`, `availableFrom`, `availableTo`, `classesFrom`, `classesTo`, `info`, `spaceTypeId`) VALUES
@@ -142,13 +142,12 @@ INSERT INTO `SpaceEquipment` (`spaceId`, `equipmentId`) VALUES
     
 /* --- Insert: Program * --- */
 INSERT INTO Program (name , departmentId) VALUES
-    ('Piano', 103),
+    ('Piano', 103), -- id 3001
     ('Laulutaide pääaineena', 102),
     ('Kitara', 103),
     ('Kantele', 103),
     ('Jazzsävellys', 101),
-    ('Laulutaide', 102),
-    ('Musiikinteoria pääaineena', 104),
+    ('Musiikinteoria pääaineena', 104), 
     ('Jazzmusiikin instrumentti- tai lauluopinnot pääaineena', 102),
     ('Fortepiano', 103),
     ('Global Music', 112),
@@ -159,7 +158,7 @@ INSERT INTO Program (name , departmentId) VALUES
     ('Kirkkomusiikki', 112),
     ('Korrepetitio', 102),
     ('Lyömäsoitin', 114),
-    ('Musiikin johtaminen', 108),
+    ('Musiikin johtaminen', 108), -- ei löydy kurseja
     ('Musiikin tohtorikoulutus', 110),
     ('Musiikkikasvatus', 104),
     ('Musiikkiteknologia', 107),
@@ -172,30 +171,50 @@ INSERT INTO Program (name , departmentId) VALUES
     ('Taidejohtaminen ja yrittäjyys', 109),
     ('Urut', 112),
     ('Vanha musiikki', 106),
-    ('Avoin Kampus', 110);
+    ('Avoin Kampus', 110); 
 
 /* --- Insert: Subject * --- */
 INSERT INTO Subject(name, groupSize, groupCount, sessionLength, sessionCount, area, programId, spaceTypeId) VALUES
-    ('Saksan kielen perusteet', 10, 2, '01:30:00', 2, 100.5, 3002, 5002),
-    ('Viulistien kehonhallinta', 20, 1, '00:30:00', 2, 50, 3013, NULL),
-    ('Piano yksilöopetus', 1, 1, '02:30:00', 2, 40, 3001, 5004),
-    ('Trumpetin ryhmäsoitto', 10, 1,'01:30:00', 3, 80, 3002, 5004),
-    ('Kirkkomusiikin ryhmäsoittoa', 15, 4, '02:30:00', 2, 30, 3015, 5004),
-    ('Ruotsin kielen oppintunti', 40, 2, '01:45:00', 1, 40, 3031, 5002),
-    ('Kitaran soiton perusteet', 15, 1, '01:30:00', 2, 60, 3003, 5004),
-    ('Kontrabassonsoitto, taso A', 1, 3, '01:00:00', 2, 10, 3013, 5004),
+    ('Saksan kielen perusteet', 20, 2, '01:30:00', 2, 35, 3030, 5002), 
+    ('Jazzimprovisoinnin ja -teorian perusteet', 17, 1, '02:30:00', 2, 35, 3005, 5004),
+    ('Piano yksilöopetus', 1, 1, '02:30:00', 2, 10, 3001, 5004),
+    ('Trumpetin ryhmäsoitto', 10, 1,'01:30:00', 3, 40, 3025, 5004),
+    ('Kirkkomusiikin ryhmäsoittoa', 5, 2, '02:30:00', 2, 30, 3014, 5004),
+    ('Ruotsin kielen oppitunti', 18, 2, '01:45:00', 1, 25, 3030, 5002),
+    ('Kitaran soiton perusteet', 11, 1, '01:30:00', 2, 25, 3003, 5004),
+    ('Kontrabassonsoitto, taso A', 1, 3, '01:00:00', 2, 10, 3012, 5004),
     ('Kanteleensoitto (musiikin kandidaatti)', 1, 4, '01:00:00', 1, 10, 3004, 5004),
     ('Yhteissoitto / kantele', 16, 1, '01:30:00', 1, 20, 3004, 5004),
-    ('Urkujensoitto (musiikin kandidaatti)', 1, 3, '01:30:00', 1, 20, 3029, 5004),
+    ('Urkujensoitto (musiikin kandidaatti)', 1, 3, '01:30:00', 1, 20, 3028, 5004),
     ('Yhteissoitto / kitara', 34, 1, '01:30:00', 1, 35, 3003, 5004),
-    ('Huilunsoitto, taso A', 1, 5, '01:00:00', 1, 10, 3026, 5004),
-    ('Fortepianonsoitto 1', 1, 7, '01:10:00', 2, 30, 3001, 5004),
-    ('Nokkahuilunsoitto, taso B', 1, 3, '01:00:00', 1, 10, 3026, 5004),
-    ('Viulunsoitto, taso D', 1, 12, '01:00:00', 1, 10, 3013, 5004),
-    ('Tuubansoitto, taso C', 1, 5, '01:00:00', 1, 15, 3026, 5004),
-    ('Harmonikansoitto (musiikin kandidaatti)', 1, 2, '01:00:00', 1, 15, 3011, 5004),
-    ('Jazz, rumpujensoitto, taso B', 1, 4, '01:00:00', 1, 15, 3017, 5004),
-    ('Kansanmusiikkiteoria 1', 1, 20, '01:00:00', 2, 40, 3014, 5002);
+    ('Huilunsoitto, taso A', 1, 5, '01:00:00', 1, 10, 3025, 5004),
+    ('Fortepianonsoitto 1', 1, 7, '01:10:00', 2, 30, 3008, 5004),
+    ('Nokkahuilunsoitto, taso B', 1, 3, '01:00:00', 1, 10, 3025, 5004),
+    ('Viulunsoitto, taso D', 1, 12, '01:00:00', 1, 10, 3012, 5004),
+    ('Tuubansoitto, taso C', 1, 5, '01:00:00', 1, 15, 3025, 5004),
+    ('Harmonikansoitto (musiikin kandidaatti)', 1, 2, '01:00:00', 1, 15, 3010, 5004),
+    ('Jazz, rumpujensoitto, taso B', 1, 4, '01:00:00', 1, 15, 3016, 5004),
+    ('Kansanmusiikkiteoria 1', 20, 1, '01:00:00', 2, 30, 3013, 5002),
+    ('Kirkkomusiikin käytännöt 1', 20, 1, '03:00:00', 1, 30, 3014, 5002),
+    ('Nuottikirjoitus', 15, 1, '02:00:00', 1, 25, 3030, 5002),
+    ('Harpun orkesterikirjallisuus', 15, 1, '03:00:00', 1, 25, 3011, 5002),
+    ('Global Orchestra', 12, 2, '02:30:00', 2, 35, 3009, 5004),
+    ('Populaarimusiikin historia', 20, 1, '03:00:00', 1, 30, 3019, 5002),
+    ('Oppimaan oppiminen', 15, 2, '02:30:00', 1, 25, 3030, 5002),
+    ('Body Mapping', 25, 2, '02:30:00', 2, 35, 3030, 5002),
+    ('Muusikon Terveys', 20, 1, '02:30:00', 1, 30, 3030, 5002),
+    ('Pianomusiikin historia', 18, 1, '01:00:00', 1, 30, 3001, 5002),
+    ('Syventävä ensemblelaulu', 4, 3, '00:45:00', 1, 10, 3002, 5004),
+    ('Laulu, pääinstrumentti', 1, 10, '01:00:00', 1, 5, 3002, 5004),
+    ('The jazz line - melodisen jazzimprovisoinnin syventävät opinnot', 14, 1, '02:00:00', 1, 20, 3005, 5002),
+    ('Jazzensemble', 5, 1, '02:00:00', 1, 20, 3007, 5004),
+    ('Äänenkäyttö ja huolto / korrepetitiokoulutus', 4, 3, '01:00:00', 1, 10, 3015, 5004),
+    ('Prima vista / korrepetitiokoulutus', 2, 6, '01:00:00', 1, 15, 3015, 5004),
+    ('Musiikinhistorian lukupiiri', 10, 1, '01:00:00', 1 , 15, 3019, 5002),
+    ('Tohtoriseminaari (sävellys)', 17, 1, '02:00:00', 1, 30, 3019, 5002),
+    ('Musiikkiteknologian perusteet', 15, 1, '01:00:00', 1, 30, 3020, 5004),
+    ('Johtamisen pedagogiikka -luentosarja', 10, 1, '02:00:00', 1, 20, 3018, 5002);
+
 
 /* --- Insert: SubjectEquipment * --- */
 INSERT INTO SubjectEquipment(subjectId, equipmentId, priority) VALUES
@@ -219,9 +238,9 @@ INSERT INTO SubjectEquipment(subjectId, equipmentId, priority) VALUES
 
 /* --- Insert: AllocRound * --- */
 INSERT INTO AllocRound(name, isSeasonAlloc, userId, description) VALUES
-    ("Testipriorisointi", 0, 201, "Testidata lisätään AllocSubject tauluun, mutta laskentaa ei vielä suoritettu eli opetuksille ei ole vielä merkitty tiloja"),
-    ("Testilaskenta", 0, 201, "Testidata lisätty ja huoneet merkitty"),
-    ("Kevät 2023", 1, 201, "");
+    ('Testipriorisointi', 0, 201, 'Testidata lisätään AllocSubject tauluun, mutta laskentaa ei vielä suoritettu eli opetuksille ei ole vielä merkitty tiloja'),
+    ('Testilaskenta', 1, 201, 'Testidata lisätty ja huoneet merkitty'),
+    ('Kevät 2023', 0, 201, '');
 
 /* --- Insert: AllocSubject * --- */
 INSERT INTO AllocSubject(subjectId, allocRound, isAllocated, allocatedDate, priority) VALUES
@@ -231,13 +250,42 @@ INSERT INTO AllocSubject(subjectId, allocRound, isAllocated, allocatedDate, prio
     (4013, 10001, 0, '2022-10-28', 4),
     (4001, 10001, 0, '2022-10-28', 5),
 
-    (4011, 10002, 1, '2022-10-28', 1), -- urkujensoitto, 1ppl, 4:30, 20m2, musiikkiluokka
-    (4014, 10002, 1, '2022-10-28', 2), -- fortepianosoitto, 1ppl, 16:20, 30m2, musiikkiluokka, 
-    (4019, 10002, 1, '2022-10-28', 3), -- jazz rummut, 1ppl, 4:00, 15m2, musiikkiluokka
-    (4013, 10002, 1, '2022-10-28', 4), -- huilujensoitto taso a, 1ppl, 05:00, 10m2, musiikkiluokka
-    (4001, 10002, 1, '2022-10-28', 5), -- saksan kielen perusteet, 10ppl, 06:00, 60m2, teorialuokka
+    (4011, 10002, 1, '2022-10-28', 1), -- Urkujensoitto, 1ppl, 1:30/4:30, 20m2, musiikkiluokka
+    (4003, 10002, 1, '2022-10-28', 2), -- Piano yksilöopetus, 1ppl, 2:30/05:00, 10m2, musiikkiluokka
+    (4005, 10002, 1, '2022-10-28', 3), -- Kirkkomusiikin ryhmäsoitto, 5ppl, 2:30/10:00, musiikkiluokka
+    (4024, 10002, 1, '2022-10-28', 4), -- Global Orchestra, 12ppl, 2:30/10:00, 35m2, musiikkiluokka
+    (4004, 10002, 1, '2022-10-28', 5), -- Trumpetin ryhmäsoitto, 10ppl, 1:30/4:30, 40m2 
+    (4014, 10002, 1, '2022-10-28', 6), -- fortepianosoitto, 1ppl, 16:20, 30m2, musiikkiluokka, 
+    (4019, 10002, 1, '2022-10-28', 7), -- jazz rummut, 1ppl, 4:00, 15m2, musiikkiluokka
+    (4013, 10002, 1, '2022-10-28', 8), -- huilujensoitto taso a, 1ppl, 05:00, 10m2, musiikkiluokka
+    (4002, 10002, 1, '2022-10-28', 9), -- jazz improvisoinnin perusteet, 17ppl, 2:30/5:00, 35m2, musiikkiluokka
+    (4016, 10002, 1, '2022-10-28', 10), -- Viulunsoitto taso D, 1ppl, 01:00/12:00, 10m2, musiikkiluokka
+    (4017, 10002, 1, '2022-10-28', 11), -- Tuubansoitto Taso C, 1ppl, 01:00/05:00, 15m2, musiikkiluokka
+    (4008, 10002, 1, '2022-10-28', 12), -- Kontrabassonsoitto Taso A, 1ppl, 01:00/06:00, 10m2, musiikkiluokka
+    (4007, 10002, 1, '2022-10-28', 13), -- Kitaran soiton perusteet, 11ppl, 1:30/03:00, 60m2, musiikkiluokka
+    (4023, 10002, 1, '2022-10-28', 14), -- Harpun orkesterikirjallisuus, 15ppl, 3:00, 25m2, teorialuokka
+    (4020, 10002, 1, '2022-10-28', 15), -- Kansanmusiikkiteoria 1, 20ppl, 1:00/2:00, 30m2, teorialuokka
+    (4027, 10002, 1, '2022-10-28', 16), -- Body mapping, 20, 2:30, 30m2, teorialuokka
+    (4028, 10002, 1, '2022-10-28', 17), -- Muusikon terveys, 20ppl, 2:30, 30m2, teorialuokka
+    (4021, 10002, 1, '2022-10-28', 18), -- Kirkkomusiikin käytännöt, 20ppl, 03:00, 30m2, teorialuokka
+    (4022, 10002, 1, '2022-10-28', 19), -- Nuottikirjoitus, 15ppl, 2:00, 25m2, teorialuokka
+    (4001, 10002, 1, '2022-10-28', 20), -- saksan kielen perusteet, 10ppl, 06:00, 35m2, teorialuokka
+    (4006, 10002, 1, '2022-10-28', 21), -- Ruotsin kielen oppintunti, 40ppl, 1:45/3:30, 40m2, teorialuokka
+    (4018, 10002, 1, '2022-10-28', 22), -- Harmonikansoitto, 1ppl, 01:00/02:00, 15m2, musiikkiluokka
+    (4029, 10002, 1, '2022-10-28', 23), -- pianomusiikin historia, 24ppl, 01:00, 30m2, teorialuokka
+    (4030, 10002, 1, '2022-10-28', 24), -- Syventävä ensemblelaulu, 4ppl, 00:45/01:45, 10m2, musiikkiluokka
+    (4031, 10002, 1, '2022-10-28', 25), -- Laulu, pääinstrumentti, 1ppl, 01:00/10:00, 5m2, musiikkiluokka
+    (4009, 10002, 1, '2022-10-28', 26), -- kanteleensoitto, 1ppl, 01:00/04:00, 10m2, musiikkiluokka
+    (4032, 10002, 1, '2022-10-28', 27), -- the jazz line, 14ppl, 02:00, 20m2, musiikkiluokka
+    (4033, 10002, 1, '2022-10-28', 28), -- Jazzensemble, 5ppl, 02:00, 20m2, musiikkiluokka
+    (4034, 10002, 1, '2022-10-28', 29), -- Äänenkäyttö ja huolto / korrepetitiokoulutus, 
+    (4035, 10002, 1, '2022-10-28', 30), -- Prima vista / korrepetitiokoulutus
+    (4036, 10002, 1, '2022-10-28', 31), -- Musiikinhistorian lukupiiri
+    (4037, 10002, 1, '2022-10-28', 32), -- Tohtoriseminaari (sävellys)
+    (4038, 10002, 1, '2022-10-28', 33), -- Musiikkiteknologian perusteet
+    (4039, 10002, 1, '2022-10-28', 34), -- Johtamisen pedagogiikka -luentosarja
 
-    (4001, 10003, 0, '2022-09-21', 1),
+    (4001, 10003, 0, '2022-09-21', 1),  
     (4002, 10003, 0, '2022-09-21', 2),
     (4003, 10003, 0, '2022-09-21', 3),
     (4004, 10003, 0, '2022-09-21', 4),
@@ -245,14 +293,42 @@ INSERT INTO AllocSubject(subjectId, allocRound, isAllocated, allocatedDate, prio
     (4006, 10003, 0, '2022-09-21', 6),
     (4007, 10003, 0, '2022-09-21', 7);
 
-INSERT INTO AllocSpace(allocSubjectId, allocRound, spaceId, totalTime) VALUES
-    (4011, 10002, 1020, '04:30:00'),
-    (4014, 10002, 1015, '08:10:00'),
-    (4014, 10002, 1009, '08:10:00'),
-    (4019, 10002, 1004, '04:00:00'),
-    (4013, 10002, 1013, '05:00:00'),
-    (4001, 10002, 1010, '06:00:00');
+INSERT INTO AllocSpace(subjectId, allocRound, spaceId, totalTime) VALUES
+    (4011, 10002, 1020, '04:30:00'), -- Urkujensoitto 1ppl/ N419 urkuluokka, 34m2, 5ppl
+    (4003, 10002, 1009, '05:00:00'), -- Pianon yksilöopetus 1ppl/ musiikkiluokka 16.6m2, 6ppl
+    (4005, 10002, 1020, '10:00:00'), -- Kirkkomusiikin ryhmäsoitto 5ppl/ N419 Kirkkomusiikki, 34m2, 5ppl
+    (4024, 10002, 1016, '10:00:00'), -- Global Orchestra 12ppl/ musiikkiluokka 53m2, 17ppl
+    (4004, 10002, 1016, '04:30:00'), -- Trumpetin ryhmäsoitto 10ppl/ R531 Musiikkiluokka, 33m2, 8ppl
+    (4014, 10002, 1009, '16:20:00'), -- Fortepianonsoitto 1ppl/ R312 Musiikkiluokka, 16.6m2, 6ppl
+    (4019, 10002, 1018, '04:00:00'), -- Jazz rummut 1ppl/ S6114 Perkussioluokka, 33.3m2, 4ppl
+    (4013, 10002, 1009, '05:00:00'), -- Huilujensoitto taso A 1ppl/ R312 Musiikkiluokka, 16.6m2, 6ppl
+    (4002, 10002, 1016, '05:00:00'), -- Jazz improvisoinnin perusteet 17ppl/ R531 Musiikkiluokka, 53m2, 17ppl
+    (4016, 10002, 1009, '12:00:00'), -- Viulunsoitto taso D 1ppl/ R312 Musiikkiluokka, 16.6m2, 6ppl
+    (4017, 10002, 1009, '05:00:00'), -- Tuubansoitto taso C 1ppl/ R312 Musiikkiluokka, 16.6m2, 6ppl
+    (4008, 10002, 1009, '06:00:00'), -- Kontrabassonsoitto taso A 1ppl/ R313 Musiikkiluokka, 16.6m2, 6ppl
+    (4007, 10002, 1016, '03:00:00'), -- Kitaran soiton perusteet 11ppl/ R422 Opetusluokka (Kitara), 23m2, 11ppl
+    (4023, 10002, 1010, '03:00:00'), -- Harpun orkesterikirjallisuus 15ppl/ R530 Luentoluokka, 50m2, 18ppl
+    (4020, 10002, 1010, '02:00:00'), -- Kansanmusiikinteoria 1 20ppl/ R530 Luentoluokka, 50m2, 18ppl
+    (4027, 10002, 1010, '02:30:00'), -- Body Mapping 20ppl/ R530 Luentoluokka, 50m2, 18ppl
+    (4028, 10002, 1010, '02:30:00'), -- Musiikin terveys 20ppl/ R530 Luentoluokka, 50m2, 18ppl
+    (4021, 10002, 1010, '03:00:00'), -- Kirkkomusiikin käytännöt 20ppl/ R530 Luentoluokka, 50m2, 18ppl
+    (4022, 10002, 1010, '02:00:00'), -- Nuottikirjoitus 15ppl/ R530 Luentoluokka, 50m2, 18ppl
+    (4001, 10002, 1010, '06:00:00'), -- Saksan kielen perusteet 10ppl/ R530 Luentoluokka, 50m2, 18ppl
+    (4006, 10002, 1010, '03:30:00'), -- Ruotsin kielen oppitunti 40ppl/ R530 Luentoluokka, 50m2, 18ppl
 
+    (4018, 10002, 1009, '02:00:00'), -- harmonikansoitto / R312 Musiikkiluokka, 16.6m2, 6ppl
+    (4029, 10002, 1010, '01:00:00'), -- pianonmusiikin historia / R512 Luentoluokka, 81m2, 30ppl
+    (4030, 10002, 1016, '02:25:00'), -- syventävä ensemblelaulu / N522 säestysluokka, 33m2, 8ppl
+    (4031, 10002, 1016, '10:00:00'), -- laulu pääinstrumentti / N517 Musiikkiluokka, 15.5m2, 3ppl
+    (4009, 10002, 1016, '04:00:00'), -- kanteleensoitto / N517 Musiikkiluokka, 15.5m2, 3ppl
+    (4032, 10002, 1010, '02:00:00'), -- jazz line / Studio Erkki, 36m2, 15ppl
+    (4033, 10002, 1018, '02:00:00'), -- jazz endemble / N319 Jazz/Lyömä/piano/yhtyeet, 34m2, 5ppl
+    (4034, 10002, 1016, '03:00:00'), -- Äänenkäyttö ja huolto / korrepetitiokoulutus 4ppl, N522 Säestysluokka, 33m2, 8m2 
+    (4035, 10002, 1018, '06:00:00'), -- Prima vista / korrepetitiokoulutus 2ppl, N319 piano, 34m2, 5ppl 
+    (4036, 10002, 1010, '01:00:00'), -- Musiikinhistorian lukupiiri 10ppl / R530 Opetusluokka, 50m2, 18ppl
+    (4037, 10002, 1010, '02:00:00'), -- Tohtoriseminaari (sävellys) 17ppl / R530 Opetusluokka, 59m2, 18ppl
+    (4038, 10002, 1010, '01:00:00'), -- Musiikkiteknologian perusteet 10ppl
+    (4039, 10002, 1010, '02:00:00'); -- Johtamisen pedagogiikka -luentosarja 15ppl
 
 /* --- Insert: AllocCurrentRoundUser * --- */
 INSERT INTO AllocCurrentRoundUser(allocId, userId) VALUES
