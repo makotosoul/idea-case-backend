@@ -180,8 +180,8 @@ INSERT INTO Subject(name, groupSize, groupCount, sessionLength, sessionCount, ar
     ('Piano yksilöopetus', 1, 1, '02:30:00', 2, 10, 3001, 5004),
     ('Trumpetin ryhmäsoitto', 10, 1,'01:30:00', 3, 40, 3025, 5004),
     ('Kirkkomusiikin ryhmäsoittoa', 5, 2, '02:30:00', 2, 30, 3014, 5004),
-    ('Ruotsin kielen oppitunti', 25, 2, '01:45:00', 1, 35, 3030, 5002),
-    ('Kitaran soiton perusteet', 11, 1, '01:30:00', 2, 60, 3003, 5004),
+    ('Ruotsin kielen oppitunti', 18, 2, '01:45:00', 1, 25, 3030, 5002),
+    ('Kitaran soiton perusteet', 11, 1, '01:30:00', 2, 25, 3003, 5004),
     ('Kontrabassonsoitto, taso A', 1, 3, '01:00:00', 2, 10, 3012, 5004),
     ('Kanteleensoitto (musiikin kandidaatti)', 1, 4, '01:00:00', 1, 10, 3004, 5004),
     ('Yhteissoitto / kantele', 16, 1, '01:30:00', 1, 20, 3004, 5004),
@@ -203,7 +203,7 @@ INSERT INTO Subject(name, groupSize, groupCount, sessionLength, sessionCount, ar
     ('Oppimaan oppiminen', 15, 2, '02:30:00', 1, 25, 3030, 5002),
     ('Body Mapping', 25, 2, '02:30:00', 2, 35, 3030, 5002),
     ('Muusikon Terveys', 20, 1, '02:30:00', 1, 30, 3030, 5002),
-    ('Pianomusiikin historia', 24, 1, '01:00:00', 1, 30, 3001, 5002),
+    ('Pianomusiikin historia', 18, 1, '01:00:00', 1, 30, 3001, 5002),
     ('Syventävä ensemblelaulu', 4, 3, '00:45:00', 1, 10, 3002, 5004),
     ('Laulu, pääinstrumentti', 1, 10, '01:00:00', 1, 5, 3002, 5004),
     ('The jazz line - melodisen jazzimprovisoinnin syventävät opinnot', 14, 1, '02:00:00', 1, 20, 3005, 5002),
@@ -300,13 +300,13 @@ INSERT INTO AllocSpace(subjectId, allocRound, spaceId, totalTime) VALUES
     (4024, 10002, 1016, '10:00:00'), -- Global Orchestra 12ppl/ musiikkiluokka 53m2, 17ppl
     (4004, 10002, 1016, '04:30:00'), -- Trumpetin ryhmäsoitto 10ppl/ R531 Musiikkiluokka, 33m2, 8ppl
     (4014, 10002, 1009, '16:20:00'), -- Fortepianonsoitto 1ppl/ R312 Musiikkiluokka, 16.6m2, 6ppl
-    (4019, 10002, 1004, '04:00:00'), -- Jazz rummut 1ppl/ S6114 Perkussioluokka, 33.3m2, 4ppl
+    (4019, 10002, 1018, '04:00:00'), -- Jazz rummut 1ppl/ S6114 Perkussioluokka, 33.3m2, 4ppl
     (4013, 10002, 1009, '05:00:00'), -- Huilujensoitto taso A 1ppl/ R312 Musiikkiluokka, 16.6m2, 6ppl
     (4002, 10002, 1016, '05:00:00'), -- Jazz improvisoinnin perusteet 17ppl/ R531 Musiikkiluokka, 53m2, 17ppl
     (4016, 10002, 1009, '12:00:00'), -- Viulunsoitto taso D 1ppl/ R312 Musiikkiluokka, 16.6m2, 6ppl
     (4017, 10002, 1009, '05:00:00'), -- Tuubansoitto taso C 1ppl/ R312 Musiikkiluokka, 16.6m2, 6ppl
     (4008, 10002, 1009, '06:00:00'), -- Kontrabassonsoitto taso A 1ppl/ R313 Musiikkiluokka, 16.6m2, 6ppl
-    (4007, 10002, 1014, '03:00:00'), -- Kitaran soiton perusteet 11ppl/ R422 Opetusluokka (Kitara), 23m2, 11ppl
+    (4007, 10002, 1016, '03:00:00'), -- Kitaran soiton perusteet 11ppl/ R422 Opetusluokka (Kitara), 23m2, 11ppl
     (4023, 10002, 1010, '03:00:00'), -- Harpun orkesterikirjallisuus 15ppl/ R530 Luentoluokka, 50m2, 18ppl
     (4020, 10002, 1010, '02:00:00'), -- Kansanmusiikinteoria 1 20ppl/ R530 Luentoluokka, 50m2, 18ppl
     (4027, 10002, 1010, '02:30:00'), -- Body Mapping 20ppl/ R530 Luentoluokka, 50m2, 18ppl
@@ -314,16 +314,16 @@ INSERT INTO AllocSpace(subjectId, allocRound, spaceId, totalTime) VALUES
     (4021, 10002, 1010, '03:00:00'), -- Kirkkomusiikin käytännöt 20ppl/ R530 Luentoluokka, 50m2, 18ppl
     (4022, 10002, 1010, '02:00:00'), -- Nuottikirjoitus 15ppl/ R530 Luentoluokka, 50m2, 18ppl
     (4001, 10002, 1010, '06:00:00'), -- Saksan kielen perusteet 10ppl/ R530 Luentoluokka, 50m2, 18ppl
-    (4006, 10002, 1012, '03:30:00'), -- Ruotsin kielen oppitunti 40ppl/ R530 Luentoluokka, 50m2, 18ppl
+    (4006, 10002, 1010, '03:30:00'), -- Ruotsin kielen oppitunti 40ppl/ R530 Luentoluokka, 50m2, 18ppl
 
     (4018, 10002, 1009, '02:00:00'), -- harmonikansoitto / R312 Musiikkiluokka, 16.6m2, 6ppl
-    (4029, 10002, 1012, '01:00:00'), -- pianonmusiikin historia / R512 Luentoluokka, 81m2, 30ppl
-    (4030, 10002, 1017, '02:25:00'), -- syventävä ensemblelaulu / N522 säestysluokka, 33m2, 8ppl
-    (4031, 10002, 1021, '10:00:00'), -- laulu pääinstrumentti / N517 Musiikkiluokka, 15.5m2, 3ppl
-    (4009, 10002, 1021, '04:00:00'), -- kanteleensoitto / N517 Musiikkiluokka, 15.5m2, 3ppl
-    (4032, 10002, 1005, '02:00:00'), -- jazz line / Studio Erkki, 36m2, 15ppl
+    (4029, 10002, 1010, '01:00:00'), -- pianonmusiikin historia / R512 Luentoluokka, 81m2, 30ppl
+    (4030, 10002, 1016, '02:25:00'), -- syventävä ensemblelaulu / N522 säestysluokka, 33m2, 8ppl
+    (4031, 10002, 1016, '10:00:00'), -- laulu pääinstrumentti / N517 Musiikkiluokka, 15.5m2, 3ppl
+    (4009, 10002, 1016, '04:00:00'), -- kanteleensoitto / N517 Musiikkiluokka, 15.5m2, 3ppl
+    (4032, 10002, 1010, '02:00:00'), -- jazz line / Studio Erkki, 36m2, 15ppl
     (4033, 10002, 1018, '02:00:00'), -- jazz endemble / N319 Jazz/Lyömä/piano/yhtyeet, 34m2, 5ppl
-    (4034, 10002, 1017, '03:00:00'), -- Äänenkäyttö ja huolto / korrepetitiokoulutus 4ppl, N522 Säestysluokka, 33m2, 8m2 
+    (4034, 10002, 1016, '03:00:00'), -- Äänenkäyttö ja huolto / korrepetitiokoulutus 4ppl, N522 Säestysluokka, 33m2, 8m2 
     (4035, 10002, 1018, '06:00:00'), -- Prima vista / korrepetitiokoulutus 2ppl, N319 piano, 34m2, 5ppl 
     (4036, 10002, 1010, '01:00:00'), -- Musiikinhistorian lukupiiri 10ppl / R530 Opetusluokka, 50m2, 18ppl
     (4037, 10002, 1010, '02:00:00'), -- Tohtoriseminaari (sävellys) 17ppl / R530 Opetusluokka, 59m2, 18ppl
