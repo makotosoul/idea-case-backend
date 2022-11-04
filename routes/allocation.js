@@ -83,4 +83,24 @@ allocation.get("/:id/program/all/rooms", async (req, res) => {
     });
 });
 
+allocation.post("/start", (req, res) => {
+  const allocRound = req.body.allocRound;
+  allocationService
+    .getPriorityOrder(allocRound)
+    .then(async (data) => {
+      for ([index, subject] of await data.entries()) {
+        allocationService.updateAllocSubjectPriority(
+          subject.subjectId,
+          subject.allocRound,
+          index + 1,
+        );
+      }
+      console.log("done");
+      res.status(200);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+});
+
 module.exports = allocation;

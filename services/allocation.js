@@ -51,7 +51,7 @@ const getRoomsByAllocId = (allocId) => {
 /* Get allocated rooms by Program.id and AllocRound.id */
 
 const getAllocatedRoomsByProgram = async (programId, allocId) => {
-  const sqlQuery = `SELECT DISTINCT s.id, s.name, CAST(SUM(TIME_TO_SEC(as2.totalTime)/3600) AS DECIMAL(10,1)) AS allocatedHours
+  const sqlQuery = `SELECT DISTINCT s.id, s.name, CAST(SUM(TIME_TO_SEC(as2.totalTime)/3600) AS DECIMAL(10,1)) AS allocatedHours 
                         FROM AllocSpace as2
                         LEFT JOIN Space s ON as2.spaceId = s.id
                         LEFT JOIN Subject s2 ON as2.subjectId = s2.id
@@ -70,9 +70,50 @@ const getAllocatedRoomsByProgram = async (programId, allocId) => {
   });
 };
 
+const getPriorityOrder = (allocRound) => {
+  const sqlQuery = `SELECT as2.subjectId, as2.allocRound, MAX(sub_eqp.priority) AS priority 
+                        FROM AllocSubject as2 
+                        LEFT JOIN SubjectEquipment sub_eqp ON as2.subjectId = sub_eqp.subjectId
+                        WHERE as2.allocRound = ? 
+                        GROUP BY as2.subjectId 
+                        ORDER BY sub_eqp.priority DESC 
+                    ;`;
+  return new Promise((resolve, reject) => {
+    db.query(sqlQuery, allocRound, (err, result) => {
+      if (err) {
+        return reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
+const updateAllocSubjectPriority = (subjectId, allocRound, priorityNumber) => {
+  const sqlQuery = `UPDATE AllocSubject
+                        SET priority = ?
+                        WHERE subjectId = ? AND allocRound = ?
+                        ;`;
+  return new Promise((resolve, reject) => {
+    db.query(
+      sqlQuery,
+      [priorityNumber, subjectId, allocRound],
+      (err, result) => {
+        if (err) {
+          return reject(err);
+        } else {
+          resolve(result);
+        }
+      },
+    );
+  });
+};
+
 module.exports = {
   getAll,
   getById,
   getRoomsByAllocId,
   getAllocatedRoomsByProgram,
+  getPriorityOrder,
+  updateAllocSubjectPriority,
 };
