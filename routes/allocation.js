@@ -83,20 +83,27 @@ allocation.get("/:id/program/all/rooms", async (req, res) => {
     });
 });
 
+// Allokointilaskennan aloitus - KESKEN!
 allocation.post("/start", (req, res) => {
   const allocRound = req.body.allocRound;
   allocationService
     .getPriorityOrder(allocRound)
     .then(async (data) => {
+      let subjects = [];
       for ([index, subject] of await data.entries()) {
-        allocationService.updateAllocSubjectPriority(
+        subjects[index] = allocationService.updateAllocSubjectPriority(
           subject.subjectId,
           subject.allocRound,
           index + 1,
         );
       }
-      console.log("done");
-      res.status(200);
+      console.log("priorisointi done");
+      return subjects;
+    })
+    .then((data) => {
+      for (ob of data) {
+        console.log(ob);
+      }
     })
     .catch((err) => {
       console.error(err);
