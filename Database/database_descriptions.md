@@ -31,7 +31,7 @@ Sarake			|	Tyyppi		|	Avaimet		|	Kuvaus
 
  Sarake			|	Tyyppi		|	Avaimet			            	|	Kuvaus
  :-----			|	:----		|	------			            	|	------
- allocSubjectId | INTEGER		| PK, FK(allocSubject.subjectId)	| Opetus
+ subjectId      | INTEGER		| PK, FK(allocSubject.subjectId)	| Opetus
  allocRound     | INTEGER		| PK, FK(allocSubject.allocRound)	| Laskenta esim. Syksy 2022
  spaceId 		| INTEGER		| PK, FK(space.id)	            	| Varattu tila
  totalTime		| TIME			|					            	| Opetusta varten varattu aika tilassa
