@@ -1,6 +1,10 @@
 const express = require("express");
 const allocation = express.Router();
-const { dbErrorHandler, successHandler } = require("../responseHandler/index");
+const {
+  dbErrorHandler,
+  successHandler,
+  validationErrorHandler,
+} = require("../responseHandler/index");
 
 const programService = require("../services/program");
 const allocationService = require("../services/allocation");
@@ -24,9 +28,17 @@ allocation.get("", (req, res) => {
 
 /* Get allocation by id */
 
-allocation.get("/:id", (req, res) => {
-  allocationService
+allocation.get("/:id", async (req, res) => {
+  await allocationService
     .getById(req.params.id)
+    .then(async (data) => {
+      console.log(data[0].id);
+      return (data[0] = {
+        ...data[0],
+        subjects: await allocationService.getAllSubjectsById(data[0].id),
+        rooms: await allocationService.getRoomsByAllocId(data[0].id),
+      });
+    })
     .then((data) => {
       successHandler(res, data, "getById succesful - Allocation");
     })
@@ -85,21 +97,32 @@ allocation.get("/:id/program/all/rooms", async (req, res) => {
 
 allocation.post("/start", (req, res) => {
   const allocRound = req.body.allocRound;
+  if (!allocRound) {
+    return validationErrorHandler(
+      res,
+      "Missing required parameter - allocation start",
+    );
+  }
+
   allocationService
-    .getPriorityOrder(allocRound)
+    .getPriorityOrder(allocRound) // "laskee" prioriteettijärjestyksen
     .then(async (data) => {
-      for ([index, subject] of await data.entries()) {
-        allocationService.updateAllocSubjectPriority(
-          subject.subjectId,
-          subject.allocRound,
-          index + 1,
-        );
-      }
-      console.log("done");
-      res.status(200);
+      // merkitsee prioriteettinumerot allocSubjecteihin
+      await Promise.all(
+        data.map((subject, index) =>
+          allocationService.updateAllocSubjectPriority(
+            subject.subjectId,
+            subject.allocRound,
+            index + 1,
+          ),
+        ),
+      );
+    })
+    .then(() => {
+      res.status(200).send("done");
     })
     .catch((err) => {
-      console.error(err);
+      dbErrorHandler(res, err, "Oops! Allocation failed - Allocation start");
     });
 });
 
