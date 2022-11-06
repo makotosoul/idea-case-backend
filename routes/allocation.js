@@ -95,6 +95,7 @@ allocation.get("/:id/program/all/rooms", async (req, res) => {
     });
 });
 
+// Allokointilaskennan aloitus - KESKEN!
 allocation.post("/start", (req, res) => {
   const allocRound = req.body.allocRound;
   if (!allocRound) {
@@ -120,6 +121,11 @@ allocation.post("/start", (req, res) => {
     })
     .then(() => {
       res.status(200).send("done");
+    })
+    .then((data) => {
+      for (ob of data) {
+        console.log(ob);
+      }
     })
     .catch((err) => {
       dbErrorHandler(res, err, "Oops! Allocation failed - Allocation start");

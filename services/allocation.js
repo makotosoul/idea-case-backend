@@ -100,6 +100,7 @@ const getAllocatedRoomsByProgram = async (programId, allocId) => {
   });
 };
 
+// Priorisoi allocRoundin subjectit - KESKEN!
 const getPriorityOrder = (allocRound) => {
   const sqlQuery = `SELECT as2.subjectId, as2.allocRound, MAX(sub_eqp.priority) AS priority 
                         FROM AllocSubject as2 
@@ -119,6 +120,7 @@ const getPriorityOrder = (allocRound) => {
   });
 };
 
+// Päivittää priorisointinumeron allocSubjetissa - KESKEN!
 const updateAllocSubjectPriority = (subjectId, allocRound, priorityNumber) => {
   const sqlQuery = `UPDATE AllocSubject
                         SET priority = ?
@@ -136,6 +138,27 @@ const updateAllocSubjectPriority = (subjectId, allocRound, priorityNumber) => {
         }
       },
     );
+  });
+};
+
+// Etsii subjectille huoneet allokointia varten - KESKEN!
+const findRoomsForSubject = (subjectId) => {
+  const sqlQuery = `SELECT sp.id, sp.personLimit, sp.area, findArea
+                        FROM Space sp
+                        WHERE sp.personLimit >= (SELECT groupSize FROM Subject WHERE id=?)
+                        AND sp.area >= (SELECT s.area FROM Subject s WHERE id=?)
+                        AND sp.spaceTypeId = (SELECT s.spaceTypeId FROM Subject s WHERE id=?)
+                        AND sp.inUse=1
+                        ORDER BY sp.area ASC, sp.personLimit ASC 
+                        ;`;
+  return new Promise((resolve, reject) => {
+    db.query(sqlQuery, [subjectId, subjectId, subjectId], (err, result) => {
+      if (err) {
+        return reject(err);
+      } else {
+        resolve(result);
+      }
+    });
   });
 };
 
