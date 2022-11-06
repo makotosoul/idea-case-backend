@@ -32,12 +32,34 @@ allocation.get("/:id", async (req, res) => {
   await allocationService
     .getById(req.params.id)
     .then(async (data) => {
-      console.log(data[0].id);
       return (data[0] = {
         ...data[0],
         subjects: await allocationService.getAllSubjectsById(data[0].id),
         rooms: await allocationService.getRoomsByAllocId(data[0].id),
       });
+    })
+    .then(async (data) => {
+      await Promise.all(
+        data.subjects.map(async (subject, index) => {
+          data.subjects[index] = {
+            ...subject,
+            rooms: await allocationService.getRoomsBySubjectAndAllocRound(
+              subject.id,
+              data.id,
+            ),
+          };
+        }),
+        data.rooms.map(async (room, index) => {
+          data.rooms[index] = {
+            ...room,
+            subjects: await allocationService.getSubjectsByAllocRoundAndSpaceId(
+              data.id,
+              room.id,
+            ),
+          };
+        }),
+      );
+      return data;
     })
     .then((data) => {
       successHandler(res, data, "getById succesful - Allocation");

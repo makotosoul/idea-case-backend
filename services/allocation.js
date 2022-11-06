@@ -5,7 +5,6 @@ const db = require("../db/index");
 const getAll = () => {
   const sqlQuery =
     "SELECT id, name, isSeasonAlloc, description, lastmodified FROM AllocRound ar;";
-
   return new Promise((resolve, reject) => {
     db.query(sqlQuery, (err, result) => {
       if (err) return reject(err);
@@ -57,6 +56,47 @@ const getAllSubjectsById = (id) => {
   });
 };
 
+/* Get all subjects in space */
+
+const getSubjectsByAllocRoundAndSpaceId = (allocRound, spaceId) => {
+  const sqlQuery = `
+    SELECT 
+    	s.id, 
+    	s.name, 
+    	CAST((TIME_TO_SEC(al_sp.totalTime) / 3600) AS DECIMAL(10,1)) AS "allocatedHours"
+    FROM AllocSpace al_sp
+    INNER JOIN Subject s ON al_sp.subjectId = s.id 
+    WHERE al_sp.allocRound = ? AND al_sp.spaceId = ?;`;
+  return new Promise((resolve, reject) => {
+    db.query(sqlQuery, [allocRound, spaceId], (err, result) => {
+      if (err) {
+        return reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
+/* Get rooms by Subject and AllocRound*/
+
+const getRoomsBySubjectAndAllocRound = (subjectId, allocRound) => {
+  const sqlQuery = `
+    SELECT s.id, s.name, CAST(TIME_TO_SEC(as2.totalTime)/3600 AS DECIMAL(10,1)) AS "allocatedHours"
+    FROM Space s
+    INNER JOIN AllocSpace as2 ON s.id = as2.spaceId
+    WHERE as2.subjectId = ? AND as2.allocRound = ?;`;
+  return new Promise((resolve, reject) => {
+    db.query(sqlQuery, [subjectId, allocRound], (err, result) => {
+      if (err) {
+        return reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
 /* Get allocated rooms with time */
 
 const getRoomsByAllocId = (allocRoundId) => {
@@ -65,10 +105,10 @@ const getRoomsByAllocId = (allocRoundId) => {
         name, 
         CAST(SUM(TIME_TO_SEC(AllocSpace.totalTime))/3600 AS DECIMAL(10,1)) AS 'allocatedHours', 
         HOUR(TIMEDIFF(Space.availableTO, Space.availableFrom))*5 AS 'requiredHours' 
-        FROM Space 
-        LEFT JOIN AllocSpace ON Space.id = AllocSpace.spaceId 
-        WHERE AllocSpace.allocRound = ? 
-        GROUP BY id
+    FROM Space 
+    LEFT JOIN AllocSpace ON Space.id = AllocSpace.spaceId 
+    WHERE AllocSpace.allocRound = ? 
+    GROUP BY id
     ;`;
   return new Promise((resolve, reject) => {
     db.query(sqlQuery, allocRoundId, (err, result) => {
@@ -82,12 +122,12 @@ const getRoomsByAllocId = (allocRoundId) => {
 
 const getAllocatedRoomsByProgram = async (programId, allocId) => {
   const sqlQuery = `SELECT DISTINCT s.id, s.name, CAST(SUM(TIME_TO_SEC(as2.totalTime)/3600) AS DECIMAL(10,1)) AS allocatedHours 
-                        FROM AllocSpace as2
-                        LEFT JOIN Space s ON as2.spaceId = s.id
-                        LEFT JOIN Subject s2 ON as2.subjectId = s2.id
-                        LEFT JOIN Program p ON s2.programId = p.id 
-                        WHERE p.id = ? AND as2.allocRound = ?
-                        GROUP BY s.id
+                    FROM AllocSpace as2
+                    LEFT JOIN Space s ON as2.spaceId = s.id
+                    LEFT JOIN Subject s2 ON as2.subjectId = s2.id
+                    LEFT JOIN Program p ON s2.programId = p.id 
+                    WHERE p.id = ? AND as2.allocRound = ?
+                    GROUP BY s.id
                     ;`;
   return new Promise((resolve, reject) => {
     db.query(sqlQuery, [programId, allocId], (err, result) => {
@@ -166,6 +206,8 @@ module.exports = {
   getAll,
   getById,
   getAllSubjectsById,
+  getSubjectsByAllocRoundAndSpaceId,
+  getRoomsBySubjectAndAllocRound,
   getRoomsByAllocId,
   getAllocatedRoomsByProgram,
   getPriorityOrder,
