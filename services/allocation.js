@@ -56,7 +56,7 @@ const getAllSubjectsById = (id) => {
   });
 };
 
-/* Get all subjects in space */
+/* Get all subjects in space by allocRoundId and SpaceId*/
 
 const getSubjectsByAllocRoundAndSpaceId = (allocRound, spaceId) => {
   const sqlQuery = `
@@ -78,7 +78,7 @@ const getSubjectsByAllocRoundAndSpaceId = (allocRound, spaceId) => {
   });
 };
 
-/* Get rooms by Subject and AllocRound*/
+/* Get rooms by Subject and AllocRound */
 
 const getRoomsBySubjectAndAllocRound = (subjectId, allocRound) => {
   const sqlQuery = `
@@ -97,7 +97,7 @@ const getRoomsBySubjectAndAllocRound = (subjectId, allocRound) => {
   });
 };
 
-/* Get allocated rooms with time */
+/* Get allocated rooms with allocatedHours */
 
 const getRoomsByAllocId = (allocRoundId) => {
   const sqlQuery = `SELECT 
@@ -131,6 +131,31 @@ const getAllocatedRoomsByProgram = async (programId, allocId) => {
                     ;`;
   return new Promise((resolve, reject) => {
     db.query(sqlQuery, [programId, allocId], (err, result) => {
+      if (err) {
+        return reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
+/* Get subjects by Program.id and AllocRound.id */
+
+const getSubjectsByProgram = (allocRound, programId) => {
+  const sqlQuery = `
+    SELECT 
+    	s.id, 
+    	s.name, 
+    	CAST(SUM(TIME_TO_SEC(as2.totalTime) / 3600) AS DECIMAL(10,1)) AS "allocatedHours",
+        CAST((s.groupCount * TIME_TO_SEC(s.sessionLength) * s.sessionCount / 3600) AS DECIMAL(10,1)) as "requiredHours"
+        FROM Subject s
+    JOIN Program p ON s.programId = p.id
+    JOIN AllocSpace as2 ON s.id = as2.subjectId
+    WHERE p.id = ? AND as2.allocRound = ?
+    GROUP BY as2.subjectId;`;
+  return new Promise((resolve, reject) => {
+    db.query(sqlQuery, [programId, allocRound], (err, result) => {
       if (err) {
         return reject(err);
       } else {
@@ -209,6 +234,7 @@ module.exports = {
   getSubjectsByAllocRoundAndSpaceId,
   getRoomsBySubjectAndAllocRound,
   getRoomsByAllocId,
+  getSubjectsByProgram,
   getAllocatedRoomsByProgram,
   getPriorityOrder,
   updateAllocSubjectPriority,
