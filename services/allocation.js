@@ -44,7 +44,8 @@ const getAllSubjectsById = (id) => {
     INNER JOIN AllocSubject as2 ON s.id = as2.subjectId
     LEFT JOIN AllocSpace al_sp ON s.id = al_sp.subjectId
     WHERE as2.allocRound = ?
-    GROUP BY s.id;`;
+    GROUP BY s.id
+    ORDER BY as2.priority ASC;`;
   return new Promise((resolve, reject) => {
     db.query(sqlQuery, [allocRound, allocRound], (err, result) => {
       if (err) {
