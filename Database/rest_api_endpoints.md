@@ -1,6 +1,6 @@
 # Rest-api endpoints
 
-# <details><summary>Allokointi</summary>
+<details><summary>Allocation (allokointi)</summary>
 
 | Kaikki allokoinnit  |   |
 |---|---|
@@ -52,5 +52,49 @@ Sisältö     | -
 
 </details>
 
+<details><summary>Program (pääaineet)</summary>
 
+|Pääaineiden nimet |   |
+|---|---|
+Endpoint    | /api/program/getNames
+Metodi      | GET
+Parametrit  | -
+Palauttaa   | Kaikki pääaineet
+Sisältö     | program.id, program.name
 
+</details>
+
+<details><summary>Subject (Opinnot)</summary>
+
+| Kaikki opinnot |   |
+|---|---|
+Endpoint    | /api/subject/getAll
+Metodi      | GET
+Parametrit  | -
+Palauttaa   | Kaikki opinnot
+Sisältö     | id, name, groupSize, groupCount, sessionLength, sessionCount, area, program.id, program.name
+
+| Opetuksen lisäys |   |
+|---|---|
+Endpoint    | /api/subject/post
+Metodi      | POST
+Parametrit  | name, groupSize, groupCount, sessionLength, sessionCount, area, programId
+Palauttaa   | Lisää uuden opinnon
+Sisältö     | -
+
+| Opetuksen poisto |   |
+|---|---|
+Endpoint    | /api/subject/delete/:id
+Metodi      | DELETE
+Parametrit  | subject.id
+Palauttaa   | Poistaa opinnon
+Sisältö     | -
+
+| Opetuksen muokkaus |   |
+|---|---|
+Endpoint    | /api/subject/update
+Metodi      | PUT
+Parametrit  | id, name, groupSize, groupCount, sessionLength, sessionCount, area, programId
+Palauttaa   | Päivittää opinnon
+Sisältö     | -
+</details>
