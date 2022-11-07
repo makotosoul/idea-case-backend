@@ -13,7 +13,7 @@ AND al.allocRound IS NULL
 ORDER BY SubjectEquipment.priority DESC;
 
 /* Subject Type equals to single practice */ 
-
+/* DO NO USE !!! */ 
 SELECT Subject.id, Subject.name, SubjectEquipment.priority, Subject.subjectTypeId 
 FROM Subject JOIN SubjectEquipment ON Subject.id=SubjectEquipment.subjectId
 LEFT JOIN AllocSubject as al ON Subject.id=al.subjectId 
@@ -22,7 +22,7 @@ AND al.allocRound IS NULL
 ORDER BY SubjectEquipment.priority DESC;
 
 /* Subject type equals to group practice */
-
+/* DO NO USE !!! */ 
 SELECT Subject.id, Subject.name, SubjectEquipment.priority , Subject.subjectTypeId
 FROM Subject 
 JOIN SubjectEquipment ON Subject.id=SubjectEquipment.subjectId
@@ -32,6 +32,7 @@ AND al.allocRound IS NULL
 ORDER BY SubjectEquipment.priority DESC;
 
 /* Subject type equals to theory with subjectEquipment priorities */
+/* DO NO USE !!! */ 
 SELECT Subject.id, Subject.name, Subject.subjectTypeId
 FROM Subject 
 JOIN SubjectEquipment ON Subject.id=SubjectEquipment.subjectId
@@ -41,6 +42,7 @@ AND al.allocRound IS NULL
 ORDER BY SubjectEquipment.priority DESC;
 
 /* Theory subject without requirements */ 
+/* DO NO USE !!! */ 
 SELECT Subject.id, Subject.name FROM Subject 
 LEFT JOIN SubjectEquipment ON Subject.id=SubjectEquipment.subjectId
 LEFT JOIN AllocSubject as al ON Subject.id=al.subjectId 
@@ -55,23 +57,23 @@ AND Subject.subjectTypeId=801;
 SELECT * FROM Space
 WHERE inUse=1;
 
-/* People_capasity >= groupSize. DON'T USE THIS!!! */ 
-SELECT id, people_capasity, area 
+/* personLimit >= groupSize. DON'T USE THIS!!! */ 
+SELECT id, personLimit, area 
 FROM Space 
-WHERE people_capasity >= (SELECT groupSize FROM Subject WHERE id=4002)
+WHERE personLimit >= (SELECT groupSize FROM Subject WHERE id=4002)
 AND inUse=1;
 
 /* Enuff roomspace. DON'T USE THIS!!! */
-SELECT id, people_capasity, area 
+SELECT id, personLimit, area 
 FROM Space 
 WHERE area >= (SELECT area FROM Subject WHERE id=4003)
 AND inUse=1;
 
 /* Last 2 combined */
-/* People_capasity >= groupSize & area >= area */ 
-SELECT id, people_capasity, area 
+/* personLimit >= groupSize & area >= area */ 
+SELECT id, personLimit, area 
 FROM Space 
-WHERE people_capasity >= (SELECT groupSize FROM Subject WHERE id=4002)
+WHERE personLimit >= (SELECT groupSize FROM Subject WHERE id=4002)
 AND area >= (SELECT area FROM Subject WHERE id=4002)
 AND inUse=1;
 
