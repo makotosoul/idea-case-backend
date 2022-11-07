@@ -28,7 +28,7 @@ let validateAddUpdateSubject = [
   check("sessionLength")
     // .matches(/^(?:\d|[01]\d|2[0-3]):[0-5]\d$/)
     .matches(/^([0-1][0-9]|[2][0-3]):([0-5][0-9]):([0-5][0-9])$/)
-    .withMessage("Accepted format: 00:00")
+    .withMessage("Accepted format: 00:00:00")
     .bail()
     .notEmpty()
     .withMessage("Cannot be empty")
@@ -42,5 +42,6 @@ let validateAddUpdateSubject = [
     .withMessage("Cannot be empty")
     .bail(),
   check("programId").notEmpty().withMessage("Cannot be empty").bail(),
+  check("spaceTypeId").notEmpty().withMessage("Cannot be empty").bail(),
 ];
 module.exports = { validateAddUpdateSubject };
