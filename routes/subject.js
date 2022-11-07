@@ -15,7 +15,8 @@ const { validateAddUpdateSubject } = require("../validationHandler/index");
 // Aineen kaikki tiedot sekä pääaineen id ja nimi
 subject.get("/getAll", (req, res) => {
   const sqlSelectSubjectProgram =
-    "SELECT subject.id, subject.name AS subjectName, subject.groupSize, subject.groupCount, subject.sessionLength, subject.sessionCount, subject.area, subject.programId, program.name FROM Subject  JOIN Program ON subject.programId = program.id";
+    // "SELECT subject.id, subject.name AS subjectName, subject.groupSize, subject.groupCount, subject.sessionLength, subject.sessionCount, subject.area, subject.programId, program.name FROM Subject  JOIN Program ON subject.programId = program.id";
+    " SELECT s.id, s.name AS subjectName, s.groupSize, s.groupCount, s.sessionLength, s.sessionCount, s.area, s.programId, p.name AS programName, s.spaceTypeId, st.name AS spaceTypeName  FROM Subject s  JOIN Program p ON s.programId = p.id  JOIN spacetype st ON s.spaceTypeId = st.id ";
   db.query(sqlSelectSubjectProgram, (err, result) => {
     if (err) {
       dbErrorHandler(res, err, "Oops! Nothing came through - Subject");
@@ -41,11 +42,21 @@ subject.post("/post", validateAddUpdateSubject, (req, res) => {
   const sessionCount = req.body.sessionCount;
   const area = req.body.area;
   const programId = req.body.programId;
+  const spaceTypeId = req.body.spaceTypeId;
   const sqlInsert =
-    "INSERT INTO Subject (name, groupSize, groupCount, sessionLength, sessionCount, area, programId) VALUES (?,?,?,?,?,?,?)";
+    "INSERT INTO Subject (name, groupSize, groupCount, sessionLength, sessionCount, area, programId, spaceTypeId) VALUES (?,?,?,?,?,?,?,?)";
   db.query(
     sqlInsert,
-    [name, groupSize, groupCount, sessionLength, sessionCount, area, programId],
+    [
+      name,
+      groupSize,
+      groupCount,
+      sessionLength,
+      sessionCount,
+      area,
+      programId,
+      spaceTypeId,
+    ],
     (err, result) => {
       if (!result) {
         requestErrorHandler(res, err, "Nothing to insert");
@@ -58,7 +69,7 @@ subject.post("/post", validateAddUpdateSubject, (req, res) => {
           { insertId: result.insertId },
           "Create successful - Subject",
         );
-        logger.info("Subject created");
+        logger.info(`Subject ${req.body.name} created`);
       }
     },
   );
@@ -67,7 +78,7 @@ subject.post("/post", validateAddUpdateSubject, (req, res) => {
 // Opetuksen poisto
 subject.delete("/delete/:id", (req, res) => {
   const id = req.params.id;
-  console.log("id", id);
+  // console.log("id", id);
   const sqlDelete = "DELETE FROM Subject WHERE id = ?;";
   db.query(sqlDelete, id, (err, result) => {
     if (err) {
@@ -97,8 +108,9 @@ subject.put("/update", validateAddUpdateSubject, (req, res) => {
   const sessionCount = req.body.sessionCount;
   const area = req.body.area;
   const programId = req.body.programId;
+  const spaceTypeId = req.body.spaceTypeId;
   const sqlUpdate =
-    "UPDATE Subject SET name = ?, groupSize = ?, groupCount = ?, sessionLength = ?, sessionCount = ?, area = ?,  programId = ? WHERE id = ?";
+    "UPDATE Subject SET name = ?, groupSize = ?, groupCount = ?, sessionLength = ?, sessionCount = ?, area = ?,  programId = ?, spaceTypeId = ? WHERE id = ?";
   db.query(
     sqlUpdate,
     [
@@ -109,6 +121,7 @@ subject.put("/update", validateAddUpdateSubject, (req, res) => {
       sessionCount,
       area,
       programId,
+      spaceTypeId,
       id,
     ],
 
@@ -119,7 +132,7 @@ subject.put("/update", validateAddUpdateSubject, (req, res) => {
         dbErrorHandler(res, err, "Oops! Update failed - Subject");
       } else {
         successHandler(res, result, "Update successful - Subject");
-        logger.info("Subject updated");
+        logger.info(`Subject ${req.body.name} updated`);
       }
     },
   );
