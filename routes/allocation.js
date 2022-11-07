@@ -93,7 +93,7 @@ allocation.get("/:id/rooms", (req, res) => {
 
 /* Get all allocated rooms in programs by allocationId and program */
 
-allocation.get("/:id/program/rooms", async (req, res) => {
+allocation.get("/:id/program/", async (req, res) => {
   const id = req.params.id;
   programService
     .getAll()
@@ -122,7 +122,7 @@ allocation.get("/:id/program/rooms", async (req, res) => {
 });
 
 /* Get all allocated rooms by ProgramId, allocRound */
-allocation.get("/:id/program/:programId/rooms", async (req, res) => {
+allocation.get("/:id/program/:programId", async (req, res) => {
   const allocId = req.params.id;
   const programId = req.params.programId;
   programService
