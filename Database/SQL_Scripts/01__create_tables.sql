@@ -238,6 +238,27 @@ CREATE TABLE IF NOT EXISTS AllocSpace (
 
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+CREATE TABLE IF NOT EXISTS AllocSubjectSuitableSpace (
+    allocRound  INTEGER     NOT NULL,
+    subjectId   INTEGER     NOT NULL,
+    spaceId     INTEGER     NOT NULL,
+
+    PRIMARY KEY(allocRound, subjectId, spaceId),
+
+    CONSTRAINT `FK_AllocSubjectSpace_AllocSubject`
+        FOREIGN KEY(`allocRound`, `subjectId`)
+        REFERENCES `AllocSubject` (allocRound, subjectId)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    CONSTRAINT `FK_AllocSubjectSpace_Space`
+        FOREIGN KEY (`spaceId`)
+        REFERENCES `Space` (id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 CREATE TABLE IF NOT EXISTS AllocCurrentRoundUser (
     allocId     INTEGER     NOT NULL,
     userId      INTEGER,

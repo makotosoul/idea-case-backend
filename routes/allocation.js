@@ -200,12 +200,17 @@ allocation.post("/start", (req, res) => {
       );
       return data;
     })
-    .then((data) => {
-      for (ob of data) {
-        console.log(ob);
-      }
-      console.log("");
+    .then(async (data) => {
+      // Etsii opetukselle sopivat tilat
+      console.log(
+        await Promise.all(
+          data.map((ob) => {
+            return allocationService.findRoomsForSubject(ob.subjectId);
+          }),
+        ),
+      );
     })
+
     .then(() => {
       successHandler(
         res,
