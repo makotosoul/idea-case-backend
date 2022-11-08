@@ -42,6 +42,5 @@ let validateAddUpdateSubject = [
     .withMessage("Cannot be empty")
     .bail(),
   check("programId").notEmpty().withMessage("Cannot be empty").bail(),
-  check("spaceTypeId").notEmpty().withMessage("Cannot be empty").bail(),
 ];
 module.exports = { validateAddUpdateSubject };
