@@ -249,6 +249,21 @@ const deleteAllSpacesInAllocRound = (allocRound) => {
   });
 };
 
+/* Delete all spaces in AllocSubjectSuitableSpace with allocRound.id */
+
+const deleteSuitableSpaces = (allocRound) => {
+  const sqlQuery = "DELETE FROM AllocSubjectSuitableSpace WHERE allocRound = ?";
+  return new Promise((resolve, reject) => {
+    db.query(sqlQuery, allocRound, (err, result) => {
+      if (err) {
+        return reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
 /* Reset non-allocated values in allocSubject */
 
 const resetAllocSubject = (allocRound) => {
@@ -278,6 +293,7 @@ module.exports = {
   getPriorityOrder,
   updateAllocSubjectPriority,
   deleteAllSpacesInAllocRound,
+  deleteSuitableSpaces,
   findRoomsForSubject,
   resetAllocSubject,
 };

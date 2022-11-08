@@ -163,6 +163,7 @@ allocation.post("/reset", (req, res) => {
   allocationService
     .deleteAllSpacesInAllocRound(allocRound)
     .then(allocationService.resetAllocSubject(allocRound))
+    .then(allocationService.deleteSuitableSpaces(allocRound))
     .then(() => {
       successHandler(
         res,

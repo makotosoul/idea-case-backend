@@ -82,6 +82,15 @@ Parametrit  | allocRound (id)
 Palauttaa   | Poistaa kaikki allocRoundin tilat allocSpace taulusta
 Sisältö     | -
 
+| Poista opetukselle sopivat tilat |  |
+|---|---|
+Metodi      | deleteSuitableSpaces
+Parametrit  | allocRound (id)
+Palauttaa   | Poistaa kaikki opetukselle sopivat tilat  
+Sisältö     | -
+
+
+
 | Resetoi allocSubject |  |
 |---|---|
 Metodi      | resetAllocSubject
