@@ -228,6 +228,35 @@ const findRoomsForSubject = (subjectId) => {
   });
 };
 
+const deleteAllSpacesInAllocRound = (allocRound) => {
+  const sqlQuery = "DELETE FROM AllocSpace WHERE allocRound = ?;";
+
+  return new Promise((resolve, reject) => {
+    db.query(sqlQuery, allocRound, (err, result) => {
+      if (err) {
+        return reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
+const resetAllocSubject = (allocRound) => {
+  const sqlQuery =
+    "UPDATE AllocSubject SET isAllocated = 0, priority = null, cantAllocate = 0 WHERE allocRound = ?;";
+
+  return new Promise((resolve, reject) => {
+    db.query(sqlQuery, allocRound, (err, result) => {
+      if (err) {
+        return reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
 module.exports = {
   getAll,
   getById,
@@ -239,4 +268,6 @@ module.exports = {
   getAllocatedRoomsByProgram,
   getPriorityOrder,
   updateAllocSubjectPriority,
+  deleteAllSpacesInAllocRound,
+  resetAllocSubject,
 };
