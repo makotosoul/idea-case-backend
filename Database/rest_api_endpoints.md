@@ -50,6 +50,14 @@ Parametrit  | AllocRound.id
 Palauttaa   | -
 Sisältö     | -
 
+| Laskennan resetointi |   |
+|---|---|
+Endpoint    | /api/allocation/reset
+Metodi      | POST
+Parametrit  | AllocRound.id
+Palauttaa   | Poistaa kaikki allocRoundin kurssit AllocSpace taulusta ja nollaa isAllocated, priority ja cantAllocate:n, allocSubject taulussa.
+Sisältö     | -
+
 </details>
 
 <details><summary>Program (pääaineet)</summary>

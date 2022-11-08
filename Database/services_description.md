@@ -71,9 +71,23 @@ Sisältö     | *KESKEN*
 | Etsi sopivat huoneet opetukselle | *KESKEN - KÄYTETÄÄN LASKENNASSA*  |
 |---|---|
 Metodi      | findRoomsForSubject
-Parametrit  | subjetId
+Parametrit  | subjectId
 Palauttaa   | *KESKEN*
 Sisältö     | *KESKEN*
+
+| Poista allokoinnin tilat |  |
+|---|---|
+Metodi      | deleteAllSpacesInAllocRound
+Parametrit  | allocRound (id)
+Palauttaa   | Poistaa kaikki allocRoundin tilat allocSpace taulusta
+Sisältö     | -
+
+| Resetoi allocSubject |  |
+|---|---|
+Metodi      | resetAllocSubject
+Parametrit  | allocRound (id)
+Palauttaa   | SET isAllocated = 0, priority = null, cantAllocate = 0 
+Sisältö     | -
 
 </details>
 
