@@ -64,6 +64,18 @@ Sisältö     | program.id, program.name
 
 </details>
 
+<details><summary>SpaceType (tilatyypit)</summary>
+
+| Kaikki tilatyypit |   |
+|---|---|
+Endpoint    | /api/spaceType/getNames
+Metodi      | GET
+Parametrit  | -
+Palauttaa   | Kaikki tilatyypit
+Sisältö     | id, name
+
+</details>
+
 <details><summary>Subject (Opinnot)</summary>
 
 | Kaikki opinnot |   |
@@ -72,13 +84,13 @@ Endpoint    | /api/subject/getAll
 Metodi      | GET
 Parametrit  | -
 Palauttaa   | Kaikki opinnot
-Sisältö     | id, name, groupSize, groupCount, sessionLength, sessionCount, area, program.id, program.name
+Sisältö     | id, name, groupSize, groupCount, sessionLength, sessionCount, area, program.id, program.name, spaceTypeId, spaceTypeName
 
 | Opetuksen lisäys |   |
 |---|---|
 Endpoint    | /api/subject/post
 Metodi      | POST
-Parametrit  | name, groupSize, groupCount, sessionLength, sessionCount, area, programId
+Parametrit  | name, groupSize, groupCount, sessionLength, sessionCount, area, programId, spaceTypeId
 Palauttaa   | Lisää uuden opinnon
 Sisältö     | -
 
@@ -94,7 +106,7 @@ Sisältö     | -
 |---|---|
 Endpoint    | /api/subject/update
 Metodi      | PUT
-Parametrit  | id, name, groupSize, groupCount, sessionLength, sessionCount, area, programId
+Parametrit  | id, name, groupSize, groupCount, sessionLength, sessionCount, area, programId, spaceTypeId
 Palauttaa   | Päivittää opinnon
 Sisältö     | -
 </details>

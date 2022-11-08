@@ -3,26 +3,6 @@
 - Palauttaa promisen eli pyynnön sisällön tai virheviestin, jos kutsu epäonnistuu
 
 <details>
-<summary>Program (pääaine)</summary>
-
-
-| Hae kaikki pääaineet |   |
-|---|---|
-Metodi      | getAll
-Parametrit  | -
-Palauttaa   | Kaikki Pääaineet
-Sisältö     | id, name
-
-| Hae yksittäinen pääaine |   |
-|---|---|
-Metodi      | getById
-Parametrit  | -
-Palauttaa   | Yksittäisen pääaineen
-Sisältö     | id, name
-
-</details>
-
-<details>
 <summary>Allocation (laskenta / allocRound)</summary>
 
 | Hae kaikki laskennat |   |
@@ -88,11 +68,31 @@ Parametrit  | subject.id, allocRound.id, priorityNumber
 Palauttaa   | Merkitsee prioriteettiarvon opetukselle. Opetukset tullaan sijoittamaan tiloihin prioriteettinumeron mukaisessa järjestyksessä.
 Sisältö     | *KESKEN*
 
-| Merkitse prioriteettinumero opetukselle | *KESKEN - KÄYTETÄÄN LASKENNASSA*  |
+| Etsi sopivat huoneet opetukselle | *KESKEN - KÄYTETÄÄN LASKENNASSA*  |
 |---|---|
 Metodi      | findRoomsForSubject
 Parametrit  | subjetId
 Palauttaa   | *KESKEN*
 Sisältö     | *KESKEN*
+
+</details>
+
+<details>
+<summary>Program (pääaine)</summary>
+
+
+| Hae kaikki pääaineet |   |
+|---|---|
+Metodi      | getAll
+Parametrit  | -
+Palauttaa   | Kaikki Pääaineet
+Sisältö     | id, name
+
+| Hae yksittäinen pääaine |   |
+|---|---|
+Metodi      | getById
+Parametrit  | -
+Palauttaa   | Yksittäisen pääaineen
+Sisältö     | id, name
 
 </details>
