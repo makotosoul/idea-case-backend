@@ -202,16 +202,16 @@ allocation.post("/start", (req, res) => {
       return data;
     })
     .then(async (data) => {
-      // Etsii opetukselle sopivat tilat
-      console.log(
-        await Promise.all(
-          data.map((ob) => {
-            return allocationService.findRoomsForSubject(ob.subjectId);
-          }),
-        ),
+      // Etsii opetukselle sopivat tilat ja tallentaa ne allocSubjectSuitableSpace tauluun
+      return await Promise.all(
+        data.map((subject) => {
+          return allocationService.findRoomsForSubject(
+            allocRound,
+            subject.subjectId,
+          );
+        }),
       );
     })
-
     .then(() => {
       successHandler(
         res,
