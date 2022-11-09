@@ -43,4 +43,24 @@ let validateAddUpdateSubject = [
     .bail(),
   check("programId").notEmpty().withMessage("Cannot be empty").bail(),
 ];
-module.exports = { validateAddUpdateSubject };
+
+let validateAddUpdateSubjectEquipment = [
+  check("subjectId")
+    .matches(/^[0-9]+$/)
+    .withMessage("Must be a number")
+    .bail()
+    .notEmpty()
+    .withMessage("Cannot be empty")
+    .bail(),
+  check("equipmentId")
+    .matches(/^[0-9]+$/)
+    .withMessage("Must be a number")
+    .bail()
+    .notEmpty()
+    .withMessage("Cannot be empty")
+    .bail(),
+];
+module.exports = {
+  validateAddUpdateSubject,
+  validateAddUpdateSubjectEquipment,
+};
