@@ -1,7 +1,8 @@
-
 USE casedb;
 
 DROP TABLE IF EXISTS AllocCurrentRoundUser;
+DROP TABLE IF EXISTS AllocSpaceEquipment;
+DROP TABLE IF EXISTS AllocSpaceMissingEquipment;
 DROP TABLE IF EXISTS AllocSubjectSuitableSpace;
 DROP TABLE IF EXISTS AllocSpace;
 DROP TABLE IF EXISTS AllocSubject;
@@ -14,14 +15,18 @@ DROP TABLE IF EXISTS Equipment;
 DROP TABLE IF EXISTS `Space`;
 DROP TABLE IF EXISTS SpaceType;
 DROP TABLE IF EXISTS Building;
-DROP TABLE IF EXISTS Campus;
 DROP TABLE IF EXISTS DepartmentPlanner;
 DROP TABLE IF EXISTS `User`;
 DROP TABLE IF EXISTS Department; 
 DROP TABLE IF EXISTS GlobalSetting;
 
+
 /* ------------------------------------------------------ */
 
+
+/* --- 01 CREATE TABLES --- */
+
+USE casedb;
 
 /* --- 01 CREATE TABLES --- */
 
@@ -282,6 +287,28 @@ CREATE TABLE IF NOT EXISTS AllocSubjectSuitableSpace (
 
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+CREATE TABLE IF NOT EXISTS AllocSpaceMissingEquipment (
+    allocRound  INTEGER     NOT NULL,
+    subjectId   INTEGER     NOT NULL,
+    equipmentId INTEGER     NOT NULL,
+
+    PRIMARY KEY(allocRound, subjectId, equipmentId),
+
+    CONSTRAINT `FK_AllocSubjectEquipmentMissing_AllocSubject`
+        FOREIGN KEY(`allocRound`, `subjectId`)
+        REFERENCES `AllocSubject` (allocRound, subjectId)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+        CONSTRAINT `FK_AllocSpaceMissingEquipment_Equipment`
+        FOREIGN KEY (`equipmentId`)
+        REFERENCES `Equipment` (id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+        
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
 CREATE TABLE IF NOT EXISTS AllocCurrentRoundUser (
     allocId     INTEGER     NOT NULL,
     userId      INTEGER,
@@ -302,6 +329,9 @@ CREATE TABLE IF NOT EXISTS AllocCurrentRoundUser (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 /* ------------------------------------------------------ */
+
+/* INSERTS */
+USE casedb;
 
 /* INSERTS */
 /* --- Insert: GlobalSettings --- */
@@ -412,7 +442,8 @@ INSERT INTO `Equipment` (`name`, `isMovable`, `priority`, `description`) VALUES
     ('Äänentoisto (ei PA-laitteet)', 0, 100, ''),
     ('Näyttölaite (videoprojektori)', 0, 200, ''),
     ('Yhtyeluokan äänentoisto', 0, 300, 'PA-laitteet'),
-    ('Dokumenttikamera', 0, 250, '');
+    ('Dokumenttikamera', 0, 250, ''), 
+    ('Sähkökitara', 1, 100, 'Sähkökitara');
     
 /* --- Insert: SpaceEquipment * --- */
 INSERT INTO `SpaceEquipment` (`spaceId`, `equipmentId`) VALUES
@@ -441,7 +472,17 @@ INSERT INTO `SpaceEquipment` (`spaceId`, `equipmentId`) VALUES
     (1019, 2021),
     (1019, 2022),
     (1019, 2023),
-    (1019, 2024);
+    (1019, 2024),
+    (1005, 2010),
+    (1005, 2004),
+    (1006, 2004),
+    (1003, 2004),
+    (1004, 2004),
+    (1018, 2004),
+    (1014, 2011),
+    (1006, 2011),
+    (1018, 2010),
+    (1013, 2010);
     
 /* --- Insert: Program * --- */
 INSERT INTO Program (name , departmentId) VALUES
@@ -537,7 +578,19 @@ INSERT INTO SubjectEquipment(subjectId, equipmentId, priority) VALUES
     (4017, 2016, 90),
     (4018, 2012, 90),
     (4019, 2014, 800),
-    (4020, 2010, 400);
+    (4020, 2010, 400),
+    (4003, 2010, 700),
+    (4005, 2010, 500),
+    (4014, 2010, 500),
+    (4031, 2010, 500),
+    (4024, 2010, 500),
+    (4002, 2011, 400),
+    (4024, 2011, 500),
+    (4033, 2011, 500),
+    (4019, 2004, 700),
+    (4005, 2004, 600),
+    (4024, 2004, 600),
+    (4033, 2004, 600);
 
 /* --- Insert: AllocRound * --- */
 INSERT INTO AllocRound(name, isSeasonAlloc, userId, description) VALUES
@@ -638,4 +691,6 @@ INSERT INTO AllocCurrentRoundUser(allocId, userId) VALUES
     (10001, 201),
     (10001, 202),
     (10002, 201);
+
+
 

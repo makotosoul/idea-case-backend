@@ -177,7 +177,7 @@ allocation.post("/reset", (req, res) => {
 });
 
 // Allokointilaskennan aloitus - KESKEN!
-allocation.post("/start", (req, res) => {
+allocation.post("/start", async (req, res) => {
   const allocRound = req.body.allocRound;
   if (!allocRound) {
     return validationErrorHandler(
@@ -186,7 +186,7 @@ allocation.post("/start", (req, res) => {
     );
   }
 
-  allocationService
+  await allocationService
     .getPriorityOrder(allocRound) // "laskee" prioriteettijärjestyksen
     .then(async (data) => {
       // merkitsee prioriteettinumerot allocSubjecteihin

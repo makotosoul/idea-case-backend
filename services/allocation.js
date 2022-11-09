@@ -226,7 +226,6 @@ const findRoomsForSubject = (allocRound, subjectId) => {
                       subjectId,
                     )})
                     AND sp.inUse=1
-                    ORDER BY sp.area ASC, sp.personLimit ASC
                     `;
   return new Promise((resolve, reject) => {
     db.query(sqlQuery, (err, result) => {
