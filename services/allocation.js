@@ -286,6 +286,59 @@ const resetAllocSubject = (allocRound) => {
   });
 };
 
+const getMissingItemAmount = (subjectId, spaceId) => {
+  const sqlQuery = `SELECT COUNT(*) AS missingItems
+                        FROM
+                        (SELECT equipmentId  FROM SubjectEquipment
+                        WHERE subjectId = ?
+                        EXCEPT 
+                        SELECT equipmentId FROM SpaceEquipment
+                        WHERE spaceId = ?) a;`;
+  return new Promise((resolve, reject) => {
+    db.query(sqlQuery, [subjectId, spaceId], (err, result) => {
+      if (err) {
+        return reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
+const setMissingItemAmount = (subjectId, spaceId, missingItemAmount) => {
+  const sqlQuery = `
+                    UPDATE AllocSubjectSuitableSpace ass
+                    SET ass.missingItems = ?
+                    WHERE ass.subjectId = ? AND ass.spaceId = ?`;
+  return new Promise((resolve, reject) => {
+    db.query(
+      sqlQuery,
+      [missingItemAmount, subjectId, spaceId],
+      (err, result) => {
+        if (err) {
+          return reject(err);
+        } else {
+          resolve(result);
+        }
+      },
+    );
+  });
+};
+
+const getSuitableRoomsForSubject = (allocRound, subject) => {
+  const sqlQuery =
+    "SELECT * FROM AllocSubjectSuitableSpace ass WHERE ass.allocRound = ? AND ass.subjectId = ?;";
+  return new Promise((resolve, reject) => {
+    db.query(sqlQuery, [allocRound, subject], (err, result) => {
+      if (err) {
+        return reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
 module.exports = {
   getAll,
   getById,
@@ -301,4 +354,7 @@ module.exports = {
   deleteSuitableSpaces,
   findRoomsForSubject,
   resetAllocSubject,
+  getMissingItemAmount,
+  setMissingItemAmount,
+  getSuitableRoomsForSubject,
 };

@@ -239,9 +239,10 @@ CREATE TABLE IF NOT EXISTS AllocSpace (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS AllocSubjectSuitableSpace (
-    allocRound  INTEGER     NOT NULL,
-    subjectId   INTEGER     NOT NULL,
-    spaceId     INTEGER     NOT NULL,
+    allocRound      INTEGER     NOT NULL,
+    subjectId       INTEGER     NOT NULL,
+    spaceId         INTEGER     NOT NULL,
+    missingItems    INTEGER,
 
     PRIMARY KEY(allocRound, subjectId, spaceId),
 
