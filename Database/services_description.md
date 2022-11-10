@@ -75,28 +75,12 @@ Parametrit  | subjectId
 Palauttaa   | *KESKEN*
 Sisältö     | *KESKEN*
 
-| Poista allokoinnin tilat |  |
+| Resetoi allokointi |  |
 |---|---|
-Metodi      | deleteAllSpacesInAllocRound
+Metodi      | resetAllocation
 Parametrit  | allocRound (id)
-Palauttaa   | Poistaa kaikki allocRoundin tilat allocSpace taulusta
-Sisältö     | -
-
-| Poista opetukselle sopivat tilat |  |
-|---|---|
-Metodi      | deleteSuitableSpaces
-Parametrit  | allocRound (id)
-Palauttaa   | Poistaa kaikki opetukselle sopivat tilat  
-Sisältö     | -
-
-
-
-| Resetoi allocSubject |  |
-|---|---|
-Metodi      | resetAllocSubject
-Parametrit  | allocRound (id)
-Palauttaa   | SET isAllocated = 0, priority = null, cantAllocate = 0 
-Sisältö     | -
+Palauttaa   | - 
+Sisältö     | Resetoi allocSubject, AllocSpace ja AllocSubjectSuitableSpace taulut
 
 </details>
 

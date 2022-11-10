@@ -238,42 +238,9 @@ const findRoomsForSubject = (allocRound, subjectId) => {
   });
 };
 
-/* Delete all subjects in allocSpace with allocround.id */
-
-const deleteAllSpacesInAllocRound = (allocRound) => {
-  const sqlQuery = "DELETE FROM AllocSpace WHERE allocRound = ?;";
-
-  return new Promise((resolve, reject) => {
-    db.query(sqlQuery, allocRound, (err, result) => {
-      if (err) {
-        return reject(err);
-      } else {
-        resolve(result);
-      }
-    });
-  });
-};
-
-/* Delete all spaces in AllocSubjectSuitableSpace with allocRound.id */
-
-const deleteSuitableSpaces = (allocRound) => {
-  const sqlQuery = "DELETE FROM AllocSubjectSuitableSpace WHERE allocRound = ?";
-  return new Promise((resolve, reject) => {
-    db.query(sqlQuery, allocRound, (err, result) => {
-      if (err) {
-        return reject(err);
-      } else {
-        resolve(result);
-      }
-    });
-  });
-};
-
-/* Reset non-allocated values in allocSubject */
-
-const resetAllocSubject = (allocRound) => {
-  const sqlQuery =
-    "UPDATE AllocSubject SET isAllocated = 0, priority = null, cantAllocate = 0 WHERE allocRound = ?;";
+/* RESET ALLOCATION - Procedure in database */
+const resetAllocation = (allocRound) => {
+  const sqlQuery = "CALL resetAllocation(?)";
 
   return new Promise((resolve, reject) => {
     db.query(sqlQuery, allocRound, (err, result) => {
@@ -350,10 +317,8 @@ module.exports = {
   getAllocatedRoomsByProgram,
   getPriorityOrder,
   updateAllocSubjectPriority,
-  deleteAllSpacesInAllocRound,
-  deleteSuitableSpaces,
+  resetAllocation,
   findRoomsForSubject,
-  resetAllocSubject,
   getMissingItemAmount,
   setMissingItemAmount,
   getSuitableRoomsForSubject,
