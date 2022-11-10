@@ -42,6 +42,35 @@ let validateAddUpdateSubject = [
     .withMessage("Cannot be empty")
     .bail(),
   check("programId").notEmpty().withMessage("Cannot be empty").bail(),
-  check("spaceTypeId").notEmpty().withMessage("Cannot be empty").bail(),
 ];
-module.exports = { validateAddUpdateSubject };
+
+let validateAddUpdateSubjectEquipment = [
+  check("subjectId")
+    .matches(/^[0-9]+$/)
+    .withMessage("Must be a number")
+    .bail()
+    .notEmpty()
+    .withMessage("Cannot be empty")
+    .bail(),
+  check("equipmentId")
+    .matches(/^[0-9]+$/)
+    .withMessage("Must be a number")
+    .bail()
+    .notEmpty()
+    .withMessage("Cannot be empty")
+    .bail(),
+  check("priority")
+    .matches(/^[0-9]+$/)
+    .withMessage("Must be a number")
+    .bail()
+    .isFloat({ min: 50, max: 900 })
+    .withMessage("Must be between 50 - 900")
+    .notEmpty()
+    .withMessage("Cannot be empty")
+    .bail(),
+  check("obligatory").matches(/^[01]$/).withMessage("Must be 0 or 1").bail(),
+];
+module.exports = {
+  validateAddUpdateSubject,
+  validateAddUpdateSubjectEquipment,
+};
