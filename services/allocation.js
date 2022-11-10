@@ -166,69 +166,11 @@ const getSubjectsByProgram = (allocRound, programId) => {
   });
 };
 
-// Priorisoi allocRoundin subjectit - KESKEN!
-
-const getPriorityOrder = (allocRound) => {
-  const sqlQuery = `SELECT as2.subjectId, as2.allocRound, MAX(sub_eqp.priority) AS priority 
-                        FROM AllocSubject as2 
-                        LEFT JOIN SubjectEquipment sub_eqp ON as2.subjectId = sub_eqp.subjectId
-                        WHERE as2.allocRound = ? 
-                        GROUP BY as2.subjectId 
-                        ORDER BY sub_eqp.priority DESC 
-                    ;`;
+/* START ALLOCATION - Procedure in database */
+const startAllocation = (allocRound) => {
+  const sqlQuery = "CALL startAllocation(?)";
   return new Promise((resolve, reject) => {
     db.query(sqlQuery, allocRound, (err, result) => {
-      if (err) {
-        return reject(err);
-      } else {
-        resolve(result);
-      }
-    });
-  });
-};
-
-// Päivittää priorisointinumeron allocSubjetissa - KESKEN!
-
-const updateAllocSubjectPriority = (subjectId, allocRound, priorityNumber) => {
-  const sqlQuery = `UPDATE AllocSubject
-                        SET priority = ?
-                        WHERE subjectId = ? AND allocRound = ?
-                        ;`;
-  return new Promise((resolve, reject) => {
-    db.query(
-      sqlQuery,
-      [priorityNumber, subjectId, allocRound],
-      (err, result) => {
-        if (err) {
-          return reject(err);
-        } else {
-          resolve(result);
-        }
-      },
-    );
-  });
-};
-
-// Etsii subjectille huoneet allokointia varten - KESKEN!
-
-const findRoomsForSubject = (allocRound, subjectId) => {
-  const sqlQuery = `
-                    INSERT INTO AllocSubjectSuitableSpace (allocRound, subjectId, spaceId)
-                    SELECT ${db.escape(allocRound)}, ${db.escape(subjectId)}, sp.id
-                    FROM Space sp
-                    WHERE sp.personLimit >= (SELECT groupSize FROM Subject WHERE id=${db.escape(
-                      subjectId,
-                    )})
-                    AND sp.area >= (SELECT s.area FROM Subject s WHERE id=${db.escape(
-                      subjectId,
-                    )})
-                    AND sp.spaceTypeId = (SELECT s.spaceTypeId FROM Subject s WHERE id=${db.escape(
-                      subjectId,
-                    )})
-                    AND sp.inUse=1
-                    `;
-  return new Promise((resolve, reject) => {
-    db.query(sqlQuery, (err, result) => {
       if (err) {
         return reject(err);
       } else {
@@ -250,45 +192,6 @@ const resetAllocation = (allocRound) => {
         resolve(result);
       }
     });
-  });
-};
-
-const getMissingItemAmount = (subjectId, spaceId) => {
-  const sqlQuery = `SELECT COUNT(*) AS missingItems
-                        FROM
-                        (SELECT equipmentId  FROM SubjectEquipment
-                        WHERE subjectId = ?
-                        EXCEPT 
-                        SELECT equipmentId FROM SpaceEquipment
-                        WHERE spaceId = ?) a;`;
-  return new Promise((resolve, reject) => {
-    db.query(sqlQuery, [subjectId, spaceId], (err, result) => {
-      if (err) {
-        return reject(err);
-      } else {
-        resolve(result);
-      }
-    });
-  });
-};
-
-const setMissingItemAmount = (subjectId, spaceId, missingItemAmount) => {
-  const sqlQuery = `
-                    UPDATE AllocSubjectSuitableSpace ass
-                    SET ass.missingItems = ?
-                    WHERE ass.subjectId = ? AND ass.spaceId = ?`;
-  return new Promise((resolve, reject) => {
-    db.query(
-      sqlQuery,
-      [missingItemAmount, subjectId, spaceId],
-      (err, result) => {
-        if (err) {
-          return reject(err);
-        } else {
-          resolve(result);
-        }
-      },
-    );
   });
 };
 
@@ -315,11 +218,7 @@ module.exports = {
   getRoomsByAllocId,
   getSubjectsByProgram,
   getAllocatedRoomsByProgram,
-  getPriorityOrder,
-  updateAllocSubjectPriority,
+  startAllocation,
   resetAllocation,
-  findRoomsForSubject,
-  getMissingItemAmount,
-  setMissingItemAmount,
   getSuitableRoomsForSubject,
 };

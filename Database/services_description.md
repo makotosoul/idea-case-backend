@@ -54,26 +54,13 @@ Parametrit  | allocRound.id, program.id
 Palauttaa   | Kaikki opetukset laskennassa, pääaineen mukaan
 Sisältö     | subject.id, subject.name, allocatedHours, requiredHours
 
-| Hae prioriteettiarvot opetuksille | *KESKEN - KÄYTETÄÄN LASKENNASSA*  |
+| Aloita allokointi |  |
 |---|---|
-Metodi      | getPriorityOrder
-Parametrit  | allocRound.id
-Palauttaa   | Opetukset haetaan prioriteettimääritelmien mukaisessa järjestyksessä
-Sisältö     | *KESKEN*
+Metodi      | startAllocation
+Parametrit  | allocRound (id)
+Palauttaa   | - 
+Sisältö     | KESKEN!
 
-| Merkitse prioriteettinumero opetukselle | *KESKEN - KÄYTETÄÄN LASKENNASSA*  |
-|---|---|
-Metodi      | updateAllocSubjectPriority
-Parametrit  | subject.id, allocRound.id, priorityNumber
-Palauttaa   | Merkitsee prioriteettiarvon opetukselle. Opetukset tullaan sijoittamaan tiloihin prioriteettinumeron mukaisessa järjestyksessä.
-Sisältö     | *KESKEN*
-
-| Etsi sopivat huoneet opetukselle | *KESKEN - KÄYTETÄÄN LASKENNASSA*  |
-|---|---|
-Metodi      | findRoomsForSubject
-Parametrit  | subjectId
-Palauttaa   | *KESKEN*
-Sisältö     | *KESKEN*
 
 | Resetoi allokointi |  |
 |---|---|
