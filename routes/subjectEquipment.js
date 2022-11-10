@@ -18,8 +18,7 @@ subjectequipment.post(
   "/post",
   validateAddUpdateSubjectEquipment,
   (req, res) => {
-    console.log("body:", req.body);
-    // Tähän vielä validation
+    // console.log("body:", req.body);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       logger.error("Validation error:  %O", errors);

@@ -59,6 +59,16 @@ let validateAddUpdateSubjectEquipment = [
     .notEmpty()
     .withMessage("Cannot be empty")
     .bail(),
+  check("priority")
+    .matches(/^[0-9]+$/)
+    .withMessage("Must be a number")
+    .bail()
+    .isFloat({ min: 50, max: 900 })
+    .withMessage("Must be between 50 - 900")
+    .notEmpty()
+    .withMessage("Cannot be empty")
+    .bail(),
+  check("obligatory").matches(/^[01]$/).withMessage("Must be 0 or 1").bail(),
 ];
 module.exports = {
   validateAddUpdateSubject,
