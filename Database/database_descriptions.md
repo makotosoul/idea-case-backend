@@ -52,6 +52,17 @@ allocatedDate 	    | TIMESTAMP		|				    | Päivämäärä, jolloin opetus on li
 
 </details>
 
+<details><summary>AllocSubjectSuitableSpace</summary>
+<small>(Lisätään kaikki opetukseen soveltuvat tilat)</small>
+
+Sarake			    |	Tyyppi		|	Avaimet		                    |	Kuvaus
+:-----			    |	:----		|	------		                    |	------
+<u>allocRound</u>   |  INTEGER      | PK, FK(AllocSubject.allocRound)   | Laskenta
+<u>subjectId</u>    |  INTEGER      | PK, FK(AllocSubject.subjectId)    | Opetus
+<u>spaceId</u>      |  INTEGER      | PK, FK(Space.id)                  | Tila
+</details>
+
+
 <details><summary>Building</summary>
 <small> (Rakennus) </small>
 
@@ -153,7 +164,7 @@ Sarake				|	Tyyppi		|	Avaimet				|	Kuvaus
 </details>
 
 <details><summary>SpaceType</summary>
-<small> (Tilatyyppi - Esim. luentotila, soittotila, studio jne.)
+<small> (Tilatyyppi - Esim. luentotila, soittotila, studio jne.)</small>
 
 Sarake			|	Tyyppi		|	Avaimet		|	Kuvaus
 :-----			|	:----		|	------		|	------

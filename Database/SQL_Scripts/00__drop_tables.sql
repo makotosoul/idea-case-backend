@@ -4,6 +4,9 @@
 USE casedb;
 
 DROP TABLE IF EXISTS AllocCurrentRoundUser;
+DROP TABLE IF EXISTS AllocSpaceEquipment;
+DROP TABLE IF EXISTS AllocSpaceMissingEquipment;
+DROP TABLE IF EXISTS AllocSubjectSuitableSpace;
 DROP TABLE IF EXISTS AllocSpace;
 DROP TABLE IF EXISTS AllocSubject;
 DROP TABLE IF EXISTS AllocRound;
@@ -15,7 +18,6 @@ DROP TABLE IF EXISTS Equipment;
 DROP TABLE IF EXISTS `Space`;
 DROP TABLE IF EXISTS SpaceType;
 DROP TABLE IF EXISTS Building;
-DROP TABLE IF EXISTS Campus;
 DROP TABLE IF EXISTS DepartmentPlanner;
 DROP TABLE IF EXISTS `User`;
 DROP TABLE IF EXISTS Department; 

@@ -109,7 +109,8 @@ INSERT INTO `Equipment` (`name`, `isMovable`, `priority`, `description`) VALUES
     ('Äänentoisto (ei PA-laitteet)', 0, 100, ''),
     ('Näyttölaite (videoprojektori)', 0, 200, ''),
     ('Yhtyeluokan äänentoisto', 0, 300, 'PA-laitteet'),
-    ('Dokumenttikamera', 0, 250, '');
+    ('Dokumenttikamera', 0, 250, ''), 
+    ('Sähkökitara', 1, 100, 'Sähkökitara');
     
 /* --- Insert: SpaceEquipment * --- */
 INSERT INTO `SpaceEquipment` (`spaceId`, `equipmentId`) VALUES
@@ -138,7 +139,17 @@ INSERT INTO `SpaceEquipment` (`spaceId`, `equipmentId`) VALUES
     (1019, 2021),
     (1019, 2022),
     (1019, 2023),
-    (1019, 2024);
+    (1019, 2024),
+    (1005, 2010),
+    (1005, 2004),
+    (1006, 2004),
+    (1003, 2004),
+    (1004, 2004),
+    (1018, 2004),
+    (1014, 2011),
+    (1006, 2011),
+    (1018, 2010),
+    (1013, 2010);
     
 /* --- Insert: Program * --- */
 INSERT INTO Program (name , departmentId) VALUES
@@ -234,7 +245,19 @@ INSERT INTO SubjectEquipment(subjectId, equipmentId, priority) VALUES
     (4017, 2016, 90),
     (4018, 2012, 90),
     (4019, 2014, 800),
-    (4020, 2010, 400);
+    (4020, 2010, 400),
+    (4003, 2010, 700),
+    (4005, 2010, 500),
+    (4014, 2010, 500),
+    (4031, 2010, 500),
+    (4024, 2010, 500),
+    (4002, 2011, 400),
+    (4024, 2011, 500),
+    (4033, 2011, 500),
+    (4019, 2004, 700),
+    (4005, 2004, 600),
+    (4024, 2004, 600),
+    (4033, 2004, 600);
 
 /* --- Insert: AllocRound * --- */
 INSERT INTO AllocRound(name, isSeasonAlloc, userId, description) VALUES

@@ -1,6 +1,10 @@
 const express = require("express");
 const allocation = express.Router();
-const { dbErrorHandler, successHandler } = require("../responseHandler/index");
+const {
+  dbErrorHandler,
+  successHandler,
+  validationErrorHandler,
+} = require("../responseHandler/index");
 
 const programService = require("../services/program");
 const allocationService = require("../services/allocation");
@@ -24,9 +28,39 @@ allocation.get("", (req, res) => {
 
 /* Get allocation by id */
 
-allocation.get("/:id", (req, res) => {
-  allocationService
+allocation.get("/:id", async (req, res) => {
+  await allocationService
     .getById(req.params.id)
+    .then(async (data) => {
+      return (data[0] = {
+        ...data[0],
+        subjects: await allocationService.getAllSubjectsById(data[0].id),
+        rooms: await allocationService.getRoomsByAllocId(data[0].id),
+      });
+    })
+    .then(async (data) => {
+      await Promise.all(
+        data.subjects.map(async (subject, index) => {
+          data.subjects[index] = {
+            ...subject,
+            rooms: await allocationService.getRoomsBySubjectAndAllocRound(
+              subject.id,
+              data.id,
+            ),
+          };
+        }),
+        data.rooms.map(async (room, index) => {
+          data.rooms[index] = {
+            ...room,
+            subjects: await allocationService.getSubjectsByAllocRoundAndSpaceId(
+              data.id,
+              room.id,
+            ),
+          };
+        }),
+      );
+      return data;
+    })
     .then((data) => {
       successHandler(res, data, "getById succesful - Allocation");
     })
@@ -57,9 +91,9 @@ allocation.get("/:id/rooms", (req, res) => {
     });
 });
 
-/* Get all allocated rooms by allocationId and program.id */
+/* Get all allocated rooms in programs by allocationId and program */
 
-allocation.get("/:id/program/all/rooms", async (req, res) => {
+allocation.get("/:id/program", async (req, res) => {
   const id = req.params.id;
   programService
     .getAll()
@@ -71,6 +105,10 @@ allocation.get("/:id/program/all/rooms", async (req, res) => {
             program.id,
             id,
           ),
+          subjects: await allocationService.getSubjectsByProgram(
+            id,
+            program.id,
+          ),
         };
       }
       return programs;
@@ -80,6 +118,83 @@ allocation.get("/:id/program/all/rooms", async (req, res) => {
     })
     .catch((err) => {
       dbErrorHandler(res, err, "Oops! Nothing came through - Allocation");
+    });
+});
+
+/* Get all allocated rooms by ProgramId, allocRound */
+allocation.get("/:id/program/:programId", async (req, res) => {
+  const allocId = req.params.id;
+  const programId = req.params.programId;
+  programService
+    .getById(programId)
+    .then(async (program) => {
+      if (program[0]) {
+        program[0] = {
+          ...program[0],
+          rooms: await allocationService.getAllocatedRoomsByProgram(
+            programId,
+            allocId,
+          ),
+          subjects: await allocationService.getSubjectsByProgram(
+            allocId,
+            programId,
+          ),
+        };
+      }
+      return program;
+    })
+    .then((data) => {
+      successHandler(res, data, "getRoomsByProgram succesful - Allocation");
+    })
+    .catch((err) => {
+      dbErrorHandler(res, err, "Oops! Nothing came through - Allocation");
+    });
+});
+
+/* Reset allocation = remove all subjects from allocSpace and reset isAllocated, prioritynumber and cantAllocate in allocSubject */
+allocation.post("/reset", async (req, res) => {
+  const allocRound = req.body.allocRound;
+  if (!allocRound) {
+    return validationErrorHandler(
+      res,
+      "Missing required parameter - allocation reset",
+    );
+  }
+  allocationService
+    .resetAllocation(allocRound)
+    .then(() => {
+      successHandler(
+        res,
+        "reset completed",
+        "Allocation reset completed - Allocation",
+      );
+    })
+    .catch((err) => {
+      dbErrorHandler(res, err, "Oops! Allocation reset failed - Allocation");
+    });
+});
+
+// Allokointilaskennan aloitus - KESKEN!
+allocation.post("/start", async (req, res) => {
+  const allocRound = req.body.allocRound;
+  if (!allocRound) {
+    return validationErrorHandler(
+      res,
+      "Missing required parameter - allocation start",
+    );
+  }
+
+  allocationService
+    .startAllocation(allocRound)
+    .then(() => {
+      successHandler(
+        res,
+        "Allocation completed",
+        "Allocation succesful - Allocation",
+      );
+    })
+    .catch((err) => {
+      dbErrorHandler(res, err, "Oops! Allocation failed - Allocation start");
     });
 });
 
