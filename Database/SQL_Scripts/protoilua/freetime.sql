@@ -1,3 +1,8 @@
+-- Opetuksen kokonaiskesto
+SELECT *, TIME_TO_SEC(sessionLength) * sessionCount  *groupCount AS totalTime
+FROM Subject
+WHERE id = 4003;
+
 -- Käytettävät tunnit tilassa
 SELECT 
 TIME_TO_SEC(TIMEDIFF(sp.availableTO, sp.availableFrom)) *5  AS "availableHours"
@@ -38,3 +43,20 @@ ORDER BY (TIME_TO_SEC(TIMEDIFF(sp.availableTO, sp.availableFrom)) *5) - IFNULL((
 LIMIT 1
 ;
 
+-- Tilat joihin mahtuu kaikki kurssin opetukset
+SELECT sp.id,
+	TIME_TO_SEC(TIMEDIFF(sp.availableTO, sp.availableFrom)) *5 AS "availableHours",
+	IFNULL(SUM(TIME_TO_SEC(al_sp.totalTime)), 0) AS USED_TIME,
+	TIME_TO_SEC(TIMEDIFF(sp.availableTO, sp.availableFrom)) *5 - IFNULL(SUM(TIME_TO_SEC(al_sp.totalTime)), 0) AS freeTime 
+
+FROM 
+AllocSubjectSuitableSpace ass
+LEFT JOIN Space sp ON ass.spaceId = sp.id
+LEFT JOIN AllocSpace al_sp ON ass.spaceId = al_sp.spaceId 
+WHERE ass.subjectId = 4003
+GROUP BY sp.id
+HAVING 
+(SELECT TIME_TO_SEC(TIMEDIFF(availableTo, availableFrom)) *5 FROM Space WHERE id = sp.id) - IFNULL(SUM(TIME_TO_SEC(al_sp.totalTime)), 0)  
+>
+(SELECT TIME_TO_SEC(sub.sessionLength) * sub.groupCount * sub.sessionCount FROM Subject sub WHERE sub.id = 4003)
+;

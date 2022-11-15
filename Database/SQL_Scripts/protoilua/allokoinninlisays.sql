@@ -38,21 +38,19 @@ BEGIN
 		AND sp.spaceTypeId = (SELECT s.spaceTypeId FROM Subject s WHERE id=subId)
 		AND sp.inUse=1
 		;
-
-        SET spaceTo = (SELECT ass.spaceId
-        FROM AllocSubjectSuitableSpace ass
-        LEFT JOIN Space sp ON ass.spaceId = sp.id
-        LEFT JOIN AllocSpace al_sp ON ass.spaceId = al_sp.spaceId
-        WHERE al_sp.allocRound = allocRouId 
-        AND ass.subjectId = subId
-        AND ass.missingItems = 0
-        GROUP BY sp.id
-        ORDER BY sp.area, sp.personLimit ASC
-        LIMIT 1)
-	;
+		-- SET cantAllocate or AllocSpace
+        SET spaceTo = (
+        	SELECT ass.spaceId 
+        	FROM AllocSubjectSuitableSpace ass
+        	LEFT JOIN Space spp ON ass.spaceId = spp.id
+        	WHERE ass.missingItems = 0 
+        	AND ass.subjectId = subId 
+        	AND allocRound = allocRouId 
+        	ORDER BY spp.area ASC, spp.personLimit ASC
+ 			LIMIT 1)
+ 		;
 
         IF spaceTo IS NULL THEN
-            SELECT spaceTo;
             UPDATE AllocSubject SET cantAllocate = 1;
             ELSE
             SELECT spaceTo;
