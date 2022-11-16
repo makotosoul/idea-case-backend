@@ -4,11 +4,11 @@ DELIMITER //
 
 CREATE OR REPLACE PROCEDURE startAllocation(allocRouId INT)
 BEGIN
-	DECLARE finished INTEGER DEFAULT 0;
-	DECLARE priorityNum INTEGER DEFAULT 1;
-	DECLARE subId	INTEGER DEFAULT 0;
-    DECLARE spaceTo INTEGER DEFAULT NULL;
-
+	DECLARE finished INTEGER DEFAULT 0; -- Marker for loop
+	DECLARE priorityNum INTEGER DEFAULT 1; -- Subject prioritynumber
+	DECLARE subId	INTEGER DEFAULT 0; -- SubjectId
+   
+	-- Cursor for subject loop / SELECT priority order 
 	DECLARE subjects CURSOR FOR 
 		SELECT allSub.subjectId 
        	FROM AllocSubject allSub 
@@ -22,9 +22,9 @@ BEGIN
 
 	SET priorityNum = 1;
 
-	test : LOOP
+	subjectLoop : LOOP
 		FETCH subjects INTO subId;
-		IF finished = 1 THEN LEAVE test;
+		IF finished = 1 THEN LEAVE subjectLoop;
 		END IF;
 		-- SET priorityNumber
 		UPDATE AllocSubject SET priority = priorityNum WHERE subjectId = subId AND allocRound = allocRouId;
@@ -38,26 +38,11 @@ BEGIN
 		AND sp.spaceTypeId = (SELECT s.spaceTypeId FROM Subject s WHERE id=subId)
 		AND sp.inUse=1
 		;
-		-- SET cantAllocate or AllocSpace
-        SET spaceTo = (
-        	SELECT ass.spaceId 
-        	FROM AllocSubjectSuitableSpace ass
-        	LEFT JOIN Space spp ON ass.spaceId = spp.id
-        	WHERE ass.missingItems = 0 
-        	AND ass.subjectId = subId 
-        	AND allocRound = allocRouId 
-        	ORDER BY spp.area ASC, spp.personLimit ASC
- 			LIMIT 1)
- 		;
-
-        IF spaceTo IS NULL THEN
-            UPDATE AllocSubject SET cantAllocate = 1;
-            ELSE
-            SELECT spaceTo;
-        END IF;
+		-- SET cantAllocate or Insert subject to spaces
+        CALL allocateSpace(allocRouId, subId);
 
 	
-	END LOOP test;
+	END LOOP subjectLoop;
 	
 	CLOSE subjects;
 
@@ -65,5 +50,5 @@ BEGIN
 END; //
 DELIMITER ;
 
-CALL resetAllocation(10003);
-CALL startAllocation(10003);
+CALL resetAllocation(10002);
+CALL startAllocation(10002);
