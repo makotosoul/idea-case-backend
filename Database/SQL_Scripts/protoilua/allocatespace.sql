@@ -58,7 +58,7 @@ BEGIN
    	UPDATE AllocSubject SET isAllocated = 1 WHERE subjectId = subId AND allocRound = allocRouId;
    ELSEIF noSuitableSpace = FALSE THEN -- if can't find any suitable space for the subject
    	UPDATE AllocSubject SET cantAllocate = 1 WHERE subjectId = subId AND allocRound = allocRouId;
-   ELSEIF allocated = 0 THEN -- if can't find any space with free time, add all sessions to same space with most freetime
+   ELSEIF allocated = 0 AND noSuitableSpace = TRUE THEN -- if can't find any space with free time, add all sessions to same space with most freetime
    	SET spaceTo := (SELECT spa.id
 					FROM AllocSubjectSuitableSpace suitspace
 					LEFT JOIN Space spa ON suitspace.spaceId = sp.id
