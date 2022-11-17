@@ -2,7 +2,6 @@ USE casedb;
 
 DROP TABLE IF EXISTS AllocCurrentRoundUser;
 DROP TABLE IF EXISTS AllocSpaceEquipment;
-DROP TABLE IF EXISTS AllocSpaceMissingEquipment;
 DROP TABLE IF EXISTS AllocSubjectSuitableSpace;
 DROP TABLE IF EXISTS AllocSpace;
 DROP TABLE IF EXISTS AllocSubject;
@@ -287,28 +286,6 @@ CREATE TABLE IF NOT EXISTS AllocSubjectSuitableSpace (
         ON UPDATE CASCADE
 
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-CREATE TABLE IF NOT EXISTS AllocSpaceMissingEquipment (
-    allocRound  INTEGER     NOT NULL,
-    subjectId   INTEGER     NOT NULL,
-    equipmentId INTEGER     NOT NULL,
-
-    PRIMARY KEY(allocRound, subjectId, equipmentId),
-
-    CONSTRAINT `FK_AllocSubjectEquipmentMissing_AllocSubject`
-        FOREIGN KEY(`allocRound`, `subjectId`)
-        REFERENCES `AllocSubject` (allocRound, subjectId)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE,
-
-        CONSTRAINT `FK_AllocSpaceMissingEquipment_Equipment`
-        FOREIGN KEY (`equipmentId`)
-        REFERENCES `Equipment` (id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE
-        
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
 
 CREATE TABLE IF NOT EXISTS AllocCurrentRoundUser (
     allocId     INTEGER     NOT NULL,
