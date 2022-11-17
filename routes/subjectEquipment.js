@@ -14,6 +14,20 @@ const {
   validateAddUpdateSubjectEquipment,
 } = require("../validationHandler/index");
 
+subjectequipment.get("/getEquipment/:id", (req, res) => {
+  const id = req.params.id;
+  console.log("id", id);
+  const sqlGetEquipmentBySubjectId =
+    "SELECT se.subjectId AS id, e.name,e.description, se.equipmentId FROM Subjectequipment se JOIN Equipment e ON se.equipmentId = e.id WHERE se.subjectid = ?;";
+  db.query(sqlGetEquipmentBySubjectId, id, (err, result) => {
+    if (err) {
+      dbErrorHandler(res, err, "Oops! Nothing came through - SubjectEquipment");
+    } else {
+      successHandler(res, result, "getEquipment successful - SubjectEquipment");
+    }
+  });
+});
+
 subjectequipment.post(
   "/post",
   validateAddUpdateSubjectEquipment,

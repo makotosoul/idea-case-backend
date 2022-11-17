@@ -17,7 +17,7 @@ subject.get("/getAll", (req, res) => {
   const sqlSelectSubjectProgram =
     // "SELECT subject.id, subject.name AS subjectName, subject.groupSize, subject.groupCount, subject.sessionLength, subject.sessionCount, subject.area, subject.programId, program.name FROM Subject  JOIN Program ON subject.programId = program.id";
     // " SELECT s.id, s.name AS subjectName, s.groupSize, s.groupCount, s.sessionLength, s.sessionCount, s.area, s.programId, p.name AS programName, s.spaceTypeId, st.name AS spaceTypeName  FROM Subject s  JOIN Program p ON s.programId = p.id  LEFT JOIN spacetype st ON s.spaceTypeId = st.id ";
-    "  SELECT s.id, s.name AS subjectName, s.groupSize, s.groupCount, s.sessionLength, s.sessionCount, s.area, s.programId, p.name AS programName, s.spaceTypeId, st.name AS SpaceTypeName, se.equipmentId,e.name AS equipmentName, e.isMovable, e.priority, e.description FROM Subject s JOIN Program p ON s.programId = p.id LEFT JOIN spacetype st ON s.spaceTypeId = st.id LEFT JOIN Subjectequipment AS se ON se.subjectId = s.id LEFT JOIN Equipment e ON se.equipmentId = e.id;";
+    "  SELECT s.id, s.name AS subjectName, s.groupSize, s.groupCount, s.sessionLength, s.sessionCount, s.area, s.programId, p.name AS programName, s.spaceTypeId, st.name AS spaceTypeName, se.equipmentId,e.name AS equipmentName, e.isMovable, e.priority, e.description FROM Subject s JOIN Program p ON s.programId = p.id LEFT JOIN spacetype st ON s.spaceTypeId = st.id LEFT JOIN Subjectequipment AS se ON se.subjectId = s.id LEFT JOIN Equipment e ON se.equipmentId = e.id;";
   db.query(sqlSelectSubjectProgram, (err, result) => {
     if (err) {
       dbErrorHandler(res, err, "Oops! Nothing came through - Subject");
