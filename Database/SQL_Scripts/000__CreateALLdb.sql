@@ -1,7 +1,6 @@
 USE casedb;
 
 DROP TABLE IF EXISTS AllocCurrentRoundUser;
-DROP TABLE IF EXISTS AllocSpaceEquipment;
 DROP TABLE IF EXISTS AllocSubjectSuitableSpace;
 DROP TABLE IF EXISTS AllocSpace;
 DROP TABLE IF EXISTS AllocSubject;
@@ -816,7 +815,7 @@ BEGIN
 					AND suitspace.missingItems = 0
 					AND suitspace.allocRound = allocRouId
 					GROUP BY suitspace.spaceId 
-					ORDER BY (TIME_TO_SEC(TIMEDIFF(spa.availableTO, spa.availableFrom)) *5) - IFNULL((SUM(TIME_TO_SEC(allspa.totalTime))), 0) ASC
+					ORDER BY (TIME_TO_SEC(TIMEDIFF(spa.availableTO, spa.availableFrom)) *5) - IFNULL((SUM(TIME_TO_SEC(allspa.totalTime))), 0) DESC
 					LIMIT 1);
 				
    	INSERT INTO AllocSpace (subjectId, allocRound, spaceId, totalTime) 
@@ -836,7 +835,6 @@ END; //
 
 DELIMITER ;
 
-
 /* --- Procedure: RESET ALLOCATION --- */
 DELIMITER //
 
@@ -854,10 +852,11 @@ DELIMITER //
 
 CREATE OR REPLACE PROCEDURE startAllocation(allocRouId INT)
 BEGIN
-	DECLARE finished INTEGER DEFAULT 0;
-	DECLARE priorityNum INTEGER DEFAULT 1;
-	DECLARE subId	INTEGER DEFAULT 0;
-
+	DECLARE finished INTEGER DEFAULT 0; -- Marker for loop
+	DECLARE priorityNum INTEGER DEFAULT 1; -- Subject prioritynumber
+	DECLARE subId	INTEGER DEFAULT 0; -- SubjectId
+   
+	-- Cursor for subject loop / SELECT priority order 
 	DECLARE subjects CURSOR FOR 
 		SELECT allSub.subjectId 
        	FROM AllocSubject allSub 
@@ -871,9 +870,9 @@ BEGIN
 
 	SET priorityNum = 1;
 
-	test : LOOP
+	subjectLoop : LOOP
 		FETCH subjects INTO subId;
-		IF finished = 1 THEN LEAVE test;
+		IF finished = 1 THEN LEAVE subjectLoop;
 		END IF;
 		-- SET priorityNumber
 		UPDATE AllocSubject SET priority = priorityNum WHERE subjectId = subId AND allocRound = allocRouId;
@@ -887,8 +886,11 @@ BEGIN
 		AND sp.spaceTypeId = (SELECT s.spaceTypeId FROM Subject s WHERE id=subId)
 		AND sp.inUse=1
 		;
+		-- SET cantAllocate or Insert subject to spaces
+        CALL allocateSpace(allocRouId, subId);
+
 	
-	END LOOP test;
+	END LOOP subjectLoop;
 	
 	CLOSE subjects;
 

@@ -73,7 +73,7 @@ BEGIN
 					AND suitspace.missingItems = 0
 					AND suitspace.allocRound = allocRouId
 					GROUP BY suitspace.spaceId 
-					ORDER BY (TIME_TO_SEC(TIMEDIFF(spa.availableTO, spa.availableFrom)) *5) - IFNULL((SUM(TIME_TO_SEC(allspa.totalTime))), 0) ASC
+					ORDER BY (TIME_TO_SEC(TIMEDIFF(spa.availableTO, spa.availableFrom)) *5) - IFNULL((SUM(TIME_TO_SEC(allspa.totalTime))), 0) DESC
 					LIMIT 1);
 				
    	INSERT INTO AllocSpace (subjectId, allocRound, spaceId, totalTime) 
