@@ -5,7 +5,6 @@ USE casedb;
 
 DROP TABLE IF EXISTS AllocCurrentRoundUser;
 DROP TABLE IF EXISTS AllocSpaceEquipment;
-DROP TABLE IF EXISTS AllocSpaceMissingEquipment;
 DROP TABLE IF EXISTS AllocSubjectSuitableSpace;
 DROP TABLE IF EXISTS AllocSpace;
 DROP TABLE IF EXISTS AllocSubject;
