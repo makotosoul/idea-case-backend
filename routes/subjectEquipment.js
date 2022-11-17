@@ -14,12 +14,12 @@ const {
   validateAddUpdateSubjectEquipment,
 } = require("../validationHandler/index");
 
-subjectequipment.get("/getEquipment/:id", (req, res) => {
-  const id = req.params.id;
-  console.log("id", id);
+subjectequipment.get("/getEquipment/:subjectId", (req, res) => {
+  const subjectId = req.params.subjectId;
+  //console.log("id", id);
   const sqlGetEquipmentBySubjectId =
-    "SELECT se.subjectId AS id, e.name,e.description, se.equipmentId FROM Subjectequipment se JOIN Equipment e ON se.equipmentId = e.id WHERE se.subjectid = ?;";
-  db.query(sqlGetEquipmentBySubjectId, id, (err, result) => {
+    "SELECT se.subjectId , e.name,e.description, se.equipmentId FROM Subjectequipment se JOIN Equipment e ON se.equipmentId = e.id WHERE se.subjectid = ?;";
+  db.query(sqlGetEquipmentBySubjectId, subjectId, (err, result) => {
     if (err) {
       dbErrorHandler(res, err, "Oops! Nothing came through - SubjectEquipment");
     } else {
@@ -69,5 +69,20 @@ subjectequipment.post(
     );
   },
 );
+
+subjectequipment.delete("/delete/:subjectId/:equipmentId", (req, res) => {
+  const subjectId = req.params.subjectId;
+  const equipmentId = req.params.equipmentId;
+  const sqlDelete =
+    "DELETE FROM SubjectEquipment WHERE subjectId = ? AND equipmentId = ?;";
+  db.query(sqlDelete, [subjectId, equipmentId], (err, result) => {
+    if (err) {
+      dbErrorHandler(res, err, "Oops! Delete failed - SubjectEquipment");
+    } else {
+      successHandler(res, result, "Delete successful - SubjectEquipment");
+      logger.info("SubjectEquipment deleted");
+    }
+  });
+});
 
 module.exports = subjectequipment;
