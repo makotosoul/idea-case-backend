@@ -730,6 +730,8 @@ INSERT INTO AllocCurrentRoundUser(allocId, userId) VALUES
 DROP PROCEDURE IF EXISTS startAllocation;
 DROP PROCEDURE IF EXISTS resetAllocation;
 DROP PROCEDURE IF EXISTS allocateSpace;
+DROP PROCEDURE IF EXISTS prioritizeSubjects;
+DROP PROCEDURE IF EXISTS setSuitableRooms;
 
 /* ------------------------------------------------------ */
 /* DROP FUNCTIONS */
@@ -738,6 +740,67 @@ DROP FUNCTION IF EXISTS getMissingItemAmount;
 
 /* ------------------------------------------------------ */
 /* PROCEDURES */
+
+/* --- Procedure: PRIORITIZE SUBJECTS -  ALLOCATION --- */
+
+DELIMITER //
+CREATE OR REPLACE PROCEDURE prioritizeSubjects(allocRoundId INT, priority_option INT)
+BEGIN 
+	DECLARE priorityNow INTEGER;
+
+	SET priorityNow = (SELECT IFNULL(MAX(priority),0) FROM AllocSubject WHERE allocRound = allocRoundId);
+
+	IF priority_option = 1 THEN -- subject_equipment.priority >= X
+		INSERT INTO AllocSubject (subjectId, allocRound, priority)
+			SELECT allSub.subjectId, allSub.allocRound, ROW_NUMBER() OVER (ORDER BY MAX(sub_eqp.priority) DESC, Subject.groupSize ASC) + priorityNow as "row"
+    		FROM AllocSubject allSub 
+    		LEFT JOIN SubjectEquipment sub_eqp ON allSub.subjectId = sub_eqp.subjectId
+    		JOIN Subject ON allSub.subjectId = Subject.id
+    		WHERE allSub.allocRound = allocRoundId AND allSub.priority IS NULL
+    		AND (sub_eqp.priority) >= (SELECT numberValue FROM GlobalSetting gs WHERE name="x")
+    		GROUP BY allSub.subjectId 
+		ON DUPLICATE KEY UPDATE priority = VALUES(priority);
+	ELSEIF priority_option = 2 THEN -- subject_equipment.priority < X
+		INSERT INTO AllocSubject (subjectId, allocRound, priority)
+			SELECT allSub.subjectId, allSub.allocRound, ROW_NUMBER() OVER (ORDER BY MAX(sub_eqp.priority) DESC, Subject.groupSize ASC) + priorityNow as "row"
+       		FROM AllocSubject allSub 
+        	LEFT JOIN SubjectEquipment sub_eqp ON allSub.subjectId = sub_eqp.subjectId
+        	JOIN Subject ON allSub.subjectId = Subject.id
+        	WHERE allSub.allocRound = allocRoundId
+        	AND allSub.priority IS NULL
+        	AND (sub_eqp.priority) < (SELECT numberValue FROM GlobalSetting gs WHERE name="x")
+        	GROUP BY allSub.subjectId 
+        	ORDER BY sub_eqp.priority DESC
+        ON DUPLICATE KEY UPDATE priority = VALUES(priority);
+    ELSEIF priority_option = 3 THEN -- all others (subjects without equipment)
+    	INSERT INTO AllocSubject (subjectId, allocRound, priority)
+    		SELECT AllocSubject.subjectId, AllocSubject.allocRound, ROW_NUMBER() OVER (ORDER BY Subject.groupSize ASC) + priorityNow as "row" 
+			FROM AllocSubject
+			LEFT JOIN Subject ON AllocSubject.subjectId = Subject.id
+			WHERE priority IS NULL
+			AND allocRound = allocRoundId
+		ON DUPLICATE KEY UPDATE priority = VALUES(priority);
+	END IF;
+END; //
+
+DELIMITER ;
+
+/* --- Procedure: SET SUITABLE ROOMS -  ALLOCATION --- */
+DELIMITER //
+
+CREATE OR REPLACE PROCEDURE setSuitableRooms(allocRouId INT, subId INT)
+BEGIN 
+	INSERT INTO AllocSubjectSuitableSpace (allocRound, subjectId, spaceId, missingItems)
+		SELECT allocRouId, subId, sp.id, getMissingItemAmount(subId, sp.id) AS "missingItems"
+		FROM Space sp
+		WHERE sp.personLimit >= (SELECT groupSize FROM Subject WHERE id=subId)
+		AND sp.area >= (SELECT s.area FROM Subject s WHERE id=subId)
+		AND sp.spaceTypeId = (SELECT s.spaceTypeId FROM Subject s WHERE id=subId)
+		AND sp.inUse=1
+		;
+END; //
+
+DELIMITER ;
 
 /*--- Procedure: SPACE ALLOCATION ---*/
 DELIMITER //
@@ -853,48 +916,34 @@ DELIMITER //
 CREATE OR REPLACE PROCEDURE startAllocation(allocRouId INT)
 BEGIN
 	DECLARE finished INTEGER DEFAULT 0; -- Marker for loop
-	DECLARE priorityNum INTEGER DEFAULT 1; -- Subject prioritynumber
 	DECLARE subId	INTEGER DEFAULT 0; -- SubjectId
-   
+   	
 	-- Cursor for subject loop / SELECT priority order 
 	DECLARE subjects CURSOR FOR 
 		SELECT allSub.subjectId 
        	FROM AllocSubject allSub 
-        LEFT JOIN SubjectEquipment sub_eqp ON allSub.subjectId = sub_eqp.subjectId
         WHERE allSub.allocRound = allocRouId 
-        GROUP BY allSub.subjectId 
-        ORDER BY sub_eqp.priority DESC;
+        ORDER BY priority ASC;
        
 	DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished = 1;
-	OPEN subjects;
 
-	SET priorityNum = 1;
+	CALL prioritizeSubjects(allocRouId, 1); -- sub_eq.prior >= X ORDER BY sub_eq.prior DESC, groupSize ASC
+	CALL prioritizeSubjects(allocRouId, 2); -- sub_eq.prior < X ORDER BY sub_eq.prior DESC, groupSize ASC
+	CALL prioritizeSubjects(allocRouId, 3); -- without equipments ORDER BY groupSize ASC
+
+	OPEN subjects;
 
 	subjectLoop : LOOP
 		FETCH subjects INTO subId;
 		IF finished = 1 THEN LEAVE subjectLoop;
 		END IF;
-		-- SET priorityNumber
-		UPDATE AllocSubject SET priority = priorityNum WHERE subjectId = subId AND allocRound = allocRouId;
-		SET priorityNum = priorityNum +1;
-		-- SET Suitable rooms
-	    INSERT INTO AllocSubjectSuitableSpace (allocRound, subjectId, spaceId, missingItems)
-		SELECT allocRouId, subId, sp.id, getMissingItemAmount(subId, sp.id) AS "missingItems"
-		FROM Space sp
-		WHERE sp.personLimit >= (SELECT groupSize FROM Subject WHERE id=subId)
-		AND sp.area >= (SELECT s.area FROM Subject s WHERE id=subId)
-		AND sp.spaceTypeId = (SELECT s.spaceTypeId FROM Subject s WHERE id=subId)
-		AND sp.inUse=1
-		;
+		-- SET Suitable rooms for the subject
+	    CALL setSuitableRooms(allocRouId, subId);
 		-- SET cantAllocate or Insert subject to spaces
         CALL allocateSpace(allocRouId, subId);
-
-	
 	END LOOP subjectLoop;
-	
-	CLOSE subjects;
 
-		
+	CLOSE subjects;		
 END; //
 DELIMITER ;
 
