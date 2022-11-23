@@ -185,6 +185,7 @@ CREATE TABLE IF NOT EXISTS AllocRound (
     userId          INTEGER     NOT NULL,
     description     VARCHAR(16000),
     lastModified    TIMESTAMP   NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+    isAllocated     BOOLEAN DEFAULT 0,
 
     PRIMARY KEY(id),
     
