@@ -151,6 +151,22 @@ allocation.get("/:id/program/:programId", async (req, res) => {
     });
 });
 
+/* Get all allocated rooms by ProgramId, allocRound */
+allocation.get("/:id/rooms/:subjectId", async (req, res) => {
+  const allocId = req.params.id;
+  const subjectId = req.params.subjectId;
+  const rooms = await allocationService.getAllocatedRoomsBySubject(
+    subjectId,
+    allocId,
+  );
+
+  rooms
+    ? successHandler(res, rooms, "getRoomsBySubject succesful - Allocation")
+    : dbErrorHandler(res, rooms, "Oops! Nothing came through - Allocation");
+
+  return rooms;
+});
+
 /* Reset allocation = remove all subjects from allocSpace and reset isAllocated, prioritynumber and cantAllocate in allocSubject */
 allocation.post("/reset", async (req, res) => {
   const allocRound = req.body.allocRound;

@@ -141,6 +141,25 @@ const getAllocatedRoomsByProgram = async (programId, allocId) => {
   });
 };
 
+/* Get allocated rooms by Subject.id and AllocRound.id */
+const getAllocatedRoomsBySubject = async (subjectId, allocId) => {
+  const sqlQuery = `SELECT DISTINCT s.id, s.name, CAST(SUM(TIME_TO_SEC(aspace.totalTime)/3600) AS DECIMAL(10,1)) AS allocatedHours
+                    FROM AllocSpace AS aspace
+                    LEFT JOIN Space s ON aspace.spaceId = s.id
+                    LEFT JOIN Subject sub ON aspace.subjectId = sub.id
+                    WHERE sub.id = ? AND aspace.allocRound = ?
+                    GROUP BY s.id
+                    ;`;
+  return new Promise((resolve, reject) => {
+    db.query(sqlQuery, [subjectId, allocId], (err, result) => {
+      if (err) {
+        return reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
 /* Get subjects by Program.id and AllocRound.id */
 
 const getSubjectsByProgram = (allocRound, programId) => {
@@ -221,4 +240,5 @@ module.exports = {
   startAllocation,
   resetAllocation,
   getSuitableRoomsForSubject,
+  getAllocatedRoomsBySubject,
 };
