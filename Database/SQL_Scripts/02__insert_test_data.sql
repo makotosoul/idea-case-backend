@@ -213,13 +213,11 @@ INSERT INTO `SpaceEquipment` (`spaceId`, `equipmentId`) VALUES
     (1028, 2010),
     (1028, 2011),
     (1029, 2011),
-    (1028, 2011),
     (1031, 2002),
     (1034, 2017),
     (1003, 2010),
     (1020, 2004),
     (1020, 2010),
-    (1029, 2011),
     (1011, 2009);
 
 /* --- Insert: Program * --- */
@@ -429,4 +427,3 @@ INSERT INTO AllocCurrentRoundUser(allocId, userId) VALUES
     (10001, 201),
     (10001, 202),
     (10002, 201);
-
