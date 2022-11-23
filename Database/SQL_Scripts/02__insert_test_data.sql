@@ -291,7 +291,7 @@ INSERT INTO SubjectEquipment(subjectId, equipmentId, priority) VALUES
     (4008, 2009, 90),
     (4009, 2002, 50),
     (4010, 2002, 90),
-    (4011, 2001, 900),F
+    (4011, 2001, 900),
     (4012, 2011, 90),
     (4013, 2012, 50),
     (4014, 2013, 900),
@@ -318,7 +318,8 @@ INSERT INTO SubjectEquipment(subjectId, equipmentId, priority) VALUES
 INSERT INTO AllocRound(name, isSeasonAlloc, userId, description) VALUES
     ('Testipriorisointi', 0, 201, 'Testidata lisätään AllocSubject tauluun, mutta laskentaa ei vielä suoritettu eli opetuksille ei ole vielä merkitty tiloja'),
     ('Testilaskenta', 1, 201, 'Testidata lisätty ja huoneet merkitty'),
-    ('Kevät 2023', 0, 201, '');
+    ('Kevät 2023', 0, 201, ''),
+    ('Demo', 0, 201, 'Allokointi demoamista varten');
 
 /* --- Insert: AllocSubject * --- */
 INSERT INTO AllocSubject(subjectId, allocRound, isAllocated, allocatedDate, priority) VALUES

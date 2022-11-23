@@ -16,6 +16,13 @@ BEGIN
        
 	DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished = 1;
 
+	/* ONLY FOR DEMO PURPOSES */
+	IF (allocRouID = 10004) THEN
+		INSERT INTO AllocSubject(subjectId, allocRound)
+		SELECT id, 10004 FROM Subject;
+	END IF;
+	/* DEMO PART ENDS */
+
 	CALL prioritizeSubjects(allocRouId, 1); -- sub_eq.prior >= X ORDER BY sub_eq.prior DESC, groupSize ASC
 	CALL prioritizeSubjects(allocRouId, 2); -- sub_eq.prior < X ORDER BY sub_eq.prior DESC, groupSize ASC
 	CALL prioritizeSubjects(allocRouId, 3); -- without equipments ORDER BY groupSize ASC
@@ -32,9 +39,9 @@ BEGIN
         CALL allocateSpace(allocRouId, subId);
 	END LOOP subjectLoop;
 
-	CLOSE subjects;		
+	CLOSE subjects;
+
+	UPDATE AllocRound SET isAllocated = 1 WHERE id = allocRouId;
+		
 END; //
 DELIMITER ;
-
-CALL resetAllocation(10003);
-CALL startAllocation(10003);

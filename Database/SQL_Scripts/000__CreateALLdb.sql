@@ -211,6 +211,7 @@ CREATE TABLE IF NOT EXISTS AllocRound (
     userId          INTEGER     NOT NULL,
     description     VARCHAR(16000),
     lastModified    TIMESTAMP   NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+    isAllocated     BOOLEAN DEFAULT 0,
 
     PRIMARY KEY(id),
     
@@ -628,7 +629,8 @@ INSERT INTO SubjectEquipment(subjectId, equipmentId, priority) VALUES
 INSERT INTO AllocRound(name, isSeasonAlloc, userId, description) VALUES
     ('Testipriorisointi', 0, 201, 'Testidata lisätään AllocSubject tauluun, mutta laskentaa ei vielä suoritettu eli opetuksille ei ole vielä merkitty tiloja'),
     ('Testilaskenta', 1, 201, 'Testidata lisätty ja huoneet merkitty'),
-    ('Kevät 2023', 0, 201, '');
+    ('Kevät 2023', 0, 201, ''),
+    ('Demo', 0, 201, 'Allokointi demoamista varten');
 
 /* --- Insert: AllocSubject * --- */
 INSERT INTO AllocSubject(subjectId, allocRound, isAllocated, allocatedDate, priority) VALUES
@@ -905,7 +907,12 @@ CREATE PROCEDURE IF NOT EXISTS  resetAllocation(allocR INTEGER)
 BEGIN
 	DELETE FROM AllocSpace WHERE allocRound = allocR;
 	DELETE FROM AllocSubjectSuitableSpace WHERE allocRound = allocR;
-	UPDATE AllocSubject SET isAllocated = 0, priority = null, cantAllocate = 0 WHERE allocRound = allocR;
+    IF (allocR = 10004) THEN
+        DELETE FROM AllocSubject WHERE allocRound = 10004;
+    ELSE 
+	    UPDATE AllocSubject SET isAllocated = 0, priority = null, cantAllocate = 0 WHERE allocRound = allocR;
+    END IF;
+    UPDATE AllocRound SET isAllocated = 0 WHERE id = allocR;
 END; //
 
 DELIMITER ;
@@ -927,6 +934,13 @@ BEGIN
        
 	DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished = 1;
 
+	/* ONLY FOR DEMO PURPOSES */
+	IF (allocRouID = 10004) THEN
+		INSERT INTO AllocSubject(subjectId, allocRound)
+		SELECT id, 10004 FROM Subject;
+	END IF;
+	/* DEMO PART ENDS */
+
 	CALL prioritizeSubjects(allocRouId, 1); -- sub_eq.prior >= X ORDER BY sub_eq.prior DESC, groupSize ASC
 	CALL prioritizeSubjects(allocRouId, 2); -- sub_eq.prior < X ORDER BY sub_eq.prior DESC, groupSize ASC
 	CALL prioritizeSubjects(allocRouId, 3); -- without equipments ORDER BY groupSize ASC
@@ -943,7 +957,10 @@ BEGIN
         CALL allocateSpace(allocRouId, subId);
 	END LOOP subjectLoop;
 
-	CLOSE subjects;		
+	CLOSE subjects;
+
+	UPDATE AllocRound SET isAllocated = 1 WHERE id = allocRouId;
+		
 END; //
 DELIMITER ;
 
