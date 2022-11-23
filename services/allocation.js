@@ -164,16 +164,16 @@ const getAllocatedRoomsBySubject = async (subjectId, allocId) => {
 
 const getSubjectsByProgram = (allocRound, programId) => {
   const sqlQuery = `
-    SELECT 
-    	s.id, 
-    	s.name, 
-    	CAST(SUM(TIME_TO_SEC(as2.totalTime) / 3600) AS DECIMAL(10,1)) AS "allocatedHours",
-        CAST((s.groupCount * TIME_TO_SEC(s.sessionLength) * s.sessionCount / 3600) AS DECIMAL(10,1)) as "requiredHours"
-        FROM Subject s
-    JOIN Program p ON s.programId = p.id
-    JOIN AllocSpace as2 ON s.id = as2.subjectId
-    WHERE p.id = ? AND as2.allocRound = ?
-    GROUP BY as2.subjectId;`;
+    SELECT alsub.subjectId AS "id", 
+            sub.name,
+            IFNULL(CAST(SUM(TIME_TO_SEC(alspace.totalTime) / 3600) AS DECIMAL(10,1)), 0) AS "allocatedHours",
+            CAST((sub.groupCount * TIME_TO_SEC(sub.sessionLength) * sub.sessionCount / 3600) AS DECIMAL(10,1)) as "requiredHours"
+    FROM AllocSubject alsub
+    JOIN Subject sub ON alsub.subjectId = sub.id
+    JOIN Program p ON sub.programId = p.id
+    LEFT JOIN AllocSpace alspace ON alsub.subjectId = alspace.subjectId AND alsub.allocRound = alspace.allocRound
+    WHERE p.id = ? AND alsub.allocRound = ?
+    GROUP BY alsub.subjectId;`;
   return new Promise((resolve, reject) => {
     db.query(sqlQuery, [programId, allocRound], (err, result) => {
       if (err) {
