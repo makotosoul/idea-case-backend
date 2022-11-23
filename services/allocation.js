@@ -101,16 +101,17 @@ const getRoomsBySubjectAndAllocRound = (subjectId, allocRound) => {
 /* Get allocated rooms with allocatedHours */
 
 const getRoomsByAllocId = (allocRoundId) => {
-  const sqlQuery = `SELECT 
-        id, 
-        name, 
-        CAST(SUM(TIME_TO_SEC(AllocSpace.totalTime))/3600 AS DECIMAL(10,1)) AS 'allocatedHours', 
-        HOUR(TIMEDIFF(Space.availableTO, Space.availableFrom))*5 AS 'requiredHours' 
-    FROM Space 
-    LEFT JOIN AllocSpace ON Space.id = AllocSpace.spaceId 
-    WHERE AllocSpace.allocRound = ? 
-    GROUP BY id
-    ;`;
+  const sqlQuery = `SELECT id, 
+    name, 
+    (SELECT IFNULL(CAST(SUM(TIME_TO_SEC(AllocSpace.totalTime))/3600 AS DECIMAL(10,1)), 0) 
+        FROM AllocSpace 
+        WHERE spaceId = id 
+        AND allocRound = ?
+    ) AS 'allocatedHours', 
+    HOUR(TIMEDIFF(Space.availableTO, Space.availableFrom))*5 AS 'requiredHours' 
+    FROM Space
+   ORDER BY allocatedHours DESC;
+;`;
   return new Promise((resolve, reject) => {
     db.query(sqlQuery, allocRoundId, (err, result) => {
       if (err) return reject(err);
