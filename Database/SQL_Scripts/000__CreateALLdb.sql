@@ -309,9 +309,6 @@ CREATE TABLE IF NOT EXISTS AllocCurrentRoundUser (
 /* ------------------------------------------------------ */
 
 /* INSERTS */
-USE casedb;
-
-/* INSERTS */
 /* --- Insert: GlobalSettings --- */
 INSERT INTO GlobalSetting(name, description, numberValue, textValue) VALUES
     ('X', 'Korkea prioriteettiarvo', 800, NULL);
@@ -515,8 +512,22 @@ INSERT INTO `SpaceEquipment` (`spaceId`, `equipmentId`) VALUES
     (1036, 2021), -- Flyygeli
     (1036, 2022), -- DVD-soitin
     (1036, 2023), -- Äänentoisto (Ei PA-laitteet)
-    (1036, 2024); -- Näyttölaite
-    
+    (1036, 2024), -- Näyttölaite
+    (1008, 2003),
+    (1008, 2016),
+    (1009, 2006),
+    (1011, 2010),
+    (1011, 2013),
+    (1028, 2010),
+    (1028, 2011),
+    (1029, 2011),
+    (1031, 2002),
+    (1034, 2017),
+    (1003, 2010),
+    (1020, 2004),
+    (1020, 2010),
+    (1011, 2009);
+
 /* --- Insert: Program * --- */
 INSERT INTO Program (name , departmentId) VALUES
     ('Piano', 103), -- id 3001
@@ -561,11 +572,11 @@ INSERT INTO Subject(name, groupSize, groupCount, sessionLength, sessionCount, ar
     ('Kitaran soiton perusteet', 11, 1, '01:30:00', 2, 25, 3003, 5004),
     ('Kontrabassonsoitto, taso A', 1, 3, '01:00:00', 2, 10, 3012, 5004),
     ('Kanteleensoitto (musiikin kandidaatti)', 1, 4, '01:00:00', 1, 10, 3004, 5004),
-    ('Yhteissoitto / kantele', 16, 1, '01:30:00', 1, 20, 3004, 5004),
+    ('Yhteissoitto / kantele', 6, 1, '01:30:00', 1, 20, 3004, 5004),
     ('Urkujensoitto (musiikin kandidaatti)', 1, 3, '01:30:00', 1, 20, 3028, 5004),
-    ('Yhteissoitto / kitara', 34, 1, '01:30:00', 1, 35, 3003, 5004),
+    ('Yhteissoitto / kitara', 5, 1, '01:30:00', 1, 25, 3003, 5004),
     ('Huilunsoitto, taso A', 1, 5, '01:00:00', 1, 10, 3025, 5004),
-    ('Fortepianonsoitto 1', 1, 7, '01:10:00', 2, 30, 3008, 5004),
+    ('Fortepianonsoitto 1', 1, 7, '01:10:00', 2, 20, 3008, 5004),
     ('Nokkahuilunsoitto, taso B', 1, 3, '01:00:00', 1, 10, 3025, 5004),
     ('Viulunsoitto, taso D', 1, 12, '01:00:00', 1, 10, 3012, 5004),
     ('Tuubansoitto, taso C', 1, 5, '01:00:00', 1, 15, 3025, 5004),
@@ -610,7 +621,6 @@ INSERT INTO SubjectEquipment(subjectId, equipmentId, priority) VALUES
     (4016, 2006, 90),
     (4017, 2016, 90),
     (4018, 2012, 90),
-    (4019, 2014, 800),
     (4020, 2010, 400),
     (4003, 2010, 700),
     (4005, 2010, 500),
