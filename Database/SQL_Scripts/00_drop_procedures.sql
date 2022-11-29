@@ -1,0 +1,11 @@
+use casedb;
+
+/* PROCEDURES */
+DROP PROCEDURE IF EXISTS startAllocation;
+DROP PROCEDURE IF EXISTS resetAllocation;
+DROP PROCEDURE IF EXISTS allocateSpace;
+DROP PROCEDURE IF EXISTS prioritizeSubjects;
+DROP PROCEDURE IF EXISTS setSuitableRooms;
+
+/* FUNCTIONS */
+DROP FUNCTION IF EXISTS getMissingItemAmount;

@@ -185,6 +185,7 @@ CREATE TABLE IF NOT EXISTS AllocRound (
     userId          INTEGER     NOT NULL,
     description     VARCHAR(16000),
     lastModified    TIMESTAMP   NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+    isAllocated     BOOLEAN DEFAULT 0,
 
     PRIMARY KEY(id),
     
@@ -231,6 +232,28 @@ CREATE TABLE IF NOT EXISTS AllocSpace (
         ON UPDATE CASCADE,
 
     CONSTRAINT `FK_AllocSpace_Space`
+        FOREIGN KEY (`spaceId`)
+        REFERENCES `Space` (id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS AllocSubjectSuitableSpace (
+    allocRound      INTEGER     NOT NULL,
+    subjectId       INTEGER     NOT NULL,
+    spaceId         INTEGER     NOT NULL,
+    missingItems    INTEGER,
+
+    PRIMARY KEY(allocRound, subjectId, spaceId),
+
+    CONSTRAINT `FK_AllocSubjectSpace_AllocSubject`
+        FOREIGN KEY(`allocRound`, `subjectId`)
+        REFERENCES `AllocSubject` (allocRound, subjectId)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    CONSTRAINT `FK_AllocSubjectSpace_Space`
         FOREIGN KEY (`spaceId`)
         REFERENCES `Space` (id)
         ON DELETE CASCADE
