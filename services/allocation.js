@@ -229,6 +229,72 @@ const getSuitableRoomsForSubject = (allocRound, subject) => {
   });
 };
 
+//for test round 10004
+const getUnAllocableSubjects = (allocRoundId = 10004) => {
+  const sqlQuery = `SELECT all_sub.subjectId, s.name, s.groupSize, s.area, st.name AS "spaceType"
+    FROM AllocSubject all_sub
+    JOIN Subject s ON all_sub.subjectId = s.id
+    JOIN SpaceType st ON s.spaceTypeId = st.id
+    WHERE cantAllocate = 1
+    AND allocRound = ?;`;
+  return new Promise((resolve, reject) => {
+    db.query(sqlQuery, allocRoundId, (err, result) => {
+      if (err) return reject(err);
+      resolve(result);
+    });
+  });
+};
+
+//work in progress
+const getSpacesForSubject = (subjectId) => {
+  const sqlQuery = `SELECT 
+    s.id, 
+    s.name, 
+    s.area,
+    getMissingItemAmount(?, s.id) AS "missingItems",
+    IF(s.area >= (SELECT area FROM Subject WHERE id = ?), TRUE, FALSE) AS areaOk, 
+    s.personLimit,
+    IF(s.personLimit >= (SELECT groupSize FROM Subject WHERE id = ?), TRUE, FALSE) AS personLimitOk, 
+    s.inUse,
+    st.name,
+    IF(st.id = (SELECT spaceTypeId FROM Subject WHERE id = ?), TRUE, FALSE) AS spaceTypeOk
+    FROM Space s
+    LEFT JOIN SpaceEquipment se ON s.id = se.spaceId
+    LEFT JOIN SpaceType st ON s.spaceTypeId = st.id
+    GROUP BY s.id
+    ORDER BY FIELD(st.id, (SELECT spaceTypeId FROM Subject WHERE id = ?)) DESC,
+    missingItems,
+    personLimitOk DESC,
+    areaOk DESC 
+    ;`;
+  return new Promise((resolve, reject) => {
+    db.query(
+      sqlQuery,
+      [subjectId, subjectId, subjectId, subjectId, subjectId],
+      (err, result) => {
+        if (err) return reject(err);
+        resolve(result);
+      },
+    );
+  });
+};
+
+const getMissingEquipmentForRoom = (subjectId, spaceId) => {
+  const sqlQuery = `SELECT equipmentId, e.name FROM SubjectEquipment sub_eq
+    JOIN Equipment e ON sub_eq.equipmentId = e.id 
+    WHERE subjectId = ?
+        EXCEPT 
+    SELECT equipmentId, e2.name FROM SpaceEquipment sp_eq
+    JOIN Equipment e2 ON sp_eq.equipmentId = e2.id
+        WHERE spaceId = ?;`;
+  return new Promise((resolve, reject) => {
+    db.query(sqlQuery, [subjectId, spaceId], (err, result) => {
+      if (err) return reject(err);
+      resolve(result);
+    });
+  });
+};
+
 module.exports = {
   getAll,
   getById,
@@ -242,4 +308,7 @@ module.exports = {
   resetAllocation,
   getSuitableRoomsForSubject,
   getAllocatedRoomsBySubject,
+  getUnAllocableSubjects,
+  getSpacesForSubject,
+  getMissingEquipmentForRoom,
 };
