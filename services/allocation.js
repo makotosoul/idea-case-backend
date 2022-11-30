@@ -108,7 +108,8 @@ const getRoomsByAllocId = (allocRoundId) => {
         WHERE spaceId = id 
         AND allocRound = ?
     ) AS 'allocatedHours', 
-    HOUR(TIMEDIFF(Space.availableTO, Space.availableFrom))*5 AS 'requiredHours' 
+    HOUR(TIMEDIFF(Space.availableTO, Space.availableFrom))*5 AS 'requiredHours',
+    SPACETYPEID AS 'spaceTypeId'
     FROM Space
    ORDER BY allocatedHours DESC;
 ;`;
