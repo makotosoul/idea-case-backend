@@ -187,6 +187,26 @@ const getSubjectsByProgram = (allocRound, programId) => {
   });
 };
 
+/* Get subjects by Room.id and AllocRound.id */
+
+const getAllocatedSubjectsByRoom = (roomId, allocRound) => {
+  const sqlQuery = `
+    SELECT su.id, su.name, allocSp.totalTime FROM allocspace allocSp
+    INNER JOIN subject su ON su.id = allocSp.subjectId
+    WHERE allocSp.spaceId = ? AND allocSp.allocRound = ?
+    `;
+
+  return new Promise((resolve, reject) => {
+    db.query(sqlQuery, [roomId, allocRound], (err, result) => {
+      if (err) {
+        return reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
 /* START ALLOCATION - Procedure in database */
 const startAllocation = (allocRound) => {
   const sqlQuery = "CALL startAllocation(?)";
@@ -243,4 +263,5 @@ module.exports = {
   resetAllocation,
   getSuitableRoomsForSubject,
   getAllocatedRoomsBySubject,
+  getAllocatedSubjectsByRoom,
 };

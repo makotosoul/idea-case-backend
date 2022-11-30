@@ -167,6 +167,25 @@ allocation.get("/:id/rooms/:subjectId", async (req, res) => {
   return rooms;
 });
 
+/* Get all allocated rooms by RoomId, allocRound */
+allocation.get("/:id/subjects/:roomId", async (req, res) => {
+  const allocId = req.params.id;
+  const roomId = req.params.roomId;
+  const subjects = await allocationService.getAllocatedSubjectsByRoom(
+    roomId,
+    allocId,
+  );
+  subjects
+    ? successHandler(
+        res,
+        subjects,
+        "getAllocatedSubjectsByRoom succesful - Allocation",
+      )
+    : dbErrorHandler(res, subjects, "Oops! Nothing came through - Allocation");
+
+  return subjects;
+});
+
 /* Reset allocation = remove all subjects from allocSpace and reset isAllocated, prioritynumber and cantAllocate in allocSubject */
 allocation.post("/reset", async (req, res) => {
   const allocRound = req.body.allocRound;
