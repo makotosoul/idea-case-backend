@@ -176,7 +176,7 @@ allocation.get("/:id/subject/unallocated", async (req, res) => {
 
 allocation.get("/subject/:id/rooms", async (req, res) => {
   const subjectId = req.params.id;
-  const rooms = await allocationService.getUnAllocableSubjects(subjectId);
+  const rooms = await allocationService.getSpacesForSubject(subjectId);
 
   successHandler(res, rooms, "Rooms for subject - Allocation");
 });
