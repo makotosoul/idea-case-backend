@@ -191,9 +191,9 @@ const getSubjectsByProgram = (allocRound, programId) => {
 
 const getAllocatedSubjectsByRoom = (roomId, allocRound) => {
   const sqlQuery = `
-    SELECT su.id, su.name, allocSp.totalTime FROM allocspace allocSp
-    INNER JOIN subject su ON su.id = allocSp.subjectId
-    WHERE allocSp.spaceId = ? AND allocSp.allocRound = ?
+    SELECT su.id, su.name, allocSp.totalTime FROM AllocSpace allocSp
+    INNER JOIN Subject su ON su.id = allocSp.subjectId
+    WHERE allocSp.spaceId = ? AND allocSp.allocRound = ?;
     `;
 
   return new Promise((resolve, reject) => {
