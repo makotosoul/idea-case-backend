@@ -14,9 +14,9 @@ const {
   validateAddUpdateSubjectEquipment,
 } = require("../validationHandler/index");
 
+// Varusteet opetus id perusteella
 subjectequipment.get("/getEquipment/:subjectId", (req, res) => {
   const subjectId = req.params.subjectId;
-  //console.log("id", id);
   const sqlGetEquipmentBySubjectId =
     "SELECT se.subjectId , e.name,e.description, se.equipmentId FROM Subjectequipment se JOIN Equipment e ON se.equipmentId = e.id WHERE se.subjectid = ?;";
   db.query(sqlGetEquipmentBySubjectId, subjectId, (err, result) => {
@@ -28,11 +28,11 @@ subjectequipment.get("/getEquipment/:subjectId", (req, res) => {
   });
 });
 
+// Varusteen lisäys opetukseen
 subjectequipment.post(
   "/post",
   validateAddUpdateSubjectEquipment,
   (req, res) => {
-    // console.log("body:", req.body);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       logger.error("Validation error:  %O", errors);
@@ -55,11 +55,10 @@ subjectequipment.post(
         } else if (err) {
           dbErrorHandler(res, err, "Oops! Create failed - SubjectEquipment");
         } else {
-          //console.log(result.insertId);
           successHandler(
             res,
             { insertId: result.insertId },
-            "Create successful - Subject",
+            "Create successful - SubjectEquipment",
           );
           logger.info(
             `SubjectEquipment created for subjectId ${req.body.subjectId}`,
@@ -70,6 +69,7 @@ subjectequipment.post(
   },
 );
 
+// Varusteen poisto
 subjectequipment.delete("/delete/:subjectId/:equipmentId", (req, res) => {
   const subjectId = req.params.subjectId;
   const equipmentId = req.params.equipmentId;

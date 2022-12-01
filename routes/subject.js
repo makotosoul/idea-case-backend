@@ -12,17 +12,27 @@ const {
 const { body, validationResult } = require("express-validator");
 const { validateAddUpdateSubject } = require("../validationHandler/index");
 
-// Aineen kaikki tiedot sekä pääaineen id ja nimi
+// Opetuksen, pääaineen sekä huonetyypin tiedot
 subject.get("/getAll", (req, res) => {
   const sqlSelectSubjectProgram =
-    // "SELECT subject.id, subject.name AS subjectName, subject.groupSize, subject.groupCount, subject.sessionLength, subject.sessionCount, subject.area, subject.programId, program.name FROM Subject  JOIN Program ON subject.programId = program.id";
-    // " SELECT s.id, s.name AS subjectName, s.groupSize, s.groupCount, s.sessionLength, s.sessionCount, s.area, s.programId, p.name AS programName, s.spaceTypeId, st.name AS spaceTypeName  FROM Subject s  JOIN Program p ON s.programId = p.id  LEFT JOIN spacetype st ON s.spaceTypeId = st.id ";
-    "  SELECT s.id, s.name AS subjectName, s.groupSize, s.groupCount, s.sessionLength, s.sessionCount, s.area, s.programId, p.name AS programName, s.spaceTypeId, st.name AS spaceTypeName, se.equipmentId,e.name AS equipmentName, e.isMovable, e.priority, e.description FROM Subject s JOIN Program p ON s.programId = p.id LEFT JOIN spacetype st ON s.spaceTypeId = st.id LEFT JOIN Subjectequipment AS se ON se.subjectId = s.id LEFT JOIN Equipment e ON se.equipmentId = e.id;";
+    "  SELECT s.id, s.name AS subjectName, s.groupSize, s.groupCount, s.sessionLength, s.sessionCount, s.area, s.programId, p.name AS programName, s.spaceTypeId, st.name AS spaceTypeName FROM Subject s JOIN Program p ON s.programId = p.id LEFT JOIN spacetype st ON s.spaceTypeId = st.id;";
   db.query(sqlSelectSubjectProgram, (err, result) => {
     if (err) {
       dbErrorHandler(res, err, "Oops! Nothing came through - Subject");
     } else {
       successHandler(res, result, "getAll successful - Subject");
+    }
+  });
+});
+
+// Opetuksien nimet ja id
+subject.get("/getNames", (req, res) => {
+  const sqlSelectSubjectNames = "SELECT id, name FROM Subject;";
+  db.query(sqlSelectSubjectNames, (err, result) => {
+    if (err) {
+      dbErrorHandler(res, err, "Oops! Nothing came through - Subject");
+    } else {
+      successHandler(res, result, "getNames successful - Subject");
     }
   });
 });
@@ -64,7 +74,6 @@ subject.post("/post", validateAddUpdateSubject, (req, res) => {
       } else if (err) {
         dbErrorHandler(res, err, "Oops! Create failed - Subject");
       } else {
-        //console.log(result.insertId);
         successHandler(
           res,
           { insertId: result.insertId },
@@ -79,7 +88,6 @@ subject.post("/post", validateAddUpdateSubject, (req, res) => {
 // Opetuksen poisto
 subject.delete("/delete/:id", (req, res) => {
   const id = req.params.id;
-  // console.log("id", id);
   const sqlDelete = "DELETE FROM Subject WHERE id = ?;";
   db.query(sqlDelete, id, (err, result) => {
     if (err) {
@@ -100,7 +108,6 @@ subject.put("/update", validateAddUpdateSubject, (req, res) => {
   if (!errors.isEmpty()) {
     return validationErrorHandler(res, "Formatting problem");
   }
-  // console.log("body", req.body);
   const id = req.body.id;
   const name = req.body.name;
   const groupSize = req.body.groupSize;
