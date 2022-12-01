@@ -427,3 +427,6 @@ INSERT INTO AllocCurrentRoundUser(allocId, userId) VALUES
     (10001, 201),
     (10001, 202),
     (10002, 201);
+
+/* --- INSERT: LOG TYPE --- */
+INSERT INTO log_type(name) VALUES ("allocation");

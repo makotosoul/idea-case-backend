@@ -3,6 +3,9 @@
 
 USE casedb;
 
+DROP TABLE IF EXISTS log_event;
+DROP TABLE IF EXISTS log_list;
+DROP TABLE IF EXISTS log_type;
 DROP TABLE IF EXISTS AllocCurrentRoundUser;
 DROP TABLE IF EXISTS AllocSpaceEquipment;
 DROP TABLE IF EXISTS AllocSubjectSuitableSpace;

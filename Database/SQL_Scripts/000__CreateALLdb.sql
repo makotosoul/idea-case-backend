@@ -1,5 +1,8 @@
 USE casedb;
 
+DROP TABLE IF EXISTS log_event;
+DROP TABLE IF EXISTS log_list;
+DROP TABLE IF EXISTS log_type;
 DROP TABLE IF EXISTS AllocCurrentRoundUser;
 DROP TABLE IF EXISTS AllocSubjectSuitableSpace;
 DROP TABLE IF EXISTS AllocSpace;
@@ -304,6 +307,42 @@ CREATE TABLE IF NOT EXISTS AllocCurrentRoundUser (
         REFERENCES `User` (id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+/* CREATE LOG TABLES */
+
+CREATE TABLE IF NOT EXISTS log_type (
+id 		INTEGER		NOT NULL AUTO_INCREMENT,
+name	VARCHAR(255)	NOT NULL UNIQUE,
+
+PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS log_list (
+id			INTEGER		NOT NULL AUTO_INCREMENT,
+log_type	INTEGER,
+created_at	TIMESTAMP	NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+
+PRIMARY KEY (id),
+
+CONSTRAINT FOREIGN KEY (log_type) REFERENCES log_type(id)
+	ON DELETE NO ACTION
+	ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS log_event (
+id 		INTEGER		NOT NULL AUTO_INCREMENT,
+log_id	INTEGER		NOT NULL,
+stage	VARCHAR(255),
+status	VARCHAR(255),
+information 	VARCHAR(16000),
+created_at	TIMESTAMP	NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+
+PRIMARY KEY (id),
+
+CONSTRAINT FOREIGN KEY (log_id) REFERENCES log_list(id)
+	ON DELETE CASCADE
+	ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 /* ------------------------------------------------------ */
@@ -735,6 +774,9 @@ INSERT INTO AllocCurrentRoundUser(allocId, userId) VALUES
     (10001, 201),
     (10001, 202),
     (10002, 201);
+
+/* --- INSERT: LOG TYPE --- */
+INSERT INTO log_type(name) VALUES ("allocation");
 
 /* ------------------------------------------------------ */
 /* DROP PROCEDURES */
