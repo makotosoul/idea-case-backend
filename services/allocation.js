@@ -256,7 +256,7 @@ const getSpacesForSubject = (subjectId) => {
     s.personLimit,
     IF(s.personLimit >= (SELECT groupSize FROM Subject WHERE id = ?), TRUE, FALSE) AS personLimitOk, 
     s.inUse,
-    st.name,
+    st.name as "spaceType",
     IF(st.id = (SELECT spaceTypeId FROM Subject WHERE id = ?), TRUE, FALSE) AS spaceTypeOk
     FROM Space s
     LEFT JOIN SpaceEquipment se ON s.id = se.spaceId
