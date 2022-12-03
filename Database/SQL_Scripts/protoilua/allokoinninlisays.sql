@@ -6,6 +6,7 @@ BEGIN
 	DECLARE subId	INTEGER DEFAULT 0; -- SubjectId
 	DECLARE logId	INTEGER DEFAULT 0;
 	DECLARE errors	INTEGER DEFAULT 0;
+	DECLARE debug	INTEGER DEFAULT 0;
    	
 	-- Cursor for subject loop / SELECT priority order 
 	DECLARE subjects CURSOR FOR 
@@ -26,6 +27,9 @@ BEGIN
 			SET @full_error = CONCAT("ERROR ", @errno, " (", @sqlstate, "): ", @text);
 			CALL LogAllocation(logId, "Allocation", "Error", (SELECT @full_error));
 		END;
+	
+	SET debug := (SELECT numberValue FROM GlobalSetting WHERE name='allocation-debug');
+
 
 	/* ONLY FOR DEMO PURPOSES */
 	IF (allocRouID = 10004) THEN
@@ -34,10 +38,12 @@ BEGIN
 	END IF;
 	/* DEMO PART ENDS */
 
-	INSERT INTO log_list(log_type) VALUES (1); -- START LOG
-	SET logId := (SELECT LAST_INSERT_ID()); -- SET log id number for the list
-	
-	CALL LogAllocation(logId, "Allocation", "Info", CONCAT("Start allocation with AllocRound: ", allocRouId));
+	IF debug = 1 THEN
+		INSERT INTO log_list(log_type) VALUES (1); -- START LOG
+		SET logId := (SELECT LAST_INSERT_ID()); -- SET log id number for the list
+	END IF;
+
+	CALL LogAllocation(logId, "Allocation", "Start", CONCAT("Start allocation with AllocRound: ", allocRouId));
 	CALL LogAllocation(logId, "Allocation", "Info", "Start Prioritioze subjects");
 
 	CALL prioritizeSubjects(allocRouId, 1); -- sub_eq.prior >= X ORDER BY sub_eq.prior DESC, groupSize ASC
@@ -69,7 +75,7 @@ BEGIN
 	CLOSE subjects;
 
 	UPDATE AllocRound SET isAllocated = 1 WHERE id = allocRouId;
-	CALL LogAllocation(logId, "Allocation", "Info", CONCAT("End allocation - Errors: ", (SELECT errors)));
+	CALL LogAllocation(logId, "Allocation", "End", CONCAT("End allocation - Errors: ", (SELECT errors)));
 
 		
 END; //
