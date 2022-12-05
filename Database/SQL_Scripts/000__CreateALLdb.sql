@@ -350,7 +350,8 @@ CONSTRAINT FOREIGN KEY (log_id) REFERENCES log_list(id)
 /* INSERTS */
 /* --- Insert: GlobalSettings --- */
 INSERT INTO GlobalSetting(name, description, numberValue, textValue) VALUES
-    ('X', 'Korkea prioriteettiarvo', 800, NULL);
+    ('X', 'Korkea prioriteettiarvo', 800, NULL),
+    ("allocation-debug", "Onko allokoinnin logitus päällä. numberValue : 0 = OFF, 1 = ON", 1, NULL);
 
 /* --- Insert: Department --- */
 INSERT INTO Department(name, description) VALUES
@@ -786,6 +787,7 @@ DROP PROCEDURE IF EXISTS resetAllocation;
 DROP PROCEDURE IF EXISTS allocateSpace;
 DROP PROCEDURE IF EXISTS prioritizeSubjects;
 DROP PROCEDURE IF EXISTS setSuitableRooms;
+DROP PROCEDURE IF EXISTS LogAllocation;
 
 /* ------------------------------------------------------ */
 /* DROP FUNCTIONS */
@@ -795,10 +797,25 @@ DROP FUNCTION IF EXISTS getMissingItemAmount;
 /* ------------------------------------------------------ */
 /* PROCEDURES */
 
+/* --- Procedure: LogAllocation - Allocation */
+DELIMITER //
+CREATE PROCEDURE IF NOT EXISTS LogAllocation(logId INT, stage VARCHAR(255), status VARCHAR(255), msg VARCHAR(16000))
+BEGIN
+	DECLARE debug INTEGER;
+
+	SET debug := (SELECT numberValue FROM GlobalSetting WHERE name='allocation-debug');
+	
+	IF debug = 1 AND logId IS NOT NULL AND logId != 0 THEN
+		INSERT INTO log_event(log_id, stage, status, information) VALUES(logId, stage, status, msg);
+	END IF;
+END; //
+
+DELIMITER ;
+
 /* --- Procedure: PRIORITIZE SUBJECTS -  ALLOCATION --- */
 
 DELIMITER //
-CREATE OR REPLACE PROCEDURE prioritizeSubjects(allocRoundId INT, priority_option INT)
+CREATE OR REPLACE PROCEDURE prioritizeSubjects(allocRoundId INT, priority_option INT, logId INT)
 BEGIN 
 	DECLARE priorityNow INTEGER;
 
@@ -835,6 +852,9 @@ BEGIN
 			AND allocRound = allocRoundId
 		ON DUPLICATE KEY UPDATE priority = VALUES(priority);
 	END IF;
+
+	CALL LogAllocation(logId, "Prioritization", "OK", CONCAT("Priority option: ", priority_option, " completed."));
+
 END; //
 
 DELIMITER ;
@@ -859,7 +879,7 @@ DELIMITER ;
 /*--- Procedure: SPACE ALLOCATION ---*/
 DELIMITER //
 
-CREATE PROCEDURE allocateSpace(allocRouId INT, subId INT) 
+CREATE PROCEDURE allocateSpace(allocRouId INT, subId INT, logId INT) 
 BEGIN
 	DECLARE spaceTo INTEGER DEFAULT NULL;
 	DECLARE i INTEGER DEFAULT 0; -- loop index
@@ -867,13 +887,13 @@ BEGIN
 	DECLARE allocated INTEGER DEFAULT 0; -- How many sessions added to AllocSpace
 	DECLARE sessionSeconds INTEGER DEFAULT 0; -- How many seconds each session lasts
 	DECLARE suitableSpaces BOOLEAN DEFAULT TRUE; -- If can't allocate set false
-	DECLARE loopOn BOOLEAN DEFAULT TRUE;
+	DECLARE loopOn BOOLEAN DEFAULT TRUE; -- while loop condition
 
-	SET sessions := (SELECT groupCount * sessionCount FROM Subject WHERE id = subId);
+	SET sessions := (SELECT groupCount * sessionCount FROM Subject WHERE id = subId); -- total amount of sessions in subject
    	SET allocated := 0; -- How many sessions allocated
-   	SET sessionSeconds := (SELECT TIME_TO_SEC(sessionLength) FROM Subject WHERE id = subId);
+   	SET sessionSeconds := (SELECT TIME_TO_SEC(sessionLength) FROM Subject WHERE id = subId); -- Session length in seconds
 	
-	SET spaceTo := ( -- Help to check if subject can be allocated
+	SET spaceTo := ( -- to check if subject can be allocated
         	SELECT ass.spaceId FROM AllocSubjectSuitableSpace ass
         	WHERE ass.missingItems = 0 AND ass.subjectId = subId AND ass.allocRound = allocRouId 
  			LIMIT 1);
@@ -882,7 +902,7 @@ BEGIN
 		SET suitableSpaces := FALSE;
    	ELSE -- Find for each session space with free time
    		SET i := 0;
-   		WHILE loopOn DO -- Try add all subject sessions to spaces	
+   		WHILE loopOn DO -- Try add all sessions to the space	
    			SET spaceTo := (SELECT sp.id FROM AllocSubjectSuitableSpace ass
 							LEFT JOIN Space sp ON ass.spaceId = sp.id
 							WHERE ass.subjectId = subId AND ass.missingItems = 0 AND ass.allocRound = allocRouId
@@ -897,7 +917,7 @@ BEGIN
 			
 			IF spaceTo IS NULL THEN -- If can't find space with freetime for specific amount sessions
 				SET i := i+1;
-				IF i = sessions - allocated THEN
+				IF i = sessions - allocated THEN -- If checked all 
 					SET loopOn = FALSE;
 				END IF;
 			ELSE -- if can find space with freetime for specific amount sessions
@@ -905,8 +925,9 @@ BEGIN
 					(subjectId, allocRound, spaceId, totalTime) 
 				VALUES 
 					(subId, allocRouId, spaceTo, SEC_TO_TIME((sessionSeconds * (sessions - i - allocated))))
-				ON DUPLICATE KEY UPDATE totalTime = totalTime + SEC_TO_TIME(sessionSeconds * (sessions - i - allocated));
-				
+				ON DUPLICATE KEY UPDATE totalTime = ADDTIME(totalTime, (SEC_TO_TIME(sessionSeconds * (sessions - i - allocated))));
+				-- LOG HERE
+				CALL LogAllocation(logId, "Space-allocation", "OK", CONCAT("Subject : ", subId, " - Allocate ", sessions - i - allocated, " of ", sessions, " sessions to space: ", spaceTo));
 				SET allocated := allocated + (sessions - i - allocated);
 				SET i := 0;
 				IF allocated = sessions THEN
@@ -918,26 +939,28 @@ BEGIN
    
    IF sessions = allocated THEN -- If all sessions allocated
    	UPDATE AllocSubject SET isAllocated = 1 WHERE subjectId = subId AND allocRound = allocRouId;
-   
    ELSEIF suitableSpaces = FALSE THEN -- if can't find any suitable space for the subject
    	UPDATE AllocSubject SET cantAllocate = 1 WHERE subjectId = subId AND allocRound = allocRouId;
-     
+   	-- LOG HERE
+    CALL LogAllocation(logId, "Space-allocation", "Warning", CONCAT("Subject : ", subId, " - Can't find suitable spaces" ));
    ELSEIF allocated = 0 AND suitableSpaces = TRUE THEN -- if can't find any space with free time, add all sessions to same space with most freetime
-   		SET spaceTo := (SELECT alpa.spaceId
-		FROM AllocSubjectSuitableSpace alpa
-		LEFT JOIN Space spa ON alpa.spaceId = spa.id
-		WHERE alpa.subjectId = subId
-		AND alpa.missingItems = 0
-		AND alpa.allocRound = allocRouId
-		GROUP BY alpa.spaceId 
-		ORDER BY ((TIME_TO_SEC(TIMEDIFF(spa.availableTO, spa.availableFrom)) *5) - 
-		(SELECT IFNULL((SUM(TIME_TO_SEC(totalTime))), 0) FROM AllocSpace WHERE allocRound = allocRouId AND spaceId = alpa.spaceId)) DESC
-		LIMIT 1);
-				
+   		SET spaceTo := (
+   			SELECT alpa.spaceId
+			FROM AllocSubjectSuitableSpace alpa
+			LEFT JOIN Space spa ON alpa.spaceId = spa.id
+			WHERE alpa.subjectId = subId
+			AND alpa.missingItems = 0
+			AND alpa.allocRound = allocRouId
+			GROUP BY alpa.spaceId 
+			ORDER BY ((TIME_TO_SEC(TIMEDIFF(spa.availableTO, spa.availableFrom)) *5) - 
+			(SELECT IFNULL((SUM(TIME_TO_SEC(totalTime))), 0) FROM AllocSpace WHERE allocRound = allocRouId AND spaceId = alpa.spaceId)) DESC
+			LIMIT 1
+		);		
    		INSERT INTO AllocSpace (subjectId, allocRound, spaceId, totalTime) 
-   		VALUES (subId, allocRouId, spaceTo, SEC_TO_TIME(sessionSeconds * sessions)); 
+   			VALUES (subId, allocRouId, spaceTo, SEC_TO_TIME(sessionSeconds * sessions)); 
    		UPDATE AllocSubject SET isAllocated = 1 WHERE subjectId = subId AND allocRound = allocRouId;
-	
+   		-- LOG HERE
+		CALL LogAllocation(logId, "Space-allocation", "Warning", CONCAT("Subject : ", subId, " - Allocate ", sessions, " of ", sessions, " sessions to space: ", spaceTo, " - All suitable spaces are full."));
    	 
    	ELSEIF allocated < sessions AND suitableSpaces = TRUE THEN -- if there is free time for some of the sessions but not all, add rest to same space than others
    		SET spaceTo := (SELECT spaceId FROM AllocSpace WHERE subjectId = subId AND allocRound = allocRouId ORDER BY totalTime ASC LIMIT 1);
@@ -945,6 +968,8 @@ BEGIN
 		UPDATE AllocSpace SET totalTime=ADDTIME(totalTime,(SEC_TO_TIME(sessionSeconds * (sessions - allocated))))
 		WHERE subjectId=subID AND spaceId = spaceTO AND allocRound = allocRouId;
 		UPDATE AllocSubject SET isAllocated = 1 WHERE subjectId = subId AND allocRound = allocRouId;
+		-- LOG HERE
+		CALL LogAllocation(logId, "Space-allocation", "Warning", CONCAT("Subject : ", subId, " - Add ", sessions - allocated, " to space: ", spaceTo, " - All suitable spaces are full"));
    	END IF;
 END; //
 
@@ -974,6 +999,9 @@ CREATE OR REPLACE PROCEDURE startAllocation(allocRouId INT)
 BEGIN
 	DECLARE finished INTEGER DEFAULT 0; -- Marker for loop
 	DECLARE subId	INTEGER DEFAULT 0; -- SubjectId
+	DECLARE logId	INTEGER DEFAULT NULL;
+	DECLARE errors	INTEGER DEFAULT 0;
+	DECLARE debug	INTEGER DEFAULT 0;
    	
 	-- Cursor for subject loop / SELECT priority order 
 	DECLARE subjects CURSOR FOR 
@@ -984,6 +1012,17 @@ BEGIN
        
 	DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished = 1;
 
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION
+		BEGIN
+			SET errors := errors +1;
+			GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
+			SET @full_error = CONCAT("ERROR ", @errno, " (", @sqlstate, "): ", @text);
+			CALL LogAllocation(logId, "Allocation", "Error", (SELECT @full_error));
+		END;
+	
+	SET debug := (SELECT numberValue FROM GlobalSetting WHERE name='allocation-debug');
+
+
 	/* ONLY FOR DEMO PURPOSES */
 	IF (allocRouID = 10004) THEN
 		INSERT INTO AllocSubject(subjectId, allocRound)
@@ -991,25 +1030,37 @@ BEGIN
 	END IF;
 	/* DEMO PART ENDS */
 
-	CALL prioritizeSubjects(allocRouId, 1); -- sub_eq.prior >= X ORDER BY sub_eq.prior DESC, groupSize ASC
-	CALL prioritizeSubjects(allocRouId, 2); -- sub_eq.prior < X ORDER BY sub_eq.prior DESC, groupSize ASC
-	CALL prioritizeSubjects(allocRouId, 3); -- without equipments ORDER BY groupSize ASC
+	IF debug = 1 THEN
+		INSERT INTO log_list(log_type) VALUES (1); -- START LOG
+		SET logId := (SELECT LAST_INSERT_ID()); -- SET log id number for the list
+	END IF;
 
+	CALL LogAllocation(logId, "Allocation", "Start", CONCAT("Start allocation. AllocRound: ", allocRouId));
+
+	CALL prioritizeSubjects(allocRouId, 1, logId); -- sub_eq.prior >= X ORDER BY sub_eq.prior DESC, groupSize ASC
+	CALL prioritizeSubjects(allocRouId, 2, logId); -- sub_eq.prior < X ORDER BY sub_eq.prior DESC, groupSize ASC
+	CALL prioritizeSubjects(allocRouId, 3, logId); -- without equipments ORDER BY groupSize ASC
+	
 	OPEN subjects;
 
 	subjectLoop : LOOP
 		FETCH subjects INTO subId;
 		IF finished = 1 THEN LEAVE subjectLoop;
 		END IF;
+		
 		-- SET Suitable rooms for the subject
+		CALL LogAllocation(logId, "Allocation", "Info", CONCAT("SubjectId: ", subId, " - Search for suitable spaces"));
 	    CALL setSuitableRooms(allocRouId, subId);
 		-- SET cantAllocate or Insert subject to spaces
-        CALL allocateSpace(allocRouId, subId);
+        CALL allocateSpace(allocRouId, subId, logId);
+       	
 	END LOOP subjectLoop;
 
 	CLOSE subjects;
 
 	UPDATE AllocRound SET isAllocated = 1 WHERE id = allocRouId;
+	CALL LogAllocation(logId, "Allocation", "End", CONCAT("Errors: ", (SELECT errors)));
+
 		
 END; //
 DELIMITER ;

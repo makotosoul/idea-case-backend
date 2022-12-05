@@ -1,5 +1,5 @@
 DELIMITER //
-CREATE OR REPLACE PROCEDURE prioritizeSubjects(allocRoundId INT, priority_option INT)
+CREATE OR REPLACE PROCEDURE prioritizeSubjects(allocRoundId INT, priority_option INT, logId INT)
 BEGIN 
 	DECLARE priorityNow INTEGER;
 
@@ -36,6 +36,9 @@ BEGIN
 			AND allocRound = allocRoundId
 		ON DUPLICATE KEY UPDATE priority = VALUES(priority);
 	END IF;
+
+	CALL LogAllocation(logId, "Prioritization", "OK", CONCAT("Priority option: ", priority_option, " completed."));
+
 END; //
 
 DELIMITER ;
