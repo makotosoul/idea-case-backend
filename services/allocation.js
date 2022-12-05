@@ -108,7 +108,8 @@ const getRoomsByAllocId = (allocRoundId) => {
         WHERE spaceId = id 
         AND allocRound = ?
     ) AS 'allocatedHours', 
-    HOUR(TIMEDIFF(Space.availableTO, Space.availableFrom))*5 AS 'requiredHours' 
+    HOUR(TIMEDIFF(Space.availableTO, Space.availableFrom))*5 AS 'requiredHours',
+    SPACETYPEID AS 'spaceTypeId'
     FROM Space
    ORDER BY allocatedHours DESC;
 ;`;
@@ -186,6 +187,26 @@ const getSubjectsByProgram = (allocRound, programId) => {
   });
 };
 
+/* Get subjects by Room.id and AllocRound.id */
+
+const getAllocatedSubjectsByRoom = (roomId, allocRound) => {
+  const sqlQuery = `
+    SELECT su.id, su.name, allocSp.totalTime FROM AllocSpace allocSp
+    INNER JOIN Subject su ON su.id = allocSp.subjectId
+    WHERE allocSp.spaceId = ? AND allocSp.allocRound = ?;
+    `;
+
+  return new Promise((resolve, reject) => {
+    db.query(sqlQuery, [roomId, allocRound], (err, result) => {
+      if (err) {
+        return reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
 /* START ALLOCATION - Procedure in database */
 const startAllocation = (allocRound) => {
   const sqlQuery = "CALL startAllocation(?)";
@@ -242,4 +263,5 @@ module.exports = {
   resetAllocation,
   getSuitableRoomsForSubject,
   getAllocatedRoomsBySubject,
+  getAllocatedSubjectsByRoom,
 };

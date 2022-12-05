@@ -155,16 +155,36 @@ allocation.get("/:id/program/:programId", async (req, res) => {
 allocation.get("/:id/rooms/:subjectId", async (req, res) => {
   const allocId = req.params.id;
   const subjectId = req.params.subjectId;
-  const rooms = await allocationService.getAllocatedRoomsBySubject(
-    subjectId,
-    allocId,
-  );
-
-  rooms
-    ? successHandler(res, rooms, "getRoomsBySubject succesful - Allocation")
-    : dbErrorHandler(res, rooms, "Oops! Nothing came through - Allocation");
+  const rooms = await allocationService
+    .getAllocatedRoomsBySubject(subjectId, allocId)
+    .then((rooms) => {
+      successHandler(res, rooms, "getRoomsBySubject succesful - Allocation");
+    })
+    .catch((err) => {
+      dbErrorHandler(res, err, "Oops! Allocation reset failed - Allocation");
+    });
 
   return rooms;
+});
+
+/* Get all allocated rooms by RoomId, allocRound */
+allocation.get("/:id/subjects/:roomId", async (req, res) => {
+  const allocId = req.params.id;
+  const roomId = req.params.roomId;
+  const subjects = await allocationService
+    .getAllocatedSubjectsByRoom(roomId, allocId)
+    .then((subs) => {
+      successHandler(
+        res,
+        subs,
+        "getAllocatedSubjectsByRoom succesful - Allocation",
+      );
+    })
+    .catch((err) => {
+      dbErrorHandler(res, err, "Oops! Allocation reset failed - Allocation");
+    });
+
+  return subjects;
 });
 
 /* Reset allocation = remove all subjects from allocSpace and reset isAllocated, prioritynumber and cantAllocate in allocSubject */
