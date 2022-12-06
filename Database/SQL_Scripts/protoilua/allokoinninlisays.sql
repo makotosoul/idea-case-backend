@@ -20,7 +20,6 @@ BEGIN
         ORDER BY priority ASC;
               
 	DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished = 1;
-
 	
 	-- IF Procedure already running or allocRound allocated exit procedure
 	DECLARE EXIT HANDLER FOR processBusy, alreadyAllocated
@@ -58,11 +57,10 @@ BEGIN
 	-- IF Allocation already running with allocRound id raise error 
 	SET @procedure_active = (SELECT processOn FROM AllocRound WHERE id = allocRouId);
 	IF @procedure_active = 1 THEN
-		SELECT "IM HERE NOW!";
 		SET @message_text = CONCAT("The allocation with allocRound:", allocRouId, " is already running.");
 		SIGNAL processBusy SET MESSAGE_TEXT = @message_text, MYSQL_ERRNO = 1192;
 	END IF;
-	-- SET procedure running
+	-- SET that procedure running
 	UPDATE AllocRound SET processOn = 1 WHERE id = allocRouId;
 	
 	/* ONLY FOR DEMO PURPOSES */
@@ -94,9 +92,9 @@ BEGIN
 	CLOSE subjects;
 
 	UPDATE AllocRound SET isAllocated = 1 WHERE id = allocRouId;
+	CALL LogAllocation(logId, "Allocation", "End", CONCAT("Errors: ", (SELECT errors)));
+
 	UPDATE AllocRound SET processOn = 0 WHERE id = allocRouId;
 
-	CALL LogAllocation(logId, "Allocation", "End", CONCAT("Errors: ", (SELECT errors)));
-		
 END; //
 DELIMITER ;
