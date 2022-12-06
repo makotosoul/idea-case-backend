@@ -16,10 +16,26 @@ const getAll = () => {
 /* Get allocation by id */
 
 const getById = (id) => {
-  sqlQuery =
-    "SELECT id, name, isSeasonAlloc, description, lastmodified FROM AllocRound ar WHERE id=?;";
+  sqlQuery = `SELECT ar.id,
+	            ar.name,
+	            ar.isSeasonAlloc,
+	            ar.description,
+	            ar.lastmodified,
+	            ar.isAllocated, 
+	            ar.processOn,
+	            (SELECT COUNT(*) FROM AllocSubject WHERE AllocRound = ${db.escape(
+                id,
+              )}) AS 'Subjects',
+	            (SELECT COUNT(*) FROM AllocSubject WHERE isAllocated = 1 AND AllocRound = ${db.escape(
+                id,
+              )}) AS 'allocated',
+	            (SELECT COUNT(*) FROM AllocSubject WHERE isAllocated = 0 AND AllocRound = ${db.escape(
+                id,
+              )}) AS 'unAllocated'
+	            FROM AllocRound ar 
+	            WHERE ar.id=${db.escape(id)}`;
   return new Promise((resolve, reject) => {
-    db.query(sqlQuery, id, (err, result) => {
+    db.query(sqlQuery, (err, result) => {
       if (err) return reject(err);
       resolve(result);
     });
