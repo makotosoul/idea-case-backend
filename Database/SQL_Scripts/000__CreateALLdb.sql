@@ -217,6 +217,7 @@ CREATE TABLE IF NOT EXISTS AllocRound (
     isAllocated     BOOLEAN DEFAULT 0,
     processOn       BOOLEAN DEFAULT 0,
     abortProcess    BOOLEAN DEFAULT 0,
+    requireReset    BOOLEAN DEFAULT 0,
 
     PRIMARY KEY(id),
     
@@ -1007,7 +1008,7 @@ BEGIN
     ELSE 
 	    UPDATE AllocSubject SET isAllocated = 0, priority = null, cantAllocate = 0 WHERE allocRound = allocR;
     END IF;
-    UPDATE AllocRound SET isAllocated = 0 WHERE id = allocR;
+    UPDATE AllocRound SET isAllocated = 0, requireReset = FALSE WHERE id = allocR;
 END; //
 
 DELIMITER ;
@@ -1023,12 +1024,15 @@ BEGIN
 	DECLARE errors	INTEGER DEFAULT 0;
 	DECLARE debug	INTEGER DEFAULT 0;
 	DECLARE abort_round	BOOLEAN DEFAULT FALSE;
+	DECLARE reset_required	BOOLEAN DEFAULT FALSE;
+	DECLARE procedure_active	BOOLEAN DEFAULT FALSE;
 
 	-- Error Handling declarations
     DECLARE processBusy CONDITION FOR SQLSTATE '50000';
     DECLARE alreadyAllocated CONDITION FOR SQLSTATE '50001';
 	DECLARE abortAllocation	CONDITION FOR SQLSTATE '50002';
-   
+	DECLARE require_reset	CONDITION FOR SQLSTATE '50003';   
+
 	-- Cursor for subject loop / SELECT priority order 
 	DECLARE subjects CURSOR FOR 
 		SELECT allSub.subjectId 
@@ -1038,8 +1042,8 @@ BEGIN
               
 	DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished = 1;
 	
-	-- IF Procedure already running or allocRound allocated exit procedure
-	DECLARE EXIT HANDLER FOR processBusy, alreadyAllocated, abortAllocation
+	-- IF Procedure already running, is already allocated, or user tell to abort the process
+	DECLARE EXIT HANDLER FOR processBusy, alreadyAllocated, abortAllocation, require_reset
 	BEGIN
 		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
 		SET @full_error = CONCAT("Error: ", @errno, " (", @sqlstate, "): ", @text);
@@ -1072,13 +1076,19 @@ BEGIN
 		SET @message_text = CONCAT("The allocRound: ", allocRouId, " is already allocated.");
 		SIGNAL alreadyAllocated SET MESSAGE_TEXT = @message_text, MYSQL_ERRNO = 1192;
 	END IF;
+	-- IF AllocRound require reset before allocation
+	SET reset_required = (SELECT requireReset FROM AllocRound WHERE id = allocRouId);
+	IF reset_required = TRUE THEN
+		SET @message_text = CONCAT("The allocRound: ", allocRouId, " require reset before allocation.");
+		SIGNAL require_reset SET MESSAGE_TEXT = @message_text, MYSQL_ERRNO = 1192;
+	END IF;
 	-- IF Allocation already running with allocRound id raise error 
-	SET @procedure_active = (SELECT processOn FROM AllocRound WHERE id = allocRouId);
-	IF @procedure_active = 1 THEN
+	SET procedure_active = (SELECT processOn FROM AllocRound WHERE id = allocRouId);
+	IF procedure_active = 1 THEN
 		SET @message_text = CONCAT("The allocation with allocRound:", allocRouId, " is already running.");
 		SIGNAL processBusy SET MESSAGE_TEXT = @message_text, MYSQL_ERRNO = 1192;
 	END IF;
-	-- SET that procedure running
+	-- SET procedure running
 	UPDATE AllocRound SET processOn = 1 WHERE id = allocRouId;
 	
 	/* ONLY FOR DEMO PURPOSES */
@@ -1087,6 +1097,8 @@ BEGIN
 		SELECT id, 10004 FROM Subject;
 	END IF;
 	/* DEMO PART ENDS */
+
+	UPDATE AllocRound SET requireReset = TRUE WHERE id = allocRouId;
 
 	CALL prioritizeSubjects(allocRouId, 1, logId); -- sub_eq.prior >= X ORDER BY sub_eq.prior DESC, groupSize ASC
 	CALL prioritizeSubjects(allocRouId, 2, logId); -- sub_eq.prior < X ORDER BY sub_eq.prior DESC, groupSize ASC

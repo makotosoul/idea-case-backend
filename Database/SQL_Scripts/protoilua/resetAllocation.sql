@@ -27,7 +27,7 @@ BEGIN
     ELSE 
 	    UPDATE AllocSubject SET isAllocated = 0, priority = null, cantAllocate = 0 WHERE allocRound = allocR;
     END IF;
-    UPDATE AllocRound SET isAllocated = 0 WHERE id = allocR;
+    UPDATE AllocRound SET isAllocated = 0, requireReset = FALSE WHERE id = allocR;
 END; //
 
 DELIMITER ;
