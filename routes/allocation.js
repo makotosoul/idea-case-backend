@@ -229,7 +229,30 @@ allocation.post("/reset", async (req, res) => {
     });
 });
 
-// Allokointilaskennan aloitus - KESKEN!
+/* Abort allocation = Stop allocation procedure */
+allocation.post("/abort", async (req, res) => {
+  const allocRound = req.body.allocRound;
+  if (!allocRound) {
+    return validationErrorHandler(
+      res,
+      "Missing required parameter - allocation reset",
+    );
+  }
+  allocationService
+    .abortAllocation(allocRound)
+    .then(() => {
+      successHandler(
+        res,
+        "Aborting...",
+        "Allocation abort completed - Allocation",
+      );
+    })
+    .catch((err) => {
+      dbErrorHandler(res, err, "Oops! Allocation abort failed - Allocation");
+    });
+});
+
+// Allokointilaskennan aloitus!
 allocation.post("/start", async (req, res) => {
   const allocRound = req.body.allocRound;
   if (!allocRound) {
