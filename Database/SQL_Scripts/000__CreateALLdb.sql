@@ -784,6 +784,7 @@ INSERT INTO log_type(name) VALUES ("allocation");
 /* ------------------------------------------------------ */
 /* DROP PROCEDURES */
 
+DROP PROCEDURE IF EXISTS abortAllocation;
 DROP PROCEDURE IF EXISTS startAllocation;
 DROP PROCEDURE IF EXISTS resetAllocation;
 DROP PROCEDURE IF EXISTS allocateSpace;
@@ -1021,11 +1022,13 @@ BEGIN
 	DECLARE logId	INTEGER DEFAULT NULL;
 	DECLARE errors	INTEGER DEFAULT 0;
 	DECLARE debug	INTEGER DEFAULT 0;
+	DECLARE abort_round	BOOLEAN DEFAULT FALSE;
 
 	-- Error Handling declarations
     DECLARE processBusy CONDITION FOR SQLSTATE '50000';
     DECLARE alreadyAllocated CONDITION FOR SQLSTATE '50001';
-
+	DECLARE abortAllocation	CONDITION FOR SQLSTATE '50002';
+   
 	-- Cursor for subject loop / SELECT priority order 
 	DECLARE subjects CURSOR FOR 
 		SELECT allSub.subjectId 
@@ -1036,11 +1039,12 @@ BEGIN
 	DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished = 1;
 	
 	-- IF Procedure already running or allocRound allocated exit procedure
-	DECLARE EXIT HANDLER FOR processBusy, alreadyAllocated
+	DECLARE EXIT HANDLER FOR processBusy, alreadyAllocated, abortAllocation
 	BEGIN
 		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
 		SET @full_error = CONCAT("Error: ", @errno, " (", @sqlstate, "): ", @text);
 		CALL LogAllocation(logId, "Allocation", "Error", (SELECT @full_error));
+		UPDATE AllocRound SET abortProcess = 0, processOn = 0 WHERE id = allocRouId;	
 		RESIGNAL SET MESSAGE_TEXT = @full_error;
 	END;
 	
@@ -1094,7 +1098,14 @@ BEGIN
 		FETCH subjects INTO subId;
 		IF finished = 1 THEN LEAVE subjectLoop;
 		END IF;
-		
+	
+		-- IF user tells abort the process.
+		SET abort_round := (SELECT abortProcess FROM AllocRound WHERE id = allocRouId);
+		IF abort_round = 1 THEN
+			SET @message_text = CONCAT("The allocation been terminated by user. AllocRoundId: ", allocRouId, ".");
+			SIGNAL abortAllocation SET MESSAGE_TEXT = @message_text, MYSQL_ERRNO = 1192;
+		END IF;
+	
 		-- SET Suitable rooms for the subject
 		CALL LogAllocation(logId, "Allocation", "Info", CONCAT("SubjectId: ", subId, " - Search for suitable spaces"));
 	    CALL setSuitableRooms(allocRouId, subId);
@@ -1111,6 +1122,23 @@ BEGIN
 	UPDATE AllocRound SET processOn = 0 WHERE id = allocRouId;
 
 END; //
+DELIMITER ;
+
+/* --- PROCEDURE: Abort Allocation --- */
+DELIMITER $$
+CREATE PROCEDURE IF NOT EXISTS abortAllocation(allocR INT)
+BEGIN
+	DECLARE inProgress BOOLEAN DEFAULT FALSE;
+	
+	-- CHECK IF Allocation is active
+	SET inProgress := (SELECT processOn FROM AllocRound WHERE id = allocR);
+	-- IF in process tell to stop
+	IF inProgress = TRUE THEN
+		UPDATE AllocRound SET abortProcess = 1 WHERE id = allocR;
+	END IF;
+	
+END; $$
+
 DELIMITER ;
 
 /* ------------------------------------------------------ */
