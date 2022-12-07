@@ -3,8 +3,9 @@ USE casedb;
 /* INSERTS */
 /* --- Insert: GlobalSettings --- */
 INSERT INTO GlobalSetting(name, description, numberValue, textValue) VALUES
-    ('X', 'Korkea prioriteettiarvo', 800, NULL);
-
+    ('X', 'Korkea prioriteettiarvo', 800, NULL),
+    ("allocation-debug", "Onko allokoinnin logitus päällä. numberValue : 0 = OFF, 1 = ON", 1, NULL);
+    
 /* --- Insert: Department --- */
 INSERT INTO Department(name, description) VALUES
 	('Jazz', 'Aineryhmän kuvaus'),
@@ -427,3 +428,6 @@ INSERT INTO AllocCurrentRoundUser(allocId, userId) VALUES
     (10001, 201),
     (10001, 202),
     (10002, 201);
+
+/* --- INSERT: LOG TYPE --- */
+INSERT INTO log_type(name) VALUES ("allocation");
