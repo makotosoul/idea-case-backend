@@ -6,7 +6,8 @@ const { dbErrorHandler, successHandler } = require("../responseHandler/index");
 
 // Varusteiden nimet ja id, selectiin
 equipment.get("/getNames", (req, res) => {
-  const sqlSelectName = "SELECT id, name FROM Equipment";
+  const sqlSelectName =
+    "SELECT id, name, priority AS equipmentPriority FROM Equipment";
   db.query(sqlSelectName, (err, result) => {
     if (err) {
       dbErrorHandler(res, err, "Oops! Nothing came through - Equipment");

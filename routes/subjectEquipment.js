@@ -18,7 +18,7 @@ const {
 subjectequipment.get("/getEquipment/:subjectId", (req, res) => {
   const subjectId = req.params.subjectId;
   const sqlGetEquipmentBySubjectId =
-    "SELECT se.subjectId , e.name,e.description, se.equipmentId FROM Subjectequipment se JOIN Equipment e ON se.equipmentId = e.id WHERE se.subjectid = ?;";
+    "SELECT se.subjectId , e.name,e.description, se.equipmentId, se.priority, se.obligatory FROM Subjectequipment se JOIN Equipment e ON se.equipmentId = e.id WHERE se.subjectid = ?;";
   db.query(sqlGetEquipmentBySubjectId, subjectId, (err, result) => {
     if (err) {
       dbErrorHandler(res, err, "Oops! Nothing came through - SubjectEquipment");
@@ -84,5 +84,41 @@ subjectequipment.delete("/delete/:subjectId/:equipmentId", (req, res) => {
     }
   });
 });
+
+// Varusteen muokkaus
+subjectequipment.put(
+  "/update",
+  validateAddUpdateSubjectEquipment,
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      logger.error("Validation error: %0", errors);
+    }
+    if (!errors.isEmpty()) {
+      return validationErrorHandler(res, "Formatting problem");
+    }
+    const priority = req.body.priority;
+    const obligatory = req.body.obligatory;
+    const subjectId = req.body.subjectId;
+    const equipmentId = req.body.equipmentId;
+    console.log("data?", req.body);
+    const sqlUpdate =
+      " UPDATE SubjectEquipment SET priority = ?, obligatory = ? WHERE subjectId = ? AND equipmentId = ?;";
+    db.query(
+      sqlUpdate,
+      [priority, obligatory, subjectId, equipmentId],
+      (err, result) => {
+        if (!result) {
+          requestErrorHandler(res, err, "Nothing to update");
+        } else if (err) {
+          dbErrorHandler(res, err, "Oops! Update failed - SubjectEquipment");
+        } else {
+          successHandler(res, result, "Update successful - SubjectEquipment");
+          logger.info("SubjectEquipment ", req.body.subjectId, " updated");
+        }
+      },
+    );
+  },
+);
 
 module.exports = subjectequipment;
