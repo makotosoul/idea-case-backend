@@ -1026,6 +1026,7 @@ BEGIN
 	DECLARE abort_round	BOOLEAN DEFAULT FALSE;
 	DECLARE reset_required	BOOLEAN DEFAULT FALSE;
 	DECLARE procedure_active	BOOLEAN DEFAULT FALSE;
+	DECLARE is_allocated 	BOOLEAN DEFAULT FALSE;
 
 	-- Error Handling declarations
     DECLARE processBusy CONDITION FOR SQLSTATE '50000';
@@ -1041,14 +1042,23 @@ BEGIN
         ORDER BY priority ASC;
               
 	DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished = 1;
-	
-	-- IF Procedure already running, is already allocated, or user tell to abort the process
-	DECLARE EXIT HANDLER FOR processBusy, alreadyAllocated, abortAllocation, require_reset
+
+	-- IF user tell to abort the process
+	DECLARE EXIT HANDLER FOR abortAllocation 
 	BEGIN
 		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
 		SET @full_error = CONCAT("Error: ", @errno, " (", @sqlstate, "): ", @text);
 		CALL LogAllocation(logId, "Allocation", "Error", (SELECT @full_error));
 		UPDATE AllocRound SET abortProcess = 0, processOn = 0 WHERE id = allocRouId;	
+		RESIGNAL SET MESSAGE_TEXT = @full_error;
+	END;
+	
+	-- IF Procedure already running, is already allocated
+	DECLARE EXIT HANDLER FOR processBusy, alreadyAllocated, require_reset
+	BEGIN
+		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
+		SET @full_error = CONCAT("Error: ", @errno, " (", @sqlstate, "): ", @text);
+		CALL LogAllocation(logId, "Allocation", "Error", (SELECT @full_error));
 		RESIGNAL SET MESSAGE_TEXT = @full_error;
 	END;
 	
@@ -1071,8 +1081,8 @@ BEGIN
 	CALL LogAllocation(logId, "Allocation", "Start", CONCAT("Start allocation. AllocRound: ", allocRouId));
 
 	-- IF allocRound already allocated raise error
-	SET @is_allocated = (SELECT isAllocated FROM AllocRound WHERE id = allocRouId);
-	IF @is_allocated = 1 THEN
+	SET is_allocated = (SELECT isAllocated FROM AllocRound WHERE id = allocRouId);
+	IF is_allocated = 1 THEN
 		SET @message_text = CONCAT("The allocRound: ", allocRouId, " is already allocated.");
 		SIGNAL alreadyAllocated SET MESSAGE_TEXT = @message_text, MYSQL_ERRNO = 1192;
 	END IF;
