@@ -17,7 +17,7 @@ Sisältö     | id, name, isSeasonAlloc, description, lastModified
 Metodi      | getById
 Parametrit  | allocRound.id
 Palauttaa   | Yksittäisen laskennan
-Sisältö     | id, name
+Sisältö     | id, name, isSeason, description, lastModified, isAllocated, processOn, Subjects, allocated, unAllocated
 
 | Hae kaikki opetukset |   |
 |---|---|
