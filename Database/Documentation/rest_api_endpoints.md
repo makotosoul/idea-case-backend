@@ -40,14 +40,14 @@ Sisältö     | program.id, program.name, rooms(id, name, allocatedHours), subje
 Käytössä    | Tulosnäkymä
 
 
-
-| Laskennan aloitus | * VIELÄ KESKEN!*  |
+| Laskennan aloitus |  |
 |---|---|
 Endpoint    | /api/allocation/start
 Metodi      | POST
 Parametrit  | AllocRound.id
 Palauttaa   | -
 Sisältö     | -
+Käytössä    | Tulosnäkymä
 
 | Laskennan resetointi |   |
 |---|---|
@@ -56,8 +56,48 @@ Metodi      | POST
 Parametrit  | AllocRound.id
 Palauttaa   | Poistaa kaikki allocRoundin kurssit AllocSpace taulusta ja nollaa isAllocated, priority ja cantAllocate:n, allocSubject taulussa.
 Sisältö     | -
+Käytössä    | Tulosnäkymä
+
+| Laskennan keskeytys | |
+| --- | ---|
+Endpoint    | /api/allocation/abort
+Metodi      | POST
+Parametrit  | AllocRound.id
+Palauttaa   | -
+Sisältö     | -
+Käytössä    | -
+
+| Allokoimattomat opetukset | |
+| --- | ---|
+Endpoint    | /api/allocation/:id/subject/unallocated
+Metodi      | GET
+Parametrit  | AllocRound.id
+Palauttaa   | Kaikki allokointiin sisältyvät opetukset, joita ei voinut sijoittaa tiloihin
+Sisältö     | subjectId, subject.name, subject.groupSize, subject.area, subject.spaceType
+Käytössä    | AllocationSubjectFailureView
+
+| Tilojen sopivuus opetukselle | |
+| --- | ---|
+Endpoint    | /api/allocation/subject/:subjectId/rooms
+Metodi      | GET
+Parametrit  | subject.id
+Palauttaa   | Palauttaa opetukselle kaikkien tilojen sopivuuden
+Sisältö     | space.id, space.name, space.area, missingItems, areaOk, space.personLimit, personLimitOk, space.inUse, space.spaceType, spaceTypeOk 
+Käytössä    | AllocationSubjectFailureView
+
+| Puuttuvat varusteet tilassa | |
+| --- | ---|
+Endpoint    | /api/allocation/missing-eqpt/subject/:subid/room/:roomid
+Metodi      | GET
+Parametrit  | subject.id, space.id
+Palauttaa   | Huoneesta puuttuvat varusteet opetukselle
+Sisältö     | equipment.id, equipment.name
+Käytössä    | AllocationFailureView
+
+
 
 </details>
+
 
 <details><summary>Program (pääaineet)</summary>
 
