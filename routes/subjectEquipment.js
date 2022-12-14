@@ -101,7 +101,6 @@ subjectequipment.put(
     const obligatory = req.body.obligatory;
     const subjectId = req.body.subjectId;
     const equipmentId = req.body.equipmentId;
-    console.log("data?", req.body);
     const sqlUpdate =
       " UPDATE SubjectEquipment SET priority = ?, obligatory = ? WHERE subjectId = ? AND equipmentId = ?;";
     db.query(
