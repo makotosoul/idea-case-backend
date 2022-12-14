@@ -1,6 +1,8 @@
 # Allokointi
 
-Nykyisessä versiossa on kolme eri vaiheitta:
+Allokointi on prosessi, jossa opetukset jaetaan tiloihin määrättyjen kriteereiden mukaisesti, joka helpottaa käyttäjää suunnittelemaan tilankäyttöä ja käyttämään tiloja tehokkaammin.
+
+Nykyisessä versiossa on kolme eri vaihetta:
 1. Opetuksien priorisointi
 - Opetuksien käsittely yksitellen, prioriteetin mukaisessa järjestyksessä:
     - 2.Opetukselle etsitään käyttöön sopivat tilat 
@@ -30,15 +32,34 @@ Lisää allocSubject tauluun opetuksille priorisointinumerot. Allokoinnin seuraa
 
 ### Priorisointiin sopivia sarakkeita
 - Equipment.priority (ei suositeltava)
+    - Varusteen prioteettinumeroa käytetään opetustilan varusteen vakioarvona, jonka takia SubjectEquipment.priority on suositeltu vaihtoehto.
 - Subject.groupSize
+    - Opetuksen opiskelijoiden määrä, voidaan käyttää kun halutaan allokoida isommat tai pienemmät ryhmät ensin.
+    - Suositeltu vaihtoehto: pienemmät ensin, jotta resursseja ei mene hukkaan
 - Subject.area
+    - Opetuksen tarvittava tilankoko, voidaan käyttää kun halutaan allokoida isommat tai pienemmät tilat ensin.
+    - Suositeltu vaihtoehto: pienemmät ensin, jotta resursseja ei mene hukkaan
 - Subject.spaceType
-- Subject.program
-- Subject.department
-- departmentplanner
+    - Tarvittava tilatyyppi (esim. musiikkiluokka, luentoluokka)
+    - Nykyisessä versiossa ei järjestyksellä ei ole väliä, mutta tulevassa versiossa ehkä opetuksen voi sijoittaa useampaan tilatyyppiin, jolloin suositeltu vaihtoehto on sijoittaa kaikki opetukset ensin, joiden ensisijainen vaihtoehto ei ole luentoluokka.
+- Subject.program (ei suositeltu)
+    - Opetuksien pääaine
+    - Vaikea laittaa eriarvoiseen järjestykseen
+- Subject.department (ei suositeltu)
+    - Opetuksien aineryhmä
+    - Vaikea laittaa eriarvoiseen järjestykseen
+- departmentplanner (ei suositeltu)
+    - Aineryhmän suunnittelija
+    - Vaikea laittaa eriarvoiseen järjestykseen
 - Equipment.isMovable
-- SubjectEquipment.priority
+    - Onko opetuksessa varusteita, joita ei voi siirrellä.
+- SubjectEquipment.priority (suositeltu)
+    - Opetukseen lisättyjen varusteiden arvonumero
+    - *Tärkein kriteeri allokoinissa*
+    - allokointikriteerinä voi olla esim. että kaikki opetukset joissa on varusteita yli x-arvolla halutaan käsitellä ensin.
 - SubjectEquipment.obligatory
+    - Onko varuste opetukselle pakollinen
+    - Ei nykyisessä versiossa käytössä, koska kaikki varusteet ovat opetukselle pakollisia.
 
 ### Kehitysehdotus
 - Priorisoinnin voisi rakentaa uusiksi, niin että eri kriteerejä/priorisointi-asetuksia voisi rakentaa omaan tauluun, jolloin pääkäyttäjä voisi valita tai luoda frontin kautta haluamat priorisointijärjestykset ja kriteerit. Tarkemmin sanottuna frontissa olisi näkymä, jonka kautta voisi valita ylläolevista sarakkeista haluttavia ominaisuuksia ja lisätä niiden arvot.
