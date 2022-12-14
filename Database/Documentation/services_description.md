@@ -25,13 +25,7 @@ Metodi      | getAllSubjectsById
 Parametrit  | allocRound.id
 Palauttaa   | Kaikki laskennan sisältämät opinnot
 Sisältö     | subject.id, subject.name, allocSubject.isAllocated, allocSubject.cantAllocate, allocSubject.priority, allocatedHours, requiredHours
-
-| Hae opinnot tilan mukaan |   |
-|---|---|
-Metodi      | getSubjectsByAllocRoundAndSpaceId
-Parametrit  | allocRound.id, space.id
-Palauttaa   | Kaikki laskennassa tilaan sijoitetut opetukset
-Sisältö     | subject.id, subject.name, allocatedHours, requiredHours
+huom!       | Ei käytössä missään vielä.
 
 | Hae kaikki opetuksia sisältävät tilat |   |
 |---|---|
