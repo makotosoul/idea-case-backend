@@ -225,20 +225,6 @@ const abortAllocation = (allocRound) => {
   });
 };
 
-const getSuitableRoomsForSubject = (allocRound, subject) => {
-  const sqlQuery =
-    "SELECT * FROM AllocSubjectSuitableSpace ass WHERE ass.allocRound = ? AND ass.subjectId = ?;";
-  return new Promise((resolve, reject) => {
-    db.query(sqlQuery, [allocRound, subject], (err, result) => {
-      if (err) {
-        return reject(err);
-      } else {
-        resolve(result);
-      }
-    });
-  });
-};
-
 //for test round 10004
 const getUnAllocableSubjects = (allocRoundId = 10004) => {
   const sqlQuery = `SELECT all_sub.subjectId, s.name, s.groupSize, s.area, st.name AS "spaceType"
