@@ -24,6 +24,7 @@ Projekti on Haaga-Helian ja Sibelius akatemian yhteistyön pohjalta toteutettava
 
 ### Teknologiat ja muut hyödylliset resurssit
 
+- [Mariadb](https://mariadb.org/)
 - [Node](https://nodejs.org/en/)
 - [Winston Logger](https://www.npmjs.com/package//winston)
 - [Express-validator](https://www.npmjs.com/package/express-validator)
@@ -44,17 +45,23 @@ Backend puolen asennusohjeet
 
 ### Asennus
 
-1. Kloonaa repo
+1. Asenna [Mariadb](https://www.mariadbtutorial.com/getting-started/install-mariadb/) versio 10.6.9
+
+2. Asenna graafinen SQL-editori: [HeidiSQL](https://www.heidisql.com/) tai [MySQL Workbench](https://www.mysql.com/products/workbench/)
+
+3. Tee valisemaasi sql editoriin tietokantaskeema nimellä casedb. Aja [000\_\_CreateALLdb.sql](https://github.com/haagahelia/Siba_be/blob/main/Database/SQL_Scripts/000__CreateALLdb.sql) skripti luodaksesi tiedot tietokantaan
+
+4. Kloonaa repo
    ```sh
    git clone https://github.com/haagahelia/Siba_be.git
    ```
-2. Asenna tarvittavat paketit
+5. Asenna tarvittavat paketit
 
    ```sh
    npm install
    ```
 
-3. Env. tiedoston lisäys. Lisää .env tiedosto repon juurihakemistoon
+6. Env. tiedoston lisäys. Lisää .env tiedosto repon juurihakemistoon
 
    ```
    BE_API_URL_PREFIX=/api
@@ -71,7 +78,7 @@ Backend puolen asennusohjeet
    DB_CONNECTION_POOL_MAX=7
    ```
 
-4. Sovelluksen käynnistys
+7. Sovelluksen käynnistys
 
    ```sh
    nodemon
@@ -83,6 +90,6 @@ Backend puolen asennusohjeet
    npm install -g nodemon
    ```
 
-5. Huom! Seuraa [Frontend repon](https://github.com/haagahelia/siba-fe) asennusohjetta myös
+8. Huom! Seuraa [Frontend repon](https://github.com/haagahelia/siba-fe) asennusohjetta myös
 
 <p align="right">(<a href="#top">back to top</a>)</p>
