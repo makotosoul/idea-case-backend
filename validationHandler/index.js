@@ -1,5 +1,12 @@
+/*
+  ---- EXPRESS VALIDATOR ----
+  Express - validator on kirjasto jolla voidaan validoida fontista tulevaa dataa
+  https://express-validator.github.io/docs/
+*/
+
 const { body, validationResult, check } = require("express-validator");
 
+/* ---- SUBJECT ---- */
 let validateAddUpdateSubject = [
   check("name")
     .isLength({ min: 2, max: 255 })
@@ -26,8 +33,8 @@ let validateAddUpdateSubject = [
     .withMessage("Cannot be empty")
     .bail(),
   check("sessionLength")
-    .matches(/^([0-1][0-9]|[2][0-3]):([0-5][0-9]):([0-5][0-9])$/)
-    .withMessage("Accepted format: 00:00:00")
+    .matches(/^([0-1][0-2]):([0-5][0-9])(:[0-5][0-9])?$/)
+    .withMessage("Accepted format: 00:00 or 00:00:00")
     .bail()
     .notEmpty()
     .withMessage("Cannot be empty")
@@ -43,6 +50,7 @@ let validateAddUpdateSubject = [
   check("programId").notEmpty().withMessage("Cannot be empty").bail(),
 ];
 
+/* ---- SUBJECTEQUIPMENT ---- */
 let validateAddUpdateSubjectEquipment = [
   check("subjectId")
     .matches(/^[0-9]+$/)

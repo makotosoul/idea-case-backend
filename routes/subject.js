@@ -132,7 +132,6 @@ subject.put("/update", validateAddUpdateSubject, (req, res) => {
       spaceTypeId,
       id,
     ],
-
     (err, result) => {
       if (!result) {
         requestErrorHandler(res, err, "Nothing to update");

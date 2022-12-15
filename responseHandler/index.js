@@ -21,7 +21,6 @@ const successHandler = (res, data, message) => {
     message = successMessage;
   }
   logger.http(message);
-  //logger.http("data: " +data);
   res.status(200).send(data);
 };
 
