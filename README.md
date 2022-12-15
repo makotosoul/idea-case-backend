@@ -84,7 +84,7 @@ Backend puolen asennusohjeet
    nodemon
    ```
 
-   HUOM! Jos ei käynnisty asenna:
+   Huom! Jos ei käynnisty asenna:
 
    ```sh
    npm install -g nodemon
