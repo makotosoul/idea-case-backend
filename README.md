@@ -45,9 +45,9 @@ Backend puolen asennusohjeet
 
 ### Asennus
 
-1. Asenna [Mariadb](https://www.mariadbtutorial.com/getting-started/install-mariadb/) versio 10.6.9
+1. Asenna [Mariadb](https://www.mariadbtutorial.com/getting-started/install-mariadb/) versio 10.x tai uudempi
 
-2. Asenna graafinen SQL-editori: [HeidiSQL](https://www.heidisql.com/) tai [MySQL Workbench](https://www.mysql.com/products/workbench/)
+2. Asenna graafinen SQL-editori: [DBeaver](https://dbeaver.io/) tai [MySQL Workbench](https://www.mysql.com/products/workbench/)
 
 3. Tee valisemaasi sql editoriin tietokantaskeema nimellä casedb. Aja [000\_\_CreateALLdb.sql](https://github.com/haagahelia/Siba_be/blob/main/Database/SQL_Scripts/000__CreateALLdb.sql) skripti luodaksesi tiedot tietokantaan
 
