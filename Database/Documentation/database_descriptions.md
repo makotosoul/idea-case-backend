@@ -19,10 +19,14 @@ Sarake			|	Tyyppi		|	Avaimet		|	Kuvaus
  <u>id</u>		| INTEGER		| PK			| Yksilöivä pääavain
  date			| TIMESTAMP 	|				| Laskennan luontiaika
  name			| VARCHAR(255)	|				| Laskennan nimi. eg. "Syksyn 2022 virallinen"			
- isSeasonAlloc	| BOOLEAN 		|				| Onko kausi aktiviinen
+ isSeasonAlloc	| BOOLEAN 		|				| Onko kausi aktiviinen *EI KÄYTÖSSÄ*
  userId			| INTEGER		| FK(User.id)	| Laskennan luoja/ylläpitäjä
  description 	| VARCHAR(16000)|				| Mahdollinen kuvaus laskentaa varten
- lastModified 	| TIMESTAMP 	|				| Viimeinen muokkaus laskennassa, automaattisesti luotu aika
+ lastModified 	| TIMESTAMP 	|				| Viimeinen muokkaus laskennassa
+ isAllocated    | BOOLEAN       |               | Onko allokointi suoritettu
+ processOn      | BOOLEAN       |               | Onko allokointi käynnissä tällä hetkellä
+ abortProcess   | BOOLEAN       |               | TRUE = pääkäyttäjä on antanut käskyn lopettaa allokointi kesken
+ requireReset   | BOOLEAN       |               | Pitääkö allokointi resetoida, ennen kuin allokoinnin voi suorittaa uudestaan
 
 </details>
 
@@ -60,6 +64,7 @@ Sarake			    |	Tyyppi		|	Avaimet		                    |	Kuvaus
 <u>allocRound</u>   |  INTEGER      | PK, FK(AllocSubject.allocRound)   | Laskenta
 <u>subjectId</u>    |  INTEGER      | PK, FK(AllocSubject.subjectId)    | Opetus
 <u>spaceId</u>      |  INTEGER      | PK, FK(Space.id)                  | Tila
+ missingItems       |  INTEGER		|									| Puuttuvien varusteiden lkm
 </details>
 
 
@@ -104,8 +109,8 @@ Sarake			|	Tyyppi		|	Avaimet		|	Kuvaus
 <u>id</u>		| INTEGER		| PK			|
 name			| VARCHAR(255)	| 				| Soittimen/varusteen nimi
 isMovable		| BOOLEAN		| 				| Onko varuste siirreltävissä. Esim. Urut ei tod.näk ole
-Priority		| INTEGER		|				| IN PROGRESS
-description		| VARCHAR(16000)|
+priority		| INTEGER		|				| IN PROGRESS
+description		| VARCHAR(16000)|				| kuvaus
 
 </details>
 
@@ -185,7 +190,7 @@ groupSize		| INTEGER		|					| Ryhmän koko, yksittäiselle opetukselle
 groupCount		| INTEGER		|					| Montako ryhmää. Esim. 2x groupSize
 sessionLength	| TIME			|					| Opetuksen yksittäisen opetuksen pituus
 sessionCount	| INTEGER		|					| Montako opetusta per viikko
-area			| DECIMAL(5,1)	|					| Opetukseen tarvittava tilan tilavuus (m²)
+area			| DECIMAL(5,1)	|					| Opetukseen tarvittava tilan koko (m²)
 programId		| INTEGER		|FK(program.id)		| Mihin pääaineeseen opetus kuuluu
 spaceTypeId		| INTEGER		|FK(spaceType.id)	| Minkälaisen tilan opetus tarvitsee (soitto/luento)
 
@@ -203,16 +208,6 @@ obligatory			| BOOLEAN		|						| Onko varuste pakollinen kurssin kannalta (nosta
 
 </details>
 
-<details><summary>SubjectProgram</summary>
-(mihin pääaineisin opetus kuuluu) **Ei tule käyttöön**
-
-Sarake				| Tyyppi		| Avaimet			| Kuvaus
-:-----				| :----			| ------			| ------
-<u>subjectId</u>	| INTEGER		|PK,FK(subject.id)	| Opetus
-<u>programId</u>	| INTEGER		|PK, FK(program.id)	| Pääaine
-
-</details>
-
 <details><summary>User</summary>
 
 Sarake			| Tyyppi		| Avaimet		| Kuvaus
@@ -221,4 +216,39 @@ Sarake			| Tyyppi		| Avaimet		| Kuvaus
 email			| VARCHAR(255)	|				| Käyttäjän sähköpostiosoite
 isAdmin			| BOOLEAN		|				| Onko käyttäjällä pääkäyttäjän oikeuksia
 
-</details
+</details>
+
+<details><summary>log_event</summary>
+
+Merkitä lokissa.
+Sarake			| Tyyppi		| Avaimet		| Kuvaus
+:-----			| :----			| ------		| ------
+<u>id</u>       | INTEGER       | PK            |
+log_id          | INTEGER       |               | Lokin tunniste
+stage           | VARCHAR(255)  |               | Vaihe (esim. priorisointi allokoinnissa)
+status          | VARCHAR(255)  |               | Status eli esim. OK tai Error
+information     | VARCHAR(16000)|               | Lisätieto
+created_at      | TIMESTAMP     |               | Merkinnän aika
+
+</details>
+
+<details><summary>log_type</summary>
+
+Lokin tyyppi, tällä hetkellä käytössä vain allokointi (allocation).
+Sarake			| Tyyppi		| Avaimet		| Kuvaus
+:-----			| :----			| ------		| ------
+<u>id</u>		| INTEGER		|  PK			|
+name			| VARCHAR(255)	| 				| nimi
+
+</details>
+
+<details>
+<summary>log_list</summary>
+
+Lista lokeista, jotta voi löytää helpommin esim. tiettyyn kelloon aikaan tehdyn laskennan.
+Sarake			| Tyyppi		| Avaimet		| Kuvaus
+:-----			| :----			| ------		| ------
+<u>id</u>       | INTEGER       | PK            |
+log_type        | INTEGER      	| FK            | Lokityyppi (esim. allocation)
+created_at      | TIMETAMP     	|               | Listan luontiaika
+</details>

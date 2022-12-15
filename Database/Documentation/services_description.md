@@ -17,7 +17,7 @@ Sisältö     | id, name, isSeasonAlloc, description, lastModified
 Metodi      | getById
 Parametrit  | allocRound.id
 Palauttaa   | Yksittäisen laskennan
-Sisältö     | id, name
+Sisältö     | id, name, isSeason, description, lastModified, isAllocated, processOn, Subjects, allocated, unAllocated
 
 | Hae kaikki opetukset |   |
 |---|---|
@@ -25,20 +25,14 @@ Metodi      | getAllSubjectsById
 Parametrit  | allocRound.id
 Palauttaa   | Kaikki laskennan sisältämät opinnot
 Sisältö     | subject.id, subject.name, allocSubject.isAllocated, allocSubject.cantAllocate, allocSubject.priority, allocatedHours, requiredHours
-
-| Hae opinnot tilan mukaan |   |
-|---|---|
-Metodi      | getSubjectsByAllocRoundAndSpaceId
-Parametrit  | allocRound.id, space.id
-Palauttaa   | Kaikki laskennassa tilaan sijoitetut opetukset
-Sisältö     | subject.id, subject.name, allocatedHours, requiredHours
+huom!       | Ei käytössä missään vielä.
 
 | Hae kaikki opetuksia sisältävät tilat |   |
 |---|---|
 Metodi      | getRoomsByAllocId
 Parametrit  | allocRound.id
 Palauttaa   | Kaikki huoneet laskennassa
-Sisältö     | id, name, allocatedHours, requiredHours
+Sisältö     | id, name, allocatedHours, requiredHours, spaceTypeId
 
 | Hae kaikki huoneet pääaineen mukaan |   |
 |---|---|
@@ -59,7 +53,7 @@ Sisältö     | subject.id, subject.name, allocatedHours, requiredHours
 Metodi      | startAllocation
 Parametrit  | allocRound (id)
 Palauttaa   | - 
-Sisältö     | KESKEN!
+Sisältö     | Käynnistää laskennan
 
 
 | Resetoi allokointi |  |
@@ -68,6 +62,37 @@ Metodi      | resetAllocation
 Parametrit  | allocRound (id)
 Palauttaa   | - 
 Sisältö     | Resetoi allocSubject, AllocSpace ja AllocSubjectSuitableSpace taulut
+
+| Keskeytä allokointi | |
+|--- | ---|
+Metodi      | abortAllocation
+Parametrit  | AllocRound.id
+Palauttaa   | -
+Sisältö     | Käskee tietokantaa lopettamaan käynnissä olevan allokoinnin
+
+| Hae opetukset, joita ei pysty allokoimaan | |
+|--- | ---|
+Metodi      | getUnAllocableSubjects
+Parametrit  | AllocRound.id
+Palauttaa   | subjects
+Sisältö     | Palauttaa allokoimattomat opetukset
+
+| Hae tilat opetuksen mukaan | |
+|--- | ---|
+Metodi      | getSpacesForSubject
+Parametrit  | Subject.id
+Palauttaa   | Tilat
+Sisältö     | Space.id, Space.name, Space.area, missingItems, areaOk, 
+Space.personLimit, personLimitOk, Space.inUse, Space.spaceType, spaceTypeOk
+
+| Hae tilasta puuttuvat tavarat opetuksen mukaan | |
+|--- | ---|
+Metodi      | getMissingEquipmentForRoom
+Parametrit  | subject.id, space.id
+Palauttaa   | Puuttuvat tavarat tilasta opetuksen mukaan 
+Sisältö     | Equipment.id, Equipment.name, SpaceEquipment.name
+
+
 
 </details>
 

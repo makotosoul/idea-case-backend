@@ -92,36 +92,6 @@ allocation.get("/:id/program", async (req, res) => {
 });
 
 /* Get all allocated rooms by ProgramId, allocRound */
-allocation.get("/:id/program/:programId", async (req, res) => {
-  const allocId = req.params.id;
-  const programId = req.params.programId;
-  programService
-    .getById(programId)
-    .then(async (program) => {
-      if (program[0]) {
-        program[0] = {
-          ...program[0],
-          rooms: await allocationService.getAllocatedRoomsByProgram(
-            programId,
-            allocId,
-          ),
-          subjects: await allocationService.getSubjectsByProgram(
-            allocId,
-            programId,
-          ),
-        };
-      }
-      return program;
-    })
-    .then((data) => {
-      successHandler(res, data, "getRoomsByProgram succesful - Allocation");
-    })
-    .catch((err) => {
-      dbErrorHandler(res, err, "Oops! Nothing came through - Allocation");
-    });
-});
-
-/* Get all allocated rooms by ProgramId, allocRound */
 allocation.get("/:id/rooms/:subjectId", async (req, res) => {
   const allocId = req.params.id;
   const subjectId = req.params.subjectId;
@@ -137,6 +107,7 @@ allocation.get("/:id/rooms/:subjectId", async (req, res) => {
   return rooms;
 });
 
+/*gets unallocated subjects*/
 allocation.get("/:id/subject/unallocated", async (req, res) => {
   const allocId = req.params.id;
   await allocationService

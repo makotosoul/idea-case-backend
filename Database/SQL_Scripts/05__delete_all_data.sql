@@ -1,3 +1,4 @@
+/* OUTDATED */
 USE casedb;
 
 DELETE FROM AllocCurrentRoundUser;
