@@ -9,22 +9,22 @@ if [ "$(uname)" == "Darwin" ]; then
 elif [ "$(uname)" == "Linux" ]; then
     if [ "$(pgrep mariadb)" == "" ]; then
         echo "mariadb is not running, starting it..."
-        service mysql start
+        sudo service mysql start
     fi
 fi
 
 #check if mariadb has schema "casedb", drop it if it does
-if [ "$(mysql -u root -e "show databases" | grep casedb)" != "" ]; then
+if [ "$(sudo mysql -u root -e "show databases" | grep casedb)" != "" ]; then
     echo "casedb already exists, dropping it..."
-    mysql -u root -e "drop database casedb"
+    sudo mysql -u root -e "drop database casedb"
 fi
 
 echo "creating database casedb"
-mysql -u root -e "create database casedb"
+sudo mysql -u root -e "create database casedb"
 
-#source ./Database/SQL_Scripts/000_CreateAlldb.sql as from the folder this is run from
+#source ./Database/SQL_Scripts/000_CreateAlldb.sql as sudo from the folder this is run from
 echo "creating tables..."
-mysql -u root casedb < Database/SQL_Scripts/000__CreateALLdb.sql
+sudo mysql -u root casedb < Database/SQL_Scripts/000__CreateALLdb.sql
 
 
 #ask for username and password and create mariadb user with the same name and password and grant it all permissions
@@ -32,15 +32,15 @@ echo "creating mariadb user..."
 read -p "username for mariadb user: " username
 read -p "password for mariadb user: " password
 #check that user is not already in the database. If it is, skip next commands
-if [ "$(mysql -u root -e "select user from mysql.user" | grep $username)" == "" ]; then
+if [ "$(sudo mysql -u root -e "select user from mysql.user" | grep $username)" == "" ]; then
     echo "user does not exist, creating it..."
-    mysql -u root -e "CREATE USER '$username'@'localhost' IDENTIFIED BY '$password'"
-    mysql -u root -e "GRANT ALL PRIVILEGES ON casedb.* TO '$username'@'localhost'"
-    mysql -u root -e "FLUSH PRIVILEGES"
+    sudo mysql -u root -e "CREATE USER '$username'@'localhost' IDENTIFIED BY '$password'"
+    sudo mysql -u root -e "GRANT ALL PRIVILEGES ON casedb.* TO '$username'@'localhost'"
+    sudo mysql -u root -e "FLUSH PRIVILEGES"
 else
     # else grant all privileges to the user
     echo "user already exists, granting all privileges..."
-    mysql -u root -e "GRANT ALL PRIVILEGES ON casedb.* TO '$username'@'localhost'"
+    sudo mysql -u root -e "GRANT ALL PRIVILEGES ON casedb.* TO '$username'@'localhost'"
 fi
 
 #check if .env file exists, if so, delete it
