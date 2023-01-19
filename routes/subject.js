@@ -15,7 +15,7 @@ const { validateAddUpdateSubject } = require("../validationHandler/index");
 // Opetuksen, pääaineen sekä huonetyypin tiedot
 subject.get("/getAll", (req, res) => {
   const sqlSelectSubjectProgram =
-    "  SELECT s.id, s.name AS subjectName, s.groupSize, s.groupCount, s.sessionLength, s.sessionCount, s.area, s.programId, p.name AS programName, s.spaceTypeId, st.name AS spaceTypeName FROM Subject s JOIN Program p ON s.programId = p.id LEFT JOIN spacetype st ON s.spaceTypeId = st.id;";
+    "  SELECT s.id, s.name AS subjectName, s.groupSize, s.groupCount, s.sessionLength, s.sessionCount, s.area, s.programId, p.name AS programName, s.spaceTypeId, st.name AS spaceTypeName FROM Subject s JOIN Program p ON s.programId = p.id LEFT JOIN SpaceType st ON s.spaceTypeId = st.id;";
   db.query(sqlSelectSubjectProgram, (err, result) => {
     if (err) {
       dbErrorHandler(res, err, "Oops! Nothing came through - Subject");
