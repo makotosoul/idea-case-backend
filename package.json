@@ -7,7 +7,9 @@
     "start": "node index.js",
     "devStart": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
+    "precommit": "sh ./pre-commit"
   },
+  "pre-commit": ["precommit"],
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -19,5 +21,9 @@
     "mysql": "^2.18.1",
     "nodemon": "^2.0.19",
     "winston": "^3.8.2"
+  },
+  "devDependencies": {
+    "pre-commit": "^1.2.2",
+    "rome": "^11.0.0"
   }
 }
