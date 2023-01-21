@@ -1,5 +1,5 @@
 #!/bin/sh
-FILES=$(git diff --cached --name-only | grep 'src/.*\.(js|ts)$')
+FILES=$(git diff --cached --name-only | grep '\.(js|ts)$')
 
 if [ -n "$FILES" ]; then
     echo "Running formatter & linter.."
