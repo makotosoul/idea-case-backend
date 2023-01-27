@@ -4,7 +4,7 @@
   https://express-validator.github.io/docs/
 */
 
-const { body, validationResult, check } = require("express-validator");
+const {check } = require("express-validator");//const { body, validationResult,} ???
 
 /* ---- SUBJECT ---- */
 let validateAddUpdateSubject = [

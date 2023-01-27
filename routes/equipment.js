@@ -1,7 +1,7 @@
 const express = require("express");
 const equipment = express.Router();
 const db = require("../db/index");
-const logger = require("../utils/logger");
+//const logger = require("../utils/logger");??
 const { dbErrorHandler, successHandler } = require("../responseHandler/index");
 
 // Varusteiden nimet ja id, selectiin sekä oletusprioriteettiin

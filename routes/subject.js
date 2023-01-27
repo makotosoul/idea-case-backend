@@ -9,7 +9,7 @@ const {
   requestErrorHandler,
   validationErrorHandler,
 } = require("../responseHandler/index");
-const { body, validationResult } = require("express-validator");
+const { validationResult } = require("express-validator"); //const { body,}???
 const { validateAddUpdateSubject } = require("../validationHandler/index");
 
 // Opetuksen, pääaineen sekä huonetyypin tiedot
