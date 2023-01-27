@@ -1,7 +1,7 @@
 const express = require("express");
 const spaceType = express.Router();
 const db = require("../db/index");
-const logger = require("../utils/logger");
+//const logger = require("../utils/logger");??
 const { dbErrorHandler, successHandler } = require("../responseHandler/index");
 
 // Huone tyyppien nimet ja id, selectiin
