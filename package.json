@@ -9,7 +9,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "precommit": "sh ./pre-commit"
   },
-  "pre-commit": ["precommit"],
+  "pre-commit": [
+    "precommit"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
