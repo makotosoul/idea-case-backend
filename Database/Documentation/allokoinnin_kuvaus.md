@@ -1,12 +1,12 @@
-# Allokointi
+# Allocation
 
-Allokointi on prosessi, jossa opetukset jaetaan tiloihin määrättyjen kriteereiden mukaisesti, joka helpottaa käyttäjää suunnittelemaan tilankäyttöä ja käyttämään tiloja tehokkaammin.
+Allocation is a process in which lessons/teaching sessions/(Opetukset) are distributed to spaces according to the specified criteria, which helps the users to plan the use of the spaces and equipment more efficiently.
 
-Nykyisessä versiossa on kolme eri vaihetta:
-1. Opetuksien priorisointi
-- Opetuksien käsittely yksitellen, prioriteetin mukaisessa järjestyksessä:
-    - 2.Opetukselle etsitään käyttöön sopivat tilat 
-    - 3.Opetus sijoitetaan tiloihin.
+The current allocation/calculation version has three different phases:
+1. Prioritization of teachings (Opetukset)
+- Processing of lessons one by one, in order of priority:
+    - 2. We are looking for suitable space (room) for teaching
+    - 3. Teaching is placed in the spaces.
 
 ---
 
