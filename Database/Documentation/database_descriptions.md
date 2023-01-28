@@ -4,251 +4,253 @@
 
 ***Not in use, at least not yet**
 
-|Column			|	Datatype		|	Keys 	|	Description					
+|Column			|	Datatype	|	Keys 	|	Description					
 |:-----			| :------- 		| 	------- 	|	------ 					
 |<u>allocId</u>	| INTEGER		| PK 			| 			
-|<u>UserId</u>	| INTEGER		| PK, FK   		| Viittaus User taulun Id	
+|<u>UserId</u>	| INTEGER		| PK, FK   		| => User.id
 
 </details>
 
 <details><summary>AllocRound</summary>
-<small> (Laskenta tietylle kaudelle. Esimerkiksi kesä 2022 kurssit) </small>
+<small> (Allocation calculations e.g. for a certain semester. E.g. "Summer semester 2023") </small>
 
-Column			|	Datatype		|	Keys		|	Description
+Column			|	Datatype	|	Keys		|	Description
 :-----			|	:---		|	-------		|	------
- <u>id</u>		| INTEGER		| PK			| Yksilöivä pääavain
- date			| TIMESTAMP 	|				| Laskennan luontiaika
- name			| VARCHAR(255)	|				| Laskennan nimi. eg. "Syksyn 2022 virallinen"			
- isSeasonAlloc	| BOOLEAN 		|				| Onko kausi aktiviinen *EI KÄYTÖSSÄ*
- userId			| INTEGER		| FK(User.id)	| Laskennan luoja/ylläpitäjä
- description 	| VARCHAR(16000)|				| Mahdollinen kuvaus laskentaa varten
- lastModified 	| TIMESTAMP 	|				| Viimeinen muokkaus laskennassa
- isAllocated    | BOOLEAN       |               | Onko allokointi suoritettu
- processOn      | BOOLEAN       |               | Onko allokointi käynnissä tällä hetkellä
- abortProcess   | BOOLEAN       |               | TRUE = pääkäyttäjä on antanut käskyn lopettaa allokointi kesken
- requireReset   | BOOLEAN       |               | Pitääkö allokointi resetoida, ennen kuin allokoinnin voi suorittaa uudestaan
+ <u>id</u>		| INTEGER		| PK			| 
+ date			| TIMESTAMP 	|				| Allocation's creation time
+ name			| VARCHAR(255)	|				| Allocation's name. eg. "Syksyn 2022 virallinen"			
+ isSeasonAlloc	| BOOLEAN 		|				| Whether semester active *NOT IN USE*
+ userId			| INTEGER		| FK(User.id)	| Allocation's creator/maintainer
+ description 	| VARCHAR(16000)|				| Possible description for allocation
+ lastModified 	| TIMESTAMP 	|				| Last modification for allocation
+ isAllocated    | BOOLEAN       |               | Whether allocation completed
+ processOn      | BOOLEAN       |               | Whether allocation on-going at the moment
+ abortProcess   | BOOLEAN       |               | TRUE = admin has given the order to interrupt the allocation before completion
+ requireReset   | BOOLEAN       |               | Should allocation be reset, before the allocation can be restarted from scratch again
 
 </details>
 
 <details><summary>AllocSpace</summary>
-<small> (Tilanvaraukset laskennassa) </small>
+<small> (Space reservations / allocations) </small>
 
- Column			|	Datatype		|	Keys			            	|	Description
+ Column			|	Datatype	|	Keys			            	|	Description
  :-----			|	:----		|	------			            	|	------
- subjectId      | INTEGER		| PK, FK(allocSubject.subjectId)	| Opetus
- allocRound     | INTEGER		| PK, FK(allocSubject.allocRound)	| Laskenta esim. Syksy 2022
- spaceId 		| INTEGER		| PK, FK(space.id)	            	| Varattu tila
- totalTime		| TIME			|					            	| Opetusta varten varattu aika tilassa
+ subjectId      | INTEGER		| PK, FK(AllocSubject.subjectId)	| 
+ allocRound     | INTEGER		| PK, FK(AllocSubject.allocRound)	| 
+ spaceId 		| INTEGER		| PK, FK(Space.id)	            	| 
+ totalTime		| TIME			|					            	| How many hours this subject took on that allocround in this room
 
 </details>
 
 <details><summary>AllocSubject</summary>
-<small> (Opetukset laskentaa varten) </small>
+<small> (Subjects for allocation) </small>
 
-Column			    |	Datatype		|	Keys		    |	Description
-:-----			    |	:----		|	------		    |	------
-<u>subjectId</u>    | INTEGER		|PK,FK(subject.id)  | Laskentaan lisätty opetus
-<u>allocRound</u>   | INTEGER		|PK,FK(allocRound)  | Laskentatoteutus esim. Kevät 2022
-isAllocated 	    | BOOLEAN		|				    | Onko kurssitoteutus jo lisätty laskentaan/allocSpace tauluun (0/1)
-cantAllocate 	    | BOOLEAN		|				    | Merkitään True(1) kun kurssille ei löydy sopivia tiloja
-priority		    | INTEGER		|				    | Opetuksien prioriteetti (arvoasteikko) - Missä järjestyksessä opetukset lisätään allocSpace-tauluun
-allocatedDate 	    | TIMESTAMP		|				    | Päivämäärä, jolloin opetus on lisätty laskentaan
+Column			    |	Datatype	|	Keys		        |	Description
+:-----			    |	:----		|	------		        |	------
+<u>subjectId</u>    | INTEGER		|PK,FK(Subject.id)      | Subject added to the allocation
+<u>allocRound</u>   | INTEGER		|PK,FK(AllocRound.id)   | 
+isAllocated 	    | BOOLEAN		|				        | Whether subject already handled in this allocRound
+cantAllocate 	    | BOOLEAN		|				        | Marking True(1) when no suitable spaces found for this subject for this allocRound
+priority		    | INTEGER		|				        | Ordinal for subjects - Number one allocated first to spaces, then two and so on
+allocatedDate 	    | TIMESTAMP		|				        | Timestamp of the allocation process
 
 </details>
 
 <details><summary>AllocSubjectSuitableSpace</summary>
-<small>(Lisätään kaikki opetukseen soveltuvat tilat)</small>
+<small>(All spaces that could be used to allocate a certain subject)</small>
 
-Column			    |	Datatype		|	Keys		                    |	Description
+Column			    |	Datatype	|	Keys		                    |	Description
 :-----			    |	:----		|	------		                    |	------
-<u>allocRound</u>   |  INTEGER      | PK, FK(AllocSubject.allocRound)   | Laskenta
-<u>subjectId</u>    |  INTEGER      | PK, FK(AllocSubject.subjectId)    | Opetus
-<u>spaceId</u>      |  INTEGER      | PK, FK(Space.id)                  | Tila
- missingItems       |  INTEGER		|									| Puuttuvien varusteiden lkm
+<u>allocRound</u>   |  INTEGER      | PK, FK(AllocSubject.allocRound)   | 
+<u>subjectId</u>    |  INTEGER      | PK, FK(AllocSubject.subjectId)    | 
+<u>spaceId</u>      |  INTEGER      | PK, FK(Space.id)                  | 
+ missingItems       |  INTEGER		|									| Number of missing equipment, number of reasons why allocation could not happen
 </details>
 
 
 <details><summary>Building</summary>
-<small> (Rakennus) </small>
+<small>Building where the spaces reside</small>
 
-Column			|	Datatype		|	Keys		|	Description
+Column			|	Datatype	|	Keys		|	Description
 :-----			|	:----		|	------		|	------
 <u>id</u>		| INTEGER		| PK			| 
-name			| VARCHAR(255)	|				| Rakennuksen nimi / Tunnus (Esim. N-Talo)
-description		| VARCHAR(16000)|				| Rakennuksen vapaaehtoinen kuvaus
+name			| VARCHAR(255)	|				| e.g. "N-talo", "M-talo"
+description		| VARCHAR(16000)|				| 
 
 </details>
 
 
 <details><summary>Department</summary>
-Rakennus
+Bigger educational entity than Program. Department has Programs.
 
-Column			|	Datatype		|	Keys		|	Description
+Column			|	Datatype	|	Keys		|	Description
 :-----			|	:----		|	------		|	------
 <u>id</u>		| INTEGER		| PK			|
-name			| VARCHAR(255)	|				| Aineryhmän nimi (esim. Jazz)
-description		| VARCHAR(16000)|				| Aineryhmän kuvaus
+name			| VARCHAR(255)	|				| e.g "Jazz department", or "Church music"
+description		| VARCHAR(16000)|				| 
 
 </details>
 
 <details><summary>DepartmentPlanner</summary>
-<small> (aineryhmän suunnittelija) </small>
+<small> (A user who has rights to modify that Department's Programs' teachings and equipment needs) </small>
 
-Column				|	Datatype		|	Keys				|	Description
+Column				|	Datatype	|	Keys				|	Description
 :-----				|	:----		|	------				|	------
-<u>departmentId</u> | INTEGER		| PK, FK(deparment.id)	| Suunnittelijalla oikeudet aineryhmän opetusten lisäykselle ja muokkaukselle.
-<u>userId</u>		| INTEGER		| PK, FK(user.id)		| Suunnittelijan käyttäjätunnus
+<u>departmentId</u> | INTEGER		| PK, FK(deparment.id)	| 
+<u>userId</u>		| INTEGER		| PK, FK(user.id)		| 
 
 </details>
 
 <details><summary>Equipment</summary>
-<small> (Varustelista, josta lisätään yksittäisiä varusteita/soittimia tiloihin ja opetuksiin) </small>
+<small> (Actually equipment type, e.g. "Double concert piano" means room could have two pianos, one for professor, one for student) </small>
 
-Column			|	Datatype		|	Keys		|	Description
+Column			|	Datatype	|	Keys		|	Description
 :-----			|	:----		|	------		|	------
 <u>id</u>		| INTEGER		| PK			|
-name			| VARCHAR(255)	| 				| Soittimen/varusteen nimi
-isMovable		| BOOLEAN		| 				| Onko varuste siirreltävissä. Esim. Urut ei tod.näk ole
-priority		| INTEGER		|				| IN PROGRESS
-description		| VARCHAR(16000)|				| kuvaus
+name			| VARCHAR(255)	| 				| e.g. "Organ X", "Double concert piano", "Concert piano", "Vertical accompany piano"
+isMovable		| BOOLEAN		| 				| Whether equipment movable. E.g. huge organs are not.
+priority		| INTEGER		|				| (Is this in use in calculations yet?)
+description		| VARCHAR(16000)|				| 
 
 </details>
 
 <details><summary>GlobalSettings</summary>
-<small> (Yleiset asetukset järjestelmässä. Ehkä lisätään AllocSettings-taulu laskentaa varten erikseen) </small>
+<small> (Global Settings in the system. Growin and growing. Maybe adding a AllocSettings-taulu for allocation separately? Or in same) </small>
 
-Column			|	Datatype		|	Keys		|	Description
+Column			|	Datatype	|	Keys		|	Description
 :-----			|	:----		|	------		|	------
 <u>id</u>		| INTEGER		| PK			|
-name			| VARCHAR(255)	| 				| Asetukselle nimi
-description		| VARCHAR(16000)|				| Description asetusta varten
-numberValue		| INTEGER		| 				| Asetukseen kokonaisluku arvona
-textValue		| VARCHAR(255)	|				| Asetukseen kiinteä tekstiarvo
+name			| VARCHAR(255)	| 				| Name of the setting
+description		| VARCHAR(16000)|				| Description for the setting
+numberValue		| INTEGER		| 				| If setting needs a number value, it will be saved here, and read from here
+textValue		| VARCHAR(255)	|				| If setting needs a text value, it will be saved here, and read from here
 
 </details>
 
 <details><summary>Program</summary>
-<small> (Pääaine) </small>
+<small> (Pääaine, e.g. "Orchestral music") </small>
 
-Column			|	Datatype		|	Keys			|	Description
+Column			|	Datatype	|	Keys			|	Description
 :-----			|	:----		|	------			|	------
 <u>id</u>		| INTEGER		| PK				|
-name			| VARCHAR(255)	|					| Pääaineen nimi
-departmentId	| INTEGER		| FK(department.id)	| Mihin aineryhmään pääaine sisältyy
+name			| VARCHAR(255)	|					| 
+departmentId	| INTEGER		| FK(department.id)	| Under which Department this Program belongs to
 
 </details>
 
 <details><summary>Space</summary>
-<small> (Tila - huone, studio, luokka jne.) </small>
+<small>(A certain Room, space, studio, classroom etc.) </small>
 
-Column			|	Datatype		|	Keys			|	Description
+Column			|	Datatype	|	Keys			|	Description
 :-----			|	:----		|	------			|	------
 <u>id</u>		| INTEGER		|PK					|
-name			| VARCHAR(255)	|					| Nimi (Esim. R-5322 Musiikkiluokka)
-area			| DECIMAL(5,1)	|					| Tilan tilavuus (neliömetreissä/m²)
-info			| VARCHAR(16000)|					| Tilan lisätietoja / Description
-personLimit 	| INTEGER		|					| Tilan maksimi henkilömäärä
-buildingId		| INTEGER		|FK(building.id)	| Missä rakennuksessa tila sijaitsee
-availableFrom	| TIME			|					| Aika, mistä lähtien tila on käytettävissä
-availableTo		| TIME			|					| Aika, mihin asti tila on käytettävissä
-classesFrom		| TIME			|					| Aika, mistä lähtien tila on käytettävissä opetusta varten
-classesTo		| TIME			|					| Aika, mihin asti tila on käytettävissä opetusta varten
-inUse			| BOOLEAN		|					| Onko tila käytettävissä vai pois käytöstä
-spaceTypeId		| INTEGER		|FK(spaceType.id)	| Minkälainen opetustila kyseessä (Esim. Luentotila, soittotila, studio, jne.)
+name			| VARCHAR(255)	|					| E.g. "R-5322 Musiikkiluokka"
+area			| DECIMAL(5,1)	|					| m²
+info			| VARCHAR(16000)|					| Description
+personLimit 	| INTEGER		|					| Max pax
+buildingId		| INTEGER		|FK(building.id)	| In which building is this space?
+availableFrom	| TIME			|					| Daily time when any use could start
+availableTo		| TIME			|					| Daily time until when any use possible
+classesFrom		| TIME			|					| Daily time when teaching sessions could start
+classesTo		| TIME			|					| Daily time until when teaching sessions possible
+inUse			| BOOLEAN		|					| Whether space in use, or e.g. under renovation
+spaceTypeId		| INTEGER		|FK(spaceType.id)	| E.g. theory classroom, music classroom, recording studio, etc.
 
 </details>
 
 <details><summary>SpaceEquipment</summary>
-<small> (Tilan varustus (soittimet, laitteistot yms.) </small>
+<small> (Equipment found in a Space (instruments, appliances, furniture, ...) </small>
+<small> (A pure join table) </small>
 
-Column				|	Datatype		|	Keys				|	Description
+Column				|	Datatype	|	Keys				|	Description
 :-----				|	:----		|	------				|	------
-<u>spaceId</u>		| INTEGER		|PK, FK(space.id)		| Tila
-<u>equipmentId</u>	| INTEGER		|PK, FK(equipment.id)	| Varauste/Soitin
+<u>spaceId</u>		| INTEGER		|PK, FK(space.id)		| 
+<u>equipmentId</u>	| INTEGER		|PK, FK(equipment.id)	| 
 
 </details>
 
 <details><summary>SpaceType</summary>
-<small> (Tilatyyppi - Esim. luentotila, soittotila, studio jne.)</small>
+<small> (E.g. theory classroom, music classroom, recording studio, etc.)</small>
 
-Column			|	Datatype		|	Keys		|	Description
+Column			|	Datatype	|	Keys		|	Description
 :-----			|	:----		|	------		|	------
 <u>id</u>		| INTEGER		| PK			| 
-name			| VARCHAR(255)	|				| Nimi (Esim. Studio)
-description		| VARCHAR(16000)|				| Vapaaehtoinen kuvaus
+name			| VARCHAR(255)	|				| 
+description		| VARCHAR(16000)|				| Possible description
 
 </details>
 
 <details><summary>Subject</summary>
-<small> (Opetus) </small>
+<small> (Teaching. One course might have several teachings=Subjects. 1. theory for all together and 2. e.g. individual piano lessons) </small>
+<small> (We only keep the teaching sessions. Courses are not kept) </small>
 
-Column			|	Datatype		|	Keys			|	Description
+Column			|	Datatype	|	Keys			|	Description
 :-----			|	:----		|	------			|	------
 <u>id</u>		| INTEGER		| PK				|
-name			| VARCHAR(255)	|					| Opetuksen nimi (esim. Huilunsoitto, Taso A)
-groupSize		| INTEGER		|					| Ryhmän koko, yksittäiselle opetukselle
-groupCount		| INTEGER		|					| Montako ryhmää. Esim. 2x groupSize
-sessionLength	| TIME			|					| Opetuksen yksittäisen opetuksen pituus
-sessionCount	| INTEGER		|					| Montako opetusta per viikko
-area			| DECIMAL(5,1)	|					| Opetukseen tarvittava tilan koko (m²)
-programId		| INTEGER		|FK(program.id)		| Mihin pääaineeseen opetus kuuluu
-spaceTypeId		| INTEGER		|FK(spaceType.id)	| Minkälaisen tilan opetus tarvitsee (soitto/luento)
+name			| VARCHAR(255)	|					| E.g. "Pianist individual piano lessons"
+groupSize		| INTEGER		|					| 
+groupCount		| INTEGER		|					| How manyu groups.
+sessionLength	| TIME			|					| How long teaching sessions
+sessionCount	| INTEGER		|					| How many sessions per week
+area			| DECIMAL(5,1)	|					| Needed room size (m²)
+programId		| INTEGER		|FK(program.id)		| The program under which this teaching/Subject is organized
+spaceTypeId		| INTEGER		|FK(spaceType.id)	| What type of space this teaching needs
 
 </details>
 
 <details><summary>SubjectEquipment</summary>
-<small> (Opetukseen tarvittavat soittimet / varusteet) </small>
+<small> (Equipment that the Subject needs) </small>
 
-Column				|	Datatype		|	Keys				|	Description
+Column				|	Datatype	|	Keys				|	Description
 :-----				|	:----		|	------				|	------
-<u>subjectId</u>	| INTEGER		| PK, FK(subject.id)	| Opetus
-<u>equipmentId</u>	| INTEGER		| PK, FK(equipment.id)	| Varuste / Soitin
-priority			| INTEGER		|						| Varusteen tärkeys (korkeampi numero on suurempi tarve)
-obligatory			| BOOLEAN		|						| Onko varuste pakollinen kurssin kannalta (nostaa prioriteettia) ***Ei ainakaan vielä käytössä**
+<u>subjectId</u>	| INTEGER		| PK, FK(subject.id)	| Subject
+<u>equipmentId</u>	| INTEGER		| PK, FK(equipment.id)	| Equipment (e.g. a musical instrument)
+priority			| INTEGER		|						| Importance or rarity of the equipment. (Higher number higher need)
+obligatory			| BOOLEAN		|						| Whether equipment obligatory for Subject (Elevates priority) ***NOT IN USE YET 2023-01-01***
 
 </details>
 
 <details><summary>User</summary>
 
-Column			| Datatype		| Keys		| Description
+Column			| Datatype		| Keys		    | Description
 :-----			| :----			| ------		| ------
 <u>id</u>		| INTEGER		| PK			|
-email			| VARCHAR(255)	|				| Käyttäjän sähköpostiosoite
-isAdmin			| BOOLEAN		|				| Onko käyttäjällä pääkäyttäjän oikeuksia
+email			| VARCHAR(255)	|				| 
+isAdmin			| BOOLEAN		|				| Whether user has admin rights
 
 </details>
 
 <details><summary>log_event</summary>
+Log entry
 
-Merkitä lokissa.
-Column			| Datatype		| Keys		| Description
+Column			| Datatype		| Keys		    | Description
 :-----			| :----			| ------		| ------
-<u>id</u>       | INTEGER       | PK            |
-log_id          | INTEGER       |               | Lokin tunniste
-stage           | VARCHAR(255)  |               | Vaihe (esim. priorisointi allokoinnissa)
-status          | VARCHAR(255)  |               | Status eli esim. OK tai Error
-information     | VARCHAR(16000)|               | Lisätieto
-created_at      | TIMESTAMP     |               | Merkinnän aika
+<u>id</u>       | INTEGER       | PK            | log entry id
+log_id          | INTEGER       |               | log id
+stage           | VARCHAR(255)  |               | (e.g. prioritization phase in allocation)
+status          | VARCHAR(255)  |               | e.g. OK or Error
+information     | VARCHAR(16000)|               | additional information
+created_at      | TIMESTAMP     |               | Creation time
 
 </details>
 
 <details><summary>log_type</summary>
 
-Lokin tyyppi, tällä hetkellä käytössä vain allokointi (allocation).
-Column			| Datatype		| Keys		| Description
+Log type, at the moment (2023-01-01) the only one is allocation log
+Column			| Datatype		| Keys		    | Description
 :-----			| :----			| ------		| ------
 <u>id</u>		| INTEGER		|  PK			|
-name			| VARCHAR(255)	| 				| nimi
+name			| VARCHAR(255)	| 				| name
 
 </details>
 
 <details>
 <summary>log_list</summary>
 
-Lista lokeista, jotta voi löytää helpommin esim. tiettyyn kelloon aikaan tehdyn laskennan.
-Column			| Datatype		| Keys		| Description
+List of log entries, to find easier e.g. an allocation done at certain time.
+Column			| Datatype		| Keys		    | Description
 :-----			| :----			| ------		| ------
 <u>id</u>       | INTEGER       | PK            |
-log_type        | INTEGER      	| FK            | Lokityyppi (esim. allocation)
-created_at      | TIMETAMP     	|               | Listan luontiaika
+log_type        | INTEGER      	| FK            | Log type (e.g allocation)
+created_at      | TIMESTAMP    	|               | Log entry creation time
 </details>
