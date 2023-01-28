@@ -13,7 +13,7 @@ Parameters  | -
 Returns     | All calculations
 Contents    | id, name, isSeasonAlloc, description, lastModified
 
-| Fetch Yksittäinen laskenta |   |
+| Fetch a certain individual allocation round |   |
 |---|---|
 Method      | getById
 Parameters  | allocRound.id
@@ -24,32 +24,32 @@ Contents    | id, name, isSeason, description, lastModified, isAllocated, proces
 |---|---|
 Method      | getAllSubjectsById
 Parameters  | allocRound.id
-Returns     | All calculation/allocation round sisältämät opinnot
+Returns     | All subjects included in a calculation/allocation round
 Contents    | subject.id, subject.name, allocSubject.isAllocated, allocSubject.cantAllocate, allocSubject.priority, allocatedHours, requiredHours
-huom!       | Ei käytössä missään vielä.
+Note!       | Not in use anywhere yet (?)
 
-| Fetch all opetuksia sisältävät tilat |   |
+| Fetch all spaces having teachings in a certain allocation round |   |
 |---|---|
 Method      | getRoomsByAllocId
 Parameters  | allocRound.id
-Returns     | All huoneet laskennassa
+Returns     | all spaces having teachings in a certain allocation round
 Contents    | id, name, allocatedHours, requiredHours, spaceTypeId
 
-| Fetch all huoneet pääaineen mukaan |   |
+| Fetch all spaces in allocation, for a certain program |   |
 |---|---|
 Method      | getAllocatedRoomsByProgram
 Parameters  | program.id, allocRound.id
-Returns     | All huoneet laskennassa, pääaineen mukaan
+Returns     | All spaces in allocation, for a certain program
 Contents    | space.id, space.name, allocatedHours
 
-| Fetch all subjects pääaineen mukaan |   |
+| Fetch all allocation round subjects for a program |   |
 |---|---|
 Method      | getSubjectsByProgram
 Parameters  | allocRound.id, program.id
-Returns     | All subjects laskennassa, pääaineen mukaan
+Returns     | All subjects in allocation, for a certain program
 Contents    | subject.id, subject.name, allocatedHours, requiredHours
 
-| Aloita allokointi |  |
+| Start allocation |  |
 |---|---|
 Method      | startAllocation
 Parameters  | allocRound (id)
@@ -57,41 +57,40 @@ Returns     | -
 Contents    | Starts calculation/allocation round
 
 
-| Resetoi allokointi |  |
+| Reset allocation (=allocation round) |  |
 |---|---|
 Method      | resetAllocation
 Parameters  | allocRound (id)
 Returns     | - 
-Contents    | Resetoi allocSubject, AllocSpace ja AllocSubjectSuitableSpace taulut
+Contents    | Resets the allocSubject, AllocSpace and AllocSubjectSuitableSpace tables
 
-| Keskeytä allokointi | |
-|--- | ---|
+| Interrupt/stop the allocation process | |
+|---|---|
 Method      | abortAllocation
 Parameters  | AllocRound.id
 Returns     | -
-Contents    | Käskee tietokantaa lopettamaan käynnissä olevan allokoinnin
+Contents    | Tells the database to stop the running allocation process
 
-| Fetch subjects, joita ei pysty allokoimaan | |
-|--- | ---|
+| Fetch subjects, that could not be allocated | |
+|---|---|
 Method      | getUnAllocableSubjects
 Parameters  | AllocRound.id
 Returns     | subjects
-Contents    | Returns   allokoimattomat subjects
+Contents    | Returns unallocated subjects
 
-| Fetch tilat opetuksen mukaan | |
-|--- | ---|
+| Fetch spaces for a certain Subject | |
+|---|---|
 Method      | getSpacesForSubject
 Parameters  | Subject.id
-Returns     | Tilat
-Contents    | Space.id, Space.name, Space.area, missingItems, areaOk, 
-Space.personLimit, personLimitOk, Space.inUse, Space.spaceType, spaceTypeOk
+Returns     | spaces
+Contents    | Space.id, Space.name, Space.area, missingItems, areaOk, Space.personLimit, personLimitOk, Space.inUse, Space.spaceType, spaceTypeOk
 
-| Fetch tilasta puuttuvat tavarat opetuksen mukaan | |
-|--- | ---|
+| Fetch the missing equipment for certain space and certain subject | |
+|---|---|
 Method      | getMissingEquipmentForRoom
 Parameters  | subject.id, space.id
-Returns     | Puuttuvat tavarat tilasta opetuksen mukaan 
-Contents    | Equipment.id, Equipment.name, SpaceEquipment.name
+Returns     | missing equipment for certain space and certain subject 
+Contents    | Equipment.id, Equipment.name, SpaceEquipment.name (Really this? Why this???)
 
 
 
