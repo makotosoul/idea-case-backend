@@ -13,13 +13,15 @@
 
 ## Creators
 
-  <p>SIBA22S</p>
+<p>SIBA22S Softala team</p>
+<p>SIBA23K Softala team</p>
+<p>SWP23K team</p>
 <!-- ABOUT THE PROJECT -->
 
 ## About project
 
 
-Project is Haaga-Helias and Sibelius academys collaborative based work/app, whereby its possible to calculate and optimate Sibelius academy teaching space and equipment usage for different lessons.
+This Project is Haaga-Helia's and Sibelius Academy's collaborative work, which aims at building an information system that makes it possible to calculate and optimize Sibelius Academy's teaching space and equipment usage for different lessons.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 

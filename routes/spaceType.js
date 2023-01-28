@@ -4,7 +4,7 @@ const db = require("../db/index");
 //const logger = require("../utils/logger");??
 const { dbErrorHandler, successHandler } = require("../responseHandler/index");
 
-// Huone tyyppien nimet ja id, selectiin
+// Get space type id:s and name:s, for populating a select list
 spaceType.get("/getSelectData", (req, res) => {
   const sqlSelectName = "SELECT id, name FROM SpaceType";
   db.query(sqlSelectName, (err, result) => {

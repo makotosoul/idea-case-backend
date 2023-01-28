@@ -14,7 +14,7 @@ const {
   validateAddUpdateSubjectEquipment,
 } = require("../validationHandler/index");
 
-// Varusteet opetus id perusteella
+// Getting all equipment requirement rows for a subject based on the subject id
 subjectequipment.get("/getEquipment/:subjectId", (req, res) => {
   const subjectId = req.params.subjectId;
   const sqlGetEquipmentBySubjectId =
@@ -28,7 +28,7 @@ subjectequipment.get("/getEquipment/:subjectId", (req, res) => {
   });
 });
 
-// Varusteen lisäys opetukseen
+// Adding a equipment requirement to teaching/subject
 subjectequipment.post(
   "/post",
   validateAddUpdateSubjectEquipment,
@@ -69,7 +69,7 @@ subjectequipment.post(
   },
 );
 
-// Varusteen poisto
+// Removing an equipment requirement from a subject
 subjectequipment.delete("/delete/:subjectId/:equipmentId", (req, res) => {
   const subjectId = req.params.subjectId;
   const equipmentId = req.params.equipmentId;
@@ -85,7 +85,7 @@ subjectequipment.delete("/delete/:subjectId/:equipmentId", (req, res) => {
   });
 });
 
-// Varusteen muokkaus
+// Modifying the equipment required by the subject/teaching
 subjectequipment.put(
   "/update",
   validateAddUpdateSubjectEquipment,

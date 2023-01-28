@@ -1,6 +1,7 @@
 /*
   ---- EXPRESS VALIDATOR ----
-  Express - validator on kirjasto jolla voidaan validoida fontista tulevaa dataa
+  Express-validator is a library that can be used to validate the data coming from 
+  the frontend or other client
   https://express-validator.github.io/docs/
 */
 

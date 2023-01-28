@@ -12,7 +12,7 @@ const {
 const { validationResult } = require("express-validator"); //const { body,}???
 const { validateAddUpdateSubject } = require("../validationHandler/index");
 
-// Opetuksen, pääaineen sekä huonetyypin tiedot
+// Fetching all subjects, joining to each subject the program, and needed spacetype
 subject.get("/getAll", (req, res) => {
   const sqlSelectSubjectProgram =
     "  SELECT s.id, s.name AS subjectName, s.groupSize, s.groupCount, s.sessionLength, s.sessionCount, s.area, s.programId, p.name AS programName, s.spaceTypeId, st.name AS spaceTypeName FROM Subject s JOIN Program p ON s.programId = p.id LEFT JOIN SpaceType st ON s.spaceTypeId = st.id;";
@@ -25,7 +25,7 @@ subject.get("/getAll", (req, res) => {
   });
 });
 
-// Opetuksien nimet ja id
+// Listing all the subjects (name and id)
 subject.get("/getNames", (req, res) => {
   const sqlSelectSubjectNames = "SELECT id, name FROM Subject;";
   db.query(sqlSelectSubjectNames, (err, result) => {
@@ -37,7 +37,7 @@ subject.get("/getNames", (req, res) => {
   });
 });
 
-// Opetuksen lisäys
+// Adding a subject/teaching
 subject.post("/post", validateAddUpdateSubject, (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -85,7 +85,7 @@ subject.post("/post", validateAddUpdateSubject, (req, res) => {
   );
 });
 
-// Opetuksen poisto
+// Removing a subject/teaching
 subject.delete("/delete/:id", (req, res) => {
   const id = req.params.id;
   const sqlDelete = "DELETE FROM Subject WHERE id = ?;";
@@ -99,7 +99,7 @@ subject.delete("/delete/:id", (req, res) => {
   });
 });
 
-// Opetuksen muokkaus
+// Modifying the subject = teaching
 subject.put("/update", validateAddUpdateSubject, (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
