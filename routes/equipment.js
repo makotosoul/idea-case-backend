@@ -4,7 +4,7 @@ const db = require("../db/index");
 //const logger = require("../utils/logger");??
 const { dbErrorHandler, successHandler } = require("../responseHandler/index");
 
-// Varusteiden nimet ja id, selectiin sekä oletusprioriteettiin
+// Equipment id:s and name:s, for a select list and for the default priority
 equipment.get("/getEquipData", (req, res) => {
   const sqlSelectName =
     "SELECT id, name, priority AS equipmentPriority FROM Equipment";

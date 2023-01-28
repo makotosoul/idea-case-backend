@@ -4,7 +4,7 @@ const db = require("../db/index");
 //const logger = require("../utils/logger");??
 const { dbErrorHandler, successHandler } = require("../responseHandler/index");
 
-// Pääaineitten nimet ja id, selectiin
+// Program id:s and name:s, to be used in a select list
 program.get("/getSelectData", (req, res) => {
   const sqlSelectName = "SELECT id, name FROM Program";
   db.query(sqlSelectName, (err, result) => {

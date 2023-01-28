@@ -1,117 +1,118 @@
 # Services
-- Kommunikoi tietokannan kanssa
-- Palauttaa promisen eli pyynnön sisällön tai virheviestin, jos kutsu epäonnistuu
+- They communicate with the database
+- Return either JSON data or error message, if the call fails.
+- Asynchronous, use Promises inside.
 
 <details>
-<summary>Allocation (laskenta / allocRound)</summary>
+<summary>Allocation (calculation / allocRound)</summary>
 
-| Hae kaikki laskennat |   |
+| Fetch all calculations |   |
 |---|---|
-Metodi      | getAll
-Parametrit  | -
-Palauttaa   | Kaikki laskennat
-Sisältö     | id, name, isSeasonAlloc, description, lastModified
+Method      | getAll
+Parameters  | -
+Returns     | All calculations
+Contents    | id, name, isSeasonAlloc, description, lastModified
 
-| Hae Yksittäinen laskenta |   |
+| Fetch Yksittäinen laskenta |   |
 |---|---|
-Metodi      | getById
-Parametrit  | allocRound.id
-Palauttaa   | Yksittäisen laskennan
-Sisältö     | id, name, isSeason, description, lastModified, isAllocated, processOn, Subjects, allocated, unAllocated
+Method      | getById
+Parameters  | allocRound.id
+Returns     | Individual calculation/allocation round
+Contents    | id, name, isSeason, description, lastModified, isAllocated, processOn, Subjects, allocated, unAllocated
 
-| Hae kaikki opetukset |   |
+| Fetch all subjects |   |
 |---|---|
-Metodi      | getAllSubjectsById
-Parametrit  | allocRound.id
-Palauttaa   | Kaikki laskennan sisältämät opinnot
-Sisältö     | subject.id, subject.name, allocSubject.isAllocated, allocSubject.cantAllocate, allocSubject.priority, allocatedHours, requiredHours
+Method      | getAllSubjectsById
+Parameters  | allocRound.id
+Returns     | All calculation/allocation round sisältämät opinnot
+Contents    | subject.id, subject.name, allocSubject.isAllocated, allocSubject.cantAllocate, allocSubject.priority, allocatedHours, requiredHours
 huom!       | Ei käytössä missään vielä.
 
-| Hae kaikki opetuksia sisältävät tilat |   |
+| Fetch all opetuksia sisältävät tilat |   |
 |---|---|
-Metodi      | getRoomsByAllocId
-Parametrit  | allocRound.id
-Palauttaa   | Kaikki huoneet laskennassa
-Sisältö     | id, name, allocatedHours, requiredHours, spaceTypeId
+Method      | getRoomsByAllocId
+Parameters  | allocRound.id
+Returns     | All huoneet laskennassa
+Contents    | id, name, allocatedHours, requiredHours, spaceTypeId
 
-| Hae kaikki huoneet pääaineen mukaan |   |
+| Fetch all huoneet pääaineen mukaan |   |
 |---|---|
-Metodi      | getAllocatedRoomsByProgram
-Parametrit  | program.id, allocRound.id
-Palauttaa   | Kaikki huoneet laskennassa, pääaineen mukaan
-Sisältö     | space.id, space.name, allocatedHours
+Method      | getAllocatedRoomsByProgram
+Parameters  | program.id, allocRound.id
+Returns     | All huoneet laskennassa, pääaineen mukaan
+Contents    | space.id, space.name, allocatedHours
 
-| Hae kaikki opetukset pääaineen mukaan |   |
+| Fetch all subjects pääaineen mukaan |   |
 |---|---|
-Metodi      | getSubjectsByProgram
-Parametrit  | allocRound.id, program.id
-Palauttaa   | Kaikki opetukset laskennassa, pääaineen mukaan
-Sisältö     | subject.id, subject.name, allocatedHours, requiredHours
+Method      | getSubjectsByProgram
+Parameters  | allocRound.id, program.id
+Returns     | All subjects laskennassa, pääaineen mukaan
+Contents    | subject.id, subject.name, allocatedHours, requiredHours
 
 | Aloita allokointi |  |
 |---|---|
-Metodi      | startAllocation
-Parametrit  | allocRound (id)
-Palauttaa   | - 
-Sisältö     | Käynnistää laskennan
+Method      | startAllocation
+Parameters  | allocRound (id)
+Returns     | - 
+Contents    | Starts calculation/allocation round
 
 
 | Resetoi allokointi |  |
 |---|---|
-Metodi      | resetAllocation
-Parametrit  | allocRound (id)
-Palauttaa   | - 
-Sisältö     | Resetoi allocSubject, AllocSpace ja AllocSubjectSuitableSpace taulut
+Method      | resetAllocation
+Parameters  | allocRound (id)
+Returns     | - 
+Contents    | Resetoi allocSubject, AllocSpace ja AllocSubjectSuitableSpace taulut
 
 | Keskeytä allokointi | |
 |--- | ---|
-Metodi      | abortAllocation
-Parametrit  | AllocRound.id
-Palauttaa   | -
-Sisältö     | Käskee tietokantaa lopettamaan käynnissä olevan allokoinnin
+Method      | abortAllocation
+Parameters  | AllocRound.id
+Returns     | -
+Contents    | Käskee tietokantaa lopettamaan käynnissä olevan allokoinnin
 
-| Hae opetukset, joita ei pysty allokoimaan | |
+| Fetch subjects, joita ei pysty allokoimaan | |
 |--- | ---|
-Metodi      | getUnAllocableSubjects
-Parametrit  | AllocRound.id
-Palauttaa   | subjects
-Sisältö     | Palauttaa allokoimattomat opetukset
+Method      | getUnAllocableSubjects
+Parameters  | AllocRound.id
+Returns     | subjects
+Contents    | Returns   allokoimattomat subjects
 
-| Hae tilat opetuksen mukaan | |
+| Fetch tilat opetuksen mukaan | |
 |--- | ---|
-Metodi      | getSpacesForSubject
-Parametrit  | Subject.id
-Palauttaa   | Tilat
-Sisältö     | Space.id, Space.name, Space.area, missingItems, areaOk, 
+Method      | getSpacesForSubject
+Parameters  | Subject.id
+Returns     | Tilat
+Contents    | Space.id, Space.name, Space.area, missingItems, areaOk, 
 Space.personLimit, personLimitOk, Space.inUse, Space.spaceType, spaceTypeOk
 
-| Hae tilasta puuttuvat tavarat opetuksen mukaan | |
+| Fetch tilasta puuttuvat tavarat opetuksen mukaan | |
 |--- | ---|
-Metodi      | getMissingEquipmentForRoom
-Parametrit  | subject.id, space.id
-Palauttaa   | Puuttuvat tavarat tilasta opetuksen mukaan 
-Sisältö     | Equipment.id, Equipment.name, SpaceEquipment.name
+Method      | getMissingEquipmentForRoom
+Parameters  | subject.id, space.id
+Returns     | Puuttuvat tavarat tilasta opetuksen mukaan 
+Contents    | Equipment.id, Equipment.name, SpaceEquipment.name
 
 
 
 </details>
 
 <details>
-<summary>Program (pääaine)</summary>
+<summary>Program (=Teaching)</summary>
 
 
-| Hae kaikki pääaineet |   |
+| Fetch all Programs |   |
 |---|---|
-Metodi      | getAll
-Parametrit  | -
-Palauttaa   | Kaikki Pääaineet
-Sisältö     | id, name
+Method      | getAll
+Parameters  | -
+Returns     | All Programs
+Contents    | id, name
 
-| Hae yksittäinen pääaine |   |
+| Fetch indivual/certain Program |   |
 |---|---|
-Metodi      | getById
-Parametrit  | -
-Palauttaa   | Yksittäisen pääaineen
-Sisältö     | id, name
+Method      | getById
+Parameters  | id
+Returns     | Individual Program
+Contents    | id, name
 
 </details>

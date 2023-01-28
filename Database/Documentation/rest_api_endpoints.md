@@ -6,93 +6,93 @@ Tarvitaan eri laskentaversioiden käyttöä varten.
 | Kaikki allokoinnit  |   |
 |---|---|
 Endpoint    | /api/allocation/
-Metodi      | GET
-Parametrit  | -
-Palauttaa   | Kaikki allocRound taulun laskennat.
-Sisältö     | id, name, isAllocSeason, description, lastModified
-Käytössä    | -
+Method      | GET
+Parameters  | -
+Returns     | Kaikki allocRound taulun laskennat.
+Contents    | id, name, isAllocSeason, description, lastModified
+Used in     | -
 
 | Yksittäinen allokointi  |   |
 |---|---|
 Endpoint    | /api/allocation/:id
-Metodi      | GET
-Parametrit  | allocRound.id
-Palauttaa   | Yksittäisen allocRound taulun laskennan.
-Sisältö     | id, name, isAllocSeason, description, lastModified, isAllocated, processOn, Subjects, allocated, unAllocated
-Käytössä    | -
+Method      | GET
+Parameters  | allocRound.id
+Returns     | Yksittäisen allocRound taulun laskennan.
+Contents    | id, name, isAllocSeason, description, lastModified, isAllocated, processOn, Subjects, allocated, unAllocated
+Used in     | -
 
 |Huoneet Allokoinnin id:n mukaan |   |
 |---|---|
 Endpoint    | /api/allocation/:id/rooms
-Metodi      | GET
-Parametrit  | allocRound.id
-Palauttaa   | Yksittäisen allocRoundin sisältämät huoneet
-Sisältö     | space.id, space.name, allocatedHours, requiredHours, spaceTypeId
-Käytössä    | tulosnäkymä
+Method      | GET
+Parameters  | allocRound.id
+Returns     | Yksittäisen allocRoundin sisältämät huoneet
+Contents    | space.id, space.name, allocatedHours, requiredHours, spaceTypeId
+Used in     | Results view
 
 |Allokoinnin sisältö pääaineittain |   |
 |---|---|
 Endpoint    | /api/allocation/:id/program/
-Metodi      | GET
-Parametrit  | allocRound.id
-Palauttaa   | Kaikki pääaineet ja niiden sisällöt
-Sisältö     | program.id, program.name, rooms(id, name, allocatedHours), subjects(id, name, allocatedHours, requiredHours)
-Käytössä    | Tulosnäkymä
+Method      | GET
+Parameters  | allocRound.id
+Returns     | Kaikki pääaineet ja niiden sisällöt
+Contents    | program.id, program.name, rooms(id, name, allocatedHours), subjects(id, name, allocatedHours, requiredHours)
+Used in     | Results view
 
 
 | Laskennan aloitus |  |
 |---|---|
 Endpoint    | /api/allocation/start
-Metodi      | POST
-Parametrit  | AllocRound.id
-Palauttaa   | -
-Sisältö     | -
-Käytössä    | Tulosnäkymä
+Method      | POST
+Parameters  | AllocRound.id
+Returns     | -
+Contents    | -
+Used in     | Results view
 
 | Laskennan resetointi |   |
 |---|---|
 Endpoint    | /api/allocation/reset
-Metodi      | POST
-Parametrit  | AllocRound.id
-Palauttaa   | Poistaa kaikki allocRoundin kurssit AllocSpace taulusta ja nollaa isAllocated, priority ja cantAllocate:n, allocSubject taulussa.
-Sisältö     | -
-Käytössä    | Tulosnäkymä
+Method      | POST
+Parameters  | AllocRound.id
+Returns     | Poistaa kaikki allocRoundin kurssit AllocSpace taulusta ja nollaa isAllocated, priority ja cantAllocate:n, allocSubject taulussa.
+Contents    | -
+Used in     | Results view
 
 | Laskennan keskeytys | |
 | --- | ---|
 Endpoint    | /api/allocation/abort
-Metodi      | POST
-Parametrit  | AllocRound.id
-Palauttaa   | -
-Sisältö     | -
-Käytössä    | -
+Method      | POST
+Parameters  | AllocRound.id
+Returns     | -
+Contents    | -
+Used in     | -
 
 | Allokoimattomat opetukset | |
 | --- | ---|
 Endpoint    | /api/allocation/:id/subject/unallocated
-Metodi      | GET
-Parametrit  | AllocRound.id
-Palauttaa   | Kaikki allokointiin sisältyvät opetukset, joita ei voinut sijoittaa tiloihin
-Sisältö     | subjectId, subject.name, subject.groupSize, subject.area, subject.spaceType
-Käytössä    | AllocationSubjectFailureView
+Method      | GET
+Parameters  | AllocRound.id
+Returns     | Kaikki allokointiin sisältyvät opetukset, joita ei voinut sijoittaa tiloihin
+Contents    | subjectId, subject.name, subject.groupSize, subject.area, subject.spaceType
+Used in     | AllocationSubjectFailureView
 
 | Tilojen sopivuus opetukselle | |
 | --- | ---|
 Endpoint    | /api/allocation/subject/:subjectId/rooms
-Metodi      | GET
-Parametrit  | subject.id
-Palauttaa   | Palauttaa opetukselle kaikkien tilojen sopivuuden
-Sisältö     | space.id, space.name, space.area, missingItems, areaOk, space.personLimit, personLimitOk, space.inUse, space.spaceType, spaceTypeOk 
-Käytössä    | AllocationSubjectFailureView
+Method      | GET
+Parameters  | subject.id
+Returns     | Palauttaa opetukselle kaikkien tilojen sopivuuden
+Contents    | space.id, space.name, space.area, missingItems, areaOk, space.personLimit, personLimitOk, space.inUse, space.spaceType, spaceTypeOk 
+Used in     | AllocationSubjectFailureView
 
 | Puuttuvat varusteet tilassa | |
 | --- | ---|
 Endpoint    | /api/allocation/missing-eqpt/subject/:subid/room/:roomid
-Metodi      | GET
-Parametrit  | subject.id, space.id
-Palauttaa   | Huoneesta puuttuvat varusteet opetukselle
-Sisältö     | equipment.id, equipment.name
-Käytössä    | AllocationFailureView
+Method      | GET
+Parameters  | subject.id, space.id
+Returns     | Huoneesta puuttuvat varusteet opetukselle
+Contents    | equipment.id, equipment.name
+Used in     | AllocationFailureView
 
 
 
@@ -104,10 +104,10 @@ Käytössä    | AllocationFailureView
 |Pääaineiden nimet |   |
 |---|---|
 Endpoint    | /api/program/getNames
-Metodi      | GET
-Parametrit  | -
-Palauttaa   | Kaikki pääaineet
-Sisältö     | program.id, program.name
+Method      | GET
+Parameters  | -
+Returns     | Kaikki pääaineet
+Contents    | program.id, program.name
 
 </details>
 
@@ -116,10 +116,10 @@ Sisältö     | program.id, program.name
 | Kaikki tilatyypit |   |
 |---|---|
 Endpoint    | /api/spaceType/getNames
-Metodi      | GET
-Parametrit  | -
-Palauttaa   | Kaikki tilatyypit
-Sisältö     | id, name
+Method      | GET
+Parameters  | -
+Returns     | Kaikki tilatyypit
+Contents    | id, name
 
 </details>
 
@@ -128,32 +128,32 @@ Sisältö     | id, name
 | Kaikki opinnot |   |
 |---|---|
 Endpoint    | /api/subject/getAll
-Metodi      | GET
-Parametrit  | -
-Palauttaa   | Kaikki opinnot
-Sisältö     | id, name, groupSize, groupCount, sessionLength, sessionCount, area, program.id, program.name, spaceTypeId, spaceTypeName
+Method      | GET
+Parameters  | -
+Returns     | Kaikki opinnot
+Contents    | id, name, groupSize, groupCount, sessionLength, sessionCount, area, program.id, program.name, spaceTypeId, spaceTypeName
 
 | Opetuksen lisäys |   |
 |---|---|
 Endpoint    | /api/subject/post
-Metodi      | POST
-Parametrit  | name, groupSize, groupCount, sessionLength, sessionCount, area, programId, spaceTypeId
-Palauttaa   | Lisää uuden opinnon
-Sisältö     | -
+Method      | POST
+Parameters  | name, groupSize, groupCount, sessionLength, sessionCount, area, programId, spaceTypeId
+Returns     | Lisää uuden opinnon
+Contents    | -
 
 | Opetuksen poisto |   |
 |---|---|
 Endpoint    | /api/subject/delete/:id
-Metodi      | DELETE
-Parametrit  | subject.id
-Palauttaa   | Poistaa opinnon
-Sisältö     | -
+Method      | DELETE
+Parameters  | subject.id
+Returns     | Poistaa opinnon
+Contents    | -
 
 | Opetuksen muokkaus |   |
 |---|---|
 Endpoint    | /api/subject/update
-Metodi      | PUT
-Parametrit  | id, name, groupSize, groupCount, sessionLength, sessionCount, area, programId, spaceTypeId
-Palauttaa   | Päivittää opinnon
-Sisältö     | -
+Method      | PUT
+Parameters  | id, name, groupSize, groupCount, sessionLength, sessionCount, area, programId, spaceTypeId
+Returns     | Päivittää opinnon
+Contents    | -
 </details>

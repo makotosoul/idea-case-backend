@@ -223,7 +223,7 @@ allocation.post("/abort", async (req, res) => {
     });
 });
 
-// Allokointilaskennan aloitus!
+// Starting the allocation calculation!
 allocation.post("/start", async (req, res) => {
   const allocRound = req.body.allocRound;
   if (!allocRound) {

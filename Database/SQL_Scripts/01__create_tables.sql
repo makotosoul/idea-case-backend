@@ -128,7 +128,7 @@ CREATE TABLE IF NOT EXISTS Program (
     ON UPDATE NO ACTION       
 ) ENGINE=InnoDB AUTO_INCREMENT=3001 DEFAULT CHARSET=latin1;
 
--- Tarvitaanko Program-taulussa tätä:
+-- Probably Program table will not need / benefit from this:
 -- participants INT(4),
 
 CREATE TABLE IF NOT EXISTS `Subject` (
