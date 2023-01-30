@@ -92,6 +92,6 @@ Backend side installation instructions
    npm install -g nodemon
    ```
 
-8. Attention! Follow [Frontend repo](https://github.com/haagahelia/siba-fe) installation guide aswell
+8. Attention! Follow the [Frontend repo](https://github.com/haagahelia/siba-fe) installation guide as well
 
 <p align="right">(<a href="#top">back to top</a>)</p>
