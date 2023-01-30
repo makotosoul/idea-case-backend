@@ -18,14 +18,13 @@
 <p>SWP23K team</p>
 <!-- ABOUT THE PROJECT -->
 
-## About project
-
+## About the project
 
 This Project is Haaga-Helia's and Sibelius Academy's collaborative work, which aims at building an information system that makes it possible to calculate and optimize Sibelius Academy's teaching space and equipment usage for different lessons.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-### Technology and other useful resources
+### Backend technology and other useful resources
 
 - [Mariadb](https://mariadb.org/)
 - [Node](https://nodejs.org/en/)
@@ -46,7 +45,7 @@ This Project is Haaga-Helia's and Sibelius Academy's collaborative work, which a
 
 Backend side installation instructions
 
-### Installing
+### Installation
 
 1. Install [Mariadb](https://www.mariadbtutorial.com/getting-started/install-mariadb/) version 10.x or newer
 
@@ -54,7 +53,7 @@ Backend side installation instructions
 
 3. Create to your chosen SQL editor database scheme called casedb. Run [000\_\_CreateALLdb.sql](https://github.com/haagahelia/Siba_be/blob/main/Database/SQL_Scripts/000__CreateALLdb.sql) script to create files to the database
 
-4. Clone repository
+4. Clone the repository
    ```sh
    git clone https://github.com/haagahelia/Siba_be.git
    ```
@@ -64,7 +63,7 @@ Backend side installation instructions
    npm install
    ```
 
-6. Create Env. file. Add .env to the root of the project
+6. Create the **.env** file. Add .env to the root of the project
 
    ```
    BE_API_URL_PREFIX=/api
@@ -93,6 +92,6 @@ Backend side installation instructions
    npm install -g nodemon
    ```
 
-8. Attention! Follow [Frontend repon](https://github.com/haagahelia/siba-fe) installation guide aswell
+8. Attention! Follow [Frontend repo](https://github.com/haagahelia/siba-fe) installation guide aswell
 
 <p align="right">(<a href="#top">back to top</a>)</p>
