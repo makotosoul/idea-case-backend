@@ -18,7 +18,7 @@ const {
 subjectequipment.get("/getEquipment/:subjectId", (req, res) => {
   const subjectId = req.params.subjectId;
   const sqlGetEquipmentBySubjectId =
-    "SELECT se.subjectId , e.name,e.description, se.equipmentId, se.priority, se.obligatory FROM Subjectequipment se JOIN Equipment e ON se.equipmentId = e.id WHERE se.subjectid = ?;";
+    "SELECT se.subjectId , e.name,e.description, se.equipmentId, se.priority, se.obligatory FROM SubjectEquipment se JOIN Equipment e ON se.equipmentId = e.id WHERE se.subjectid = ?;";
   db.query(sqlGetEquipmentBySubjectId, subjectId, (err, result) => {
     if (err) {
       dbErrorHandler(res, err, "Oops! Nothing came through - SubjectEquipment");
