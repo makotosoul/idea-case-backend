@@ -1,11 +1,11 @@
-const routes = require("./routes/index.js");
-const express = require("express");
-const bodyParser = require("body-parser");
-const cors = require("cors");
+import routes from './routes/index.js';
+import express from 'express';
+import bodyParser from 'body-parser';
+import cors from 'cors';
 const app = express();
-//const db = require("./db/index");???
-//const logger = require("./utils/logger");???
-const dotenv = require("dotenv");
+//import db from './db/index';???
+//import logger from './utils/logger.js';???
+import dotenv from 'dotenv';
 
 dotenv.config({});
 

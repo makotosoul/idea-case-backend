@@ -6,7 +6,7 @@ It's possible to edit the logging formats and the logging levels.
 NPM: https://www.npmjs.com/package//winston
 */
 
-const { createLogger, transports, format } = require("winston");
+import { createLogger, transports, format } from 'winston';
 const LEVEL = Symbol.for("level");
 
 // Modifying the log for easier reading
@@ -51,4 +51,4 @@ const logger = createLogger({
   ],
 });
 
-module.exports = logger;
+export default logger;

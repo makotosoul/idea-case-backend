@@ -1,4 +1,4 @@
-const db = require("../db/index");
+import db from '../db/index.js';
 
 const getAll = () => {
   const sqlQuery = "SELECT p.id, p.name FROM Program p;";
@@ -26,7 +26,7 @@ const getById = (id) => {
   });
 };
 
-module.exports = {
+export default {
   getAll,
   getById,
 };

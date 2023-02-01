@@ -1,18 +1,19 @@
-const express = require("express");
-const subjectequipment = express.Router();
-//import db from ("../db/index");
-const db = require("../db/index");
-const logger = require("../utils/logger");
-const {
+import express from 'express';
+//import db from ("../db/index';
+import db from '../db/index.js';
+import logger from '../utils/logger.js';
+import {
   dbErrorHandler,
   successHandler,
   requestErrorHandler,
   validationErrorHandler,
-} = require("../responseHandler/index");
-const { validationResult } = require("express-validator");// const { body,} ??
-const {
+} from '../responseHandler/index.js';
+import { validationResult } from 'express-validator';// import { body,} ??
+import {
   validateAddUpdateSubjectEquipment,
-} = require("../validationHandler/index");
+} from '../validationHandler/index.js';
+
+const subjectequipment = express.Router();
 
 // Getting all equipment requirement rows for a subject based on the subject id
 subjectequipment.get("/getEquipment/:subjectId", (req, res) => {
@@ -120,4 +121,4 @@ subjectequipment.put(
   },
 );
 
-module.exports = subjectequipment;
+export default subjectequipment;

@@ -1,8 +1,9 @@
-const express = require("express");
+import express from 'express';
+import db from '../db/index.js';
+//import logger from '../utils/logger.js';??
+import { dbErrorHandler, successHandler } from '../responseHandler/index.js';
+
 const program = express.Router();
-const db = require("../db/index");
-//const logger = require("../utils/logger");??
-const { dbErrorHandler, successHandler } = require("../responseHandler/index");
 
 // Program id:s and name:s, to be used in a select list
 program.get("/getSelectData", (req, res) => {
@@ -16,4 +17,4 @@ program.get("/getSelectData", (req, res) => {
   });
 });
 
-module.exports = program;
+export default program;
