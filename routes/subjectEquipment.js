@@ -1,5 +1,4 @@
 import express from 'express';
-//import db from ("../db/index';
 import db from '../db/index.js';
 import logger from '../utils/logger.js';
 import {
