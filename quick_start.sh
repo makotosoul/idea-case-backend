@@ -53,7 +53,7 @@ fi
 echo "creating .env file..."
 touch .env
 echo "BE_API_URL_PREFIX=/api" >> .env
-echo "BE_SERVER_PORT=3001" >> .env
+echo "BE_SERVER_PORT=8764" >> .env
 echo "DB_DRIVER_MODULE=mysql" >> .env
 echo "DB_HOST=localhost" >> .env
 echo "DB_PORT=3306" >> .env
