@@ -1,6 +1,5 @@
 import express from 'express';
 import db from '../db/index.js';
-
 import { dbErrorHandler, successHandler } from '../responseHandler/index.js';
 
 const equipment = express.Router();
