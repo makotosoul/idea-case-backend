@@ -1,4 +1,4 @@
-const db = require("../db/index");
+import db from '../db/index.js';
 
 /* Get all allocations */
 
@@ -291,7 +291,7 @@ const getMissingEquipmentForRoom = (subjectId, spaceId) => {
   });
 };
 
-module.exports = {
+export default {
   getAll,
   getById,
   getAllSubjectsById,

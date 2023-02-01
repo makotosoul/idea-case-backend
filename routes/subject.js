@@ -1,16 +1,17 @@
-const express = require("express");
-const subject = express.Router();
-//import db from ("../db/index");
-const db = require("../db/index");
-const logger = require("../utils/logger");
-const {
+import express from 'express';
+//import db from ("../db/index';
+import db from '../db/index.js';
+import logger from '../utils/logger.js';
+import {
   dbErrorHandler,
   successHandler,
   requestErrorHandler,
   validationErrorHandler,
-} = require("../responseHandler/index");
-const { validationResult } = require("express-validator"); //const { body,}???
-const { validateAddUpdateSubject } = require("../validationHandler/index");
+} from '../responseHandler/index.js';
+import { validationResult } from 'express-validator'; //import { body,}???
+import { validateAddUpdateSubject } from '../validationHandler/index.js';
+
+const subject = express.Router();
 
 // Fetching all subjects, joining to each subject the program, and needed spacetype
 subject.get("/getAll", (req, res) => {
@@ -145,4 +146,4 @@ subject.put("/update", validateAddUpdateSubject, (req, res) => {
   );
 });
 
-module.exports = subject;
+export default subject;

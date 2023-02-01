@@ -1,5 +1,5 @@
-const mysql = require("mysql");
-const dotenv = require("dotenv");
+import mysql from 'mysql';
+import dotenv from 'dotenv';
 
 dotenv.config({});
 
@@ -10,4 +10,5 @@ const db = mysql.createPool({
   password: process.env.DB_PASSWORD || "",
   database: process.env.DB_DATABASE || "casedb",
 });
-module.exports = db;
+
+export default db;

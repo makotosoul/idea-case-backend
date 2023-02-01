@@ -1,13 +1,9 @@
-const express = require("express");
-const allocation = express.Router();
-const {
-  dbErrorHandler,
-  successHandler,
-  validationErrorHandler,
-} = require("../responseHandler/index");
+import express from 'express';
+import {dbErrorHandler, successHandler, validationErrorHandler} from '../responseHandler/index.js';
+import programService from '../services/program.js';
+import allocationService from '../services/allocation.js';
 
-const programService = require("../services/program");
-const allocationService = require("../services/allocation");
+const allocation = express.Router();
 
 /* Get all allocations */
 
@@ -247,4 +243,4 @@ allocation.post("/start", async (req, res) => {
     });
 });
 
-module.exports = allocation;
+export default allocation;

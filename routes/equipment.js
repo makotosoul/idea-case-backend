@@ -1,8 +1,9 @@
-const express = require("express");
+import express from 'express';
+import db from '../db/index.js';
+
+import { dbErrorHandler, successHandler } from '../responseHandler/index.js';
+
 const equipment = express.Router();
-const db = require("../db/index");
-//const logger = require("../utils/logger");??
-const { dbErrorHandler, successHandler } = require("../responseHandler/index");
 
 // Equipment id:s and name:s, for a select list and for the default priority
 equipment.get("/getEquipData", (req, res) => {
@@ -17,4 +18,4 @@ equipment.get("/getEquipData", (req, res) => {
   });
 });
 
-module.exports = equipment;
+export default equipment;

@@ -5,10 +5,10 @@
   https://express-validator.github.io/docs/
 */
 
-const {check } = require("express-validator");//const { body, validationResult,} ???
+import {check } from 'express-validator';   //import { body, validationResult,} ???
 
 /* ---- SUBJECT ---- */
-let validateAddUpdateSubject = [
+export const validateAddUpdateSubject = [
   check("name")
     .isLength({ min: 2, max: 255 })
     .withMessage("Must be between 2-255 characters long")
@@ -52,7 +52,7 @@ let validateAddUpdateSubject = [
 ];
 
 /* ---- SUBJECTEQUIPMENT ---- */
-let validateAddUpdateSubjectEquipment = [
+export const validateAddUpdateSubjectEquipment = [
   check("subjectId")
     .matches(/^[0-9]+$/)
     .withMessage("Must be a number")
@@ -78,7 +78,3 @@ let validateAddUpdateSubjectEquipment = [
     .bail(),
   check("obligatory").matches(/^[01]$/).withMessage("Must be 0 or 1").bail(),
 ];
-module.exports = {
-  validateAddUpdateSubject,
-  validateAddUpdateSubjectEquipment,
-};

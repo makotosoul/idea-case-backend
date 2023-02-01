@@ -1,4 +1,4 @@
-const logger = require("../utils/logger");
+import logger from '../utils/logger.js';
 
 const serverErrorMessage = "Server error.";
 const requestErrorMessage = "Request error";
@@ -6,7 +6,7 @@ const dbErrorMessage = serverErrorMessage;
 const successMessage = "OK";
 const validationErrorMessage = "Formatting erroR";
 
-const dbErrorHandler = (res, error, message) => {
+export const dbErrorHandler = (res, error, message) => {
   if (!message) {
     message = dbErrorMessage;
   }
@@ -16,7 +16,7 @@ const dbErrorHandler = (res, error, message) => {
   res.status(500).send(dbErrorMessage);
 };
 
-const successHandler = (res, data, message) => {
+export const successHandler = (res, data, message) => {
   if (!message) {
     message = successMessage;
   }
@@ -24,7 +24,7 @@ const successHandler = (res, data, message) => {
   res.status(200).send(data);
 };
 
-const requestErrorHandler = (res, message) => {
+export const requestErrorHandler = (res, message) => {
   if (!message) {
     message = requestErrorMessage;
   }
@@ -32,17 +32,10 @@ const requestErrorHandler = (res, message) => {
   res.status(400).send(requestErrorMessage);
 };
 
-const validationErrorHandler = (res, message) => {
+export const validationErrorHandler = (res, message) => {
   if (!message) {
     message = validationErrorMessage;
   }
   logger.error(message);
   res.status(400).send(validationErrorMessage);
-};
-
-module.exports = {
-  dbErrorHandler,
-  successHandler,
-  requestErrorHandler,
-  validationErrorHandler,
 };
