@@ -21,6 +21,10 @@ export const successHandler = (res, data, message) => {
     message = successMessage;
   }
   logger.http(message);
+  
+  if(typeof(data)===Number) {
+    data = {data}   // If data is just a number, wrapping object around it
+  }
   res.status(200).send(data);
 };
 

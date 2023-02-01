@@ -3,8 +3,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 const app = express();
-//import db from './db/index';???
-//import logger from './utils/logger.js';???
+// import logger from './utils/logger.js';???
 import dotenv from 'dotenv';
 
 dotenv.config({});
