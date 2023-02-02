@@ -6,12 +6,12 @@ const building = express.Router();
 
 building.get("/", (req, res) => {
   db("Building").select()
-  .then( data => {
-      successHandler(res,data,"Successfully read the buildings from DB");
-  }) 
-  .catch((err)=>{
-      dbErrorHandler(res, err, "Oops! Nothing came through - SpaceType");      
-  });
+    .then((data) => {
+      successHandler(res, data, "Successfully read the buildings from DB");
+    })
+    .catch((err) => {
+      dbErrorHandler(res, err, "Error trying to read all buildings from DB");
+    });
 });
 
 export default building;

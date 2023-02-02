@@ -4,7 +4,7 @@ const serverErrorMessage = "Server error.";
 const requestErrorMessage = "Request error";
 const dbErrorMessage = serverErrorMessage;
 const successMessage = "OK";
-const validationErrorMessage = "Formatting erroR";
+const validationErrorMessage = "Formatting error";
 
 export const dbErrorHandler = (res, error, message) => {
   if (!message) {
@@ -13,6 +13,7 @@ export const dbErrorHandler = (res, error, message) => {
   message += ` Db error code: ${error.errno}`;
   message += ` Db error message: ${error.message}`;
   logger.error(message);
+
   res.status(500).send(dbErrorMessage);
 };
 
@@ -23,8 +24,9 @@ export const successHandler = (res, data, message) => {
   logger.http(message);
   
   if(typeof(data)===Number) {
-    data = {data}   // If data is just a number, wrapping object around it
+    data = {data:data}   // If data is just a number, wrapping object around it
   }
+
   res.status(200).send(data);
 };
 
@@ -33,6 +35,7 @@ export const requestErrorHandler = (res, message) => {
     message = requestErrorMessage;
   }
   logger.error(message);
+
   res.status(400).send(requestErrorMessage);
 };
 
@@ -41,5 +44,6 @@ export const validationErrorHandler = (res, message) => {
     message = validationErrorMessage;
   }
   logger.error(message);
+  
   res.status(400).send(validationErrorMessage);
 };
