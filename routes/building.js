@@ -6,11 +6,11 @@ const building = express.Router();
 
 building.get("/", (req, res) => {
   db("Building").select()
-    .then(data => {
+     .then((data) => {
       successHandler(res, data, "Successfully read the buildings from DB");
     })
     .catch((err) => {
-      dbErrorHandler(res, err, "Oops! Nothing came through - SpaceType");
+      dbErrorHandler(res, err, "Error trying to read all buildings from DB");
     });
 });
 
