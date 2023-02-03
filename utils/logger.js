@@ -11,7 +11,7 @@ const LEVEL = Symbol.for("level");
 
 // Modifying the log for easier reading
 const customFormat = format.combine(
-  format.timestamp({ format: "YYYYMMDD HH:mm:ss" }),
+  format.timestamp({ format: "YYMMDD HH:mm:ss" }),
   format.splat(),
   format.printf((info) => {
     return `${info.timestamp}-${info.level.toLocaleUpperCase()}-${info.message}`;
