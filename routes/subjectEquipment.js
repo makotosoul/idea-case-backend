@@ -45,7 +45,7 @@ subjectequipment.post(
     const priority = req.body.priority;
     const obligatory = req.body.obligatory;
     const sqlInsert =
-      "INSERT INTO subjectequipment (subjectId, equipmentId, priority, obligatory) VALUES (?,?,?,?)";
+      "INSERT INTO SubjectEquipment (subjectId, equipmentId, priority, obligatory) VALUES (?,?,?,?)";
     db.query(
       sqlInsert,
       [subjectId, equipmentId, priority, obligatory],
@@ -61,7 +61,8 @@ subjectequipment.post(
             "Create successful - SubjectEquipment",
           );
           logger.info(
-            `SubjectEquipment created for subjectId ${req.body.subjectId}`,
+            `SubjectEquipment created subjectId ${req.body.subjectId} &
+              ${req.body.equipmentId}`,
           );
         }
       },
