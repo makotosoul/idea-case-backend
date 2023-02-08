@@ -4,7 +4,7 @@ import db from '../db/index.js';
 
 const getAll = () => {
   const sqlQuery =
-    "SELECT id, name, isSeasonAlloc, description, lastmodified FROM AllocRound ar;";
+    "SELECT id, name, isSeasonAlloc, description, lastModified FROM AllocRound ar;";
   return new Promise((resolve, reject) => {
     db.query(sqlQuery, (err, result) => {
       if (err) return reject(err);
@@ -20,7 +20,7 @@ const getById = (id) => {
 	            ar.name,
 	            ar.isSeasonAlloc,
 	            ar.description,
-	            ar.lastmodified,
+	            ar.lastModified,
 	            ar.isAllocated, 
 	            ar.processOn,
 	            (SELECT COUNT(*) FROM AllocSubject WHERE AllocRound = ${db.escape(
