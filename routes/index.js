@@ -6,9 +6,11 @@ import equipment from './equipment.js';
 import subjectequipment from './subjectEquipment.js';
 import allocation from './allocation.js';
 import building from './building.js';
+import setting from './setting.js'
 
 const routes = express.Router();
 
+routes.use("/setting", setting);
 routes.use("/subject", subject);
 routes.use("/program", program);
 routes.use("/spaceType", spaceType);
