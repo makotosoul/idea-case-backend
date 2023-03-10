@@ -6,7 +6,7 @@ const building = express.Router();
 
 building.get("/", (req, res) => {
   db("Building").select()
-     .then((data) => {
+    .then((data) => {
       successHandler(res, data, "Successfully read the buildings from DB");
     })
     .catch((err) => {
@@ -26,7 +26,7 @@ building.get("/:id", (req, res) => {
 
 building.delete("/:id", (req, res) => {
   db("Building").select().where("id", req.params.id)
-  .del()
+    .del()
     .then(rowsAffected => {
       if (rowsAffected === 1) {
         successHandler(res, rowsAffected, "Delete succesfull! Count of deleted rows: " + rowsAffected);
