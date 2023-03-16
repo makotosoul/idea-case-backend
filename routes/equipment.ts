@@ -11,7 +11,7 @@ const equipment = express.Router();
 equipment.get("/", (req, res) => {
   db_knex("Equipment").select("id", "name", "priority as equipmentPriority", "description")
     .then(data => {
-      successHandler(res, data, "getNames succesful - Equipment")
+      successHandler(res, JSON.stringify(data), "getNames succesful - Equipment")
     })
     .catch(err => {
       requestErrorHandler(res, err + "Oops! Nothing came through - Equipment")
@@ -27,7 +27,7 @@ equipment.post("/", validateAddEquipment, (req, res) => {
   db_knex.insert(req.body)
     .into("Equipment")
     .then((idArray) => {
-      successHandler(res, idArray, "Adding an equipment was succesful.")
+      successHandler(res, JSON.stringify(idArray), "Adding an equipment was succesful.")
     })
     .catch(error => {
       if (error.errno == 1062) {
@@ -46,7 +46,7 @@ equipment.delete("/:id", (req, res) => {
     .del()
     .then(rowsAffected => {
       if (rowsAffected === 1) {
-        successHandler(res, rowsAffected, `Delete succesful! Count of deleted rows: ${rowsAffected}`)
+        successHandler(res, JSON.stringify(rowsAffected), `Delete succesful! Count of deleted rows: ${rowsAffected}`)
       } else {
         requestErrorHandler(res, `Invalid number id: ${req.params.id}`)
       }
@@ -62,7 +62,7 @@ equipment.put("/updateEquip", (req, res) => {
     .update(req.body)
     .then(rowsAffected => {
       if (rowsAffected === 1) {
-        successHandler(res, rowsAffected, `Updated succesfully`)
+        successHandler(res, JSON.stringify(rowsAffected), `Updated succesfully`)
       } else {
         requestErrorHandler(res, "Error")
       }

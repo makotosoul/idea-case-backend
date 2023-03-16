@@ -19,7 +19,7 @@ const customFormat = format.combine(
 );
 
 // Which log levels we want to show / see
-function filterOnly(level) {
+function filterOnly(level: string) {
   const LEVEL = "level"
   return format(function (info, http) {
     if (info[LEVEL] === level) {

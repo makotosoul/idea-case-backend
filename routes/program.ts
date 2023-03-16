@@ -21,7 +21,7 @@ program.get("/getSelectData", (req, res) => {
 program.get("/:id", (req, res) => {
   db_knex("Program").select().where("id", req.params.id)
   .then(data => {
-    successHandler(res, data, "Succesfully read the programs from DB");
+    successHandler(res, JSON.stringify(data), "Succesfully read the programs from DB");
   })
   .catch(err => {
     dbErrorHandler(res, err, "Oops! Nothing came through - Program");

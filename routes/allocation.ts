@@ -78,14 +78,11 @@ allocation.get("/:id/program", async (req, res) => {
             program.id,
           ),
         });
-        console.log(programs)
-        console.log(AllocatedPrograms)
         return AllocatedPrograms;
       }
     )
     .then((data) => {
-      console.log(data)
-      successHandler(res, data, "getRoomsByProgram succesful - Allocation");
+      successHandler(res, JSON.stringify(data), "getRoomsByProgram succesful - Allocation");
     })
     .catch((err) => {
       dbErrorHandler(res, err, "Oops! Nothing came through - Allocation");

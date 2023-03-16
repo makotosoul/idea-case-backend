@@ -7,7 +7,7 @@ const building = express.Router();
 building.get("/", (req, res) => {
   db("Building").select()
     .then((data) => {
-      successHandler(res, data, "Successfully read the buildings from DB");
+      successHandler(res, JSON.stringify(data), "Successfully read the buildings from DB");
     })
     .catch((err) => {
       dbErrorHandler(res, err, "Error trying to read all buildings from DB");
@@ -17,7 +17,7 @@ building.get("/", (req, res) => {
 building.get("/:id", (req, res) => {
   db("Building").select().where("id", req.params.id)
     .then(data => {
-      successHandler(res, data, "Successfully read the buildings from DB");
+      successHandler(res, JSON.stringify(data), "Successfully read the buildings from DB");
     })
     .catch((err) => {
       dbErrorHandler(res, err, "Oops! Nothing came through - Building");
@@ -29,7 +29,7 @@ building.delete("/:id", (req, res) => {
     .del()
     .then(rowsAffected => {
       if (rowsAffected === 1) {
-        successHandler(res, rowsAffected, "Delete succesfull! Count of deleted rows: " + rowsAffected);
+        successHandler(res, JSON.stringify(rowsAffected), "Delete succesfull! Count of deleted rows: " + rowsAffected);
       } else {
         requestErrorHandler(res, "Invalid category id:" + req.params.id);
       }

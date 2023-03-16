@@ -11,6 +11,7 @@ import { validationResult } from 'express-validator';// import { body,} ??
 import {
   validateAddUpdateSubjectEquipment,
 } from '../validationHandler/index.js';
+import { Request, Response } from 'express';
 
 const subjectequipment = express.Router();
 
@@ -32,7 +33,7 @@ subjectequipment.get("/getEquipment/:subjectId", (req, res) => {
 subjectequipment.post(
   "/post",
   validateAddUpdateSubjectEquipment,
-  (req, res) => {
+  (req: Request, res: Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       logger.error("Validation error:  %O", errors);
@@ -57,7 +58,7 @@ subjectequipment.post(
         } else {
           successHandler(
             res,
-            { insertId: result.insertId },
+            JSON.stringify({ insertId: result.insertId }),
             "Create successful - SubjectEquipment",
           );
           logger.info(
@@ -90,7 +91,7 @@ subjectequipment.delete("/delete/:subjectId/:equipmentId", (req, res) => {
 subjectequipment.put(
   "/update",
   validateAddUpdateSubjectEquipment,
-  (req, res) => {
+  (req: Request, res: Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       logger.error("Validation error: %0", errors);

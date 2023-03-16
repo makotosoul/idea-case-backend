@@ -3,7 +3,7 @@ import { AllocatedRoomsByProgramType, AllocatedSubjectsByProgramType } from '../
 
 /* Get all allocations */
 
-const getAll = () => {
+const getAll = ():Promise<string> => {
   const sqlQuery =
     "SELECT id, name, isSeasonAlloc, description, lastModified FROM AllocRound ar;";
   return new Promise((resolve, reject) => {
@@ -16,7 +16,7 @@ const getAll = () => {
 
 /* Get allocation by id */
 
-const getById = (id: number) => {
+const getById = (id: number):Promise<string> => {
   const sqlQuery = `SELECT ar.id,
 	            ar.name,
 	            ar.isSeasonAlloc,
@@ -75,7 +75,7 @@ const getAllSubjectsById = (id: number) => {
 };
 /* Get allocated rooms with allocatedHours */
 
-const getRoomsByAllocId = (allocRoundId: number) => {
+const getRoomsByAllocId = (allocRoundId: number):Promise<string> => {
   const sqlQuery = `SELECT id, 
     name, 
     (SELECT IFNULL(CAST(SUM(TIME_TO_SEC(AllocSpace.totalTime))/3600 AS DECIMAL(10,1)), 0) 
@@ -120,7 +120,7 @@ const getAllocatedRoomsByProgram = async (programId:number, allocId:number):Prom
 };
 
 /* Get allocated rooms by Subject.id and AllocRound.id */
-const getAllocatedRoomsBySubject = async (subjectId: number, allocId: number) => {
+const getAllocatedRoomsBySubject = async (subjectId: number, allocId: number):Promise<string> => {
   const sqlQuery = `SELECT DISTINCT s.id, s.name, CAST(SUM(TIME_TO_SEC(aspace.totalTime)/3600) AS DECIMAL(10,1)) AS allocatedHours
                     FROM AllocSpace AS aspace
                     LEFT JOIN Space s ON aspace.spaceId = s.id
@@ -165,7 +165,7 @@ const getSubjectsByProgram = (allocRound:number, programId:number):Promise<Alloc
 
 /* Get subjects by Room.id and AllocRound.id */
 
-const getAllocatedSubjectsByRoom = (roomId: number, allocRound: number) => {
+const getAllocatedSubjectsByRoom = (roomId: number, allocRound: number):Promise<string> => {
   const sqlQuery = `
     SELECT su.id, su.name, allocSp.totalTime FROM AllocSpace allocSp
     INNER JOIN Subject su ON su.id = allocSp.subjectId
@@ -228,7 +228,7 @@ const abortAllocation = (allocRound: number) => {
 };
 
 //for test round 10004
-const getUnAllocableSubjects = (allocRoundId = 10004) => {
+const getUnAllocableSubjects = (allocRoundId = 10004):Promise<string> => {
   const sqlQuery = `SELECT all_sub.subjectId, s.name, s.groupSize, s.area, st.name AS "spaceType"
     FROM AllocSubject all_sub
     JOIN Subject s ON all_sub.subjectId = s.id
@@ -244,7 +244,7 @@ const getUnAllocableSubjects = (allocRoundId = 10004) => {
 };
 
 //work in progress
-const getSpacesForSubject = (subjectId: number) => {
+const getSpacesForSubject = (subjectId: number):Promise<string> => {
   const sqlQuery = `SELECT 
     s.id, 
     s.name, 
@@ -277,7 +277,7 @@ const getSpacesForSubject = (subjectId: number) => {
   });
 };
 
-const getMissingEquipmentForRoom = (subjectId: number, spaceId: number) => {
+const getMissingEquipmentForRoom = (subjectId: number, spaceId: number):Promise<string> => {
   const sqlQuery = `SELECT equipmentId, e.name FROM SubjectEquipment sub_eq
     JOIN Equipment e ON sub_eq.equipmentId = e.id 
     WHERE subjectId = ?

@@ -9,6 +9,7 @@ import {
 } from '../responseHandler/index.js';
 import { validationResult } from 'express-validator'; //import { body,}???
 import { validateAddUpdateSubject } from '../validationHandler/index.js';
+import { Response, Request } from 'express';
 
 const subject = express.Router();
 
@@ -38,7 +39,7 @@ subject.get("/getNames", (req, res) => {
 });
 
 // Adding a subject/teaching
-subject.post("/post", validateAddUpdateSubject, (req, res) => {
+subject.post("/post", validateAddUpdateSubject, (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     logger.error("Validation error:  %O", errors);
@@ -76,7 +77,7 @@ subject.post("/post", validateAddUpdateSubject, (req, res) => {
       } else {
         successHandler(
           res,
-          { insertId: result.insertId },
+          JSON.stringify({ insertId: result.insertId }),
           "Create successful - Subject",
         );
         logger.info(`Subject ${req.body.name} created`);
@@ -100,7 +101,7 @@ subject.delete("/delete/:id", (req, res) => {
 });
 
 // Modifying the subject = teaching
-subject.put("/update", validateAddUpdateSubject, (req, res) => {
+subject.put("/update", validateAddUpdateSubject, (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     logger.error("Validation error:  %O", errors);

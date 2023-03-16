@@ -12,10 +12,10 @@ department.get("/getDeptData", (req, res) => {
 	db_knex("Department")
 		.select("id", "name", "description")
 		.then((data) => {
-			successHandler(res, data, "GetDeptData succesful -Department");
+			successHandler(res, JSON.stringify(data), "GetDeptData succesful -Department");
 		})
 		.catch((err) => {
-			requestErrorHandler(res, err, "Oops! Nothing came through - Department");
+			requestErrorHandler(res, err + " Oops! Nothing came through - Department");
 		});
 });
 
@@ -27,7 +27,7 @@ department.delete("/:id", (req, res) => {
 			if (rowsAffected === 1) {
 				successHandler(
 					res,
-					rowsAffected,
+					JSON.stringify(rowsAffected),
 					`Delete succesful! Count of deleted rows: ${rowsAffected}`
 				);
 			} else {
@@ -35,7 +35,7 @@ department.delete("/:id", (req, res) => {
 			}
 		})
 		.catch((error) => {
-			dbErrorHandler(res, error);
+			dbErrorHandler(res, error, "Error");
 		});
 });
 
