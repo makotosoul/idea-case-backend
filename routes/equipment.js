@@ -1,11 +1,14 @@
 import express from 'express';
 import db_knex from '../db/index_knex.js';
-import { dbErrorHandler, requestErrorHandler, successHandler } from '../responseHandler/index.js';
+import logger from '../utils/logger.js';
+import { dbErrorHandler, requestErrorHandler, successHandler, validationErrorHandler } from '../responseHandler/index.js';
+import { validateAddEquipment } from '../validationHandler/index.js';
+import { validationResult } from 'express-validator';
 
 const equipment = express.Router();
 
 // Equipment id:s and name:s, for a select list and for the default priority done with Knex
-equipment.get("/getEquipData", (req, res) => {
+equipment.get("/", (req, res) => {
   db_knex("Equipment").select("id", "name", "priority as equipmentPriority", "description")
     .then(data => {
       successHandler(res, data, "getNames succesful - Equipment")
@@ -15,7 +18,12 @@ equipment.get("/getEquipData", (req, res) => {
     })
 })
 
-equipment.post("/", (req, res) => {
+equipment.post("/", validateAddEquipment, (req, res) => {
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return validationErrorHandler(res, "Formatting problem");
+  }
+
   db_knex.insert(req.body)
     .into("Equipment")
     .then((idArray) => {

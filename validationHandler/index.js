@@ -78,3 +78,25 @@ export const validateAddUpdateSubjectEquipment = [
     .bail(),
   check("obligatory").matches(/^[01]$/).withMessage("Must be 0 or 1").bail(),
 ];
+
+export const validateAddEquipment = [
+  check("name")
+    .isLength({ min: 2, max: 255 })
+    .withMessage("Must be between 2-255 characters long")
+    .bail()
+    .matches(/^[A-Za-zäöåÄÖÅ0-9\s-]*$/)
+    .withMessage("Must contain only letters")
+    .bail(),
+  check("priority")
+    .matches(/^[0-9]+$/)
+    .withMessage("Must be a number")
+    .bail(),
+  check("description")
+    .isLength({ min: 2, max: 255 })
+    .withMessage("Must be between 2-255 characters long")
+    .bail(),
+  check("isMovable")
+    .matches(/^[01]$/)
+    .withMessage("isMovable needs to be 1 = can be moved, 0 = cannot be moved.")
+    .bail()
+]
