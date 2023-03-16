@@ -51,7 +51,7 @@ subjectequipment.post(
       [subjectId, equipmentId, priority, obligatory],
       (err, result) => {
         if (!result) {
-          requestErrorHandler(res, err, "Nothing to insert");
+          requestErrorHandler(res, err + ": Nothing to insert");
         } else if (err) {
           dbErrorHandler(res, err, "Oops! Create failed - SubjectEquipment");
         } else {
@@ -109,7 +109,7 @@ subjectequipment.put(
       [priority, obligatory, subjectId, equipmentId],
       (err, result) => {
         if (!result) {
-          requestErrorHandler(res, err, "Nothing to update");
+          requestErrorHandler(res, err + ": Nothing to update");
         } else if (err) {
           dbErrorHandler(res, err, "Oops! Update failed - SubjectEquipment");
         } else {

@@ -2,6 +2,7 @@ import express from 'express';
 import {dbErrorHandler, successHandler, validationErrorHandler} from '../responseHandler/index.js';
 import programService from '../services/program.js';
 import allocationService from '../services/allocation.js';
+import { ProgramAllocation } from '../types.js';
 
 const allocation = express.Router();
 
@@ -26,7 +27,7 @@ allocation.get("", (req, res) => {
 
 allocation.get("/:id", async (req, res) => {
   await allocationService
-    .getById(req.params.id)
+    .getById(Number(req.params.id))
     .then((data) => {
       successHandler(res, data, "getById succesful - Allocation");
     })
@@ -44,7 +45,7 @@ allocation.get("/:id", async (req, res) => {
 allocation.get("/:id/rooms", (req, res) => {
   const id = req.params.id;
   allocationService
-    .getRoomsByAllocId(id)
+    .getRoomsByAllocId(Number(id))
     .then((data) => {
       successHandler(res, data, "getById succesful - Allocation");
     })
@@ -54,32 +55,36 @@ allocation.get("/:id/rooms", (req, res) => {
         err,
         "Oops! Nothing came through - Allocation getById",
       );
-    });
+    }); 
 });
 
 /* Get all allocated rooms in programs by allocationId and program */
 
 allocation.get("/:id/program", async (req, res) => {
   const id = req.params.id;
+  let AllocatedPrograms: ProgramAllocation[] = [];
   programService
     .getAll()
     .then(async (programs) => {
-      for (let [index, program] of programs.entries()) {
-        programs[index] = {
+      for (let [index, program] of programs.entries()) 
+        AllocatedPrograms.push({
           ...program,
           rooms: await allocationService.getAllocatedRoomsByProgram(
             program.id,
-            id,
+            Number(id),
           ),
           subjects: await allocationService.getSubjectsByProgram(
-            id,
+            Number(id),
             program.id,
           ),
-        };
+        });
+        console.log(programs)
+        console.log(AllocatedPrograms)
+        return AllocatedPrograms;
       }
-      return programs;
-    })
+    )
     .then((data) => {
+      console.log(data)
       successHandler(res, data, "getRoomsByProgram succesful - Allocation");
     })
     .catch((err) => {
@@ -92,7 +97,7 @@ allocation.get("/:id/rooms/:subjectId", async (req, res) => {
   const allocId = req.params.id;
   const subjectId = req.params.subjectId;
   const rooms = await allocationService
-    .getAllocatedRoomsBySubject(subjectId, allocId)
+    .getAllocatedRoomsBySubject(Number(subjectId), Number(allocId))
     .then((rooms) => {
       successHandler(res, rooms, "getRoomsBySubject succesful - Allocation");
     })
@@ -107,7 +112,7 @@ allocation.get("/:id/rooms/:subjectId", async (req, res) => {
 allocation.get("/:id/subject/unallocated", async (req, res) => {
   const allocId = req.params.id;
   await allocationService
-    .getUnAllocableSubjects(allocId)
+    .getUnAllocableSubjects(Number(allocId))
     .then((data) => {
       successHandler(res, data, "Unallocated subjects returned - Allocation");
     })
@@ -119,7 +124,7 @@ allocation.get("/:id/subject/unallocated", async (req, res) => {
 allocation.get("/subject/:id/rooms", async (req, res) => {
   const subjectId = req.params.id;
   await allocationService
-    .getSpacesForSubject(subjectId)
+    .getSpacesForSubject(Number(subjectId))
     .then((data) => {
       successHandler(res, data, "Get Spaces for subject - Allocation");
     })
@@ -139,7 +144,7 @@ allocation.get(
     const subjectId = req.params.subid;
     const spaceId = req.params.roomid;
     await allocationService
-      .getMissingEquipmentForRoom(subjectId, spaceId)
+      .getMissingEquipmentForRoom(Number(subjectId), Number(spaceId))
       .then((data) => {
         successHandler(res, data, "Missing Equipment for Room - Allocation");
       })
@@ -158,7 +163,7 @@ allocation.get("/:id/subjects/:roomId", async (req, res) => {
   const allocId = req.params.id;
   const roomId = req.params.roomId;
   const subjects = await allocationService
-    .getAllocatedSubjectsByRoom(roomId, allocId)
+    .getAllocatedSubjectsByRoom(Number(roomId), Number(allocId))
     .then((subs) => {
       successHandler(
         res,

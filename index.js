@@ -2,9 +2,10 @@ import routes from './routes/index.js';
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-const app = express();
 import logger from './utils/logger.js';
 import dotenv from 'dotenv';
+
+const app = express();
 
 dotenv.config({});
 

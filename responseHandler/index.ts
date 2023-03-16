@@ -6,7 +6,7 @@ const dbErrorMessage = serverErrorMessage;
 const successMessage = "OK";
 const validationErrorMessage = "Formatting error";
 
-export const dbErrorHandler = (res, error, message) => {
+export const dbErrorHandler = (res: Response, error: Error , message: string):void => {
   if (!message) {
     message = dbErrorMessage;
   }

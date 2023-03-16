@@ -7,7 +7,7 @@ NPM: https://www.npmjs.com/package//winston
 */
 
 import { createLogger, transports, format } from 'winston';
-const LEVEL = Symbol.for("level");
+const LEVEL = "level";
 
 // Modifying the log for easier reading
 const customFormat = format.combine(
@@ -20,6 +20,7 @@ const customFormat = format.combine(
 
 // Which log levels we want to show / see
 function filterOnly(level) {
+  const LEVEL = "level"
   return format(function (info, http) {
     if (info[LEVEL] === level) {
       return info;

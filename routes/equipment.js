@@ -14,7 +14,7 @@ equipment.get("/", (req, res) => {
       successHandler(res, data, "getNames succesful - Equipment")
     })
     .catch(err => {
-      requestErrorHandler(res, err, "Oops! Nothing came through - Equipment")
+      requestErrorHandler(res, err + "Oops! Nothing came through - Equipment")
     })
 })
 
@@ -35,7 +35,7 @@ equipment.post("/", validateAddEquipment, (req, res) => {
       } else if (error.errno == 1052) {
         dbErrorHandler(res, error, `Error in database column name`)
       } else {
-        dbErrorHandler(res, error)
+        dbErrorHandler(res, error, `Error at adding equipment`)
       }
     })
 })
@@ -52,7 +52,7 @@ equipment.delete("/:id", (req, res) => {
       }
     })
     .catch(error => {
-      dbErrorHandler(res, error)
+      dbErrorHandler(res, error, "Error at equipment delete")
     })
 })
 
@@ -68,7 +68,7 @@ equipment.put("/updateEquip", (req, res) => {
       }
     })
     .catch(error => {
-      dbErrorHandler(res, error);
+      dbErrorHandler(res, error, "Error at updating equipment");
     })
 })
 

@@ -1,6 +1,6 @@
 import express from 'express';
 import db from '../db/index_knex.js';
-import { dbErrorHandler, successHandler } from '../responseHandler/index.js';
+import { dbErrorHandler, successHandler, requestErrorHandler } from '../responseHandler/index.js';
 
 const building = express.Router();
 
@@ -35,7 +35,7 @@ building.delete("/:id", (req, res) => {
       }
     })
     .catch(error => {
-      dbErrorHandler(res, error)
+      dbErrorHandler(res, error, "Error delete failed")
     });
 });
 
