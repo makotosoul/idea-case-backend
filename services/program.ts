@@ -1,8 +1,8 @@
 import db from '../db/index.js';
-import { Program } from "../types";
+import { Program } from '../types';
 
-const getAll = ():Promise<Program[]> => {
-  const sqlQuery = "SELECT p.id, p.name FROM Program p;";
+const getAll = (): Promise<Program[]> => {
+  const sqlQuery = 'SELECT p.id, p.name FROM Program p;';
   return new Promise((resolve, reject) => {
     db.query(sqlQuery, (err, result) => {
       if (err) {
@@ -14,8 +14,8 @@ const getAll = ():Promise<Program[]> => {
   });
 };
 
-const getById = (id:number) => {
-  const sqlQuery = "SELECT p.id, p.name FROM Program p WHERE p.id=?;";
+const getById = (id: number) => {
+  const sqlQuery = 'SELECT p.id, p.name FROM Program p WHERE p.id=?;';
   return new Promise((resolve, reject) => {
     db.query(sqlQuery, id, (err, result) => {
       if (err) {

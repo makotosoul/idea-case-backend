@@ -7,20 +7,22 @@ NPM: https://www.npmjs.com/package//winston
 */
 
 import { createLogger, transports, format } from 'winston';
-const LEVEL = "level";
+const LEVEL = 'level';
 
 // Modifying the log for easier reading
 const customFormat = format.combine(
-  format.timestamp({ format: "YYMMDD HH:mm:ss" }),
+  format.timestamp({ format: 'YYMMDD HH:mm:ss' }),
   format.splat(),
   format.printf((info) => {
-    return `${info.timestamp}-${info.level.toLocaleUpperCase()}-${info.message}`;
+    return `${
+      info.timestamp
+    }-${info.level.toLocaleUpperCase()}-${info.message}`;
   }),
 );
 
 // Which log levels we want to show / see
 function filterOnly(level: string) {
-  const LEVEL = "level"
+  const LEVEL = 'level';
   return format(function (info, http) {
     if (info[LEVEL] === level) {
       return info;
@@ -34,18 +36,18 @@ function filterOnly(level: string) {
 const logger = createLogger({
   format: customFormat,
   transports: [
-    new transports.Console({ level: "silly" }),
+    new transports.Console({ level: 'silly' }),
     // Where are which logs saved
     new transports.File({
-      filename: "./utils/app.log",
-      level: "info",
-      format: filterOnly("info"),
+      filename: './utils/app.log',
+      level: 'info',
+      format: filterOnly('info'),
     }),
-    new transports.File({ filename: "./utils/error.log", level: "error" }),
+    new transports.File({ filename: './utils/error.log', level: 'error' }),
     new transports.File({
-      filename: "./utils/http.log",
-      level: "http",
-      format: filterOnly("http"),
+      filename: './utils/http.log',
+      level: 'http',
+      format: filterOnly('http'),
     }),
   ],
 });

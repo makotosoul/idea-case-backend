@@ -12,8 +12,8 @@ dotenv.config({});
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
-app.use("/api", routes);
+app.use('/api', routes);
 
 app.listen(process.env.BE_SERVER_PORT, () => {
-  logger.log("info",`Backend starting on port ${process.env.BE_SERVER_PORT}`)
+  logger.log('info', `Backend starting on port ${process.env.BE_SERVER_PORT}`);
 });
