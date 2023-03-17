@@ -4,6 +4,7 @@ import logger from '../utils/logger.js';
 import { dbErrorHandler, requestErrorHandler, successHandler, validationErrorHandler } from '../responseHandler/index.js';
 import { validateAddEquipment } from '../validationHandler/index.js';
 import { validationResult } from 'express-validator';
+import { Request, Response } from 'express';
 
 const equipment = express.Router();
 
@@ -18,7 +19,7 @@ equipment.get("/", (req, res) => {
     })
 })
 
-equipment.post("/", validateAddEquipment, (req, res) => {
+equipment.post("/", validateAddEquipment, (req: Request, res: Response) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
     return validationErrorHandler(res, "Formatting problem");

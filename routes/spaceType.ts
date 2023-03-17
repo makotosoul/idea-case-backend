@@ -22,7 +22,7 @@ spaceType.get("/getSelectData", (req, res) => {
     successHandler(res, JSON.stringify(data), "All SpaceTypes fetched succesfully from DB.");
   })
   .catch((err) => {
-    requestErrorHandler(res, err, "Oops! Nothing came through - SpaceType")
+    requestErrorHandler(res, err + "Oops! Nothing came through - SpaceType")
   });
 });
 

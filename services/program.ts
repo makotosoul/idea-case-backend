@@ -1,7 +1,7 @@
 import db from '../db/index.js';
 import { Program } from "../types";
 
-const getAll = ():Promise<Map<number, Program>> => {
+const getAll = ():Promise<Program[]> => {
   const sqlQuery = "SELECT p.id, p.name FROM Program p;";
   return new Promise((resolve, reject) => {
     db.query(sqlQuery, (err, result) => {

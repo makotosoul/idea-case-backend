@@ -8,6 +8,7 @@
       "moduleResolution": "node",
       "allowJs": true,
       "checkJs": true,
+      "noImplicitAny": true
   },
   "include": [
       "db/**/*",
@@ -16,7 +17,7 @@
       "services/**/*",
       "utils/**/*",
       "validationHandler/**/*",
-      "index.js"
+      "index.ts"
   ],
   "exclude": [
       "node_modules",
