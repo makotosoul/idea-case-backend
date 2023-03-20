@@ -1,6 +1,9 @@
 import express from 'express';
 import db_knex from '../db/index_knex.js';
-import { successHandler, requestErrorHandler } from '../responseHandler/index.js';
+import {
+  successHandler,
+  requestErrorHandler,
+} from '../responseHandler/index.js';
 
 const spaceType = express.Router();
 
@@ -16,14 +19,19 @@ const spaceType = express.Router();
 //   });
 // });
 
-spaceType.get("/getSelectData", (req, res) => {
-  db_knex("SpaceType").select("id", "name", "description")
-  .then((data) => {
-    successHandler(res, data, "All SpaceTypes fetched succesfully from DB.");
-  })
-  .catch((err) => {
-    requestErrorHandler(res, err, "Oops! Nothing came through - SpaceType")
-  });
+spaceType.get('/getSelectData', (req, res) => {
+  db_knex('SpaceType')
+    .select('id', 'name', 'description')
+    .then((data) => {
+      successHandler(
+        res,
+        JSON.stringify(data),
+        'All SpaceTypes fetched succesfully from DB.',
+      );
+    })
+    .catch((err) => {
+      requestErrorHandler(res, `${err}Oops! Nothing came through - SpaceType`);
+    });
 });
 
 export default spaceType;
