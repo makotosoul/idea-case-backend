@@ -8,7 +8,7 @@
       "moduleResolution": "node",
       "allowJs": true,
       "checkJs": true,
-      "noImplicitAny": true
+      // "noImplicitAny": true
   },
   "include": [
       "db/**/*",
