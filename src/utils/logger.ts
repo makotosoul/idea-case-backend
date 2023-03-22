@@ -11,12 +11,12 @@ import { createLogger, transports, format } from 'winston';
 
 // Modifying the log for easier reading
 const customFormat = format.combine(
-  format.timestamp({ format: 'YYMMDD HH:mm:ss' }),
+  format.timestamp({ format: 'YYYYMMDD|HH:mm:ss' }),
   format.splat(),
   format.printf((info) => {
     return `${
       info.timestamp
-    }-${info.level.toLocaleUpperCase()}-${info.message}`;
+    }|${info.level.toLocaleUpperCase()}|${info.message}`;
   }),
 );
 
@@ -40,8 +40,7 @@ const logger = createLogger({
     // Where are which logs saved
     new transports.File({
       filename: './logs/app.log',
-      level: 'info',
-      format: filterOnly('info'),
+      level: 'verbose',
     }),
     new transports.File({ filename: './logs/error.log', level: 'error' }),
     new transports.File({
