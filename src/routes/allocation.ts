@@ -6,7 +6,7 @@ import {
 } from '../responseHandler/index.js';
 import programService from '../services/program.js';
 import allocationService from '../services/allocation.js';
-import { ProgramAllocation } from '../types.js';
+//import { ProgramAllocation } from '../types.js';
 
 const allocation = express.Router();
 

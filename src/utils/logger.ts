@@ -7,7 +7,7 @@ NPM: https://www.npmjs.com/package//winston
 */
 
 import { createLogger, transports, format } from 'winston';
-const LEVEL = 'level';
+//const LEVEL = 'level';
 
 // Modifying the log for easier reading
 const customFormat = format.combine(
@@ -39,13 +39,13 @@ const logger = createLogger({
     new transports.Console({ level: 'silly' }),
     // Where are which logs saved
     new transports.File({
-      filename: '/logs/app.log',
+      filename: './logs/app.log',
       level: 'info',
       format: filterOnly('info'),
     }),
-    new transports.File({ filename: '/logs/error.log', level: 'error' }),
+    new transports.File({ filename: './logs/error.log', level: 'error' }),
     new transports.File({
-      filename: '/logs/http.log',
+      filename: './logs/http.log',
       level: 'http',
       format: filterOnly('http'),
     }),
