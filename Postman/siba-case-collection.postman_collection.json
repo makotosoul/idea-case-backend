@@ -1,0 +1,30 @@
+{
+	"info": {
+		"_postman_id": "eb1d30df-d62a-4389-9426-94691472416e",
+		"name": "siba-case-collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "8942792"
+	},
+	"item": [
+		{
+			"name": "/allocation (OK)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8764/api/allocation",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8764",
+					"path": [
+						"api",
+						"allocation"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
