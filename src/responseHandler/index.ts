@@ -1,6 +1,6 @@
 import { MysqlError } from 'mysql';
 import logger from '../utils/logger.js';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 
 const serverErrorMessage = 'Server error.';
 const requestErrorMessage = 'Request error';
@@ -23,19 +23,15 @@ export const dbErrorHandler = (
   res.status(500).send(dbErrorMessage);
 };
 
-export const successHandler = (
-  res: Response,
-  data: string,
-  message: string,
-) => {
+export const successHandler = (res: Response, data: any, message: string) => {
   if (!message) {
     message = successMessage;
   }
   logger.http(message);
 
-  /* if(typeof(data)==="number") {
-    data = {returnedNumberValue:data}   // If data is just a number, wrapping an object around it
-  } */
+  if (typeof data === 'number') {
+    data = { returnedNumberValue: data }; // If data is just a number, wrapping an object around it
+  }
 
   res.status(200).send(data);
 };

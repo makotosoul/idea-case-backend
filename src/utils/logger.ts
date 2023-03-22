@@ -39,13 +39,13 @@ const logger = createLogger({
     new transports.Console({ level: 'silly' }),
     // Where are which logs saved
     new transports.File({
-      filename: './utils/app.log',
+      filename: '/logs/app.log',
       level: 'info',
       format: filterOnly('info'),
     }),
-    new transports.File({ filename: './utils/error.log', level: 'error' }),
+    new transports.File({ filename: '/logs/error.log', level: 'error' }),
     new transports.File({
-      filename: './utils/http.log',
+      filename: '/logs/http.log',
       level: 'http',
       format: filterOnly('http'),
     }),

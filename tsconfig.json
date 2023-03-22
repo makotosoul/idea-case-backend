@@ -1,23 +1,24 @@
 {
   "compilerOptions": {
-      "target": "ESNEXT",
-      "module": "ESNEXT",
+      "target": "ES2015",
+      "module": "ES2015",
       "outDir": "dist",
       "strict": true,
       "esModuleInterop": true,
+      "allowSyntheticDefaultImports": true,
       "moduleResolution": "node",
       "allowJs": true,
       "checkJs": true,
       // "noImplicitAny": true
   },
   "include": [
-      "db/**/*",
-      "responseHandler/**/*",
-      "routes/**/*",
-      "services/**/*",
-      "utils/**/*",
-      "validationHandler/**/*",
-      "index.ts"
+      "src/db/**/*",
+      "src/responseHandler/**/*",
+      "src/routes/**/*",
+      "src/services/**/*",
+      "src/utils/**/*",
+      "src/validationHandler/**/*",
+      "src/index.ts"
   ],
   "exclude": [
       "node_modules",
