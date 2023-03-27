@@ -56,7 +56,7 @@ subjectequipment.post(
         } else {
           successHandler(
             res,
-            JSON.stringify({ insertId: result.insertId }),
+            { insertId: result.insertId },
             'Create successful - SubjectEquipment',
           );
           logger.info(

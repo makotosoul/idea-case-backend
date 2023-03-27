@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "tsc-watch --project . --outDir ./dist --onSuccess \"node ./dist/index.js\"",
-    "devStart": "nodemon index.js",
+    "devStart": "nodemon src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "precommit": "sh ./pre-commit"
   },

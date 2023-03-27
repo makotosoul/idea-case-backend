@@ -15,11 +15,7 @@ building.get('/', (req, res) => {
   db('Building')
     .select()
     .then((data) => {
-      successHandler(
-        res,
-        JSON.stringify(data),
-        'Successfully read the buildings from DB',
-      );
+      successHandler(res, data, 'Successfully read the buildings from DB');
     })
     .catch((err) => {
       dbErrorHandler(res, err, 'Error trying to read all buildings from DB');
@@ -31,11 +27,7 @@ building.get('/:id', (req, res) => {
     .select()
     .where('id', req.params.id)
     .then((data) => {
-      successHandler(
-        res,
-        JSON.stringify(data),
-        'Successfully read the buildings from DB',
-      );
+      successHandler(res, data, 'Successfully read the buildings from DB');
     })
     .catch((err) => {
       dbErrorHandler(res, err, 'Oops! Nothing came through - Building');
@@ -51,7 +43,7 @@ building.delete('/:id', (req, res) => {
       if (rowsAffected === 1) {
         successHandler(
           res,
-          JSON.stringify(rowsAffected),
+          rowsAffected,
           `Delete succesfull! Count of deleted rows: ${rowsAffected}`,
         );
       } else {
@@ -79,7 +71,7 @@ building.post('/', validateAddUpdateBuilding, (req: Request, res: Response) => {
     .then((idArray) => {
       successHandler(
         res,
-        JSON.stringify(idArray),
+        idArray,
         'Adding a building, or multiple buildings was succesful',
       );
     })
@@ -111,7 +103,7 @@ building.put('/', (req, res) => {
         if (rowsAffected === 1) {
           successHandler(
             res,
-            JSON.stringify(rowsAffected),
+            rowsAffected,
             `Update building successful! Count of modified rows: ${rowsAffected}`,
           );
         } else {

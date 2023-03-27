@@ -12,11 +12,7 @@ department.get('/getDeptData', (req, res) => {
   db_knex('Department')
     .select('id', 'name', 'description')
     .then((data) => {
-      successHandler(
-        res,
-        JSON.stringify(data),
-        'GetDeptData succesful -Department',
-      );
+      successHandler(res, data, 'GetDeptData succesful -Department');
     })
     .catch((err) => {
       requestErrorHandler(
@@ -34,7 +30,7 @@ department.delete('/:id', (req, res) => {
       if (rowsAffected === 1) {
         successHandler(
           res,
-          JSON.stringify(rowsAffected),
+          rowsAffected,
           `Delete succesful! Count of deleted rows: ${rowsAffected}`,
         );
       } else {

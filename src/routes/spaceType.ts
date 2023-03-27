@@ -23,11 +23,7 @@ spaceType.get('/getSelectData', (req, res) => {
   db_knex('SpaceType')
     .select('id', 'name', 'description')
     .then((data) => {
-      successHandler(
-        res,
-        JSON.stringify(data),
-        'All SpaceTypes fetched succesfully from DB.',
-      );
+      successHandler(res, data, 'All SpaceTypes fetched succesfully from DB.');
     })
     .catch((err) => {
       requestErrorHandler(res, `${err}Oops! Nothing came through - SpaceType`);

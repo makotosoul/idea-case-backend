@@ -18,11 +18,7 @@ equipment.get('/', (req, res) => {
   db_knex('Equipment')
     .select('id', 'name', 'priority as equipmentPriority', 'description')
     .then((data) => {
-      successHandler(
-        res,
-        JSON.stringify(data),
-        'getNames succesful - Equipment',
-      );
+      successHandler(res, data, 'getNames succesful - Equipment');
     })
     .catch((err) => {
       requestErrorHandler(res, `${err}Oops! Nothing came through - Equipment`);
@@ -39,11 +35,7 @@ equipment.post('/', validateAddEquipment, (req: Request, res: Response) => {
     .insert(req.body)
     .into('Equipment')
     .then((idArray) => {
-      successHandler(
-        res,
-        JSON.stringify(idArray),
-        'Adding an equipment was succesful.',
-      );
+      successHandler(res, idArray, 'Adding an equipment was succesful.');
     })
     .catch((error) => {
       if (error.errno === 1062) {
@@ -67,7 +59,7 @@ equipment.delete('/:id', (req, res) => {
       if (rowsAffected === 1) {
         successHandler(
           res,
-          JSON.stringify(rowsAffected),
+          rowsAffected,
           `Delete succesful! Count of deleted rows: ${rowsAffected}`,
         );
       } else {
@@ -85,11 +77,7 @@ equipment.put('/updateEquip', (req, res) => {
     .update(req.body)
     .then((rowsAffected) => {
       if (rowsAffected === 1) {
-        successHandler(
-          res,
-          JSON.stringify(rowsAffected),
-          'Updated succesfully',
-        );
+        successHandler(res, rowsAffected, 'Updated succesfully');
       } else {
         requestErrorHandler(res, 'Error');
       }

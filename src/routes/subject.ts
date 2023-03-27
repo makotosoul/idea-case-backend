@@ -80,7 +80,7 @@ subject.post(
         } else {
           successHandler(
             res,
-            JSON.stringify({ insertId: result.insertId }),
+            { insertId: result.insertId },
             'Create successful - Subject',
           );
           logger.info(`Subject ${req.body.name} created`);
