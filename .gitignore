@@ -88,6 +88,9 @@ typings/
 .nuxt
 dist
 
+# Create React App output folder after running "nmp build" or so
+build
+
 # Gatsby files
 .cache/
 # Comment in the public line in if your project uses Gatsby and *not* Next.js

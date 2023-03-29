@@ -7,24 +7,95 @@
 	},
 	"item": [
 		{
-			"name": "/allocation (OK)",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8764/api/allocation",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8764",
-					"path": [
-						"api",
-						"allocation"
-					]
+			"name": "allocation_multiple",
+			"item": [
+				{
+					"name": "/allocation (OK)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{SIBA_BE_IP}}:{{SIBA_BE_PORT}}/api/allocation",
+							"protocol": "http",
+							"host": [
+								"{{SIBA_BE_IP}}"
+							],
+							"port": "{{SIBA_BE_PORT}}",
+							"path": [
+								"api",
+								"allocation"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
+		},
+		{
+			"name": "allocation_single",
+			"item": [
+				{
+					"name": "/allocation/id (OK)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{SIBA_BE_IP}}:{{SIBA_BE_PORT}}/api/allocation/{{SIBA_ALLOCROUNDID_CURRENT}}",
+							"protocol": "http",
+							"host": [
+								"{{SIBA_BE_IP}}"
+							],
+							"port": "{{SIBA_BE_PORT}}",
+							"path": [
+								"api",
+								"allocation",
+								"{{SIBA_ALLOCROUNDID_CURRENT}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "building_multiple",
+			"item": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "SIBA_ALLOCROUNDID_CURRENT",
+			"value": "10004"
+		},
+		{
+			"key": "SIBA_BE_IP",
+			"value": "localhost",
+			"type": "string"
+		},
+		{
+			"key": "SIBA_BE_PORT",
+			"value": "8764",
+			"type": "string"
 		}
 	]
 }
