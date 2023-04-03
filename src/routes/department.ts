@@ -82,4 +82,20 @@ department.delete('/:id', (req, res) => {
     });
 });
 
+department.put('/updateDept', (req, res) => {
+  db_knex('Department')
+    .where('id', req.body.id)
+    .update(req.body)
+    .then((rowsAffected) => {
+      if (rowsAffected === 1) {
+        successHandler(res, rowsAffected, 'Updated succesfully');
+      } else {
+        requestErrorHandler(res, 'Error');
+      }
+    })
+    .catch((error) => {
+      dbErrorHandler(res, error, 'Error at updating department');
+    });
+});
+
 export default department;
