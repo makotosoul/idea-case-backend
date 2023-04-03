@@ -8,6 +8,7 @@ import allocation from './allocation.js';
 import building from './building.js';
 import setting from './setting.js';
 import department from './department.js';
+import user from './user.js';
 
 const routes = express.Router();
 
@@ -20,5 +21,6 @@ routes.use('/subjectequipment', subjectequipment);
 routes.use('/allocation', allocation);
 routes.use('/building', building);
 routes.use('/department', department);
+routes.use('/user', user);
 
 export default routes;
