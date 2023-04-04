@@ -77,9 +77,18 @@ const getAllSubjectsById = (id: number) => {
     });
   });
 };
+
+interface RoomsByAllocId {
+  id: string;
+  name: string;
+  allocRoundId: string;
+  requiredHours: string;
+  spaceTypeId: string;
+}
+
 /* Get allocated rooms with allocatedHours */
-const getRoomsByAllocId = (allocRoundId: number): Promise<string> => {
-  return db_knex('Space')
+const getRoomsByAllocId = (allocRoundId: number): Promise<RoomsByAllocId[]> => {
+  return db_knex<RoomsByAllocId[]>('Space')
     .select('id', 'name')
     .select({
       allocatedHours: db_knex.raw(
@@ -96,7 +105,8 @@ const getRoomsByAllocId = (allocRoundId: number): Promise<string> => {
         'HOUR(TIMEDIFF(Space.availableTO, Space.availableFrom))*5',
       ),
     })
-    .select('spaceTypeId');
+    .select('spaceTypeId')
+    .orderBy('allocatedHours', 'desc');
 };
 
 /* Get allocated rooms by Program.id and AllocRound.id */
