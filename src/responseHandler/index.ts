@@ -31,6 +31,7 @@ export const successHandler = (res: Response, data: any, message: string) => {
 
   if (typeof data === 'number') {
     data = { returnedNumberValue: data }; // If data is just a number, wrapping an object around it
+    console.log(data);
   }
 
   res.status(200).send(data);
