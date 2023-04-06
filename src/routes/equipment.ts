@@ -21,7 +21,7 @@ equipment.get('/', (req, res) => {
       successHandler(res, data, 'getNames succesful - Equipment');
     })
     .catch((err) => {
-      requestErrorHandler(res, `${err}Oops! Nothing came through - Equipment`);
+      requestErrorHandler(res, `${err} Oops! Nothing came through - Equipment`);
     });
 });
 
@@ -30,7 +30,6 @@ equipment.post('/', validateAddEquipment, (req: Request, res: Response) => {
   if (!errors.isEmpty()) {
     return validationErrorHandler(res, 'Formatting problem');
   }
-
   db_knex
     .insert(req.body)
     .into('Equipment')
