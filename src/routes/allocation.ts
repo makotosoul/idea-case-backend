@@ -1,18 +1,12 @@
 import express from 'express';
-import db from '../db/index.js';
 import db_knex from '../db/index_knex.js';
-import logger from '../utils/logger.js';
 import {
   dbErrorHandler,
   successHandler,
   validationErrorHandler,
-  requestErrorHandler,
 } from '../responseHandler/index.js';
 import programService from '../services/program.js';
 import allocationService from '../services/allocation.js';
-import { validateAddUpdateAllocRound } from '../validationHandler/allocRound.js';
-import { validationResult } from 'express-validator';
-import { Response, Request } from 'express';
 //import { ProgramAllocation } from '../types.js';
 
 const allocation = express.Router();
@@ -20,8 +14,8 @@ const allocation = express.Router();
 /* Get all allocations */
 
 allocation.get('', (req, res) => {
-  allocationService
-    .getAll()
+  db_knex('AllocRound')
+    .select('id', 'name', 'isSeasonAlloc', 'description', 'lastModified')
     .then((data) => {
       successHandler(res, data, 'getAll succesful - Allocation');
     })
@@ -37,17 +31,14 @@ allocation.get('', (req, res) => {
 /* Get allocation by id */
 
 allocation.get('/:id', async (req, res) => {
-  await allocationService
-    .getById(Number(req.params.id))
+  db_knex('AllocRound')
+    .select()
+    .where('id', req.params.id)
     .then((data) => {
-      successHandler(res, data, 'getById succesful - Allocation');
+      successHandler(res, data, 'Successfully read the buildings from DB');
     })
     .catch((err) => {
-      dbErrorHandler(
-        res,
-        err,
-        'Oops! Nothing came through - Allocation getById',
-      );
+      dbErrorHandler(res, err, 'Oops! Nothing came through - Building');
     });
 });
 
@@ -255,88 +246,6 @@ allocation.post('/start', async (req, res) => {
     })
     .catch((err) => {
       dbErrorHandler(res, err, 'Oops! Allocation failed - Allocation start');
-    });
-});
-
-// Adding an AllocRound
-const userId = 201;
-allocation.post(
-  '/post',
-  validateAddUpdateAllocRound,
-  (req: Request, res: Response) => {
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-      return validationErrorHandler(res, 'Formatting problem');
-    }
-
-    const allocRound = {
-      name: req.body.name,
-      description: req.body.description,
-      userId: userId,
-    };
-    db_knex
-      .insert(allocRound)
-      .into('AllocRound')
-      .then((idArray) => {
-        successHandler(res, idArray, 'Adding an equipment was succesful.');
-      })
-      .catch((error) => {
-        if (error.errno === 1062) {
-          requestErrorHandler(
-            res,
-            `Conflict: AllocRound with the name ${req.body.name} already exists!`,
-          );
-        } else if (error.errno === 1052) {
-          dbErrorHandler(res, error, 'Error in database column name');
-        } else {
-          dbErrorHandler(res, error, 'Error at adding equipment');
-        }
-      });
-  },
-);
-
-// Delete allocation round
-allocation.delete('/delete/:id', (req, res) => {
-  db_knex('AllocRound')
-    .select()
-    .where('id', req.params.id)
-    .del()
-    .then((rowsAffected) => {
-      if (rowsAffected === 1) {
-        successHandler(
-          res,
-          rowsAffected,
-          `Delete succesfull! Count of deleted rows: ${rowsAffected}`,
-        );
-      } else {
-        requestErrorHandler(res, `Invalid AllocRound id:${req.params.id}`);
-      }
-    })
-    .catch((error) => {
-      dbErrorHandler(res, error, 'Error delete failed');
-    });
-});
-
-// Update allocation round
-allocation.put('/update', (req, res) => {
-  const allocRound = {
-    name: req.body.name,
-    description: req.body.description,
-  };
-
-  db_knex('AllocRound')
-    .where('id', req.body.id)
-    .update(allocRound)
-    .then((rowsAffected) => {
-      if (rowsAffected === 1) {
-        successHandler(res, rowsAffected, 'Updated succesfully');
-      } else {
-        requestErrorHandler(res, 'Error');
-      }
-    })
-    .catch((error) => {
-      dbErrorHandler(res, error, 'Error at updating AllocRound');
     });
 });
 

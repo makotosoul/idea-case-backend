@@ -1,3 +1,4 @@
+import db_knex from '../db/index_knex.js';
 import db from '../db/index.js';
 import {
   AllocatedRoomsByProgramType,
@@ -76,27 +77,36 @@ const getAllSubjectsById = (id: number) => {
     });
   });
 };
-/* Get allocated rooms with allocatedHours */
 
-const getRoomsByAllocId = (allocRoundId: number): Promise<string> => {
-  const sqlQuery = `SELECT id, 
-    name, 
-    (SELECT IFNULL(CAST(SUM(TIME_TO_SEC(AllocSpace.totalTime))/3600 AS DECIMAL(10,1)), 0) 
-        FROM AllocSpace 
-        WHERE spaceId = id 
-        AND allocRound = ?
-    ) AS 'allocatedHours', 
-    HOUR(TIMEDIFF(Space.availableTO, Space.availableFrom))*5 AS 'requiredHours',
-    SPACETYPEID AS 'spaceTypeId'
-    FROM Space
-   ORDER BY allocatedHours DESC;
-;`;
-  return new Promise((resolve, reject) => {
-    db.query(sqlQuery, allocRoundId, (err, result) => {
-      if (err) return reject(err);
-      resolve(result);
-    });
-  });
+interface RoomsByAllocId {
+  id: string;
+  name: string;
+  allocRoundId: string;
+  requiredHours: string;
+  spaceTypeId: string;
+}
+
+/* Get allocated rooms with allocatedHours */
+const getRoomsByAllocId = (allocRoundId: number): Promise<RoomsByAllocId[]> => {
+  return db_knex<RoomsByAllocId[]>('Space')
+    .select('id', 'name')
+    .select({
+      allocatedHours: db_knex.raw(
+        `(SELECT IFNULL(CAST(SUM(TIME_TO_SEC(AllocSpace.totalTime))/3600 AS DECIMAL(10,1)), 0) 
+    FROM AllocSpace 
+    WHERE spaceId = id 
+    AND allocRound = ?
+)`,
+        allocRoundId,
+      ),
+    })
+    .select({
+      requiredHours: db_knex.raw(
+        'HOUR(TIMEDIFF(Space.availableTO, Space.availableFrom))*5',
+      ),
+    })
+    .select('spaceTypeId')
+    .orderBy('allocatedHours', 'desc');
 };
 
 /* Get allocated rooms by Program.id and AllocRound.id */
