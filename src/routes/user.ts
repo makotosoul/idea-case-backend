@@ -21,4 +21,16 @@ user.post('/', (req, res) => {
     });
 });
 
+user.get('/:email', (req, res) => {
+  db_knex('User')
+    .select('email', 'password', 'isAdmin')
+    .where('email', req.params.email)
+    .then((data) => {
+      successHandler(res, data, 'Ok');
+    })
+    .catch((err) => {
+      requestErrorHandler(res, `${err} Oops! Nothing came through - User`);
+    });
+});
+
 export default user;
