@@ -11,7 +11,7 @@ import { validationResult } from 'express-validator';
 
 const department = express.Router();
 
-department.get('/getDeptData', (req, res) => {
+department.get('/', (req, res) => {
   db_knex('Department')
     .select('id', 'name', 'description')
     .then((data) => {
@@ -82,7 +82,7 @@ department.delete('/:id', (req, res) => {
     });
 });
 
-department.put('/updateDept', (req, res) => {
+department.put('/', (req, res) => {
   db_knex('Department')
     .where('id', req.body.id)
     .update(req.body)
