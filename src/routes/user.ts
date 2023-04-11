@@ -6,6 +6,7 @@ import {
   successHandler,
   validationErrorHandler,
 } from '../responseHandler/index.js';
+import jsonwebtoken from 'jsonwebtoken';
 
 const user = express.Router();
 
@@ -26,7 +27,14 @@ user.get('/:email', (req, res) => {
     .select('email', 'password', 'isAdmin')
     .where('email', req.params.email)
     .then((data) => {
-      successHandler(res, data, 'Ok');
+      const token = jsonwebtoken.sign(
+        { userEmail: data[0].email },
+        'RANDOM-TOKEN',
+        { expiresIn: '24h' },
+      );
+      const updatedData = data.map((obj) => ({ ...obj, token }));
+      successHandler(res, updatedData, 'Ok');
+      module.exports = { token };
     })
     .catch((err) => {
       requestErrorHandler(res, `${err} Oops! Nothing came through - User`);

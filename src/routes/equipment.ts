@@ -10,7 +10,7 @@ import {
 import { validateAddEquipment } from '../validationHandler/index.js';
 import { validationResult } from 'express-validator';
 import { Request, Response } from 'express';
-
+import token from './user.js';
 const equipment = express.Router();
 
 // Equipment id:s and name:s, for a select list and for the default priority done with Knex
@@ -19,6 +19,7 @@ equipment.get('/', (req, res) => {
     .select('id', 'name', 'priority as equipmentPriority', 'description')
     .then((data) => {
       successHandler(res, data, 'getNames succesful - Equipment');
+      console.log(token);
     })
     .catch((err) => {
       requestErrorHandler(res, `${err} Oops! Nothing came through - Equipment`);
