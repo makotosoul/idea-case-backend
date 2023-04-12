@@ -34,7 +34,6 @@ department.post('/', validateAddUpdateDepartment, (req: any, res: any) => {
       `${valResult}validateAddUpdateDepartment error`,
     );
   }
-
   db_knex('Department')
     .insert(req.body)
     .into('Department')

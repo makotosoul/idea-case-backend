@@ -10,7 +10,6 @@ import {
 import { validateAddEquipment } from '../validationHandler/index.js';
 import { validationResult } from 'express-validator';
 import { Request, Response } from 'express';
-
 const equipment = express.Router();
 
 // Equipment id:s and name:s, for a select list and for the default priority done with Knex
