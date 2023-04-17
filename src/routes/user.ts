@@ -24,11 +24,17 @@ user.post('/', (req, res) => {
 
 user.get('/:email', (req, res) => {
   db_knex('User')
-    .select('email', 'password', 'isAdmin')
+    .select('email', 'isAdmin', 'isPlanner', 'isStatist')
     .where('email', req.params.email)
     .then((data) => {
+      console.log(data);
       const token = jsonwebtoken.sign(
-        { userEmail: data[0].email },
+        {
+          email: data[0].email,
+          isAdmin: data[0].isAdmin,
+          isPlanner: data[0].isPlanner,
+          isStatist: data[0].isStatist,
+        },
         'RANDOM-TOKEN',
         { expiresIn: '24h' },
       );
