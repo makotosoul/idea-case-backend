@@ -34,7 +34,6 @@ user.get('/:email', (req, res) => {
       );
       const updatedData = data.map((obj) => ({ ...obj, token }));
       successHandler(res, updatedData, 'Ok');
-      module.exports = { token };
     })
     .catch((err) => {
       requestErrorHandler(res, `${err} Oops! Nothing came through - User`);
