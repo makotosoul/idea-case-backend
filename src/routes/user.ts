@@ -7,6 +7,9 @@ import {
   validationErrorHandler,
 } from '../responseHandler/index.js';
 import jsonwebtoken from 'jsonwebtoken';
+import dotenv from 'dotenv';
+
+dotenv.config({});
 
 const user = express.Router();
 
@@ -35,7 +38,7 @@ user.get('/:email', (req, res) => {
           isPlanner: data[0].isPlanner,
           isStatist: data[0].isStatist,
         },
-        'RANDOM-TOKEN',
+        process.env.SECRET_TOKEN as string,
         { expiresIn: '24h' },
       );
       const updatedData = data.map((obj) => ({ ...obj, token }));
