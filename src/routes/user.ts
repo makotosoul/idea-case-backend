@@ -21,7 +21,14 @@ user.post('/', (req, res) => {
       successHandler(res, idArray, 'Adding user success');
     })
     .catch((error) => {
-      console.log(error);
+      if (error.errno === 1062 || error.errno === 1169) {
+        requestErrorHandler(
+          res,
+          `User with that email ${req.body.email} already exists`,
+        );
+      } else {
+        dbErrorHandler(res, error, 'Some DB error while adding user');
+      }
     });
 });
 

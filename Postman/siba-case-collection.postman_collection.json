@@ -84,12 +84,104 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "/allocation/ (OK)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\r\n        \"name\": \"Demon\",\r\n        \"isSeasonAlloc\": 0,\r\n        \"description\": \"Allokointi demoamista varten\",\r\n        \"lastModified\": \"2023-04-02T17:17:15.000Z\",\r\n        \"isAllocated\": 1,\r\n        \"processOn\": 0,\r\n        \"Subjects\": 46,\r\n        \"allocated\": 35,\r\n        \"unAllocated\": 11\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{SIBA_BE_ADDRESS}}:{{SIBA_BE_PORT}}/api/allocation/post",
+							"protocol": "http",
+							"host": [
+								"{{SIBA_BE_ADDRESS}}"
+							],
+							"port": "{{SIBA_BE_PORT}}",
+							"path": [
+								"api",
+								"allocation",
+								"post"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
 		{
 			"name": "building_multiple",
 			"item": []
+		},
+		{
+			"name": "user_single",
+			"item": [
+				{
+					"name": "Login w. email (OK)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{SIBA_BE_ADDRESS}}:{{SIBA_BE_PORT}}/api/user/testi3%40testi%2Ecom",
+							"protocol": "http",
+							"host": [
+								"{{SIBA_BE_ADDRESS}}"
+							],
+							"port": "{{SIBA_BE_PORT}}",
+							"path": [
+								"api",
+								"user",
+								"testi3%40testi%2Ecom"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/user/    Register new user (OK)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "{{SIBA_TOKEN}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\":\"uusiuser2@gmail.com\",\"password\":\"$2a$10$f4cmsOUA/s1dOG/3ru3qVOkg5GbbK07Pz.f.n9HpeP6YBxXJMZBXi\",\"isAdmin\":\"1\",\"isPlanner\":\"0\",\"isStatist\":\"1\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{SIBA_BE_ADDRESS}}:{{SIBA_BE_PORT}}/api/user/",
+							"protocol": "http",
+							"host": [
+								"{{SIBA_BE_ADDRESS}}"
+							],
+							"port": "{{SIBA_BE_PORT}}",
+							"path": [
+								"api",
+								"user",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"event": [
@@ -118,11 +210,6 @@
 			"value": "10004"
 		},
 		{
-			"key": "SIBA_BE_IP",
-			"value": "127.0.0.1",
-			"type": "string"
-		},
-		{
 			"key": "SIBA_BE_PORT",
 			"value": "8764",
 			"type": "string"
@@ -130,6 +217,15 @@
 		{
 			"key": "SIBA_BE_ADDRESS",
 			"value": "localhost"
+		},
+		{
+			"key": "SIBA_TOKEN",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RpM0B0ZXN0LmNvbSIsImlzQWRtaW4iOjEsImlzUGxhbm5lciI6MCwiaXNTdGF0aXN0IjowLCJpYXQiOjE2ODE4ODgyOTMsImV4cCI6MTY4MTk3NDY5M30.ssmulouQuWM9HuFGCro_redoQUDK04n_L5_4P1EE-Qs",
+			"type": "string"
+		},
+		{
+			"key": "SIBA_EMAIL_ADDRESS",
+			"value": "testi3@test.com"
 		}
 	]
 }
