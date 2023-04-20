@@ -3,7 +3,8 @@
 		"_postman_id": "13e9f923-010f-4389-8bf1-9af9cadd91f0",
 		"name": "siba-case-collection",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "8942792"
+		"_exporter_id": "8942792",
+		"_collection_link": "https://martian-firefly-799040.postman.co/workspace/task-signature-workspace~42371aa3-742f-4243-92b6-9599e545c834/collection/8942792-13e9f923-010f-4389-8bf1-9af9cadd91f0?action=share&creator=8942792&source=collection_link"
 	},
 	"item": [
 		{
@@ -217,11 +218,6 @@
 		{
 			"key": "SIBA_BE_ADDRESS",
 			"value": "localhost"
-		},
-		{
-			"key": "SIBA_TOKEN",
-			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RpM0B0ZXN0LmNvbSIsImlzQWRtaW4iOjEsImlzUGxhbm5lciI6MCwiaXNTdGF0aXN0IjowLCJpYXQiOjE2ODE4ODgyOTMsImV4cCI6MTY4MTk3NDY5M30.ssmulouQuWM9HuFGCro_redoQUDK04n_L5_4P1EE-Qs",
-			"type": "string"
 		},
 		{
 			"key": "SIBA_EMAIL_ADDRESS",
