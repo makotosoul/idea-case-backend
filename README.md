@@ -78,7 +78,13 @@ Backend side installation instructions
    DB_MULTIPLE_STATEMENTS=true
    DB_CONNECTION_POOL_MIN=1
    DB_CONNECTION_POOL_MAX=7
+   SECRET_TOKEN=<<Secret token here for the JWT>>
+
    ```
+
+   The secret_token has to be something of the length and format of: A3fs9t395dsgSDf3fRsTse349. But not that one! Hardening process should
+   change it for the real deployment of the backend. This particular one A3fs... should not be used even for testing!
+   This is visible in the internet. It's just a dummy.
 
 7. Application launch
 
