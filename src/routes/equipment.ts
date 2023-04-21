@@ -10,12 +10,15 @@ import {
 import { validateAddEquipment } from '../validationHandler/index.js';
 import { validationResult } from 'express-validator';
 import { Request, Response } from 'express';
-import { authenticator } from '../validationHandler/userValidation.js';
+import { authenticator } from '../auhorization/userValidation.js';
+import { admin } from '../auhorization/admin.js';
+import { statist } from '../auhorization/statist.js';
+import { planner } from '../auhorization/planner.js';
 
 const equipment = express.Router();
 
 // Equipment id:s and name:s, for a select list and for the default priority done with Knex
-equipment.get('/', authenticator, (req, res) => {
+equipment.get('/', authenticator, admin, (req, res) => {
   db_knex('Equipment')
     .select('id', 'name', 'priority as equipmentPriority', 'description')
     .then((data) => {
