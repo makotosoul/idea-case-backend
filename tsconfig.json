@@ -17,7 +17,7 @@
       "src/utils/**/*",
       "src/validationHandler/**/*",
       "src/index.ts"
-  ],
+, "src/auhorization/userValidation.ts"  ],
   "exclude": [
       "node_modules",
       "dist"
