@@ -12,7 +12,7 @@ export const oneRoleRequirementHandler = (
     .toUpperCase()}${roleName.substring(1)}`;
   if (req.user[rolePropertyName] === 1) {
     req.areRolesRequired = 1;
-    console.log(roleName);
+    console.log(`Logged in User has role: ${roleName}`);
   } else {
     if (req.areRolesRequired === 0) {
       req.areRolesRequired = -1;

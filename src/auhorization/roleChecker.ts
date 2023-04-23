@@ -27,9 +27,7 @@ export const roleChecker = (req: any, res: Response, next: any) => {
       );
     }
   } else {
-    console.debug(
-      `Role check success! Roles required were: ${roleListPrinter(req)}`,
-    );
+    console.debug(`Role check success! ${roleListPrinter(req)}`);
     next();
   }
 };
