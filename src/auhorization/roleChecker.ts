@@ -1,17 +1,25 @@
 import express, { Response, Request } from 'express';
 import { authorizationErrorHandler } from '../responseHandler/index.js';
 
+export const roleListPrinter = (req: any): string => {
+  let rolesListText = 'Roles asked [';
+  req.requiredRolesList.forEach((element: string) => {
+    rolesListText += `${element} `;
+  });
+  rolesListText += ']';
+
+  return rolesListText;
+};
+
 export const roleChecker = (req: any, res: Response, next: any) => {
   if (req.areRolesRequired !== 0 && req.areRolesRequired !== 1) {
     // areRolesRequired is then supposed to be -1 = roles required, but none of the roles were present
     if (req.areRolesRequired === -1) {
-      let rolesListText = 'Roles asked [';
-      req.requiredRolesList.forEach((element: string) => {
-        rolesListText += `${element} `;
-      });
-      rolesListText += ']';
-
-      authorizationErrorHandler(req, res, `Roles missing, ${rolesListText}`);
+      authorizationErrorHandler(
+        req,
+        res,
+        `Roles missing, ${roleListPrinter(req)}`,
+      );
     } else {
       authorizationErrorHandler(
         req,
@@ -20,7 +28,9 @@ export const roleChecker = (req: any, res: Response, next: any) => {
       );
     }
   } else {
-    console.debug('Role check successful!');
+    console.debug(
+      `Role check success! Roles required were: ${roleListPrinter(req)}`,
+    );
     next();
   }
 };

@@ -1,6 +1,7 @@
 import { Response } from 'express';
 
 export const statist = (req: any, res: Response, next: any) => {
+  req.requiredRolesList.push('statist');
   if (req.user.isStatist === 1) {
     req.areRolesRequired = 1;
     console.log('statist');

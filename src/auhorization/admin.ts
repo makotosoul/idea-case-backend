@@ -1,6 +1,7 @@
 import { Response } from 'express';
 
 export const admin = (req: any, res: Response, next: any) => {
+  req.requiredRolesList.push('admin');
   if (req.user.isAdmin === 1) {
     req.areRolesRequired = 1;
     console.log('admin');

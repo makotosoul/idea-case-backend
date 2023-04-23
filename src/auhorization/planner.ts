@@ -1,6 +1,7 @@
 import { Response } from 'express';
 
 export const planner = (req: any, res: Response, next: any) => {
+  req.requiredRolesList.push('planner');
   if (req.user.isPlanner === 1) {
     req.areRolesRequired = 1;
     console.log('planner');
