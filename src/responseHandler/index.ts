@@ -1,16 +1,24 @@
 import { MysqlError } from 'mysql';
 import logger from '../utils/logger.js';
 import { Response, Request } from 'express';
+import { Logform } from 'winston';
 
 const serverErrorMessage = 'Server error.';
 const requestErrorMessage = 'Request error';
 const dbErrorMessage = serverErrorMessage;
 const successMessage = 'OK';
-const validationErrorMessage = 'Formatting error';
+const validationErrorMessage = requestErrorMessage; //'Formatting error';
 
 export const routePrinter = (req: Request): string => {
-  let routeText = req.baseUrl;
+  let routeText = `${req.baseUrl}|`;
   return routeText;
+};
+
+const providedMessagePrinter = (
+  providedMessage: string,
+  defaultMessage: string,
+): string => {
+  return `${providedMessage ? providedMessage : defaultMessage}|`;
 };
 
 export const dbErrorHandler = (
@@ -19,13 +27,9 @@ export const dbErrorHandler = (
   error: MysqlError,
   message: string,
 ): void => {
-  let logMessage = routePrinter(req);
+  let logMessage =
+    routePrinter(req) + providedMessagePrinter(message, dbErrorMessage);
 
-  if (!message) {
-    logMessage += dbErrorMessage;
-  } else {
-    logMessage += message;
-  }
   logMessage += `. Db error code: ${error.errno}`;
   logMessage += `. Db error message: ${error.message}`;
   logger.error(logMessage);
@@ -39,12 +43,8 @@ export const successHandler = (
   data: any,
   message: string,
 ) => {
-  let logMessage = routePrinter(req);
-  if (!message) {
-    logMessage += successMessage;
-  } else {
-    logMessage += message;
-  }
+  let logMessage =
+    routePrinter(req) + providedMessagePrinter(message, successMessage);
 
   logger.http(logMessage);
 
@@ -61,12 +61,8 @@ export const requestErrorHandler = (
   res: Response,
   message: string,
 ) => {
-  let logMessage = routePrinter(req);
-  if (!message) {
-    logMessage += requestErrorMessage;
-  } else {
-    logMessage += message;
-  }
+  let logMessage =
+    routePrinter(req) + providedMessagePrinter(message, requestErrorMessage);
   logger.error(logMessage);
 
   res.status(400).send(requestErrorMessage);
@@ -77,12 +73,8 @@ export const validationErrorHandler = (
   res: Response,
   message: string,
 ) => {
-  let logMessage = routePrinter(req);
-  if (!message) {
-    logMessage = validationErrorMessage;
-  } else {
-    logMessage += message;
-  }
+  let logMessage =
+    routePrinter(req) + providedMessagePrinter(message, validationErrorMessage);
 
   logger.error(message);
 
