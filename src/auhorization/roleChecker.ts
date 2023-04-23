@@ -2,11 +2,10 @@ import express, { Response, Request } from 'express';
 import { authorizationErrorHandler } from '../responseHandler/index.js';
 
 export const roleListPrinter = (req: any): string => {
-  let rolesListText = 'Roles asked [';
+  let rolesListText = 'Roles accepted: ';
   req.requiredRolesList.forEach((element: string) => {
     rolesListText += `${element} `;
   });
-  rolesListText += ']';
 
   return rolesListText;
 };
