@@ -1,18 +1,16 @@
-import express, { Response, Request } from 'express';
-import jsonwebtoken from 'jsonwebtoken';
-import dotenv from 'dotenv';
-
-dotenv.config();
+import { Response } from 'express';
 
 export const statist = (req: any, res: Response, next: any) => {
-  if (
-    req.user.isStatist === 0 &&
-    req.user.isAdmin === 0 &&
-    req.user.isPlanner === 0
-  ) {
+  if (req.user.isStatist === 1) {
+    req.areRolesRequired = 1;
     console.log('statist');
-    return res.sendStatus(403);
+  } else {
+    if (req.areRolesRequired === 0) {
+      req.areRolesRequired = -1;
+    } else {
+      // req.areRolesRequired must have already been 1
+    }
   }
 
-  next();
+  next(); // No matter what we go to next role handler or roleChecker
 };

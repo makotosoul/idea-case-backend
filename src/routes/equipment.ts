@@ -14,24 +14,29 @@ import { authenticator } from '../auhorization/userValidation.js';
 import { admin } from '../auhorization/admin.js';
 import { statist } from '../auhorization/statist.js';
 import { planner } from '../auhorization/planner.js';
+import { roleChecker } from '../auhorization/roleChecker.js';
 
 const equipment = express.Router();
 
 // Equipment id:s and name:s, for a select list and for the default priority done with Knex
-equipment.get('/', authenticator, admin, (req, res) => {
-  db_knex('Equipment')
-    .select('id', 'name', 'priority as equipmentPriority', 'description')
-    .then((data) => {
-      successHandler(req, res, data, 'getNames succesful - Equipment');
-    })
-    .catch((err) => {
-      requestErrorHandler(
-        req,
-        res,
-        `${err} Oops! Nothing came through - Equipment`,
-      );
-    });
-});
+equipment.get(
+  '/',
+  [authenticator, admin, planner, roleChecker],
+  (req: Request, res: Response) => {
+    db_knex('Equipment')
+      .select('id', 'name', 'priority as equipmentPriority', 'description')
+      .then((data) => {
+        successHandler(req, res, data, 'getNames succesful - Equipment');
+      })
+      .catch((err) => {
+        requestErrorHandler(
+          req,
+          res,
+          `${err} Oops! Nothing came through - Equipment`,
+        );
+      });
+  },
+);
 
 equipment.post('/', validateAddEquipment, (req: Request, res: Response) => {
   const errors = validationResult(req);
