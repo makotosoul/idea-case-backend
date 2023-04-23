@@ -10,9 +10,9 @@ program.get('/getSelectData', (req, res) => {
   const sqlSelectName = 'SELECT id, name FROM Program';
   db.query(sqlSelectName, (err, result) => {
     if (err) {
-      dbErrorHandler(res, err, 'Oops! Nothing came through - Program');
+      dbErrorHandler(req, res, err, 'Oops! Nothing came through - Program');
     } else {
-      successHandler(res, result, 'getNames successful - Program');
+      successHandler(req, res, result, 'getNames successful - Program');
     }
   });
 });
@@ -22,10 +22,10 @@ program.get('/:id', (req, res) => {
     .select()
     .where('id', req.params.id)
     .then((data) => {
-      successHandler(res, data, 'Succesfully read the programs from DB');
+      successHandler(req, res, data, 'Succesfully read the programs from DB');
     })
     .catch((err) => {
-      dbErrorHandler(res, err, 'Oops! Nothing came through - Program');
+      dbErrorHandler(req, res, err, 'Oops! Nothing came through - Program');
     });
 });
 

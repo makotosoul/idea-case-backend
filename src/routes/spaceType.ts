@@ -12,9 +12,9 @@ const spaceType = express.Router();
 //   const sqlSelectName = "SELECT id, name FROM SpaceType";
 //   db.query(sqlSelectName, (err, result) => {
 //     if (err) {
-//       dbErrorHandler(res, err, "Oops! Nothing came through - SpaceType");
+//       dbErrorHandler(req,res, err, "Oops! Nothing came through - SpaceType");
 //     } else {
-//       successHandler(res, result, "getNames successful - SpaceType");
+//       successHandler(req,res, result, "getNames successful - SpaceType");
 //     }
 //   });
 // });
@@ -23,10 +23,19 @@ spaceType.get('/getSelectData', (req, res) => {
   db_knex('SpaceType')
     .select('id', 'name', 'description')
     .then((data) => {
-      successHandler(res, data, 'All SpaceTypes fetched succesfully from DB.');
+      successHandler(
+        req,
+        res,
+        data,
+        'All SpaceTypes fetched succesfully from DB.',
+      );
     })
     .catch((err) => {
-      requestErrorHandler(res, `${err}Oops! Nothing came through - SpaceType`);
+      requestErrorHandler(
+        req,
+        res,
+        `${err}Oops! Nothing came through - SpaceType`,
+      );
     });
 });
 

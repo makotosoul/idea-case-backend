@@ -15,10 +15,11 @@ department.get('/', (req, res) => {
   db_knex('Department')
     .select('id', 'name', 'description')
     .then((data) => {
-      successHandler(res, data, 'GetDeptData succesful -Department');
+      successHandler(req, res, data, 'GetDeptData succesful -Department');
     })
     .catch((err) => {
       requestErrorHandler(
+        req,
         res,
         `${err} Oops! Nothing came through - Department`,
       );
@@ -30,6 +31,7 @@ department.post('/', validateAddUpdateDepartment, (req: any, res: any) => {
 
   if (!valResult.isEmpty()) {
     return validationErrorHandler(
+      req,
       res,
       `${valResult}validateAddUpdateDepartment error`,
     );
@@ -39,6 +41,7 @@ department.post('/', validateAddUpdateDepartment, (req: any, res: any) => {
     .into('Department')
     .then((idArray) => {
       successHandler(
+        req,
         res,
         idArray,
         'Adding a department, or multiple departments was succesful',
@@ -47,16 +50,18 @@ department.post('/', validateAddUpdateDepartment, (req: any, res: any) => {
     .catch((error) => {
       if (error.errno === 1062) {
         requestErrorHandler(
+          req,
           res,
           `Conflict: Department with the name ${req.body.name} already exists!`,
         );
       } else if (error.errno === 1054) {
         requestErrorHandler(
+          req,
           res,
           "error in spelling [either in 'name' and/or in 'description'].",
         );
       } else {
-        dbErrorHandler(res, error, 'error adding department');
+        dbErrorHandler(req, res, error, 'error adding department');
       }
     });
 });
@@ -68,16 +73,17 @@ department.delete('/:id', (req, res) => {
     .then((rowsAffected) => {
       if (rowsAffected === 1) {
         successHandler(
+          req,
           res,
           rowsAffected,
           `Delete succesful! Count of deleted rows: ${rowsAffected}`,
         );
       } else {
-        requestErrorHandler(res, `Invalid number id: ${req.params.id}`);
+        requestErrorHandler(req, res, `Invalid number id: ${req.params.id}`);
       }
     })
     .catch((error) => {
-      dbErrorHandler(res, error, 'Error');
+      dbErrorHandler(req, res, error, 'Error');
     });
 });
 
@@ -87,13 +93,13 @@ department.put('/', (req, res) => {
     .update(req.body)
     .then((rowsAffected) => {
       if (rowsAffected === 1) {
-        successHandler(res, rowsAffected, 'Updated succesfully');
+        successHandler(req, res, rowsAffected, 'Updated succesfully');
       } else {
-        requestErrorHandler(res, 'Error');
+        requestErrorHandler(req, res, 'Error');
       }
     })
     .catch((error) => {
-      dbErrorHandler(res, error, 'Error at updating department');
+      dbErrorHandler(req, res, error, 'Error at updating department');
     });
 });
 

@@ -16,10 +16,15 @@ setting.get('/', (req, res) => {
   db('GlobalSetting')
     .select()
     .then((data) => {
-      successHandler(res, data, 'Successfully read the settings from DB');
+      successHandler(req, res, data, 'Successfully read the settings from DB');
     })
     .catch((err) => {
-      dbErrorHandler(res, err, 'Error trying to read all settings from DB');
+      dbErrorHandler(
+        req,
+        res,
+        err,
+        'Error trying to read all settings from DB',
+      );
     });
 });
 
@@ -28,10 +33,15 @@ setting.get('/:id', (req, res) => {
     .select()
     .where('id', req.params.id)
     .then((data) => {
-      successHandler(res, data, 'Successfully read the settings from DB');
+      successHandler(req, res, data, 'Successfully read the settings from DB');
     })
     .catch((err) => {
-      dbErrorHandler(res, err, 'Oops! Nothing came through - GlobalSetting');
+      dbErrorHandler(
+        req,
+        res,
+        err,
+        'Oops! Nothing came through - GlobalSetting',
+      );
     });
 });
 
@@ -43,16 +53,17 @@ setting.delete('/delete/:id', (req, res) => {
     .then((rowsAffected) => {
       if (rowsAffected === 1) {
         successHandler(
+          req,
           res,
           rowsAffected,
           `Delete succesfull! Count of deleted rows: ${rowsAffected}`,
         );
       } else {
-        requestErrorHandler(res, `Invalid setting id:${req.params.id}`);
+        requestErrorHandler(req, res, `Invalid setting id:${req.params.id}`);
       }
     })
     .catch((error) => {
-      dbErrorHandler(res, error, 'Error delete failed');
+      dbErrorHandler(req, res, error, 'Error delete failed');
     });
 });
 
@@ -64,6 +75,7 @@ setting.post(
 
     if (!valResult.isEmpty()) {
       return validationErrorHandler(
+        req,
         res,
         `${valResult}validateAddSetting error`,
       );
@@ -74,6 +86,7 @@ setting.post(
       .into('GlobalSetting')
       .then((idArray) => {
         successHandler(
+          req,
           res,
           idArray,
           'Adding a setting, or multiple settings was succesful',
@@ -82,16 +95,18 @@ setting.post(
       .catch((error) => {
         if (error.errno === 1062) {
           requestErrorHandler(
+            req,
             res,
             `Conflict: Setting with the name ${req.body.name} already exists!`,
           );
         } else if (error.errno === 1054) {
           requestErrorHandler(
+            req,
             res,
             "error in spelling [either in 'name' and/or in 'description'].",
           );
         } else {
-          dbErrorHandler(res, error, 'error adding setting');
+          dbErrorHandler(req, res, error, 'error adding setting');
         }
       });
   },
@@ -99,7 +114,7 @@ setting.post(
 
 setting.put('/updateSetting', (req, res) => {
   if (!req.body.name) {
-    requestErrorHandler(res, 'Setting name is missing.');
+    requestErrorHandler(req, res, 'Setting name is missing.');
   } else {
     db('GlobalSetting')
       .where('id', req.body.id)
@@ -107,12 +122,14 @@ setting.put('/updateSetting', (req, res) => {
       .then((rowsAffected) => {
         if (rowsAffected === 1) {
           successHandler(
+            req,
             res,
             rowsAffected,
             `Update setting successful! Count of modified rows: ${rowsAffected}`,
           );
         } else {
           requestErrorHandler(
+            req,
             res,
             `Update setting not successful, ${rowsAffected} row modified`,
           );
@@ -121,16 +138,18 @@ setting.put('/updateSetting', (req, res) => {
       .catch((error) => {
         if (error.errno === 1062) {
           requestErrorHandler(
+            req,
             res,
             `DB 1062: Setting with the name ${req.body.name} already exists!`,
           );
         } else if (error.errno === 1054) {
           requestErrorHandler(
+            req,
             res,
             "error in spelling [either in 'name' and/or in 'description'].",
           );
         } else {
-          dbErrorHandler(res, error, 'error updating setting');
+          dbErrorHandler(req, res, error, 'error updating setting');
         }
       });
   }

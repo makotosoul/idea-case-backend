@@ -20,9 +20,19 @@ subjectequipment.get('/getEquipment/:subjectId', (req, res) => {
     'SELECT se.subjectId , e.name,e.description, se.equipmentId, se.priority, se.obligatory FROM SubjectEquipment se JOIN Equipment e ON se.equipmentId = e.id WHERE se.subjectid = ?;';
   db.query(sqlGetEquipmentBySubjectId, subjectId, (err, result) => {
     if (err) {
-      dbErrorHandler(res, err, 'Oops! Nothing came through - SubjectEquipment');
+      dbErrorHandler(
+        req,
+        res,
+        err,
+        'Oops! Nothing came through - SubjectEquipment',
+      );
     } else {
-      successHandler(res, result, 'getEquipment successful - SubjectEquipment');
+      successHandler(
+        req,
+        res,
+        result,
+        'getEquipment successful - SubjectEquipment',
+      );
     }
   });
 });
@@ -37,7 +47,7 @@ subjectequipment.post(
       logger.error('Validation error:  %O', errors);
     }
     if (!errors.isEmpty()) {
-      return validationErrorHandler(res, 'Formatting problem');
+      return validationErrorHandler(req, res, 'Formatting problem');
     }
     const subjectId = req.body.subjectId;
     const equipmentId = req.body.equipmentId;
@@ -50,11 +60,17 @@ subjectequipment.post(
       [subjectId, equipmentId, priority, obligatory],
       (err, result) => {
         if (!result) {
-          requestErrorHandler(res, `${err}: Nothing to insert`);
+          requestErrorHandler(req, res, `${err}: Nothing to insert`);
         } else if (err) {
-          dbErrorHandler(res, err, 'Oops! Create failed - SubjectEquipment');
+          dbErrorHandler(
+            req,
+            res,
+            err,
+            'Oops! Create failed - SubjectEquipment',
+          );
         } else {
           successHandler(
+            req,
             res,
             { insertId: result.insertId },
             'Create successful - SubjectEquipment',
@@ -77,9 +93,9 @@ subjectequipment.delete('/delete/:subjectId/:equipmentId', (req, res) => {
     'DELETE FROM SubjectEquipment WHERE subjectId = ? AND equipmentId = ?;';
   db.query(sqlDelete, [subjectId, equipmentId], (err, result) => {
     if (err) {
-      dbErrorHandler(res, err, 'Oops! Delete failed - SubjectEquipment');
+      dbErrorHandler(req, res, err, 'Oops! Delete failed - SubjectEquipment');
     } else {
-      successHandler(res, result, 'Delete successful - SubjectEquipment');
+      successHandler(req, res, result, 'Delete successful - SubjectEquipment');
       logger.info('SubjectEquipment deleted');
     }
   });
@@ -95,7 +111,7 @@ subjectequipment.put(
       logger.error('Validation error: %0', errors);
     }
     if (!errors.isEmpty()) {
-      return validationErrorHandler(res, 'Formatting problem');
+      return validationErrorHandler(req, res, 'Formatting problem');
     }
     const priority = req.body.priority;
     const obligatory = req.body.obligatory;
@@ -108,11 +124,21 @@ subjectequipment.put(
       [priority, obligatory, subjectId, equipmentId],
       (err, result) => {
         if (!result) {
-          requestErrorHandler(res, `${err}: Nothing to update`);
+          requestErrorHandler(req, res, `${err}: Nothing to update`);
         } else if (err) {
-          dbErrorHandler(res, err, 'Oops! Update failed - SubjectEquipment');
+          dbErrorHandler(
+            req,
+            res,
+            err,
+            'Oops! Update failed - SubjectEquipment',
+          );
         } else {
-          successHandler(res, result, 'Update successful - SubjectEquipment');
+          successHandler(
+            req,
+            res,
+            result,
+            'Update successful - SubjectEquipment',
+          );
           logger.info('SubjectEquipment ', req.body.subjectId, ' updated');
         }
       },

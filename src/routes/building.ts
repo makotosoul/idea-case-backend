@@ -15,10 +15,15 @@ building.get('/', (req, res) => {
   db('Building')
     .select()
     .then((data) => {
-      successHandler(res, data, 'Successfully read the buildings from DB');
+      successHandler(req, res, data, 'Successfully read the buildings from DB');
     })
     .catch((err) => {
-      dbErrorHandler(res, err, 'Error trying to read all buildings from DB');
+      dbErrorHandler(
+        req,
+        res,
+        err,
+        'Error trying to read all buildings from DB',
+      );
     });
 });
 
@@ -27,10 +32,10 @@ building.get('/:id', (req, res) => {
     .select()
     .where('id', req.params.id)
     .then((data) => {
-      successHandler(res, data, 'Successfully read the buildings from DB');
+      successHandler(req, res, data, 'Successfully read the buildings from DB');
     })
     .catch((err) => {
-      dbErrorHandler(res, err, 'Oops! Nothing came through - Building');
+      dbErrorHandler(req, res, err, 'Oops! Nothing came through - Building');
     });
 });
 
@@ -42,16 +47,17 @@ building.delete('/:id', (req, res) => {
     .then((rowsAffected) => {
       if (rowsAffected === 1) {
         successHandler(
+          req,
           res,
           rowsAffected,
           `Delete succesfull! Count of deleted rows: ${rowsAffected}`,
         );
       } else {
-        requestErrorHandler(res, `Invalid building id:${req.params.id}`);
+        requestErrorHandler(req, res, `Invalid building id:${req.params.id}`);
       }
     })
     .catch((error) => {
-      dbErrorHandler(res, error, 'Error delete failed');
+      dbErrorHandler(req, res, error, 'Error delete failed');
     });
 });
 
@@ -60,6 +66,7 @@ building.post('/', validateAddUpdateBuilding, (req: Request, res: Response) => {
 
   if (!valResult.isEmpty()) {
     return validationErrorHandler(
+      req,
       res,
       `${valResult}validateAddUpdateBuilding error`,
     );
@@ -70,6 +77,7 @@ building.post('/', validateAddUpdateBuilding, (req: Request, res: Response) => {
     .into('Building')
     .then((idArray) => {
       successHandler(
+        req,
         res,
         idArray,
         'Adding a building, or multiple buildings was succesful',
@@ -78,23 +86,25 @@ building.post('/', validateAddUpdateBuilding, (req: Request, res: Response) => {
     .catch((error) => {
       if (error.errno === 1062) {
         requestErrorHandler(
+          req,
           res,
           `Conflict: Building with the name ${req.body.name} already exists!`,
         );
       } else if (error.errno === 1054) {
         requestErrorHandler(
+          req,
           res,
           "error in spelling [either in 'name' and/or in 'description'].",
         );
       } else {
-        dbErrorHandler(res, error, 'error adding building');
+        dbErrorHandler(req, res, error, 'error adding building');
       }
     });
 });
 
 building.put('/', (req, res) => {
   if (!req.body.name) {
-    requestErrorHandler(res, 'Building name is missing.');
+    requestErrorHandler(req, res, 'Building name is missing.');
   } else {
     db('Building')
       .where('id', req.body.id)
@@ -102,12 +112,14 @@ building.put('/', (req, res) => {
       .then((rowsAffected) => {
         if (rowsAffected === 1) {
           successHandler(
+            req,
             res,
             rowsAffected,
             `Update building successful! Count of modified rows: ${rowsAffected}`,
           );
         } else {
           requestErrorHandler(
+            req,
             res,
             `Update building not successful, ${rowsAffected} row modified`,
           );
@@ -116,16 +128,18 @@ building.put('/', (req, res) => {
       .catch((error) => {
         if (error.errno === 1062) {
           requestErrorHandler(
+            req,
             res,
             `DB 1062: Building with the name ${req.body.name} already exists!`,
           );
         } else if (error.errno === 1054) {
           requestErrorHandler(
+            req,
             res,
             "error in spelling [either in 'name' and/or in 'description'].",
           );
         } else {
-          dbErrorHandler(res, error, 'error updating building');
+          dbErrorHandler(req, res, error, 'error updating building');
         }
       });
   }

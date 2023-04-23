@@ -18,16 +18,17 @@ user.post('/', (req, res) => {
     .insert(req.body)
     .into('User')
     .then((idArray) => {
-      successHandler(res, idArray, 'Adding user success');
+      successHandler(req, res, idArray, 'Adding user success');
     })
     .catch((error) => {
       if (error.errno === 1062 || error.errno === 1169) {
         requestErrorHandler(
+          req,
           res,
           `User with that email ${req.body.email} already exists`,
         );
       } else {
-        dbErrorHandler(res, error, 'Some DB error while adding user');
+        dbErrorHandler(req, res, error, 'Some DB error while adding user');
       }
     });
 });
@@ -49,10 +50,10 @@ user.get('/:email', (req, res) => {
         { expiresIn: '24h' },
       );
       const updatedData = data.map((obj) => ({ ...obj, token }));
-      successHandler(res, updatedData, 'Ok');
+      successHandler(req, res, updatedData, 'Ok');
     })
     .catch((err) => {
-      requestErrorHandler(res, `${err} Oops! Nothing came through - User`);
+      requestErrorHandler(req, res, `${err} Oops! Nothing came through - User`);
     });
 });
 

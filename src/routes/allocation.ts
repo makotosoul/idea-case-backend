@@ -17,10 +17,11 @@ allocation.get('', (req, res) => {
   db_knex('AllocRound')
     .select('id', 'name', 'isSeasonAlloc', 'description', 'lastModified')
     .then((data) => {
-      successHandler(res, data, 'getAll succesful - Allocation');
+      successHandler(req, res, data, 'getAll succesful - Allocation');
     })
     .catch((err) => {
       dbErrorHandler(
+        req,
         res,
         err,
         'Oops! Nothing came through - Allocation getAll',
@@ -35,10 +36,10 @@ allocation.get('/:id', async (req, res) => {
     .select()
     .where('id', req.params.id)
     .then((data) => {
-      successHandler(res, data, 'Successfully read the buildings from DB');
+      successHandler(req, res, data, 'Successfully read the buildings from DB');
     })
     .catch((err) => {
-      dbErrorHandler(res, err, 'Oops! Nothing came through - Building');
+      dbErrorHandler(req, res, err, 'Oops! Nothing came through - Building');
     });
 });
 
@@ -49,10 +50,11 @@ allocation.get('/:id/rooms', (req, res) => {
   allocationService
     .getRoomsByAllocId(Number(id))
     .then((data) => {
-      successHandler(res, data, 'getById succesful - Allocation');
+      successHandler(req, res, data, 'getById succesful - Allocation');
     })
     .catch((err) => {
       dbErrorHandler(
+        req,
         res,
         err,
         'Oops! Nothing came through - Allocation getById',
@@ -86,10 +88,15 @@ allocation.get('/:id/program', async (req, res) => {
       );
     })
     .then((data) => {
-      successHandler(res, data, 'getRoomsByProgram succesful - Allocation');
+      successHandler(
+        req,
+        res,
+        data,
+        'getRoomsByProgram succesful - Allocation',
+      );
     })
     .catch((err) => {
-      dbErrorHandler(res, err, 'Oops! Nothing came through - Allocation');
+      dbErrorHandler(req, res, err, 'Oops! Nothing came through - Allocation');
     });
 });
 
@@ -100,10 +107,20 @@ allocation.get('/:id/rooms/:subjectId', async (req, res) => {
   const rooms = await allocationService
     .getAllocatedRoomsBySubject(Number(subjectId), Number(allocId))
     .then((rooms) => {
-      successHandler(res, rooms, 'getRoomsBySubject succesful - Allocation');
+      successHandler(
+        req,
+        res,
+        rooms,
+        'getRoomsBySubject succesful - Allocation',
+      );
     })
     .catch((err) => {
-      dbErrorHandler(res, err, 'Oops! Allocation reset failed - Allocation');
+      dbErrorHandler(
+        req,
+        res,
+        err,
+        'Oops! Allocation reset failed - Allocation',
+      );
     });
 
   return rooms;
@@ -115,10 +132,15 @@ allocation.get('/:id/subject/unallocated', async (req, res) => {
   await allocationService
     .getUnAllocableSubjects(Number(allocId))
     .then((data) => {
-      successHandler(res, data, 'Unallocated subjects returned - Allocation');
+      successHandler(
+        req,
+        res,
+        data,
+        'Unallocated subjects returned - Allocation',
+      );
     })
     .catch((err) => {
-      dbErrorHandler(res, err, 'Oops! Failure - unAllocated');
+      dbErrorHandler(req, res, err, 'Oops! Failure - unAllocated');
     });
 });
 
@@ -127,10 +149,11 @@ allocation.get('/subject/:id/rooms', async (req, res) => {
   await allocationService
     .getSpacesForSubject(Number(subjectId))
     .then((data) => {
-      successHandler(res, data, 'Get Spaces for subject - Allocation');
+      successHandler(req, res, data, 'Get Spaces for subject - Allocation');
     })
     .catch((err) => {
       dbErrorHandler(
+        req,
         res,
         err,
         'Oops! Failed get spaces for subject - unAllocated',
@@ -147,10 +170,16 @@ allocation.get(
     await allocationService
       .getMissingEquipmentForRoom(Number(subjectId), Number(spaceId))
       .then((data) => {
-        successHandler(res, data, 'Missing Equipment for Room - Allocation');
+        successHandler(
+          req,
+          res,
+          data,
+          'Missing Equipment for Room - Allocation',
+        );
       })
       .catch((err) => {
         dbErrorHandler(
+          req,
           res,
           err,
           'Oops! Failed get equipments for the room - Allocation',
@@ -167,13 +196,19 @@ allocation.get('/:id/subjects/:roomId', async (req, res) => {
     .getAllocatedSubjectsByRoom(Number(roomId), Number(allocId))
     .then((subs) => {
       successHandler(
+        req,
         res,
         subs,
         'getAllocatedSubjectsByRoom succesful - Allocation',
       );
     })
     .catch((err) => {
-      dbErrorHandler(res, err, 'Oops! Allocation reset failed - Allocation');
+      dbErrorHandler(
+        req,
+        res,
+        err,
+        'Oops! Allocation reset failed - Allocation',
+      );
     });
 
   return subjects;
@@ -184,6 +219,7 @@ allocation.post('/reset', async (req, res) => {
   const allocRound = req.body.allocRound;
   if (!allocRound) {
     return validationErrorHandler(
+      req,
       res,
       'Missing required parameter - allocation reset',
     );
@@ -192,13 +228,19 @@ allocation.post('/reset', async (req, res) => {
     .resetAllocation(allocRound)
     .then(() => {
       successHandler(
+        req,
         res,
         'reset completed',
         'Allocation reset completed - Allocation',
       );
     })
     .catch((err) => {
-      dbErrorHandler(res, err, 'Oops! Allocation reset failed - Allocation');
+      dbErrorHandler(
+        req,
+        res,
+        err,
+        'Oops! Allocation reset failed - Allocation',
+      );
     });
 });
 
@@ -207,6 +249,7 @@ allocation.post('/abort', async (req, res) => {
   const allocRound = req.body.allocRound;
   if (!allocRound) {
     return validationErrorHandler(
+      req,
       res,
       'Missing required parameter - allocation reset',
     );
@@ -215,13 +258,19 @@ allocation.post('/abort', async (req, res) => {
     .abortAllocation(allocRound)
     .then(() => {
       successHandler(
+        req,
         res,
         'Aborting...',
         'Allocation abort completed - Allocation',
       );
     })
     .catch((err) => {
-      dbErrorHandler(res, err, 'Oops! Allocation abort failed - Allocation');
+      dbErrorHandler(
+        req,
+        res,
+        err,
+        'Oops! Allocation abort failed - Allocation',
+      );
     });
 });
 
@@ -230,6 +279,7 @@ allocation.post('/start', async (req, res) => {
   const allocRound = req.body.allocRound;
   if (!allocRound) {
     return validationErrorHandler(
+      req,
       res,
       'Missing required parameter - allocation start',
     );
@@ -239,13 +289,19 @@ allocation.post('/start', async (req, res) => {
     .startAllocation(allocRound)
     .then(() => {
       successHandler(
+        req,
         res,
         'Allocation completed',
         'Allocation succesful - Allocation',
       );
     })
     .catch((err) => {
-      dbErrorHandler(res, err, 'Oops! Allocation failed - Allocation start');
+      dbErrorHandler(
+        req,
+        res,
+        err,
+        'Oops! Allocation failed - Allocation start',
+      );
     });
 });
 

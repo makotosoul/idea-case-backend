@@ -19,9 +19,9 @@ subject.get('/getAll', (req, res) => {
     '  SELECT s.id, s.name AS subjectName, s.groupSize, s.groupCount, s.sessionLength, s.sessionCount, s.area, s.programId, p.name AS programName, s.spaceTypeId, st.name AS spaceTypeName FROM Subject s JOIN Program p ON s.programId = p.id LEFT JOIN SpaceType st ON s.spaceTypeId = st.id;';
   db.query(sqlSelectSubjectProgram, (err, result) => {
     if (err) {
-      dbErrorHandler(res, err, 'Oops! Nothing came through - Subject');
+      dbErrorHandler(req, res, err, 'Oops! Nothing came through - Subject');
     } else {
-      successHandler(res, result, 'getAll successful - Subject');
+      successHandler(req, res, result, 'getAll successful - Subject');
     }
   });
 });
@@ -31,9 +31,9 @@ subject.get('/getNames', (req, res) => {
   const sqlSelectSubjectNames = 'SELECT id, name FROM Subject;';
   db.query(sqlSelectSubjectNames, (err, result) => {
     if (err) {
-      dbErrorHandler(res, err, 'Oops! Nothing came through - Subject');
+      dbErrorHandler(req, res, err, 'Oops! Nothing came through - Subject');
     } else {
-      successHandler(res, result, 'getNames successful - Subject');
+      successHandler(req, res, result, 'getNames successful - Subject');
     }
   });
 });
@@ -48,7 +48,7 @@ subject.post(
       logger.error('Validation error:  %O', errors);
     }
     if (!errors.isEmpty()) {
-      return validationErrorHandler(res, 'Formatting problem');
+      return validationErrorHandler(req, res, 'Formatting problem');
     }
     const name = req.body.name;
     const groupSize = req.body.groupSize;
@@ -74,11 +74,12 @@ subject.post(
       ],
       (err, result) => {
         if (!result) {
-          requestErrorHandler(res, `${err}: Nothing to insert`);
+          requestErrorHandler(req, res, `${err}: Nothing to insert`);
         } else if (err) {
-          dbErrorHandler(res, err, 'Oops! Create failed - Subject');
+          dbErrorHandler(req, res, err, 'Oops! Create failed - Subject');
         } else {
           successHandler(
+            req,
             res,
             { insertId: result.insertId },
             'Create successful - Subject',
@@ -96,9 +97,9 @@ subject.delete('/delete/:id', (req, res) => {
   const sqlDelete = 'DELETE FROM Subject WHERE id = ?;';
   db.query(sqlDelete, id, (err, result) => {
     if (err) {
-      dbErrorHandler(res, err, 'Oops! Delete failed - Subject');
+      dbErrorHandler(req, res, err, 'Oops! Delete failed - Subject');
     } else {
-      successHandler(res, result, 'Delete successful - Subject');
+      successHandler(req, res, result, 'Delete successful - Subject');
       logger.info('Subject deleted');
     }
   });
@@ -114,7 +115,7 @@ subject.put(
       logger.error('Validation error:  %O', errors);
     }
     if (!errors.isEmpty()) {
-      return validationErrorHandler(res, 'Formatting problem');
+      return validationErrorHandler(req, res, 'Formatting problem');
     }
     const id = req.body.id;
     const name = req.body.name;
@@ -142,11 +143,11 @@ subject.put(
       ],
       (err, result) => {
         if (!result) {
-          requestErrorHandler(res, `${err}: Nothing to update`);
+          requestErrorHandler(req, res, `${err}: Nothing to update`);
         } else if (err) {
-          dbErrorHandler(res, err, 'Oops! Update failed - Subject');
+          dbErrorHandler(req, res, err, 'Oops! Update failed - Subject');
         } else {
-          successHandler(res, result, 'Update successful - Subject');
+          successHandler(req, res, result, 'Update successful - Subject');
           logger.info(`Subject ${req.body.name} updated`);
         }
       },

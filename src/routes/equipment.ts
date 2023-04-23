@@ -22,34 +22,39 @@ equipment.get('/', authenticator, admin, (req, res) => {
   db_knex('Equipment')
     .select('id', 'name', 'priority as equipmentPriority', 'description')
     .then((data) => {
-      successHandler(res, data, 'getNames succesful - Equipment');
+      successHandler(req, res, data, 'getNames succesful - Equipment');
     })
     .catch((err) => {
-      requestErrorHandler(res, `${err} Oops! Nothing came through - Equipment`);
+      requestErrorHandler(
+        req,
+        res,
+        `${err} Oops! Nothing came through - Equipment`,
+      );
     });
 });
 
 equipment.post('/', validateAddEquipment, (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return validationErrorHandler(res, 'Formatting problem');
+    return validationErrorHandler(req, res, 'Formatting problem');
   }
   db_knex
     .insert(req.body)
     .into('Equipment')
     .then((idArray) => {
-      successHandler(res, idArray, 'Adding an equipment was succesful.');
+      successHandler(req, res, idArray, 'Adding an equipment was succesful.');
     })
     .catch((error) => {
       if (error.errno === 1062) {
         requestErrorHandler(
+          req,
           res,
           `Equipment with the ${req.body.id} already exists!`,
         );
       } else if (error.errno === 1052) {
-        dbErrorHandler(res, error, 'Error in database column name');
+        dbErrorHandler(req, res, error, 'Error in database column name');
       } else {
-        dbErrorHandler(res, error, 'Error at adding equipment');
+        dbErrorHandler(req, res, error, 'Error at adding equipment');
       }
     });
 });
@@ -61,16 +66,17 @@ equipment.delete('/:id', (req, res) => {
     .then((rowsAffected) => {
       if (rowsAffected === 1) {
         successHandler(
+          req,
           res,
           rowsAffected,
           `Delete succesful! Count of deleted rows: ${rowsAffected}`,
         );
       } else {
-        requestErrorHandler(res, `Invalid number id: ${req.params.id}`);
+        requestErrorHandler(req, res, `Invalid number id: ${req.params.id}`);
       }
     })
     .catch((error) => {
-      dbErrorHandler(res, error, 'Error at equipment delete');
+      dbErrorHandler(req, res, error, 'Error at equipment delete');
     });
 });
 
@@ -80,13 +86,13 @@ equipment.put('/updateEquip', (req, res) => {
     .update(req.body)
     .then((rowsAffected) => {
       if (rowsAffected === 1) {
-        successHandler(res, rowsAffected, 'Updated succesfully');
+        successHandler(req, res, rowsAffected, 'Updated succesfully');
       } else {
-        requestErrorHandler(res, 'Error');
+        requestErrorHandler(req, res, 'Error');
       }
     })
     .catch((error) => {
-      dbErrorHandler(res, error, 'Error at updating equipment');
+      dbErrorHandler(req, res, error, 'Error at updating equipment');
     });
 });
 
