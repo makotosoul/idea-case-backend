@@ -5,9 +5,12 @@ import {
   requestErrorHandler,
   successHandler,
   validationErrorHandler,
+  authenticationErrorHandler,
 } from '../responseHandler/index.js';
 import jsonwebtoken from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import bcrypt from 'bcrypt';
+import { error } from 'console';
 
 dotenv.config({});
 
@@ -33,27 +36,42 @@ user.post('/', (req, res) => {
     });
 });
 
-user.get('/:email', (req, res) => {
+user.post('/login', (req, res) => {
   db_knex('User')
-    .select('email', 'isAdmin', 'isPlanner', 'isStatist')
-    .where('email', req.params.email)
+    .select('email', 'password', 'isAdmin', 'isPlanner', 'isStatist')
+    .where('email', req.body.email)
     .then((data) => {
-      console.log(data);
-      const token = jsonwebtoken.sign(
-        {
-          email: data[0].email,
-          isAdmin: data[0].isAdmin,
-          isPlanner: data[0].isPlanner,
-          isStatist: data[0].isStatist,
-        },
-        process.env.SECRET_TOKEN as string,
-        { expiresIn: '24h' },
-      );
-      const updatedData = data.map((obj) => ({ ...obj, token }));
-      successHandler(req, res, updatedData, 'Ok');
+      bcrypt
+        .compare(req.body.password, data[0].password)
+        .then((passwordCheck) => {
+          if (!passwordCheck) {
+            authenticationErrorHandler(req, res, "Passwords don't match!");
+            return;
+          } else {
+            const token = jsonwebtoken.sign(
+              {
+                email: data[0].email,
+                isAdmin: data[0].isAdmin,
+                isPlanner: data[0].isPlanner,
+                isStatist: data[0].isStatist,
+              },
+              process.env.SECRET_TOKEN as string,
+              { expiresIn: '24h' },
+            );
+            const updatedData = data.map((obj) => ({ ...obj, token }));
+            successHandler(req, res, updatedData, 'Ok');
+          }
+        })
+        .catch((err) => {
+          requestErrorHandler(
+            req,
+            res,
+            `${err} Oops! Nothing came through - User`,
+          );
+        });
     })
-    .catch((err) => {
-      requestErrorHandler(req, res, `${err} Oops! Nothing came through - User`);
+    .catch((error) => {
+      dbErrorHandler(req, res, error, 'Database error');
     });
 });
 
