@@ -11,22 +11,36 @@ import {
 import { validateAddSetting } from '../validationHandler/index.js';
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
+import { authenticator } from '../auhorization/userValidation.js';
+import { admin } from '../auhorization/admin.js';
+import { statist } from '../auhorization/statist.js';
+import { planner } from '../auhorization/planner.js';
+import { roleChecker } from '../auhorization/roleChecker.js';
 
-setting.get('/', (req, res) => {
-  db('GlobalSetting')
-    .select()
-    .then((data) => {
-      successHandler(req, res, data, 'Successfully read the settings from DB');
-    })
-    .catch((err) => {
-      dbErrorHandler(
-        req,
-        res,
-        err,
-        'Error trying to read all settings from DB',
-      );
-    });
-});
+setting.get(
+  '/',
+  [authenticator, admin, planner, statist, roleChecker],
+  (req: Request, res: Response) => {
+    db('GlobalSetting')
+      .select()
+      .then((data) => {
+        successHandler(
+          req,
+          res,
+          data,
+          'Successfully read the settings from DB',
+        );
+      })
+      .catch((err) => {
+        dbErrorHandler(
+          req,
+          res,
+          err,
+          'Error trying to read all settings from DB',
+        );
+      });
+  },
+);
 
 setting.get('/:id', (req, res) => {
   db('GlobalSetting')
@@ -45,30 +59,35 @@ setting.get('/:id', (req, res) => {
     });
 });
 
-setting.delete('/delete/:id', (req, res) => {
-  db('GlobalSetting')
-    .select()
-    .where('id', req.params.id)
-    .del()
-    .then((rowsAffected) => {
-      if (rowsAffected === 1) {
-        successHandler(
-          req,
-          res,
-          rowsAffected,
-          `Delete succesfull! Count of deleted rows: ${rowsAffected}`,
-        );
-      } else {
-        requestErrorHandler(req, res, `Invalid setting id:${req.params.id}`);
-      }
-    })
-    .catch((error) => {
-      dbErrorHandler(req, res, error, 'Error delete failed');
-    });
-});
+setting.delete(
+  '/delete/:id',
+  [authenticator, admin, roleChecker],
+  (req: Request, res: Response) => {
+    db('GlobalSetting')
+      .select()
+      .where('id', req.params.id)
+      .del()
+      .then((rowsAffected) => {
+        if (rowsAffected === 1) {
+          successHandler(
+            req,
+            res,
+            rowsAffected,
+            `Delete succesfull! Count of deleted rows: ${rowsAffected}`,
+          );
+        } else {
+          requestErrorHandler(req, res, `Invalid setting id:${req.params.id}`);
+        }
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Error delete failed');
+      });
+  },
+);
 
 setting.post(
   '/postSetting',
+  [authenticator, admin, planner, roleChecker],
   validateAddSetting,
   (req: Request, res: Response) => {
     const valResult = validationResult(req);
@@ -80,7 +99,6 @@ setting.post(
         `${valResult}validateAddSetting error`,
       );
     }
-
     db('GlobalSetting')
       .insert(req.body)
       .into('GlobalSetting')
@@ -112,47 +130,51 @@ setting.post(
   },
 );
 
-setting.put('/updateSetting', (req, res) => {
-  if (!req.body.name) {
-    requestErrorHandler(req, res, 'Setting name is missing.');
-  } else {
-    db('GlobalSetting')
-      .where('id', req.body.id)
-      .update(req.body)
-      .then((rowsAffected) => {
-        if (rowsAffected === 1) {
-          successHandler(
-            req,
-            res,
-            rowsAffected,
-            `Update setting successful! Count of modified rows: ${rowsAffected}`,
-          );
-        } else {
-          requestErrorHandler(
-            req,
-            res,
-            `Update setting not successful, ${rowsAffected} row modified`,
-          );
-        }
-      })
-      .catch((error) => {
-        if (error.errno === 1062) {
-          requestErrorHandler(
-            req,
-            res,
-            `DB 1062: Setting with the name ${req.body.name} already exists!`,
-          );
-        } else if (error.errno === 1054) {
-          requestErrorHandler(
-            req,
-            res,
-            "error in spelling [either in 'name' and/or in 'description'].",
-          );
-        } else {
-          dbErrorHandler(req, res, error, 'error updating setting');
-        }
-      });
-  }
-});
+setting.put(
+  '/updateSetting',
+  [authenticator, admin, roleChecker],
+  (req: Request, res: Response) => {
+    if (!req.body.name) {
+      requestErrorHandler(req, res, 'Setting name is missing.');
+    } else {
+      db('GlobalSetting')
+        .where('id', req.body.id)
+        .update(req.body)
+        .then((rowsAffected) => {
+          if (rowsAffected === 1) {
+            successHandler(
+              req,
+              res,
+              rowsAffected,
+              `Update setting successful! Count of modified rows: ${rowsAffected}`,
+            );
+          } else {
+            requestErrorHandler(
+              req,
+              res,
+              `Update setting not successful, ${rowsAffected} row modified`,
+            );
+          }
+        })
+        .catch((error) => {
+          if (error.errno === 1062) {
+            requestErrorHandler(
+              req,
+              res,
+              `DB 1062: Setting with the name ${req.body.name} already exists!`,
+            );
+          } else if (error.errno === 1054) {
+            requestErrorHandler(
+              req,
+              res,
+              "error in spelling [either in 'name' and/or in 'description'].",
+            );
+          } else {
+            dbErrorHandler(req, res, error, 'error updating setting');
+          }
+        });
+    }
+  },
+);
 
 export default setting;
