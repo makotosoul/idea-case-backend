@@ -10,31 +10,38 @@ import {
 import jsonwebtoken from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
-import { error } from 'console';
+import { authenticator } from '../auhorization/userValidation.js';
+import { admin } from '../auhorization/admin.js';
+import { roleChecker } from '../auhorization/roleChecker.js';
+import { Request, Response } from 'express';
 
 dotenv.config({});
 
 const user = express.Router();
 
-user.post('/', (req, res) => {
-  db_knex
-    .insert(req.body)
-    .into('User')
-    .then((idArray) => {
-      successHandler(req, res, idArray, 'Adding user success');
-    })
-    .catch((error) => {
-      if (error.errno === 1062 || error.errno === 1169) {
-        requestErrorHandler(
-          req,
-          res,
-          `User with that email ${req.body.email} already exists`,
-        );
-      } else {
-        dbErrorHandler(req, res, error, 'Some DB error while adding user');
-      }
-    });
-});
+user.post(
+  '/',
+  [authenticator, admin, roleChecker],
+  (req: Request, res: Response) => {
+    db_knex
+      .insert(req.body)
+      .into('User')
+      .then((idArray) => {
+        successHandler(req, res, idArray, 'Adding user success');
+      })
+      .catch((error) => {
+        if (error.errno === 1062 || error.errno === 1169) {
+          requestErrorHandler(
+            req,
+            res,
+            `User with that email ${req.body.email} already exists`,
+          );
+        } else {
+          dbErrorHandler(req, res, error, 'Some DB error while adding user');
+        }
+      });
+  },
+);
 
 user.post('/login', (req, res) => {
   db_knex('User')
