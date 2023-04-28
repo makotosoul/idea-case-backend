@@ -23,6 +23,12 @@ user.post(
   '/',
   [authenticator, admin, roleChecker],
   (req: Request, res: Response) => {
+    const hashedPassword = bcrypt.hashSync(req.body.password, 10);
+    console.log(
+      `Register, clear text password from frontend: ${req.body.password}`,
+    ); // REMOVE AFTER SOME TESTING!!! SECURITY!!!
+    req.body.password = hashedPassword;
+    console.log(`Register, password hashed for DB: ${req.body.password}`); // REMOVE AFTER SOME TESTING!!! SECURITY!!!
     db_knex
       .insert(req.body)
       .into('User')
@@ -44,6 +50,7 @@ user.post(
 );
 
 user.post('/login', (req, res) => {
+  console.log(`Login, password: ${req.body.password}`);
   db_knex('User')
     .select('email', 'password', 'isAdmin', 'isPlanner', 'isStatist')
     .where('email', req.body.email)

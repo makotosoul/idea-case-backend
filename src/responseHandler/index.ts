@@ -12,7 +12,7 @@ const authorizationErrorMessage = requestErrorMessage;
 const validationErrorMessage = requestErrorMessage; //'Formatting error';
 
 export const routePrinter = (req: Request): string => {
-  let routeText = `${req.method} ${req.baseUrl}|`;
+  let routeText = `${req.method} ${req.baseUrl.substring(4)}|`;
   return routeText;
 };
 
