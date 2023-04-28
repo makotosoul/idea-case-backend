@@ -9,6 +9,7 @@ import building from './building.js';
 import setting from './setting.js';
 import department from './department.js';
 import user from './user.js';
+import allocround from './allocRound.js';
 
 const routes = express.Router();
 
@@ -22,5 +23,6 @@ routes.use('/allocation', allocation);
 routes.use('/building', building);
 routes.use('/department', department);
 routes.use('/user', user);
+routes.use('/allocation', allocround);
 
 export default routes;
