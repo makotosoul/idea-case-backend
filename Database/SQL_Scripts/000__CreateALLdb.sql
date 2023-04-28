@@ -377,10 +377,10 @@ INSERT INTO Department(name, description) VALUES
     ('Avoin Kampus', 'Aineryhmän kuvaus');
 
 /* --- Insert: `User` --- */
-INSERT INTO `User`(email, isAdmin) VALUES
-    ('fake_admin@test.co', 1),
-    ('fake_planner@test.co', 0),
-    ('fake_planner2@test.co', 0);
+INSERT INTO `User`(email, password, isAdmin, isPlanner, isStatist) VALUES
+    ('admin','$2a$10$My5c7qZPRzp2p5QpgzQ0kOt5Au1xdwIidJDegsEWpntwAWceUjdWa',1,0,0),
+    ('planner','$2a$10$mKf/VHzIGyIfADKHFACEBuYTb0IbPv6sE/FqlsbLAKgfelMWwsnEm',0,1,0),
+    ('statist','$2a$10$3oFjcGMj3Zq.91PkbGuL9Oo1zowAU9WFNNWyYA018Rff5BpCEmQ8y',0,0,1);
 
 /* --- Insert: DepartmentPlanner * --- */
 INSERT INTO DepartmentPlanner(userId, departmentId) VALUES
