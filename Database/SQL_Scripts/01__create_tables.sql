@@ -232,12 +232,12 @@ CREATE TABLE IF NOT EXISTS AllocSpace (
         FOREIGN KEY (`subjectId`, `allocRound`)
         REFERENCES `AllocSubject` (subjectId, allocRound)
         ON DELETE CASCADE
-        ON UPDATE CASCADE,
+        ON UPDATE NO ACTION,
 
     CONSTRAINT `FK_AllocSpace_Space`
         FOREIGN KEY (`spaceId`)
         REFERENCES `Space` (id)
-        ON DELETE CASCADE
+        ON DELETE NO ACTION      
         ON UPDATE CASCADE
 
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -254,16 +254,18 @@ CREATE TABLE IF NOT EXISTS AllocSubjectSuitableSpace (
         FOREIGN KEY(`allocRound`, `subjectId`)
         REFERENCES `AllocSubject` (allocRound, subjectId)
         ON DELETE CASCADE
-        ON UPDATE CASCADE,
+        ON UPDATE NO ACTION,
 
     CONSTRAINT `FK_AllocSubjectSpace_Space`
         FOREIGN KEY (`spaceId`)
         REFERENCES `Space` (id)
-        ON DELETE CASCADE
+        ON DELETE NO ACTION
         ON UPDATE CASCADE
 
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+/* Should this now be called just AllocRoundUser?
+ As now we have multiple alloc rounds */
 CREATE TABLE IF NOT EXISTS AllocCurrentRoundUser (
     allocId     INTEGER     NOT NULL,
     userId      INTEGER,
@@ -274,13 +276,13 @@ CREATE TABLE IF NOT EXISTS AllocCurrentRoundUser (
         FOREIGN KEY (`allocId`) 
         REFERENCES `AllocRound` (id)
         ON DELETE CASCADE 
-        ON UPDATE CASCADE,
+        ON UPDATE NO ACTION,
         
     CONSTRAINT `FK_AllocCurrentRoundUser_User` 
         FOREIGN KEY (`userId`) 
         REFERENCES `User` (id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE
+        ON DELETE NO ACTION   /* Or cascade? depends on biz logic */
+        ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 /* CREATE LOG TABLES */
