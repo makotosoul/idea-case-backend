@@ -4,10 +4,10 @@
 <br />
 <div align="center">
   
-<h1 align="center">SIBA22S</h1>
+<h1 align="center">Siba project - Backend</h1>
 
 <h3 align="center">
-    Project created in Softala Project course <br />
+    This project was created on the courses Softala-projekti / Software Project<br />
 <br />
 </div>
 
@@ -84,12 +84,14 @@ Backend side installation instructions
 
    The secret_token has to be something of the length and format of: A3fs9t395dsgSDf3fRsTse349. But not that one! Hardening process should
    change it for the real deployment of the backend. This particular one A3fs... should not be used even for testing!
-   This is visible in the internet. It's just a dummy.
+   This is visible in the internet. It's just a dummy value to help randomizing the real one.
+
+   Be context aware! E.g. in the list above the ports are usually changed. And if you use a tunnel, then you target the tunnel port, not the real ports. Ask help! Usually one excel has all the dev time secrets for you.
 
 7. Application launch
 
    ```sh
-   nodemon
+   npm start
    ```
 
    Attention! If it doesn't boot install:
