@@ -100,7 +100,7 @@ export const validationErrorHandler = (
   let logMessage =
     routePrinter(req) + messagePrinter(message, validationErrorMessage);
 
-  logger.error(message);
+  logger.error(logMessage);
 
   res.status(400).send(validationErrorMessage);
 };

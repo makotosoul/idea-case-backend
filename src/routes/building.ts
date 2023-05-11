@@ -7,7 +7,10 @@ import {
   validationErrorHandler,
 } from '../responseHandler/index.js';
 import { validationResult } from 'express-validator';
-import { validateAddUpdateBuilding } from '../validationHandler/index.js';
+import {
+  validateAddUpdateBuilding,
+  validateAddBuildings,
+} from '../validationHandler/index.js';
 import { authenticator } from '../auhorization/userValidation.js';
 import { admin } from '../auhorization/admin.js';
 import { statist } from '../auhorization/statist.js';
@@ -93,6 +96,54 @@ building.post(
         `${valResult}validateAddUpdateBuilding error`,
       );
     }
+    db('Building')
+      .insert(req.body)
+      .into('Building')
+      .then((idArray) => {
+        successHandler(
+          req,
+          res,
+          idArray,
+          'Adding a building, or multiple buildings was succesful',
+        );
+      })
+      .catch((error) => {
+        if (error.errno === 1062) {
+          requestErrorHandler(
+            req,
+            res,
+            `Conflict: Building with the name ${req.body.name} already exists!`,
+          );
+        } else if (error.errno === 1054) {
+          requestErrorHandler(
+            req,
+            res,
+            "error in spelling [either in 'name' and/or in 'description'].",
+          );
+        } else {
+          dbErrorHandler(req, res, error, 'error adding building');
+        }
+      });
+  },
+);
+
+building.post(
+  '/multi',
+  [authenticator, admin, planner, roleChecker],
+  validateAddBuildings,
+  (req: Request, res: Response) => {
+    const valResult = validationResult(req);
+
+    if (!valResult.isEmpty()) {
+      validationErrorHandler(
+        req,
+        res,
+        `${valResult} validateAddBuildings error`,
+      );
+
+      return;
+    }
+
     db('Building')
       .insert(req.body)
       .into('Building')
