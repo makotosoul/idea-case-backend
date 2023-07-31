@@ -21,8 +21,8 @@ const verifyJwtAndCheckExpiration = (
       const currentTime = Math.floor(Date.now() / 1000); // Time in seconds
       const iat = typeof verified === 'object' ? verified.iat : 0;
 
-      // Checking if token is older than 20 minutes (1200 seconds)
-      if (currentTime - (iat || 0) > 1200) {
+      // Checking if token is older than 60 minutes(3600 seconds) (if we want shorter for example 20min put 1200 seconds)
+      if (currentTime - (iat || 0) > 3600) {
         logger.warn('Token Expired');
         res.status(401).send('Token Expired');
         return;
