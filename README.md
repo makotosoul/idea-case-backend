@@ -57,13 +57,20 @@ Backend side installation instructions
    ```sh
    git clone https://github.com/haagahelia/Siba_be.git
    ```
-5. Install needed packages
+
+5. Change directory
+
+   ```sh
+   cd Sibe_be
+   ```
+
+6. Install needed packages
 
    ```sh
    npm install
    ```
 
-6. Create the **.env** file. Add .env to the root of the project
+7. Create the **.env** file. Add .env to the root of the project
 
    ```
    BE_API_URL_PREFIX=/api
@@ -88,7 +95,7 @@ Backend side installation instructions
 
    Be context aware! E.g. in the list above the ports are usually changed. And if you use a tunnel, then you target the tunnel port, not the real ports. Ask help! Usually one excel has all the dev time secrets for you.
 
-7. Application launch
+8. Application launch
 
    ```sh
    npm start
@@ -100,6 +107,6 @@ Backend side installation instructions
    npm install -g nodemon
    ```
 
-8. Attention! Follow the [Frontend repo](https://github.com/haagahelia/siba-fe) installation guide as well
+9. Attention! Follow the [Frontend repo](https://github.com/haagahelia/siba-fe) installation guide as well
 
 <p align="right">(<a href="#top">back to top</a>)</p>
