@@ -128,7 +128,7 @@ textValue		| VARCHAR(255)	|				| If setting needs a text value, it will be saved
 </details>
 
 <details><summary>Program</summary>
-<small> (Pääaine, e.g. "Orchestral music") </small>
+<small> (Program ('pääaine'), e.g. "Orchestral music") </small>
 
 Column			|	Datatype	|	Keys			|	Description
 :-----			|	:----		|	------			|	------
