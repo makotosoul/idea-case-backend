@@ -10,10 +10,10 @@ import {
 import { validationResult } from 'express-validator'; //import { body,}???
 import { validateAddUpdateSubject } from '../validationHandler/index.js';
 import { Response, Request } from 'express';
-import { planner } from '../auhorization/planner.js';
-import { roleChecker } from '../auhorization/roleChecker.js';
 import { authenticator } from '../auhorization/userValidation.js';
 import { admin } from '../auhorization/admin.js';
+import { planner } from '../auhorization/planner.js';
+import { roleChecker } from '../auhorization/roleChecker.js';
 
 const subject = express.Router();
 
@@ -45,6 +45,7 @@ subject.get('/getNames', (req, res) => {
 // Adding a subject/teaching
 subject.post(
   '/post',
+  [authenticator, admin, planner, roleChecker],
   validateAddUpdateSubject,
   (req: Request, res: Response) => {
     const errors = validationResult(req);
