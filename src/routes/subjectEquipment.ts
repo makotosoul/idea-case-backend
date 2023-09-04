@@ -7,8 +7,8 @@ import {
   requestErrorHandler,
   validationErrorHandler,
 } from '../responseHandler/index.js';
-import { validationResult } from 'express-validator'; // import { body,} ??
-import { validateAddUpdateSubjectEquipment } from '../validationHandler/index.js';
+import { Result, ValidationError, validationResult } from 'express-validator'; // import { body,} ??
+import { validateSubjectEquipmentPostAndPut } from '../validationHandler/subjectEquipment.js';
 import { Request, Response } from 'express';
 
 const subjectequipment = express.Router();
@@ -40,14 +40,19 @@ subjectequipment.get('/getEquipment/:subjectId', (req, res) => {
 // Adding a equipment requirement to teaching/subject
 subjectequipment.post(
   '/post',
-  validateAddUpdateSubjectEquipment,
+  validateSubjectEquipmentPostAndPut,
   (req: Request, res: Response) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      logger.error('Validation error:  %O', errors);
-    }
-    if (!errors.isEmpty()) {
-      return validationErrorHandler(req, res, 'Formatting problem');
+    const validationResults: Result<ValidationError> = validationResult(req);
+    // if (!validationResults.isEmpty()) {
+    //   logger.error('Validation error:  %O', errors);
+    // }
+    if (!validationResults.isEmpty()) {
+      return validationErrorHandler(
+        req,
+        res,
+        'Formatting problem',
+        validationResults,
+      );
     }
     const subjectId = req.body.subjectId;
     const equipmentId = req.body.equipmentId;
@@ -104,7 +109,7 @@ subjectequipment.delete('/delete/:subjectId/:equipmentId', (req, res) => {
 // Modifying the equipment required by the subject/teaching
 subjectequipment.put(
   '/update',
-  validateAddUpdateSubjectEquipment,
+  validateSubjectEquipmentPostAndPut,
   (req: Request, res: Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

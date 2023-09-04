@@ -11,24 +11,6 @@ import allocationService from '../services/allocation.js';
 
 const allocation = express.Router();
 
-/* Get all allocations */
-
-allocation.get('', (req, res) => {
-  db_knex('AllocRound')
-    .select('id', 'name', 'isSeasonAlloc', 'description', 'lastModified')
-    .then((data) => {
-      successHandler(req, res, data, 'getAll succesful - Allocation');
-    })
-    .catch((err) => {
-      dbErrorHandler(
-        req,
-        res,
-        err,
-        'Oops! Nothing came through - Allocation getAll',
-      );
-    });
-});
-
 /* Get allocation by id */
 
 allocation.get('/:id', async (req, res) => {

@@ -19,7 +19,6 @@ const getAll = (): Promise<string> => {
 };
 
 /* Get allocation by id */
-
 const getById = (id: number): Promise<string> => {
   const sqlQuery = `SELECT ar.id,
 	            ar.name,

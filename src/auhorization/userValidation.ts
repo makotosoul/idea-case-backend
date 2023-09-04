@@ -2,14 +2,19 @@ import express, { Response, Request } from 'express';
 import jsonwebtoken, { JwtPayload } from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { authenticationErrorHandler } from '../responseHandler/index.js';
+import { IncomingHttpHeaders } from 'http';
+import logger from '../utils/logger.js';
 
 dotenv.config();
 
 export const authenticator = (req: any, res: Response, next: any) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader?.split(' ')[1];
+  const authHeader: any = req.get('Authorization');
+  //logger.debug("Header: " +req.get('Authorization'))
+  //logger.debug("Old version stopped working: ") + req.headers['Authorization'] );
+  const token = authHeader?.split(' ')[1]; // Taking the leading 'Bearer' and space ' ' out
 
   if (token == null) {
+    logger.error(`Token: ${token}`);
     authenticationErrorHandler(req, res, 'Login TOKEN not found in headers');
     return;
   }

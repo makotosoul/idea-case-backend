@@ -8,8 +8,8 @@ import {
 } from '../responseHandler/index.js';
 import { validationResult } from 'express-validator';
 import {
-  validateAddUpdateBuilding,
-  validateAddBuildings,
+  validateBuildingPost,
+  validateBuildingMultiPost,
 } from '../validationHandler/index.js';
 import { authenticator } from '../auhorization/userValidation.js';
 import { admin } from '../auhorization/admin.js';
@@ -44,17 +44,26 @@ building.get(
   },
 );
 // protected form getting access through /api/bulding/id
-building.get('/:id', [authenticator, admin, planner, roleChecker], (req: Request, res: Response) => {
-  db('Building')
-    .select()
-    .where('id', req.params.id)
-    .then((data) => {
-      successHandler(req, res, data, 'Successfully read the building from DB');
-    })
-    .catch((err) => {
-      dbErrorHandler(req, res, err, 'Oops! Nothing came through - Building');
-    });
-});
+building.get(
+  '/:id',
+  [authenticator, admin, planner, roleChecker],
+  (req: Request, res: Response) => {
+    db('Building')
+      .select()
+      .where('id', req.params.id)
+      .then((data) => {
+        successHandler(
+          req,
+          res,
+          data,
+          'Successfully read the building from DB',
+        );
+      })
+      .catch((err) => {
+        dbErrorHandler(req, res, err, 'Oops! Nothing came through - Building');
+      });
+  },
+);
 
 building.delete(
   '/:id',
@@ -85,7 +94,7 @@ building.delete(
 building.post(
   '/',
   [authenticator, admin, planner, roleChecker],
-  validateAddUpdateBuilding,
+  validateBuildingPost,
   (req: Request, res: Response) => {
     const valResult = validationResult(req);
 
@@ -130,7 +139,7 @@ building.post(
 building.post(
   '/multi',
   [authenticator, admin, planner, roleChecker],
-  validateAddBuildings,
+  validateBuildingMultiPost,
   (req: Request, res: Response) => {
     const valResult = validationResult(req);
 

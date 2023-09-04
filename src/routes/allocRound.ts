@@ -6,24 +6,42 @@ import {
   validationErrorHandler,
   requestErrorHandler,
 } from '../responseHandler/index.js';
-import { validateAddUpdateAllocRound } from '../validationHandler/allocRound.js';
-import { validationResult } from 'express-validator';
+import {
+  validateAllocRoundPost,
+  validateAllocRoundPut,
+} from '../validationHandler/allocRound.js';
+import { Result, ValidationError, validationResult } from 'express-validator';
 import { Response, Request } from 'express';
+import { checkAndReportValidationErrors } from '../validationHandler/index.js';
 
 const allocround = express.Router();
+
+/* Get all allocations */
+
+allocround.get('', (req, res) => {
+  db_knex('AllocRound')
+    .select('id', 'name', 'isSeasonAlloc', 'description', 'lastModified')
+    .then((data) => {
+      successHandler(req, res, data, 'getAll succesful - Allocation');
+    })
+    .catch((err) => {
+      dbErrorHandler(
+        req,
+        res,
+        err,
+        'Oops! Nothing came through - Allocation getAll',
+      );
+    });
+});
 
 // Adding an AllocRound
 const userId = 201; //user id for adding new AllocRound
 
 allocround.post(
   '/post',
-  validateAddUpdateAllocRound,
+  validateAllocRoundPost,
   (req: Request, res: Response) => {
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-      return validationErrorHandler(req, res, 'Formatting problem');
-    }
+    checkAndReportValidationErrors(req, res);
 
     const allocRound = {
       name: req.body.name,
@@ -34,7 +52,12 @@ allocround.post(
       .insert(allocRound)
       .into('AllocRound')
       .then((idArray) => {
-        successHandler(req, res, idArray, 'Adding an equipment was succesful.');
+        successHandler(
+          req,
+          res,
+          idArray,
+          'Adding the new alloc round was succesful.',
+        );
       })
       .catch((error) => {
         if (error.errno === 1062) {
@@ -46,14 +69,14 @@ allocround.post(
         } else if (error.errno === 1052) {
           dbErrorHandler(req, res, error, 'Error in database column name');
         } else {
-          dbErrorHandler(req, res, error, 'Error at adding equipment');
+          dbErrorHandler(req, res, error, 'Error at adding alloc round');
         }
       });
   },
 );
 
 // Delete allocround round
-allocround.delete('/delete/:id', (req, res) => {
+allocround.delete('/delete/:id', (req: Request, res: Response) => {
   db_knex('AllocRound')
     .select()
     .where('id', req.params.id)
@@ -64,37 +87,52 @@ allocround.delete('/delete/:id', (req, res) => {
           req,
           res,
           rowsAffected,
-          `Delete succesfull! Count of deleted rows: ${rowsAffected}`,
+          `Delete successful! Count of deleted rows: ${rowsAffected}`,
         );
       } else {
         requestErrorHandler(req, res, `Invalid AllocRound id:${req.params.id}`);
       }
     })
     .catch((error) => {
-      dbErrorHandler(req, res, error, 'Error delete failed');
+      dbErrorHandler(req, res, error, 'Error deleting alloc round failed');
     });
 });
 
 // Update allocround round
-allocround.put('/update', (req, res) => {
-  const allocRound = {
-    name: req.body.name,
-    description: req.body.description,
-  };
+allocround.put(
+  '/update',
+  validateAllocRoundPut,
+  (req: Request, res: Response) => {
+    const validationResults: Result<ValidationError> = validationResult(req);
 
-  db_knex('AllocRound')
-    .where('id', req.body.id)
-    .update(allocRound)
-    .then((rowsAffected) => {
-      if (rowsAffected === 1) {
-        successHandler(req, res, rowsAffected, 'Updated succesfully');
-      } else {
-        requestErrorHandler(req, res, 'Error');
-      }
-    })
-    .catch((error) => {
-      dbErrorHandler(req, res, error, 'Error at updating AllocRound');
-    });
-});
+    if (!validationResults.isEmpty()) {
+      return validationErrorHandler(
+        req,
+        res,
+        'Formatting problem',
+        validationResults,
+      );
+    }
+
+    const allocRound = {
+      name: req.body.name,
+      description: req.body.description,
+    };
+
+    db_knex('AllocRound')
+      .where('id', req.body.id)
+      .update(allocRound)
+      .then((rowsAffected) => {
+        if (rowsAffected === 1) {
+          successHandler(req, res, rowsAffected, 'Updated succesfully');
+        } else {
+          requestErrorHandler(req, res, 'Error');
+        }
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Error at updating AllocRound');
+      });
+  },
+);
 
 export default allocround;

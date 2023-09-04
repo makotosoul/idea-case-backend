@@ -23,6 +23,6 @@ routes.use('/allocation', allocation);
 routes.use('/building', building);
 routes.use('/department', department);
 routes.use('/user', user);
-routes.use('/allocation', allocround);
+routes.use('/allocRound', allocround);
 
 export default routes;

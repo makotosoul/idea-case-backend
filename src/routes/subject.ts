@@ -1,5 +1,6 @@
 import express from 'express';
 import db from '../db/index.js';
+import db_knex from '../db/index_knex.js'; // knex available for new database operations
 import logger from '../utils/logger.js';
 import {
   dbErrorHandler,
@@ -8,30 +9,41 @@ import {
   validationErrorHandler,
 } from '../responseHandler/index.js';
 import { validationResult } from 'express-validator'; //import { body,}???
-import { validateAddUpdateSubject } from '../validationHandler/index.js';
+import {
+  validateSubjectPost,
+  validateSubjectPut,
+} from '../validationHandler/subject.js';
 import { Response, Request } from 'express';
 import { authenticator } from '../auhorization/userValidation.js';
 import { admin } from '../auhorization/admin.js';
 import { planner } from '../auhorization/planner.js';
-// import { statist } from '../auhorization/statist.js';
+import { statist } from '../auhorization/statist.js';
 import { roleChecker } from '../auhorization/roleChecker.js';
+import {
+  validateIdObl,
+  checkAndReportValidationErrors,
+} from '../validationHandler/index.js';
 
 const subject = express.Router();
 
 // Fetching all subjects, joining to each subject the program, and needed spacetype
-subject.get('/getAll', (req, res) => {
-  const sqlSelectSubjectProgram =
-    '  SELECT s.id, s.name AS subjectName, s.groupSize, s.groupCount, s.sessionLength, s.sessionCount, s.area, s.programId, p.name AS programName, s.spaceTypeId, st.name AS spaceTypeName FROM Subject s JOIN Program p ON s.programId = p.id LEFT JOIN SpaceType st ON s.spaceTypeId = st.id;';
-  db.query(sqlSelectSubjectProgram, (err, result) => {
-    if (err) {
-      dbErrorHandler(req, res, err, 'Oops! Nothing came through - Subject');
-    } else {
-      successHandler(req, res, result, 'getAll successful - Subject');
-    }
-  });
-});
+subject.get(
+  '/',
+  [authenticator, admin, planner, statist, roleChecker],
+  (req: Request, res: Response) => {
+    const sqlSelectSubjectProgram =
+      '  SELECT s.id, s.name AS subjectName, s.groupSize, s.groupCount, s.sessionLength, s.sessionCount, s.area, s.programId, p.name AS programName, s.spaceTypeId, st.name AS spaceTypeName FROM Subject s JOIN Program p ON s.programId = p.id LEFT JOIN SpaceType st ON s.spaceTypeId = st.id;';
+    db.query(sqlSelectSubjectProgram, (err, result) => {
+      if (err) {
+        dbErrorHandler(req, res, err, 'Oops! Nothing came through - Subject');
+      } else {
+        successHandler(req, res, result, 'getAll successful - Subject');
+      }
+    });
+  },
+);
 
-// Listing all the subjects (name and id)
+// SPECIAL Listing all the subjects for selection dropdown etc. (Just name and id)
 subject.get('/getNames', [authenticator], (req: Request, res: Response) => {
   const sqlSelectSubjectNames = 'SELECT id, name FROM Subject;';
   db.query(sqlSelectSubjectNames, (err, result) => {
@@ -43,19 +55,45 @@ subject.get('/getNames', [authenticator], (req: Request, res: Response) => {
   });
 });
 
+// Fetching one subject by id   A new one with Knex for a model
+subject.get(
+  '/:id',
+  [authenticator, admin, planner, statist, roleChecker],
+  (req: Request, res: Response) => {
+    db_knex
+      .select()
+      .from('Subject')
+      .where('id', req.params.id)
+      .then((data) => {
+        if (data.length === 1) {
+          successHandler(
+            req,
+            res,
+            data,
+            `Subject successfully fetched with id ${req.params.id}`,
+          );
+        } else {
+          requestErrorHandler(
+            req,
+            res,
+            `Non-existing category id: ${req.params.id}`,
+          );
+        }
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, '');
+      });
+  },
+);
+
 // Adding a subject/teaching
 subject.post(
-  '/post',
+  '/',
   [authenticator, admin, planner, roleChecker],
-  validateAddUpdateSubject,
+  validateSubjectPost,
   (req: Request, res: Response) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      logger.error('Validation error:  %O', errors);
-    }
-    if (!errors.isEmpty()) {
-      return validationErrorHandler(req, res, 'Formatting problem');
-    }
+    checkAndReportValidationErrors(req, res);
+
     const name = req.body.name;
     const groupSize = req.body.groupSize;
     const groupCount = req.body.groupCount;
@@ -98,32 +136,34 @@ subject.post(
 );
 
 // Removing a subject/teaching
-subject.delete('/delete/:id', (req, res) => {
-  const id = req.params.id;
-  const sqlDelete = 'DELETE FROM Subject WHERE id = ?;';
-  db.query(sqlDelete, id, (err, result) => {
-    if (err) {
-      dbErrorHandler(req, res, err, 'Oops! Delete failed - Subject');
-    } else {
-      successHandler(req, res, result, 'Delete successful - Subject');
-      logger.info('Subject deleted');
-    }
-  });
-});
-
-// Modifying the subject = teaching
-subject.put(
-  '/update',
+subject.delete(
+  '/:id',
   [authenticator, admin, planner, roleChecker],
-  validateAddUpdateSubject,
+  validateIdObl,
   (req: Request, res: Response) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      logger.error('Validation error:  %O', errors);
-    }
-    if (!errors.isEmpty()) {
-      return validationErrorHandler(req, res, 'Formatting problem');
-    }
+    checkAndReportValidationErrors(req, res);
+
+    const id = req.params.id;
+    const sqlDelete = 'DELETE FROM Subject WHERE id = ?;';
+    db.query(sqlDelete, id, (err, result) => {
+      if (err) {
+        dbErrorHandler(req, res, err, 'Oops! Delete failed - Subject');
+      } else {
+        successHandler(req, res, result, 'Delete successful - Subject');
+        logger.info('Subject deleted');
+      }
+    });
+  },
+);
+
+// Modifying the subject/teaching
+subject.put(
+  '/',
+  [authenticator, admin, planner, roleChecker],
+  validateSubjectPut,
+  (req: Request, res: Response) => {
+    checkAndReportValidationErrors(req, res);
+
     const id = req.body.id;
     const name = req.body.name;
     const groupSize = req.body.groupSize;

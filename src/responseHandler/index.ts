@@ -2,6 +2,8 @@ import { MysqlError } from 'mysql';
 import logger from '../utils/logger.js';
 import { Response, Request } from 'express';
 import { Logform } from 'winston';
+import { Result, ValidationError } from 'express-validator';
+import { validationErrorFormatter } from '../validationHandler/index.js';
 
 const serverErrorMessage = 'Server error.';
 const requestErrorMessage = 'Request error';
@@ -96,9 +98,16 @@ export const validationErrorHandler = (
   req: Request,
   res: Response,
   message: string,
+  validationResults?: Result<ValidationError>,
 ) => {
+  let validationResultMessage = '';
+  if (validationResults !== undefined) {
+    validationResultMessage += validationErrorFormatter(validationResults);
+  }
+  validationResultMessage += `|${message}`;
   let logMessage =
-    routePrinter(req) + messagePrinter(message, validationErrorMessage);
+    routePrinter(req) +
+    messagePrinter(validationResultMessage, validationErrorMessage);
 
   logger.error(logMessage);
 
