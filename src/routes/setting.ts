@@ -11,11 +11,11 @@ import {
 import { validateAddSetting } from '../validationHandler/index.js';
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
-import { authenticator } from '../auhorization/userValidation.js';
-import { admin } from '../auhorization/admin.js';
-import { statist } from '../auhorization/statist.js';
-import { planner } from '../auhorization/planner.js';
-import { roleChecker } from '../auhorization/roleChecker.js';
+import { authenticator } from '../authorization/userValidation.js';
+import { admin } from '../authorization/admin.js';
+import { statist } from '../authorization/statist.js';
+import { planner } from '../authorization/planner.js';
+import { roleChecker } from '../authorization/roleChecker.js';
 
 setting.get(
   '/',

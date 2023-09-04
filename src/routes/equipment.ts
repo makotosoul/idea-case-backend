@@ -10,11 +10,11 @@ import {
 import { validateAddEquipment } from '../validationHandler/index.js';
 import { validationResult } from 'express-validator';
 import { Request, Response } from 'express';
-import { authenticator } from '../auhorization/userValidation.js';
-import { admin } from '../auhorization/admin.js';
-import { planner } from '../auhorization/planner.js';
-import { statist } from '../auhorization/statist.js';
-import { roleChecker } from '../auhorization/roleChecker.js';
+import { authenticator } from '../authorization/userValidation.js';
+import { admin } from '../authorization/admin.js';
+import { planner } from '../authorization/planner.js';
+import { statist } from '../authorization/statist.js';
+import { roleChecker } from '../authorization/roleChecker.js';
 
 const equipment = express.Router();
 

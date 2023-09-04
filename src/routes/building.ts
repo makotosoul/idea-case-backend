@@ -11,11 +11,11 @@ import {
   validateBuildingPost,
   validateBuildingMultiPost,
 } from '../validationHandler/index.js';
-import { authenticator } from '../auhorization/userValidation.js';
-import { admin } from '../auhorization/admin.js';
-import { statist } from '../auhorization/statist.js';
-import { planner } from '../auhorization/planner.js';
-import { roleChecker } from '../auhorization/roleChecker.js';
+import { authenticator } from '../authorization/userValidation.js';
+import { admin } from '../authorization/admin.js';
+import { statist } from '../authorization/statist.js';
+import { planner } from '../authorization/planner.js';
+import { roleChecker } from '../authorization/roleChecker.js';
 
 const building = express.Router();
 

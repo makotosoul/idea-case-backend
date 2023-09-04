@@ -10,9 +10,9 @@ import {
 import jsonwebtoken from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
-import { authenticator } from '../auhorization/userValidation.js';
-import { admin } from '../auhorization/admin.js';
-import { roleChecker } from '../auhorization/roleChecker.js';
+import { authenticator } from '../authorization/userValidation.js';
+import { admin } from '../authorization/admin.js';
+import { roleChecker } from '../authorization/roleChecker.js';
 import { Request, Response } from 'express';
 
 dotenv.config({});
