@@ -12,10 +12,9 @@ import { validateAddUpdateSubject } from '../validationHandler/index.js';
 import { Response, Request } from 'express';
 import { authenticator } from '../auhorization/userValidation.js';
 import { admin } from '../auhorization/admin.js';
-//import { statist } from '../auhorization/statist.js';
 import { planner } from '../auhorization/planner.js';
+// import { statist } from '../auhorization/statist.js';
 import { roleChecker } from '../auhorization/roleChecker.js';
-import { statist } from '../auhorization/statist.js';
 
 const subject = express.Router();
 
