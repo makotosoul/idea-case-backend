@@ -12,8 +12,8 @@ import { validationResult } from 'express-validator';
 import { Request, Response } from 'express';
 import { authenticator } from '../auhorization/userValidation.js';
 import { admin } from '../auhorization/admin.js';
-import { statist } from '../auhorization/statist.js';
 import { planner } from '../auhorization/planner.js';
+import { statist } from '../auhorization/statist.js';
 import { roleChecker } from '../auhorization/roleChecker.js';
 
 const equipment = express.Router();
