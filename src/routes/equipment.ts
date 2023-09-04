@@ -12,8 +12,8 @@ import { validationResult } from 'express-validator';
 import { Request, Response } from 'express';
 import { authenticator } from '../auhorization/userValidation.js';
 import { admin } from '../auhorization/admin.js';
-import { statist } from '../auhorization/statist.js';
 import { planner } from '../auhorization/planner.js';
+import { statist } from '../auhorization/statist.js';
 import { roleChecker } from '../auhorization/roleChecker.js';
 
 const equipment = express.Router();
@@ -114,16 +114,25 @@ equipment.put(
   },
 );
 
-equipment.get('/:id', (req, res) => {
-  db_knex('Equipment')
-    .select()
-    .where('id', req.params.id)
-    .then((data) => {
-      successHandler(req, res, data, 'Successfully read the buildings from DB');
-    })
-    .catch((err) => {
-      dbErrorHandler(req, res, err, 'Oops! Nothing came through - Building');
-    });
-});
+equipment.get(
+  '/:id',
+  [authenticator, admin, planner, roleChecker],
+  (req: Request, res: Response) => {
+    db_knex('Equipment')
+      .select()
+      .where('id', req.params.id)
+      .then((data) => {
+        successHandler(
+          req,
+          res,
+          data,
+          'Successfully read the equipment from DB',
+        );
+      })
+      .catch((err) => {
+        dbErrorHandler(req, res, err, 'Oops! Nothing came through - Equipment');
+      });
+  },
+);
 
 export default equipment;
