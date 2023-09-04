@@ -33,20 +33,16 @@ subject.get('/getAll', (req, res) => {
 });
 
 // Listing all the subjects (name and id)
-subject.get(
-  '/getNames',
-  [authenticator, admin, planner, statist],
-  (req: Request, res: Response) => {
-    const sqlSelectSubjectNames = 'SELECT id, name FROM Subject;';
-    db.query(sqlSelectSubjectNames, (err, result) => {
-      if (err) {
-        dbErrorHandler(req, res, err, 'Oops! Nothing came through - Subject');
-      } else {
-        successHandler(req, res, result, 'getNames successful - Subject');
-      }
-    });
-  },
-);
+subject.get('/getNames', [authenticator], (req: Request, res: Response) => {
+  const sqlSelectSubjectNames = 'SELECT id, name FROM Subject;';
+  db.query(sqlSelectSubjectNames, (err, result) => {
+    if (err) {
+      dbErrorHandler(req, res, err, 'Oops! Nothing came through - Subject');
+    } else {
+      successHandler(req, res, result, 'getNames successful - Subject');
+    }
+  });
+});
 
 // Adding a subject/teaching
 subject.post(
