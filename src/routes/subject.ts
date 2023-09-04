@@ -15,6 +15,7 @@ import { admin } from '../auhorization/admin.js';
 //import { statist } from '../auhorization/statist.js';
 import { planner } from '../auhorization/planner.js';
 import { roleChecker } from '../auhorization/roleChecker.js';
+import { statist } from '../auhorization/statist.js';
 
 const subject = express.Router();
 
@@ -32,16 +33,20 @@ subject.get('/getAll', (req, res) => {
 });
 
 // Listing all the subjects (name and id)
-subject.get('/getNames', (req, res) => {
-  const sqlSelectSubjectNames = 'SELECT id, name FROM Subject;';
-  db.query(sqlSelectSubjectNames, (err, result) => {
-    if (err) {
-      dbErrorHandler(req, res, err, 'Oops! Nothing came through - Subject');
-    } else {
-      successHandler(req, res, result, 'getNames successful - Subject');
-    }
-  });
-});
+subject.get(
+  '/getNames',
+  [authenticator, admin, planner, statist],
+  (req: Request, res: Response) => {
+    const sqlSelectSubjectNames = 'SELECT id, name FROM Subject;';
+    db.query(sqlSelectSubjectNames, (err, result) => {
+      if (err) {
+        dbErrorHandler(req, res, err, 'Oops! Nothing came through - Subject');
+      } else {
+        successHandler(req, res, result, 'getNames successful - Subject');
+      }
+    });
+  },
+);
 
 // Adding a subject/teaching
 subject.post(
