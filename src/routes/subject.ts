@@ -14,6 +14,7 @@ import { authenticator } from '../auhorization/userValidation.js';
 import { admin } from '../auhorization/admin.js';
 import { planner } from '../auhorization/planner.js';
 import { roleChecker } from '../auhorization/roleChecker.js';
+import { statist } from '../auhorization/statist.js';
 
 const subject = express.Router();
 
@@ -31,7 +32,7 @@ subject.get('/getAll', (req, res) => {
 });
 
 // Listing all the subjects (name and id)
-subject.get('/getNames', (req, res) => {
+subject.get('/getNames', [authenticator], (req: Request, res: Response) => {
   const sqlSelectSubjectNames = 'SELECT id, name FROM Subject;';
   db.query(sqlSelectSubjectNames, (err, result) => {
     if (err) {
