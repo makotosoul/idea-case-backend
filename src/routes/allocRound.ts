@@ -1,24 +1,25 @@
 import express from 'express';
+import { Response, Request } from 'express';
+
 import db_knex from '../db/index_knex.js';
+
 import {
   dbErrorHandler,
   successHandler,
-  validationErrorHandler,
   requestErrorHandler,
 } from '../responseHandler/index.js';
+
+import { validate, validateIdObl } from '../validationHandler/index.js';
 import {
   validateAllocRoundPost,
   validateAllocRoundPut,
 } from '../validationHandler/allocRound.js';
-import { Result, ValidationError, validationResult } from 'express-validator';
-import { Response, Request } from 'express';
-import { checkAndReportValidationErrors } from '../validationHandler/index.js';
 
 const allocround = express.Router();
 
 /* Get all allocations */
 
-allocround.get('', (req, res) => {
+allocround.get('/', (req, res) => {
   db_knex('AllocRound')
     .select('id', 'name', 'isSeasonAlloc', 'description', 'lastModified')
     .then((data) => {
@@ -38,11 +39,10 @@ allocround.get('', (req, res) => {
 const userId = 201; //user id for adding new AllocRound
 
 allocround.post(
-  '/post',
+  '/',
   validateAllocRoundPost,
+  [validate],
   (req: Request, res: Response) => {
-    checkAndReportValidationErrors(req, res);
-
     const allocRound = {
       name: req.body.name,
       description: req.body.description,
@@ -76,44 +76,43 @@ allocround.post(
 );
 
 // Delete allocround round
-allocround.delete('/delete/:id', (req: Request, res: Response) => {
-  db_knex('AllocRound')
-    .select()
-    .where('id', req.params.id)
-    .del()
-    .then((rowsAffected) => {
-      if (rowsAffected === 1) {
-        successHandler(
-          req,
-          res,
-          rowsAffected,
-          `Delete successful! Count of deleted rows: ${rowsAffected}`,
-        );
-      } else {
-        requestErrorHandler(req, res, `Invalid AllocRound id:${req.params.id}`);
-      }
-    })
-    .catch((error) => {
-      dbErrorHandler(req, res, error, 'Error deleting alloc round failed');
-    });
-});
+allocround.delete(
+  '/:id',
+  validateIdObl,
+  [validate],
+  (req: Request, res: Response) => {
+    db_knex('AllocRound')
+      .select()
+      .where('id', req.params.id)
+      .del()
+      .then((rowsAffected) => {
+        if (rowsAffected === 1) {
+          successHandler(
+            req,
+            res,
+            rowsAffected,
+            `Delete successful! Count of deleted rows: ${rowsAffected}`,
+          );
+        } else {
+          requestErrorHandler(
+            req,
+            res,
+            `Invalid AllocRound id:${req.params.id}`,
+          );
+        }
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Error deleting alloc round failed');
+      });
+  },
+);
 
 // Update allocround round
 allocround.put(
-  '/update',
+  '/',
   validateAllocRoundPut,
+  [validate],
   (req: Request, res: Response) => {
-    const validationResults: Result<ValidationError> = validationResult(req);
-
-    if (!validationResults.isEmpty()) {
-      return validationErrorHandler(
-        req,
-        res,
-        'Formatting problem',
-        validationResults,
-      );
-    }
-
     const allocRound = {
       name: req.body.name,
       description: req.body.description,

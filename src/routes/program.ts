@@ -22,7 +22,12 @@ program.get('/:id', (req, res) => {
     .select()
     .where('id', req.params.id)
     .then((data) => {
-      successHandler(req, res, data, 'Succesfully read the programs from DB');
+      successHandler(
+        req,
+        res,
+        data,
+        `Succesfully read the program from DB with id: ${req.params.id} `,
+      );
     })
     .catch((err) => {
       dbErrorHandler(req, res, err, 'Oops! Nothing came through - Program');

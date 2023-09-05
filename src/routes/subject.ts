@@ -1,19 +1,16 @@
 import express from 'express';
+import { Response, Request } from 'express';
+
 import db from '../db/index.js';
 import db_knex from '../db/index_knex.js'; // knex available for new database operations
+
 import logger from '../utils/logger.js';
 import {
   dbErrorHandler,
   successHandler,
   requestErrorHandler,
-  validationErrorHandler,
 } from '../responseHandler/index.js';
-import { validationResult } from 'express-validator'; //import { body,}???
-import {
-  validateSubjectPost,
-  validateSubjectPut,
-} from '../validationHandler/subject.js';
-import { Response, Request } from 'express';
+
 import { authenticator } from '../authorization/userValidation.js';
 import { admin } from '../authorization/admin.js';
 import { planner } from '../authorization/planner.js';
@@ -21,15 +18,21 @@ import { statist } from '../authorization/statist.js';
 import { roleChecker } from '../authorization/roleChecker.js';
 import {
   validateIdObl,
-  checkAndReportValidationErrors,
+  validate, // This is the new validation result handler
+  // (our express-compatible middleware function
+  // for the req handling chain)
 } from '../validationHandler/index.js';
+import {
+  validateSubjectPost,
+  validateSubjectPut,
+} from '../validationHandler/subject.js';
 
 const subject = express.Router();
 
 // Fetching all subjects, joining to each subject the program, and needed spacetype
 subject.get(
   '/',
-  [authenticator, admin, planner, statist, roleChecker],
+  [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     const sqlSelectSubjectProgram =
       '  SELECT s.id, s.name AS subjectName, s.groupSize, s.groupCount, s.sessionLength, s.sessionCount, s.area, s.programId, p.name AS programName, s.spaceTypeId, st.name AS spaceTypeName FROM Subject s JOIN Program p ON s.programId = p.id LEFT JOIN SpaceType st ON s.spaceTypeId = st.id;';
@@ -44,22 +47,26 @@ subject.get(
 );
 
 // SPECIAL Listing all the subjects for selection dropdown etc. (Just name and id)
-subject.get('/getNames', [authenticator], (req: Request, res: Response) => {
-  const sqlSelectSubjectNames = 'SELECT id, name FROM Subject;';
-  db.query(sqlSelectSubjectNames, (err, result) => {
-    if (err) {
-      dbErrorHandler(req, res, err, 'Oops! Nothing came through - Subject');
-    } else {
-      successHandler(req, res, result, 'getNames successful - Subject');
-    }
-  });
-});
+subject.get(
+  '/getNames',
+  [authenticator, roleChecker, validate],
+  (req: Request, res: Response) => {
+    const sqlSelectSubjectNames = 'SELECT id, name FROM Subject;';
+    db.query(sqlSelectSubjectNames, (err, result) => {
+      if (err) {
+        dbErrorHandler(req, res, err, 'Oops! Nothing came through - Subject');
+      } else {
+        successHandler(req, res, result, 'getNames successful - Subject');
+      }
+    });
+  },
+);
 
 // Fetching one subject by id   A new one with Knex for a model
 subject.get(
   '/:id',
-  [authenticator, admin, planner, statist, roleChecker],
   validateIdObl,
+  [validate],
   (req: Request, res: Response) => {
     db_knex
       .select()
@@ -77,7 +84,7 @@ subject.get(
           requestErrorHandler(
             req,
             res,
-            `Non-existing category id: ${req.params.id}`,
+            `Non-existing subject id: ${req.params.id}`,
           );
         }
       })
@@ -90,11 +97,9 @@ subject.get(
 // Adding a subject/teaching
 subject.post(
   '/',
-  [authenticator, admin, planner, roleChecker],
   validateSubjectPost,
+  [authenticator, admin, planner, roleChecker, validate],
   (req: Request, res: Response) => {
-    checkAndReportValidationErrors(req, res);
-
     const name = req.body.name;
     const groupSize = req.body.groupSize;
     const groupCount = req.body.groupCount;
@@ -139,11 +144,9 @@ subject.post(
 // Removing a subject/teaching
 subject.delete(
   '/:id',
-  [authenticator, admin, planner, roleChecker],
   validateIdObl,
+  [authenticator, admin, planner, roleChecker, validate],
   (req: Request, res: Response) => {
-    checkAndReportValidationErrors(req, res);
-
     const id = req.params.id;
     const sqlDelete = 'DELETE FROM Subject WHERE id = ?;';
     db.query(sqlDelete, id, (err, result) => {
@@ -160,11 +163,9 @@ subject.delete(
 // Modifying the subject/teaching
 subject.put(
   '/',
-  [authenticator, admin, planner, roleChecker],
   validateSubjectPut,
+  [authenticator, admin, planner, roleChecker, validate],
   (req: Request, res: Response) => {
-    checkAndReportValidationErrors(req, res);
-
     const id = req.body.id;
     const name = req.body.name;
     const groupSize = req.body.groupSize;

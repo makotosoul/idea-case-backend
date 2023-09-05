@@ -11,6 +11,5 @@ export const validateAllocRoundPost = [
 
 export const validateAllocRoundPut = [
   ...validateIdObl,
-  ...validateNameObl,
-  ...validateDescriptionObl,
+  ...validateAllocRoundPost,
 ];

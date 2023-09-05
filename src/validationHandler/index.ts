@@ -20,21 +20,22 @@ export const validationErrorFormatter = (result: Result<ValidationError>) => {
   }`;
 };
 
-export const checkAndReportValidationErrors = (req: any, res: any) => {
+export const validate = (req: any, res: any, next: any) => {
   const validationResults: Result<ValidationError> = validationResult(req);
 
   if (!validationResults.isEmpty()) {
-    return validationErrorHandler(
-      req,
-      res,
-      'Formatting problem',
-      validationResults,
-    );
+    validationErrorHandler(req, res, 'Validation', validationResults);
+    return;
+  } else {
+    next();
   }
 };
 
 export const validateIdObl = [
   check('id')
+    // .isLength({ min: 1, max: 1 })    // Nice way to make e.g.  valid id 4015 fail for testing
+    // .withMessage('Id Must be between 1-1 characters long')
+    // .bail()
     .matches(/^[0-9]+$/)
     .withMessage('Must be a number')
     .bail()
@@ -44,8 +45,8 @@ export const validateIdObl = [
 ];
 export const validateNameObl = [
   check('name')
-    .isLength({ min: 55, max: 255 })
-    .withMessage('Must be between 55-255 characters long')
+    .isLength({ min: 2, max: 255 })
+    .withMessage('Must be between 2-255 characters long')
     .bail()
     .matches(/^[A-Za-zäöåÄÖÅ0-9\s-]*$/)
     .withMessage('Must contain only letters, numbers and -')
@@ -54,12 +55,29 @@ export const validateNameObl = [
     .withMessage('Cannot be empty')
     .bail(),
 ];
-export const validateDescriptionObl = [
+
+export const validateDescription = [
   check('description')
-    .isLength({ min: 3, max: 255 })
+    .isLength({ min: 2, max: 255 })
     .withMessage('Must be between 2-255 characters long')
+    .bail()
+    .matches(/^[A-Za-zäöåÄÖÅ0-9\s-]*$/)
+    .withMessage('Must contain only letters, numbers and -')
     .bail(),
+  /* LATER:
+  check('description').isLength({ max: 16000 })
+    .withMessage('Must be at maximum 16000 characters long')
+    .matches(/^[A-Za-zäöåÄÖÅ0-9\s-]*$/)
+    .withMessage('Must contain only letters, numbers and -')
+    .bail(),
+*/
 ];
+
+export const validateDescriptionObl = [
+  ...validateDescription,
+  check('description').notEmpty().withMessage('Cannot be empty').bail(),
+];
+
 export const validatePriorityMustBeNumber = [
   check('priority').matches(/^[0-9]+$/).withMessage('Must be a number').bail(),
 ];
