@@ -8,15 +8,11 @@ export interface ProgramAllocation extends Program {
   subjects: AllocatedSubjectsByProgramType;
 }
 
-export interface AllocatedSubjectsByProgramType {
-  id: number;
-  name: string;
+export interface AllocatedSubjectsByProgramType extends Program {
   allocatedHours: number;
   requiredHours: number;
 }
 
-export interface AllocatedRoomsByProgramType {
-  id: number;
-  name: string;
+export interface AllocatedRoomsByProgramType extends Program {
   allocatedhours: number;
 }
