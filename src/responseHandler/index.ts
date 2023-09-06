@@ -1,9 +1,9 @@
 import { MysqlError } from 'mysql';
-import logger from '../utils/logger.js';
-import { Response, Request } from 'express';
-import { Logform } from 'winston';
 import { Result, ValidationError } from 'express-validator';
+import { Response, Request } from 'express';
+
 import { validationErrorFormatter } from '../validationHandler/index.js';
+import logger from '../utils/logger.js';
 
 const serverErrorMessage = 'Server error.';
 const requestErrorMessage = 'Request error';
