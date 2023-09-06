@@ -1,4 +1,5 @@
 import express from 'express';
+
 import db_knex from '../db/index_knex.js';
 import {
   successHandler,
@@ -19,6 +20,7 @@ const spaceType = express.Router();
 //   });
 // });
 
+//get all spacetypes
 spaceType.get('/getSelectData', (req, res) => {
   db_knex('SpaceType')
     .select('id', 'name', 'description')

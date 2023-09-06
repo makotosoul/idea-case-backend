@@ -1,5 +1,7 @@
 import express, { Response, Request } from 'express';
 import db_knex from '../db/index_knex.js';
+import { validationResult } from 'express-validator';
+
 import {
   dbErrorHandler,
   requestErrorHandler,
@@ -7,15 +9,15 @@ import {
   validationErrorHandler,
 } from '../responseHandler/index.js';
 import { validateAddUpdateDepartment } from '../validationHandler/index.js';
-import { validationResult } from 'express-validator';
 import { authenticator } from '../authorization/userValidation.js';
 import { admin } from '../authorization/admin.js';
-import { statist } from '../authorization/statist.js';
 import { planner } from '../authorization/planner.js';
+import { statist } from '../authorization/statist.js';
 import { roleChecker } from '../authorization/roleChecker.js';
 
 const department = express.Router();
 
+//get all departments
 department.get(
   '/',
   [authenticator, admin, planner, statist, roleChecker],
@@ -35,6 +37,7 @@ department.get(
   },
 );
 
+//add department
 department.post(
   '/',
   [authenticator, admin, planner, roleChecker],
@@ -80,6 +83,7 @@ department.post(
   },
 );
 
+//delete department by id
 department.delete(
   '/:id',
   [authenticator, admin, roleChecker],
@@ -105,6 +109,7 @@ department.delete(
   },
 );
 
+//update department
 department.put(
   '/',
   [authenticator, admin, roleChecker],

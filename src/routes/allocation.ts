@@ -1,5 +1,6 @@
 import express from 'express';
 import db_knex from '../db/index_knex.js';
+
 import {
   dbErrorHandler,
   successHandler,
@@ -7,12 +8,10 @@ import {
 } from '../responseHandler/index.js';
 import programService from '../services/program.js';
 import allocationService from '../services/allocation.js';
-//import { ProgramAllocation } from '../types.js';
 
 const allocation = express.Router();
 
 /* Get allocation by id */
-
 allocation.get('/:id', async (req, res) => {
   db_knex('AllocRound')
     .select()
@@ -26,7 +25,6 @@ allocation.get('/:id', async (req, res) => {
 });
 
 /* Get rooms with allocated hours by allocationId */
-
 allocation.get('/:id/rooms', (req, res) => {
   const id = req.params.id;
   allocationService
@@ -45,7 +43,6 @@ allocation.get('/:id/rooms', (req, res) => {
 });
 
 /* Get all allocated rooms in programs by allocationId and program */
-
 allocation.get('/:id/program', async (req, res) => {
   const id = req.params.id;
   programService

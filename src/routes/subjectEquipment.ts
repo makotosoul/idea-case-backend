@@ -1,4 +1,7 @@
 import express from 'express';
+import { Request, Response } from 'express';
+import { Result, ValidationError, validationResult } from 'express-validator'; // import { body,} ??
+
 import db from '../db/index.js';
 import logger from '../utils/logger.js';
 import {
@@ -7,9 +10,7 @@ import {
   requestErrorHandler,
   validationErrorHandler,
 } from '../responseHandler/index.js';
-import { Result, ValidationError, validationResult } from 'express-validator'; // import { body,} ??
 import { validateSubjectEquipmentPostAndPut } from '../validationHandler/subjectEquipment.js';
-import { Request, Response } from 'express';
 
 const subjectequipment = express.Router();
 
