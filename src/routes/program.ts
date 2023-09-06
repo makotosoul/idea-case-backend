@@ -7,7 +7,7 @@ import { dbErrorHandler, successHandler } from '../responseHandler/index.js';
 const program = express.Router();
 
 // Program id:s and name:s, to be used in a select list
-program.get('/getSelectData', (req, res) => {
+program.get('/', (req, res) => {
   const sqlSelectName = 'SELECT id, name FROM Program';
   db.query(sqlSelectName, (err, result) => {
     if (err) {
