@@ -14,8 +14,8 @@ import {
 } from '../validationHandler/index.js';
 import { authenticator } from '../authorization/userValidation.js';
 import { admin } from '../authorization/admin.js';
-import { statist } from '../authorization/statist.js';
 import { planner } from '../authorization/planner.js';
+import { statist } from '../authorization/statist.js';
 import { roleChecker } from '../authorization/roleChecker.js';
 
 const building = express.Router();
@@ -68,32 +68,6 @@ building.get(
   },
 );
 
-//delete building by id
-building.delete(
-  '/:id',
-  [authenticator, admin, roleChecker],
-  (req: Request, res: Response) => {
-    db('Building')
-      .select()
-      .where('id', req.params.id)
-      .del()
-      .then((rowsAffected) => {
-        if (rowsAffected === 1) {
-          successHandler(
-            req,
-            res,
-            rowsAffected,
-            `Delete succesfull! Count of deleted rows: ${rowsAffected}`,
-          );
-        } else {
-          requestErrorHandler(req, res, `Invalid building id:${req.params.id}`);
-        }
-      })
-      .catch((error) => {
-        dbErrorHandler(req, res, error, 'Error delete failed');
-      });
-  },
-);
 
 //adding single building
 building.post(
@@ -189,6 +163,34 @@ building.post(
       });
   },
 );
+
+//delete building by id
+building.delete(
+  '/:id',
+  [authenticator, admin, roleChecker],
+  (req: Request, res: Response) => {
+    db('Building')
+      .select()
+      .where('id', req.params.id)
+      .del()
+      .then((rowsAffected) => {
+        if (rowsAffected === 1) {
+          successHandler(
+            req,
+            res,
+            rowsAffected,
+            `Delete succesfull! Count of deleted rows: ${rowsAffected}`,
+          );
+        } else {
+          requestErrorHandler(req, res, `Invalid building id:${req.params.id}`);
+        }
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Error delete failed');
+      });
+  },
+);
+
 
 //updating building information
 building.put(
