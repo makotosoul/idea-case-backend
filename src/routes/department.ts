@@ -37,6 +37,33 @@ department.get(
   },
 );
 
+//get department by id
+department.get(
+  '/:id',
+  [authenticator, admin, planner, statist, roleChecker],
+  (req: Request, res: Response) => {
+    db_knex('Department')
+      .select()
+      .where('id', req.params.id)
+      .then((data) => {
+        successHandler(
+          req,
+          res,
+          data,
+          'Successfully read the department by id from database',
+        );
+      })
+      .catch((err) => {
+        dbErrorHandler(
+          req,
+          res,
+          err,
+          'Oh no! could not get anything from database',
+        );
+      });
+  },
+);
+
 //add department
 department.post(
   '/',
