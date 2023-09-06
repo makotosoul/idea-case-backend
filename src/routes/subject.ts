@@ -32,7 +32,7 @@ const subject = express.Router();
 // Fetching all subjects, joining to each subject the program, and needed spacetype
 subject.get(
   '/',
-  [authenticator, admin, planner, statist, roleChecker, validate],
+  [authenticator, admin, planner, roleChecker, validate],
   (req: Request, res: Response) => {
     const sqlSelectSubjectProgram =
       '  SELECT s.id, s.name AS subjectName, s.groupSize, s.groupCount, s.sessionLength, s.sessionCount, s.area, s.programId, p.name AS programName, s.spaceTypeId, st.name AS spaceTypeName FROM Subject s JOIN Program p ON s.programId = p.id LEFT JOIN SpaceType st ON s.spaceTypeId = st.id;';
