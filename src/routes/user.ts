@@ -1,24 +1,24 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
+import jsonwebtoken from 'jsonwebtoken';
+import dotenv from 'dotenv';
+import bcrypt from 'bcrypt';
+
 import db_knex from '../db/index_knex.js';
 import {
   dbErrorHandler,
   requestErrorHandler,
   successHandler,
-  validationErrorHandler,
   authenticationErrorHandler,
 } from '../responseHandler/index.js';
-import jsonwebtoken from 'jsonwebtoken';
-import dotenv from 'dotenv';
-import bcrypt from 'bcrypt';
 import { authenticator } from '../authorization/userValidation.js';
 import { admin } from '../authorization/admin.js';
 import { roleChecker } from '../authorization/roleChecker.js';
-import { Request, Response } from 'express';
 
 dotenv.config({});
 
 const user = express.Router();
 
+//adding user
 user.post(
   '/',
   [authenticator, admin, roleChecker],
@@ -49,6 +49,7 @@ user.post(
   },
 );
 
+//handling login for registered user
 user.post('/login', (req, res) => {
   console.log(`Login, password: ${req.body.password}`);
   db_knex('User')

@@ -1,11 +1,11 @@
-import express, { Response, Request } from 'express';
+import { Response } from 'express';
 import jsonwebtoken, { JwtPayload } from 'jsonwebtoken';
 import dotenv from 'dotenv';
+
 import { authenticationErrorHandler } from '../responseHandler/index.js';
-import { IncomingHttpHeaders } from 'http';
 import logger from '../utils/logger.js';
 
-dotenv.config();
+dotenv.config(); //In order to load environment variables to process.env
 
 export const authenticator = (req: any, res: Response, next: any) => {
   const authHeader: any = req.get('Authorization');

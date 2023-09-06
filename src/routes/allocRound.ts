@@ -2,13 +2,11 @@ import express from 'express';
 import { Response, Request } from 'express';
 
 import db_knex from '../db/index_knex.js';
-
 import {
   dbErrorHandler,
   successHandler,
   requestErrorHandler,
 } from '../responseHandler/index.js';
-
 import { validate, validateIdObl } from '../validationHandler/index.js';
 import {
   validateAllocRoundPost,
@@ -18,7 +16,6 @@ import {
 const allocround = express.Router();
 
 /* Get all allocations */
-
 allocround.get('/', (req, res) => {
   db_knex('AllocRound')
     .select('id', 'name', 'isSeasonAlloc', 'description', 'lastModified')

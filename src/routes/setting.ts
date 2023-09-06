@@ -1,6 +1,7 @@
 import express from 'express';
-const setting = express.Router();
-import logger from '../utils/logger.js';
+import { Request, Response } from 'express';
+import { validationResult } from 'express-validator';
+
 import db from '../db/index_knex.js';
 import {
   dbErrorHandler,
@@ -9,14 +10,15 @@ import {
   validationErrorHandler,
 } from '../responseHandler/index.js';
 import { validateAddSetting } from '../validationHandler/index.js';
-import { Request, Response } from 'express';
-import { validationResult } from 'express-validator';
 import { authenticator } from '../authorization/userValidation.js';
 import { admin } from '../authorization/admin.js';
-import { statist } from '../authorization/statist.js';
 import { planner } from '../authorization/planner.js';
+import { statist } from '../authorization/statist.js';
 import { roleChecker } from '../authorization/roleChecker.js';
 
+const setting = express.Router();
+
+//get all settings
 setting.get(
   '/',
   [authenticator, admin, planner, statist, roleChecker],
@@ -42,6 +44,7 @@ setting.get(
   },
 );
 
+//get setting by id
 setting.get('/:id', (req, res) => {
   db('GlobalSetting')
     .select()
@@ -59,6 +62,7 @@ setting.get('/:id', (req, res) => {
     });
 });
 
+//delete setting by id
 setting.delete(
   '/delete/:id',
   [authenticator, admin, roleChecker],
@@ -85,6 +89,7 @@ setting.delete(
   },
 );
 
+//add setting
 setting.post(
   '/postSetting',
   [authenticator, admin, planner, roleChecker],
@@ -130,6 +135,7 @@ setting.post(
   },
 );
 
+//update setting
 setting.put(
   '/updateSetting',
   [authenticator, admin, roleChecker],

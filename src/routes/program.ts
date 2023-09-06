@@ -1,4 +1,5 @@
 import express from 'express';
+
 import db from '../db/index.js';
 import db_knex from '../db/index_knex.js';
 import { dbErrorHandler, successHandler } from '../responseHandler/index.js';
@@ -17,6 +18,7 @@ program.get('/getSelectData', (req, res) => {
   });
 });
 
+//get program by id
 program.get('/:id', (req, res) => {
   db_knex('Program')
     .select()

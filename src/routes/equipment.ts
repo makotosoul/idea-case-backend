@@ -1,6 +1,8 @@
 import express from 'express';
 import db_knex from '../db/index_knex.js';
-import logger from '../utils/logger.js';
+import { validationResult } from 'express-validator';
+import { Request, Response } from 'express';
+
 import {
   dbErrorHandler,
   requestErrorHandler,
@@ -8,8 +10,6 @@ import {
   validationErrorHandler,
 } from '../responseHandler/index.js';
 import { validateAddEquipment } from '../validationHandler/index.js';
-import { validationResult } from 'express-validator';
-import { Request, Response } from 'express';
 import { authenticator } from '../authorization/userValidation.js';
 import { admin } from '../authorization/admin.js';
 import { planner } from '../authorization/planner.js';
@@ -38,6 +38,29 @@ equipment.get(
   },
 );
 
+//get equipment by id
+equipment.get(
+  '/:id',
+  [authenticator, admin, planner, roleChecker],
+  (req: Request, res: Response) => {
+    db_knex('Equipment')
+      .select()
+      .where('id', req.params.id)
+      .then((data) => {
+        successHandler(
+          req,
+          res,
+          data,
+          'Successfully read the equipment from DB',
+        );
+      })
+      .catch((err) => {
+        dbErrorHandler(req, res, err, 'Oops! Nothing came through - Equipment');
+      });
+  },
+);
+
+//adding an equipment
 equipment.post(
   '/',
   [authenticator, admin, planner, roleChecker],
@@ -69,6 +92,7 @@ equipment.post(
   },
 );
 
+//deleting an equipment
 equipment.delete(
   '/:id',
   [authenticator, admin, roleChecker],
@@ -94,6 +118,7 @@ equipment.delete(
   },
 );
 
+//updating an equipment
 equipment.put(
   '/updateEquip',
   [authenticator, admin, roleChecker],
@@ -110,27 +135,6 @@ equipment.put(
       })
       .catch((error) => {
         dbErrorHandler(req, res, error, 'Error at updating equipment');
-      });
-  },
-);
-
-equipment.get(
-  '/:id',
-  [authenticator, admin, planner, roleChecker],
-  (req: Request, res: Response) => {
-    db_knex('Equipment')
-      .select()
-      .where('id', req.params.id)
-      .then((data) => {
-        successHandler(
-          req,
-          res,
-          data,
-          'Successfully read the equipment from DB',
-        );
-      })
-      .catch((err) => {
-        dbErrorHandler(req, res, err, 'Oops! Nothing came through - Equipment');
       });
   },
 );

@@ -1,12 +1,13 @@
 import express, { Response, Request } from 'express';
 import db from '../db/index_knex.js';
+import { validationResult } from 'express-validator';
+
 import {
   dbErrorHandler,
   successHandler,
   requestErrorHandler,
   validationErrorHandler,
 } from '../responseHandler/index.js';
-import { validationResult } from 'express-validator';
 import {
   validateBuildingPost,
   validateBuildingMultiPost,
@@ -19,6 +20,7 @@ import { roleChecker } from '../authorization/roleChecker.js';
 
 const building = express.Router();
 
+//get all buildings
 building.get(
   '/',
   [authenticator, admin, statist, planner, roleChecker],
@@ -43,7 +45,8 @@ building.get(
       });
   },
 );
-// protected form getting access through /api/bulding/id
+
+// get building by id
 building.get(
   '/:id',
   [authenticator, admin, planner, roleChecker],
@@ -65,6 +68,7 @@ building.get(
   },
 );
 
+//delete building by id
 building.delete(
   '/:id',
   [authenticator, admin, roleChecker],
@@ -91,6 +95,7 @@ building.delete(
   },
 );
 
+//adding single building
 building.post(
   '/',
   [authenticator, admin, planner, roleChecker],
@@ -136,6 +141,7 @@ building.post(
   },
 );
 
+//adding single or multiple building
 building.post(
   '/multi',
   [authenticator, admin, planner, roleChecker],
@@ -184,6 +190,7 @@ building.post(
   },
 );
 
+//updating building information
 building.put(
   '/',
   [authenticator, admin, roleChecker],

@@ -1,4 +1,5 @@
-import express, { Response, Request } from 'express';
+import { Response } from 'express';
+
 import { authorizationErrorHandler } from '../responseHandler/index.js';
 
 export const roleListPrinter = (req: any): string => {

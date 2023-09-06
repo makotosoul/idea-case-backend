@@ -3,14 +3,12 @@ import { Response, Request } from 'express';
 
 import db from '../db/index.js';
 import db_knex from '../db/index_knex.js'; // knex available for new database operations
-
 import logger from '../utils/logger.js';
 import {
   dbErrorHandler,
   successHandler,
   requestErrorHandler,
 } from '../responseHandler/index.js';
-
 import { authenticator } from '../authorization/userValidation.js';
 import { admin } from '../authorization/admin.js';
 import { planner } from '../authorization/planner.js';
@@ -46,7 +44,7 @@ subject.get(
   },
 );
 
-// SPECIAL Listing all the subjects for selection dropdown etc. (Just name and id)
+// get all subject names and ids
 subject.get(
   '/getNames',
   [authenticator, roleChecker, validate],
