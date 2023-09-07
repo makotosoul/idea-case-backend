@@ -110,6 +110,27 @@ department.post(
   },
 );
 
+//update department
+department.put(
+  '/',
+  [authenticator, admin, roleChecker],
+  (req: Request, res: Response) => {
+    db_knex('Department')
+      .where('id', req.body.id)
+      .update(req.body)
+      .then((rowsAffected) => {
+        if (rowsAffected === 1) {
+          successHandler(req, res, rowsAffected, 'Updated succesfully');
+        } else {
+          requestErrorHandler(req, res, 'Error');
+        }
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Error at updating department');
+      });
+  },
+);
+
 //delete department by id
 department.delete(
   '/:id',
@@ -132,27 +153,6 @@ department.delete(
       })
       .catch((error) => {
         dbErrorHandler(req, res, error, 'Error');
-      });
-  },
-);
-
-//update department
-department.put(
-  '/',
-  [authenticator, admin, roleChecker],
-  (req: Request, res: Response) => {
-    db_knex('Department')
-      .where('id', req.body.id)
-      .update(req.body)
-      .then((rowsAffected) => {
-        if (rowsAffected === 1) {
-          successHandler(req, res, rowsAffected, 'Updated succesfully');
-        } else {
-          requestErrorHandler(req, res, 'Error');
-        }
-      })
-      .catch((error) => {
-        dbErrorHandler(req, res, error, 'Error at updating department');
       });
   },
 );
