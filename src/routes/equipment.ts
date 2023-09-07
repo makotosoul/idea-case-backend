@@ -96,6 +96,7 @@ equipment.post(
 equipment.put(
   '/:id',
   [authenticator, admin, roleChecker, validate],
+
   (req: Request, res: Response) => {
     db_knex('Equipment')
       .where('id', req.body.id)

@@ -72,6 +72,33 @@ allocround.post(
   },
 );
 
+// Update allocround round
+allocround.put(
+  '/',
+  validateAllocRoundPut,
+  [validate],
+  (req: Request, res: Response) => {
+    const allocRound = {
+      name: req.body.name,
+      description: req.body.description,
+    };
+
+    db_knex('AllocRound')
+      .where('id', req.body.id)
+      .update(allocRound)
+      .then((rowsAffected) => {
+        if (rowsAffected === 1) {
+          successHandler(req, res, rowsAffected, 'Updated succesfully');
+        } else {
+          requestErrorHandler(req, res, 'Error');
+        }
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Error at updating AllocRound');
+      });
+  },
+);
+
 // Delete allocround round
 allocround.delete(
   '/:id',
@@ -100,33 +127,6 @@ allocround.delete(
       })
       .catch((error) => {
         dbErrorHandler(req, res, error, 'Error deleting alloc round failed');
-      });
-  },
-);
-
-// Update allocround round
-allocround.put(
-  '/',
-  validateAllocRoundPut,
-  [validate],
-  (req: Request, res: Response) => {
-    const allocRound = {
-      name: req.body.name,
-      description: req.body.description,
-    };
-
-    db_knex('AllocRound')
-      .where('id', req.body.id)
-      .update(allocRound)
-      .then((rowsAffected) => {
-        if (rowsAffected === 1) {
-          successHandler(req, res, rowsAffected, 'Updated succesfully');
-        } else {
-          requestErrorHandler(req, res, 'Error');
-        }
-      })
-      .catch((error) => {
-        dbErrorHandler(req, res, error, 'Error at updating AllocRound');
       });
   },
 );
