@@ -7,6 +7,12 @@ import {
   successHandler,
   requestErrorHandler,
 } from '../responseHandler/index.js';
+
+import { authenticator } from '../authorization/userValidation.js';
+import { admin } from '../authorization/admin.js';
+import { planner } from '../authorization/planner.js';
+import { statist } from '../authorization/statist.js';
+import { roleChecker } from '../authorization/roleChecker.js';
 import { validate, validateIdObl } from '../validationHandler/index.js';
 import {
   validateAllocRoundPost,
@@ -16,21 +22,25 @@ import {
 const allocround = express.Router();
 
 /* Get all allocations */
-allocround.get('/', (req, res) => {
-  db_knex('AllocRound')
-    .select('id', 'name', 'isSeasonAlloc', 'description', 'lastModified')
-    .then((data) => {
-      successHandler(req, res, data, 'getAll succesful - Allocation');
-    })
-    .catch((err) => {
-      dbErrorHandler(
-        req,
-        res,
-        err,
-        'Oops! Nothing came through - Allocation getAll',
-      );
-    });
-});
+allocround.get(
+  '/',
+  [authenticator, admin, planner, statist, roleChecker, validate],
+  (req: Request, res: Response) => {
+    db_knex('AllocRound')
+      .select('id', 'name', 'isSeasonAlloc', 'description', 'lastModified')
+      .then((data) => {
+        successHandler(req, res, data, 'getAll succesful - Allocation');
+      })
+      .catch((err) => {
+        dbErrorHandler(
+          req,
+          res,
+          err,
+          'Oops! Nothing came through - Allocation getAll',
+        );
+      });
+  },
+);
 
 // Adding an AllocRound
 const userId = 201; //user id for adding new AllocRound
@@ -38,7 +48,7 @@ const userId = 201; //user id for adding new AllocRound
 allocround.post(
   '/',
   validateAllocRoundPost,
-  [validate],
+  [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     const allocRound = {
       name: req.body.name,
@@ -72,38 +82,11 @@ allocround.post(
   },
 );
 
-// Update allocround round
-allocround.put(
-  '/',
-  validateAllocRoundPut,
-  [validate],
-  (req: Request, res: Response) => {
-    const allocRound = {
-      name: req.body.name,
-      description: req.body.description,
-    };
-
-    db_knex('AllocRound')
-      .where('id', req.body.id)
-      .update(allocRound)
-      .then((rowsAffected) => {
-        if (rowsAffected === 1) {
-          successHandler(req, res, rowsAffected, 'Updated succesfully');
-        } else {
-          requestErrorHandler(req, res, 'Error');
-        }
-      })
-      .catch((error) => {
-        dbErrorHandler(req, res, error, 'Error at updating AllocRound');
-      });
-  },
-);
-
 // Delete allocround round
 allocround.delete(
   '/:id',
   validateIdObl,
-  [validate],
+  [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('AllocRound')
       .select()
@@ -127,6 +110,33 @@ allocround.delete(
       })
       .catch((error) => {
         dbErrorHandler(req, res, error, 'Error deleting alloc round failed');
+      });
+  },
+);
+
+// Update allocround round
+allocround.put(
+  '/',
+  validateAllocRoundPut,
+  [authenticator, admin, roleChecker, validate],
+  (req: Request, res: Response) => {
+    const allocRound = {
+      name: req.body.name,
+      description: req.body.description,
+    };
+
+    db_knex('AllocRound')
+      .where('id', req.body.id)
+      .update(allocRound)
+      .then((rowsAffected) => {
+        if (rowsAffected === 1) {
+          successHandler(req, res, rowsAffected, 'Updated succesfully');
+        } else {
+          requestErrorHandler(req, res, 'Error');
+        }
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Error at updating AllocRound');
       });
   },
 );
