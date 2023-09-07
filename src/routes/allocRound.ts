@@ -7,12 +7,6 @@ import {
   successHandler,
   requestErrorHandler,
 } from '../responseHandler/index.js';
-
-import { authenticator } from '../authorization/userValidation.js';
-import { admin } from '../authorization/admin.js';
-// import { planner } from '../authorization/planner.js';
-import { statist } from '../authorization/statist.js';
-import { roleChecker } from '../authorization/roleChecker.js';
 import { validate, validateIdObl } from '../validationHandler/index.js';
 import {
   validateAllocRoundPost,
