@@ -8,7 +8,7 @@ import {
   successHandler,
   validationErrorHandler,
 } from '../responseHandler/index.js';
-import { validateAddUpdateDepartment } from '../validationHandler/index.js';
+import { validate, validateAddUpdateDepartment } from '../validationHandler/index.js';
 import { authenticator } from '../authorization/userValidation.js';
 import { admin } from '../authorization/admin.js';
 import { planner } from '../authorization/planner.js';
@@ -40,7 +40,7 @@ department.get(
 //get department by id
 department.get(
   '/:id',
-  [authenticator, admin, planner, statist, roleChecker],
+  [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Department')
       .select()
@@ -67,7 +67,7 @@ department.get(
 //add department
 department.post(
   '/',
-  [authenticator, admin, planner, roleChecker],
+  [authenticator, admin, roleChecker, validate],
   validateAddUpdateDepartment,
   (req: any, res: any) => {
     const valResult = validationResult(req);
@@ -134,7 +134,7 @@ department.put(
 //delete department by id
 department.delete(
   '/:id',
-  [authenticator, admin, roleChecker],
+  [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Department')
       .where('id', req.params.id)
