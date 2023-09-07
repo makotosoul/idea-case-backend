@@ -92,6 +92,27 @@ equipment.post(
   },
 );
 
+//updating an equipment
+equipment.put(
+  '/updateEquip',
+  [authenticator, admin, roleChecker],
+  (req: Request, res: Response) => {
+    db_knex('Equipment')
+      .where('id', req.body.id)
+      .update(req.body)
+      .then((rowsAffected) => {
+        if (rowsAffected === 1) {
+          successHandler(req, res, rowsAffected, 'Updated succesfully');
+        } else {
+          requestErrorHandler(req, res, 'Error');
+        }
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Error at updating equipment');
+      });
+  },
+);
+
 //deleting an equipment
 equipment.delete(
   '/:id',
@@ -114,27 +135,6 @@ equipment.delete(
       })
       .catch((error) => {
         dbErrorHandler(req, res, error, 'Error at equipment delete');
-      });
-  },
-);
-
-//updating an equipment
-equipment.put(
-  '/updateEquip',
-  [authenticator, admin, roleChecker],
-  (req: Request, res: Response) => {
-    db_knex('Equipment')
-      .where('id', req.body.id)
-      .update(req.body)
-      .then((rowsAffected) => {
-        if (rowsAffected === 1) {
-          successHandler(req, res, rowsAffected, 'Updated succesfully');
-        } else {
-          requestErrorHandler(req, res, 'Error');
-        }
-      })
-      .catch((error) => {
-        dbErrorHandler(req, res, error, 'Error at updating equipment');
       });
   },
 );

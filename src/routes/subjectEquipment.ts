@@ -91,22 +91,6 @@ subjectequipment.post(
   },
 );
 
-// Removing an equipment requirement from a subject
-subjectequipment.delete('/delete/:subjectId/:equipmentId', (req, res) => {
-  const subjectId = req.params.subjectId;
-  const equipmentId = req.params.equipmentId;
-  const sqlDelete =
-    'DELETE FROM SubjectEquipment WHERE subjectId = ? AND equipmentId = ?;';
-  db.query(sqlDelete, [subjectId, equipmentId], (err, result) => {
-    if (err) {
-      dbErrorHandler(req, res, err, 'Oops! Delete failed - SubjectEquipment');
-    } else {
-      successHandler(req, res, result, 'Delete successful - SubjectEquipment');
-      logger.info('SubjectEquipment deleted');
-    }
-  });
-});
-
 // Modifying the equipment required by the subject/teaching
 subjectequipment.put(
   '/update',
@@ -151,5 +135,21 @@ subjectequipment.put(
     );
   },
 );
+
+// Removing an equipment requirement from a subject
+subjectequipment.delete('/delete/:subjectId/:equipmentId', (req, res) => {
+  const subjectId = req.params.subjectId;
+  const equipmentId = req.params.equipmentId;
+  const sqlDelete =
+    'DELETE FROM SubjectEquipment WHERE subjectId = ? AND equipmentId = ?;';
+  db.query(sqlDelete, [subjectId, equipmentId], (err, result) => {
+    if (err) {
+      dbErrorHandler(req, res, err, 'Oops! Delete failed - SubjectEquipment');
+    } else {
+      successHandler(req, res, result, 'Delete successful - SubjectEquipment');
+      logger.info('SubjectEquipment deleted');
+    }
+  });
+});
 
 export default subjectequipment;

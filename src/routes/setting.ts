@@ -62,33 +62,6 @@ setting.get('/:id', (req, res) => {
     });
 });
 
-//delete setting by id
-setting.delete(
-  '/delete/:id',
-  [authenticator, admin, roleChecker],
-  (req: Request, res: Response) => {
-    db('GlobalSetting')
-      .select()
-      .where('id', req.params.id)
-      .del()
-      .then((rowsAffected) => {
-        if (rowsAffected === 1) {
-          successHandler(
-            req,
-            res,
-            rowsAffected,
-            `Delete succesfull! Count of deleted rows: ${rowsAffected}`,
-          );
-        } else {
-          requestErrorHandler(req, res, `Invalid setting id:${req.params.id}`);
-        }
-      })
-      .catch((error) => {
-        dbErrorHandler(req, res, error, 'Error delete failed');
-      });
-  },
-);
-
 //add setting
 setting.post(
   '/postSetting',
@@ -180,6 +153,33 @@ setting.put(
           }
         });
     }
+  },
+);
+
+//delete setting by id
+setting.delete(
+  '/delete/:id',
+  [authenticator, admin, roleChecker],
+  (req: Request, res: Response) => {
+    db('GlobalSetting')
+      .select()
+      .where('id', req.params.id)
+      .del()
+      .then((rowsAffected) => {
+        if (rowsAffected === 1) {
+          successHandler(
+            req,
+            res,
+            rowsAffected,
+            `Delete succesfull! Count of deleted rows: ${rowsAffected}`,
+          );
+        } else {
+          requestErrorHandler(req, res, `Invalid setting id:${req.params.id}`);
+        }
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Error delete failed');
+      });
   },
 );
 
