@@ -20,6 +20,21 @@ import { roleChecker } from '../authorization/roleChecker.js';
 
 const building = express.Router();
 
+
+function handleErrorBasedOnErrno(req: Request, res: Response, error: any, defaultMessage: string) {
+  switch (error.errno) {
+    case 1062:
+      requestErrorHandler(req, res, `Conflict: Building with the name ${req.body.name} already exists!`);
+      break;
+    case 1054:
+      requestErrorHandler(req, res, "error in spelling [either in 'name' and/or in 'description'].");
+      break;
+    default:
+      dbErrorHandler(req, res, error, defaultMessage);
+      break;
+  }
+}
+
 //get all buildings
 building.get(
   '/',
@@ -96,21 +111,7 @@ building.post(
         );
       })
       .catch((error) => {
-        if (error.errno === 1062) {
-          requestErrorHandler(
-            req,
-            res,
-            `Conflict: Building with the name ${req.body.name} already exists!`,
-          );
-        } else if (error.errno === 1054) {
-          requestErrorHandler(
-            req,
-            res,
-            "error in spelling [either in 'name' and/or in 'description'].",
-          );
-        } else {
-          dbErrorHandler(req, res, error, 'error adding building');
-        }
+        handleErrorBasedOnErrno(req, res, error, 'error adding building');
       });
   },
 );
@@ -145,52 +146,10 @@ building.post(
         );
       })
       .catch((error) => {
-        if (error.errno === 1062) {
-          requestErrorHandler(
-            req,
-            res,
-            `Conflict: Building with the name ${req.body.name} already exists!`,
-          );
-        } else if (error.errno === 1054) {
-          requestErrorHandler(
-            req,
-            res,
-            "error in spelling [either in 'name' and/or in 'description'].",
-          );
-        } else {
-          dbErrorHandler(req, res, error, 'error adding building');
-        }
+        handleErrorBasedOnErrno(req, res, error, 'error adding building');
       });
   },
 );
-
-//delete building by id
-building.delete(
-  '/:id',
-  [authenticator, admin, roleChecker],
-  (req: Request, res: Response) => {
-    db('Building')
-      .select()
-      .where('id', req.params.id)
-      .del()
-      .then((rowsAffected) => {
-        if (rowsAffected === 1) {
-          successHandler(
-            req,
-            res,
-            rowsAffected,
-            `Delete succesfull! Count of deleted rows: ${rowsAffected}`,
-          );
-        } else {
-          requestErrorHandler(req, res, `Invalid building id:${req.params.id}`);
-        }
-      })
-      .catch((error) => {
-        dbErrorHandler(req, res, error, 'Error delete failed');
-      });
-  },
-);
-
 
 //updating building information
 building.put(
@@ -220,24 +179,39 @@ building.put(
           }
         })
         .catch((error) => {
-          if (error.errno === 1062) {
-            requestErrorHandler(
-              req,
-              res,
-              `DB 1062: Building with the name ${req.body.name} already exists!`,
-            );
-          } else if (error.errno === 1054) {
-            requestErrorHandler(
-              req,
-              res,
-              "error in spelling [either in 'name' and/or in 'description'].",
-            );
-          } else {
-            dbErrorHandler(req, res, error, 'error updating building');
-          }
+          handleErrorBasedOnErrno(req, res, error, 'error adding building');
         });
     }
   },
 );
+
+
+//delete building by id
+building.delete(
+  '/:id',
+  [authenticator, admin, roleChecker],
+  (req: Request, res: Response) => {
+    db('Building')
+      .select()
+      .where('id', req.params.id)
+      .del()
+      .then((rowsAffected) => {
+        if (rowsAffected === 1) {
+          successHandler(
+            req,
+            res,
+            rowsAffected,
+            `Delete succesfull! Count of deleted rows: ${rowsAffected}`,
+          );
+        } else {
+          requestErrorHandler(req, res, `Invalid building id:${req.params.id}`);
+        }
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Error delete failed');
+      });
+  },
+);
+
 
 export default building;
