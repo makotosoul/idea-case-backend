@@ -9,7 +9,7 @@ import {
   requestErrorHandler,
   validationErrorHandler,
 } from '../responseHandler/index.js';
-import { validateAddSetting } from '../validationHandler/index.js';
+import { validateAddSetting, validate } from '../validationHandler/index.js';
 import { authenticator } from '../authorization/userValidation.js';
 import { admin } from '../authorization/admin.js';
 import { planner } from '../authorization/planner.js';
@@ -21,7 +21,7 @@ const setting = express.Router();
 //get all settings
 setting.get(
   '/',
-  [authenticator, admin, planner, statist, roleChecker],
+  [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     db('GlobalSetting')
       .select()
@@ -64,8 +64,8 @@ setting.get('/:id', (req, res) => {
 
 //add setting
 setting.post(
-  '/postSetting',
-  [authenticator, admin, planner, roleChecker],
+  '/',
+  [authenticator, admin, planner, roleChecker, validate],
   validateAddSetting,
   (req: Request, res: Response) => {
     const valResult = validationResult(req);
@@ -110,8 +110,8 @@ setting.post(
 
 //update setting
 setting.put(
-  '/updateSetting',
-  [authenticator, admin, roleChecker],
+  '/',
+  [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     if (!req.body.name) {
       requestErrorHandler(req, res, 'Setting name is missing.');
@@ -158,8 +158,8 @@ setting.put(
 
 //delete setting by id
 setting.delete(
-  '/delete/:id',
-  [authenticator, admin, roleChecker],
+  '/:id',
+  [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     db('GlobalSetting')
       .select()
