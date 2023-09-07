@@ -21,7 +21,7 @@ const spaceType = express.Router();
 // });
 
 //get all spacetypes
-spaceType.get('/getSelectData', (req, res) => {
+spaceType.get('/', (req, res) => {
   db_knex('SpaceType')
     .select('id', 'name', 'description')
     .then((data) => {
