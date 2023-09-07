@@ -10,7 +10,7 @@ import {
 
 import { authenticator } from '../authorization/userValidation.js';
 import { admin } from '../authorization/admin.js';
-import { planner } from '../authorization/planner.js';
+// import { planner } from '../authorization/planner.js';
 import { statist } from '../authorization/statist.js';
 import { roleChecker } from '../authorization/roleChecker.js';
 import { validate, validateIdObl } from '../validationHandler/index.js';
@@ -24,7 +24,7 @@ const allocround = express.Router();
 /* Get all allocations */
 allocround.get(
   '/',
-  [authenticator, admin, planner, statist, roleChecker, validate],
+  [authenticator, admin, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('AllocRound')
       .select('id', 'name', 'isSeasonAlloc', 'description', 'lastModified')
