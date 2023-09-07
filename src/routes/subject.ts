@@ -139,25 +139,6 @@ subject.post(
   },
 );
 
-// Removing a subject/teaching
-subject.delete(
-  '/:id',
-  validateIdObl,
-  [authenticator, admin, planner, roleChecker, validate],
-  (req: Request, res: Response) => {
-    const id = req.params.id;
-    const sqlDelete = 'DELETE FROM Subject WHERE id = ?;';
-    db.query(sqlDelete, id, (err, result) => {
-      if (err) {
-        dbErrorHandler(req, res, err, 'Oops! Delete failed - Subject');
-      } else {
-        successHandler(req, res, result, 'Delete successful - Subject');
-        logger.info('Subject deleted');
-      }
-    });
-  },
-);
-
 // Modifying the subject/teaching
 subject.put(
   '/',
@@ -199,6 +180,25 @@ subject.put(
         }
       },
     );
+  },
+);
+
+// Removing a subject/teaching
+subject.delete(
+  '/:id',
+  validateIdObl,
+  [authenticator, admin, planner, roleChecker, validate],
+  (req: Request, res: Response) => {
+    const id = req.params.id;
+    const sqlDelete = 'DELETE FROM Subject WHERE id = ?;';
+    db.query(sqlDelete, id, (err, result) => {
+      if (err) {
+        dbErrorHandler(req, res, err, 'Oops! Delete failed - Subject');
+      } else {
+        successHandler(req, res, result, 'Delete successful - Subject');
+        logger.info('Subject deleted');
+      }
+    });
   },
 );
 
