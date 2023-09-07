@@ -1,5 +1,4 @@
 import express from 'express';
-import db_knex from '../db/index_knex.js';
 
 import {
   dbErrorHandler,
@@ -16,28 +15,6 @@ import { roleChecker } from '../authorization/roleChecker.js';
 import { validate } from '../validationHandler/index.js';
 
 const allocation = express.Router();
-
-/* Get allocation by id */
-allocation.get(
-  '/:id',
-  [authenticator, admin, planner, statist, roleChecker, validate],
-  async (req: any, res: any) => {
-    db_knex('AllocRound')
-      .select()
-      .where('id', req.params.id)
-      .then((data) => {
-        successHandler(
-          req,
-          res,
-          data,
-          'Successfully read the buildings from DB',
-        );
-      })
-      .catch((err) => {
-        dbErrorHandler(req, res, err, 'Oops! Nothing came through - Building');
-      });
-  },
-);
 
 /* Get rooms with allocated hours by allocationId */
 allocation.get(

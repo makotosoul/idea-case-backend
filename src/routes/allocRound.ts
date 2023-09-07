@@ -12,6 +12,11 @@ import {
   validateAllocRoundPost,
   validateAllocRoundPut,
 } from '../validationHandler/allocRound.js';
+import { authenticator } from '../authorization/userValidation.js';
+import { admin } from '../authorization/admin.js';
+import { planner } from '../authorization/planner.js';
+import { statist } from '../authorization/statist.js';
+import { roleChecker } from '../authorization/roleChecker.js';
 
 const allocround = express.Router();
 
@@ -31,6 +36,28 @@ allocround.get('/', (req, res) => {
       );
     });
 });
+
+/* Get alloc round by id */
+allocround.get(
+  '/:id',
+  [authenticator, admin, planner, statist, roleChecker, validate],
+  async (req: any, res: any) => {
+    db_knex('AllocRound')
+      .select()
+      .where('id', req.params.id)
+      .then((data) => {
+        successHandler(
+          req,
+          res,
+          data,
+          'Successfully read the buildings from DB',
+        );
+      })
+      .catch((err) => {
+        dbErrorHandler(req, res, err, 'Oops! Nothing came through - Building');
+      });
+  },
+);
 
 // Adding an AllocRound
 const userId = 201; //user id for adding new AllocRound
