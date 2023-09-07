@@ -1,32 +1,32 @@
 import express from 'express';
-import db_knex from '../db/index_knex.js';
-import { validationResult } from 'express-validator';
 import { Request, Response } from 'express';
 
+import db_knex from '../db/index_knex.js';
+import { validationResult } from 'express-validator';
 import {
   dbErrorHandler,
   requestErrorHandler,
   successHandler,
   validationErrorHandler,
 } from '../responseHandler/index.js';
-import { validateAddEquipment } from '../validationHandler/index.js';
 import { authenticator } from '../authorization/userValidation.js';
 import { admin } from '../authorization/admin.js';
 import { planner } from '../authorization/planner.js';
 import { statist } from '../authorization/statist.js';
 import { roleChecker } from '../authorization/roleChecker.js';
+import { validateAddEquipment, validate } from '../validationHandler/index.js';
 
 const equipment = express.Router();
 
 // Equipment id:s and name:s, for a select list and for the default priority done with Knex
 equipment.get(
   '/',
-  [authenticator, admin, statist, planner, roleChecker],
+  [authenticator, admin, statist, planner, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Equipment')
       .select('id', 'name', 'priority as equipmentPriority', 'description')
       .then((data) => {
-        successHandler(req, res, data, 'getNames succesful - Equipment');
+        successHandler(req, res, data, 'getNames successful - Equipment');
       })
       .catch((err) => {
         requestErrorHandler(
@@ -41,7 +41,7 @@ equipment.get(
 //get equipment by id
 equipment.get(
   '/:id',
-  [authenticator, admin, planner, roleChecker],
+  [authenticator, admin, planner, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Equipment')
       .select()
@@ -63,7 +63,7 @@ equipment.get(
 //adding an equipment
 equipment.post(
   '/',
-  [authenticator, admin, planner, roleChecker],
+  [authenticator, admin, roleChecker, validate],
   validateAddEquipment,
   (req: Request, res: Response) => {
     const errors = validationResult(req);
@@ -94,8 +94,9 @@ equipment.post(
 
 //updating an equipment
 equipment.put(
-  '/updateEquip',
-  [authenticator, admin, roleChecker],
+  '/:id',
+  [authenticator, admin, roleChecker, validate],
+
   (req: Request, res: Response) => {
     db_knex('Equipment')
       .where('id', req.body.id)
@@ -116,7 +117,7 @@ equipment.put(
 //deleting an equipment
 equipment.delete(
   '/:id',
-  [authenticator, admin, roleChecker],
+  [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Equipment')
       .where('id', req.params.id)
@@ -127,7 +128,7 @@ equipment.delete(
             req,
             res,
             rowsAffected,
-            `Delete succesful! Count of deleted rows: ${rowsAffected}`,
+            `Delete successful! Count of deleted rows: ${rowsAffected}`,
           );
         } else {
           requestErrorHandler(req, res, `Invalid number id: ${req.params.id}`);
