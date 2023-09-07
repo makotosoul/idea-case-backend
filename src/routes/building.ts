@@ -1,5 +1,5 @@
 import express, { Response, Request } from 'express';
-import db from '../db/index_knex.js';
+import db_knex from '../db/index_knex.js';
 import { validationResult } from 'express-validator';
 
 import {
@@ -11,6 +11,7 @@ import {
 import {
   validateBuildingPost,
   validateBuildingMultiPost,
+  validate,
 } from '../validationHandler/index.js';
 import { authenticator } from '../authorization/userValidation.js';
 import { admin } from '../authorization/admin.js';
@@ -38,9 +39,9 @@ function handleErrorBasedOnErrno(req: Request, res: Response, error: any, defaul
 //get all buildings
 building.get(
   '/',
-  [authenticator, admin, statist, planner, roleChecker],
+  [authenticator, admin, statist, planner, roleChecker, validate],
   (req: Request, res: Response) => {
-    db('Building')
+    db_knex('Building')
       .select()
       .then((data) => {
         successHandler(
@@ -64,9 +65,9 @@ building.get(
 // get building by id
 building.get(
   '/:id',
-  [authenticator, admin, planner, roleChecker],
+  [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
-    db('Building')
+    db_knex('Building')
       .select()
       .where('id', req.params.id)
       .then((data) => {
@@ -87,7 +88,7 @@ building.get(
 //adding single building
 building.post(
   '/',
-  [authenticator, admin, planner, roleChecker],
+  [authenticator, admin, roleChecker, validate],
   validateBuildingPost,
   (req: Request, res: Response) => {
     const valResult = validationResult(req);
@@ -99,7 +100,7 @@ building.post(
         `${valResult}validateAddUpdateBuilding error`,
       );
     }
-    db('Building')
+    db_knex('Building')
       .insert(req.body)
       .into('Building')
       .then((idArray) => {
@@ -119,7 +120,7 @@ building.post(
 //adding single or multiple building
 building.post(
   '/multi',
-  [authenticator, admin, planner, roleChecker],
+  [authenticator, admin, roleChecker, validate],
   validateBuildingMultiPost,
   (req: Request, res: Response) => {
     const valResult = validationResult(req);
@@ -134,7 +135,7 @@ building.post(
       return;
     }
 
-    db('Building')
+    db_knex('Building')
       .insert(req.body)
       .into('Building')
       .then((idArray) => {
@@ -154,12 +155,12 @@ building.post(
 //updating building information
 building.put(
   '/',
-  [authenticator, admin, roleChecker],
+  [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     if (!req.body.name) {
       requestErrorHandler(req, res, 'Building name is missing.');
     } else {
-      db('Building')
+      db_knex('Building')
         .where('id', req.body.id)
         .update(req.body)
         .then((rowsAffected) => {
@@ -189,9 +190,9 @@ building.put(
 //delete building by id
 building.delete(
   '/:id',
-  [authenticator, admin, roleChecker],
+  [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
-    db('Building')
+    db_knex('Building')
       .select()
       .where('id', req.params.id)
       .del()
