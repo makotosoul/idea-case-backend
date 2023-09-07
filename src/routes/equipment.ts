@@ -21,7 +21,7 @@ const equipment = express.Router();
 // Equipment id:s and name:s, for a select list and for the default priority done with Knex
 equipment.get(
   '/',
-  [authenticator, admin, statist, planner, roleChecker, validate],
+  [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Equipment')
       .select('id', 'name', 'priority as equipmentPriority', 'description')
@@ -41,7 +41,7 @@ equipment.get(
 //get equipment by id
 equipment.get(
   '/:id',
-  [authenticator, admin, planner, roleChecker, validate],
+  [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Equipment')
       .select()
