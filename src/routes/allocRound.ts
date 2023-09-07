@@ -126,8 +126,8 @@ allocround.put(
     };
 
     db_knex('AllocRound')
-      .where('id', req.body.id)
       .update(allocRound)
+      .where('id', req.body.id)
       .then((rowsAffected) => {
         if (rowsAffected === 1) {
           successHandler(req, res, rowsAffected, 'Updated succesfully');

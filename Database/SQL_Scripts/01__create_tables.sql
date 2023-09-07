@@ -181,7 +181,7 @@ CREATE TABLE IF NOT EXISTS SubjectEquipment (
 CREATE TABLE IF NOT EXISTS AllocRound (
     id              INTEGER     NOT NULL AUTO_INCREMENT,
     date            TIMESTAMP   NOT NULL DEFAULT current_timestamp(),
-    name            VARCHAR(255) NOT NULL,
+    name            VARCHAR(255) UNIQUE NOT NULL,
     isSeasonAlloc   BOOLEAN,
     userId          INTEGER     NOT NULL,
     description     VARCHAR(16000),
