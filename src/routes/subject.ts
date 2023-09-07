@@ -3,12 +3,14 @@ import { Response, Request } from 'express';
 
 import db from '../db/index.js';
 import db_knex from '../db/index_knex.js'; // knex available for new database operations
+
 import logger from '../utils/logger.js';
 import {
   dbErrorHandler,
   successHandler,
   requestErrorHandler,
 } from '../responseHandler/index.js';
+
 import { authenticator } from '../authorization/userValidation.js';
 import { admin } from '../authorization/admin.js';
 import { planner } from '../authorization/planner.js';
@@ -30,7 +32,7 @@ const subject = express.Router();
 // Fetching all subjects, joining to each subject the program, and needed spacetype
 subject.get(
   '/',
-  [authenticator, admin, planner, roleChecker, validate],
+  [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     const sqlSelectSubjectProgram =
       '  SELECT s.id, s.name AS subjectName, s.groupSize, s.groupCount, s.sessionLength, s.sessionCount, s.area, s.programId, p.name AS programName, s.spaceTypeId, st.name AS spaceTypeName FROM Subject s JOIN Program p ON s.programId = p.id LEFT JOIN SpaceType st ON s.spaceTypeId = st.id;';
@@ -44,7 +46,7 @@ subject.get(
   },
 );
 
-// get all subject names and ids
+// SPECIAL Listing all the subjects for selection dropdown etc. (Just name and id)
 subject.get(
   '/getNames',
   [authenticator, roleChecker, validate],
@@ -139,6 +141,25 @@ subject.post(
   },
 );
 
+// Removing a subject/teaching
+subject.delete(
+  '/:id',
+  validateIdObl,
+  [authenticator, admin, planner, roleChecker, validate],
+  (req: Request, res: Response) => {
+    const id = req.params.id;
+    const sqlDelete = 'DELETE FROM Subject WHERE id = ?;';
+    db.query(sqlDelete, id, (err, result) => {
+      if (err) {
+        dbErrorHandler(req, res, err, 'Oops! Delete failed - Subject');
+      } else {
+        successHandler(req, res, result, 'Delete successful - Subject');
+        logger.info('Subject deleted');
+      }
+    });
+  },
+);
+
 // Modifying the subject/teaching
 subject.put(
   '/',
@@ -180,25 +201,6 @@ subject.put(
         }
       },
     );
-  },
-);
-
-// Removing a subject/teaching
-subject.delete(
-  '/:id',
-  validateIdObl,
-  [authenticator, admin, planner, roleChecker, validate],
-  (req: Request, res: Response) => {
-    const id = req.params.id;
-    const sqlDelete = 'DELETE FROM Subject WHERE id = ?;';
-    db.query(sqlDelete, id, (err, result) => {
-      if (err) {
-        dbErrorHandler(req, res, err, 'Oops! Delete failed - Subject');
-      } else {
-        successHandler(req, res, result, 'Delete successful - Subject');
-        logger.info('Subject deleted');
-      }
-    });
   },
 );
 
