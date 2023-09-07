@@ -14,16 +14,16 @@ import allocround from './allocRound.js';
 
 const routes = express.Router();
 
-routes.use('/setting', setting);
-routes.use('/subject', subject);
-routes.use('/program', program);
-routes.use('/spaceType', spaceType);
-routes.use('/equipment', equipment);
-routes.use('/subjectequipment', subjectequipment);
 routes.use('/allocation', allocation);
+routes.use('/allocRound', allocround);
 routes.use('/building', building);
 routes.use('/department', department);
+routes.use('/equipment', equipment);
+routes.use('/program', program);
+routes.use('/setting', setting);
+routes.use('/spaceType', spaceType);
+routes.use('/subject', subject);
+routes.use('/subjectequipment', subjectequipment);
 routes.use('/user', user);
-routes.use('/allocRound', allocround);
 
 export default routes;
