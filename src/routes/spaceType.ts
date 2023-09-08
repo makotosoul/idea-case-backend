@@ -8,7 +8,7 @@ import {
 import { authenticator } from '../authorization/userValidation.js';
 import { admin } from '../authorization/admin.js';
 import { planner } from '../authorization/planner.js';
-//import { statist } from '../authorization/statist.js';
+import { statist } from '../authorization/statist.js';
 import { roleChecker } from '../authorization/roleChecker.js';
 import { validate } from '../validationHandler/index.js';
 
@@ -29,7 +29,7 @@ const spaceType = express.Router();
 //get all spacetypes
 spaceType.get(
   '/',
-  [authenticator, admin, planner, roleChecker, validate],
+  [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('SpaceType')
       .select('id', 'name', 'description')
