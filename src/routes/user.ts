@@ -60,7 +60,11 @@ user.post('/login', (req, res) => {
         .compare(req.body.password, data[0].password)
         .then((passwordCheck) => {
           if (!passwordCheck) {
-            authenticationErrorHandler(req, res, "Passwords don't match!");
+            authenticationErrorHandler(
+              req,
+              res,
+              "/login: Passwords don't match!",
+            );
             return;
           } else {
             const token = jsonwebtoken.sign(
@@ -74,19 +78,19 @@ user.post('/login', (req, res) => {
               { expiresIn: '24h' },
             );
             const updatedData = data.map((obj) => ({ ...obj, token }));
-            successHandler(req, res, updatedData, 'Ok');
+            successHandler(req, res, updatedData, '/login: Ok');
           }
         })
         .catch((err) => {
           requestErrorHandler(
             req,
             res,
-            `${err} Oops! Nothing came through - User`,
+            `${err} /login: Oops! Nothing came through - User`,
           );
         });
     })
     .catch((error) => {
-      dbErrorHandler(req, res, error, 'Database error');
+      dbErrorHandler(req, res, error, '/login: Database error');
     });
 });
 
