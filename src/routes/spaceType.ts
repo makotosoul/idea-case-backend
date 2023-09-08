@@ -1,10 +1,16 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 
 import db_knex from '../db/index_knex.js';
 import {
   successHandler,
   requestErrorHandler,
 } from '../responseHandler/index.js';
+import { authenticator } from '../authorization/userValidation.js';
+import { admin } from '../authorization/admin.js';
+import { planner } from '../authorization/planner.js';
+//import { statist } from '../authorization/statist.js';
+import { roleChecker } from '../authorization/roleChecker.js';
+import { validate } from '../validationHandler/index.js';
 
 const spaceType = express.Router();
 
@@ -21,24 +27,28 @@ const spaceType = express.Router();
 // });
 
 //get all spacetypes
-spaceType.get('/', (req, res) => {
-  db_knex('SpaceType')
-    .select('id', 'name', 'description')
-    .then((data) => {
-      successHandler(
-        req,
-        res,
-        data,
-        'All SpaceTypes fetched succesfully from DB.',
-      );
-    })
-    .catch((err) => {
-      requestErrorHandler(
-        req,
-        res,
-        `${err}Oops! Nothing came through - SpaceType`,
-      );
-    });
-});
+spaceType.get(
+  '/',
+  [authenticator, admin, planner, roleChecker, validate],
+  (req: Request, res: Response) => {
+    db_knex('SpaceType')
+      .select('id', 'name', 'description')
+      .then((data) => {
+        successHandler(
+          req,
+          res,
+          data,
+          'All SpaceTypes fetched succesfully from DB.',
+        );
+      })
+      .catch((err) => {
+        requestErrorHandler(
+          req,
+          res,
+          `${err}Oops! Nothing came through - SpaceType`,
+        );
+      });
+  },
+);
 
 export default spaceType;
