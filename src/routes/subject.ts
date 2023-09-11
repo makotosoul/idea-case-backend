@@ -30,7 +30,7 @@ import {
 const subject = express.Router();
 
 // Fetching all subjects, joining to each subject the program, and needed spacetype
-subject.get(
+/*subject.get(
   '/',
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
@@ -44,7 +44,7 @@ subject.get(
       }
     });
   },
-);
+);*/
 
 // SPECIAL Listing all the subjects for selection dropdown etc. (Just name and id)
 subject.get(
@@ -201,6 +201,37 @@ subject.put(
         }
       },
     );
+  },
+);
+
+// Fetching all subjects, joining to each subject the program, and needed spacetype using Knex
+subject.get(
+  '/',
+  [authenticator, admin, planner, statist, roleChecker, validate],
+  (req: Request, res: Response) => {
+    db_knex
+      .select(
+        's.id',
+        's.name AS subjectName',
+        's.groupSize',
+        's.groupCount',
+        's.sessionLength',
+        's.sessionCount',
+        's.area',
+        's.programId',
+        'p.name AS programName',
+        's.spaceTypeId',
+        'st.name AS spaceTypeName',
+      )
+      .from('Subject as s')
+      .leftJoin('Program as p', 's.programId', 'p.id')
+      .leftJoin('SpaceType as st', 's.spaceTypeId', 'st.id')
+      .then((subjects) => {
+        successHandler(req, res, subjects, 'getAll successful - Subject');
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Oops! Nothing came through - Subject');
+      });
   },
 );
 
