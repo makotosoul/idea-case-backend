@@ -224,7 +224,7 @@ subject.get(
         'st.name AS spaceTypeName',
       )
       .from('Subject as s')
-      .leftJoin('Program as p', 's.programId', 'p.id')
+      .innerJoin('Program as p', 's.programId', 'p.id')
       .leftJoin('SpaceType as st', 's.spaceTypeId', 'st.id')
       .then((subjects) => {
         successHandler(req, res, subjects, 'getAll successful - Subject');
