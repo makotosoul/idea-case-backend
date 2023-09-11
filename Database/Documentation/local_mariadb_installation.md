@@ -23,33 +23,7 @@
 
 1. Create .env file.
 
-1. Copy following lines to .env file:
-
-    BE_API_URL_PREFIX=/api
-
-    BE_SERVER_PORT=8764
-
-    DB_DRIVER_MODULE=mysql
-
-    DB_HOST=localhost
-
-    DB_PORT=3306
-
-    DB_USER=#your username here
-
-    DB_PASSWORD=#your password here
-
-    DB_DATABASE=casedb
-
-    DB_DEBUG=true
-
-    DB_MULTIPLE_STATEMENTS=true
-
-    DB_CONNECTION_POOL_MIN=1
-
-    DB_CONNECTION_POOL_MAX=7
-
-    SECRET_TOKEN=ThwvTz7KcvxbPeJWxMSU8BBX4
+1. Copy the lines mentioned in the main README to the .env file:
 
 1. Change DB_USER and DB_PASSWORD to the ones you selected.
 
@@ -93,32 +67,7 @@ Ensure that serverhost is 'localhost' and port is '3306'. The username should be
 https://github.com/haagahelia/Siba_be/blob/main/Database/SQL_Scripts/000__CreateALLdb.sql 
 and paste them to execute SQL scripts. Shortcut to execute: option + X
 
-1. Go to the director Siba_be and create the .env file. Paste in the .env file
-    `BE_API_URL_PREFIX=/api`
-   
-    `BE_SERVER_PORT=8764`
-   
-    `DB_DRIVER_MODULE=mysql`
-   
-    `DB_HOST=localhost`
-   
-    `DB_PORT=3306`
-   
-    `DB_USER=#your username here`
-   
-    `DB_PASSWORD=#your password here`
-   
-    `DB_DATABASE=casedb`
-   
-    `DB_DEBUG=true`
-   
-    `DB_MULTIPLE_STATEMENTS=true`
-   
-    `DB_CONNECTION_POOL_MIN=1`
-   
-    `DB_CONNECTION_POOL_MAX=7`
-   
-    `SECRET_TOKEN=ThwvTz7KcvxbPeJWxMSU8BBX4`
+1. Go to the director Siba_be and create the .env file according to the main README.md instructions.     
 
 1. Change DB_USER and DB_PASSWORD to the ones you selected.
 
