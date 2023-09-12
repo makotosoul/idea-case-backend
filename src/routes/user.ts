@@ -13,6 +13,8 @@ import {
 import { authenticator } from '../authorization/userValidation.js';
 import { admin } from '../authorization/admin.js';
 import { roleChecker } from '../authorization/roleChecker.js';
+import { validate } from '../validationHandler/index.js';
+import knex from 'knex';
 
 dotenv.config({});
 
@@ -45,6 +47,35 @@ user.post(
         } else {
           dbErrorHandler(req, res, error, 'Some DB error while adding user');
         }
+      });
+  },
+);
+
+// Fetching all users
+user.get(
+  '/',
+  [authenticator, admin, roleChecker, validate],
+  (req: Request, res: Response) => {
+    db_knex
+      .select(
+        'u.id',
+        'u.email',
+        'u.isAdmin',
+        'u.isPlanner',
+        'u.isStatist',
+        db_knex.raw(
+          "GROUP_CONCAT(d.name SEPARATOR ' | ') as 'Planner for Departments'",
+        ),
+      )
+      .from('User as u')
+      .leftJoin('Departmentplanner as dp', 'u.id', 'dp.userid')
+      .leftJoin('Department as d', 'dp.departmentid', 'd.id')
+      .groupBy('u.id')
+      .then((users) => {
+        successHandler(req, res, users, 'getAll successful - Users');
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Oops! Nothing came through - Users');
       });
   },
 );
