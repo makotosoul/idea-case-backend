@@ -61,7 +61,7 @@ Backend side installation instructions
 5. Change directory
 
    ```sh
-   cd Sibe_be
+   cd Siba_be
    ```
 
 6. Install needed packages
@@ -108,5 +108,17 @@ Backend side installation instructions
    ```
 
 9. Attention! Follow the [Frontend repo](https://github.com/haagahelia/siba-fe) installation guide as well
+
+
+### How to run using docker-compose
+
+1. Follow installation steps from 1 to 5
+
+2. Run this command to launch application
+ 
+   ```sh
+   docker-compose -f docker-compose-be.yaml up -d
+   ```
+
 
 <p align="right">(<a href="#top">back to top</a>)</p>
