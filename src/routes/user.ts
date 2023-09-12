@@ -67,7 +67,7 @@ user.get(
         ),
       )
       .from('User as u')
-      .leftJoin('Departmentplanner as dp', 'u.id', 'dp.userid')
+      .leftJoin('DepartmentPlanner as dp', 'u.id', 'dp.userid')
       .leftJoin('Department as d', 'dp.departmentid', 'd.id')
       .groupBy('u.id')
       .then((users) => {
