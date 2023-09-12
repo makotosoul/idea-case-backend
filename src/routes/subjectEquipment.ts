@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { Result, ValidationError, validationResult } from 'express-validator'; // import { body,} ??
 
 import db from '../db/index.js';
+import db_knex from '../db/index_knex.js'; // knex available for new database operations
 import logger from '../utils/logger.js';
 import {
   dbErrorHandler,
@@ -15,7 +16,7 @@ import { validateSubjectEquipmentPostAndPut } from '../validationHandler/subject
 const subjectequipment = express.Router();
 
 // Getting all equipment requirement rows for a subject based on the subject id
-subjectequipment.get('/getEquipment/:subjectId', (req, res) => {
+/*subjectequipment.get('/getEquipment/:subjectId', (req, res) => {
   const subjectId = req.params.subjectId;
   const sqlGetEquipmentBySubjectId =
     'SELECT se.subjectId , e.name,e.description, se.equipmentId, se.priority, se.obligatory FROM SubjectEquipment se JOIN Equipment e ON se.equipmentId = e.id WHERE se.subjectid = ?;';
@@ -36,10 +37,10 @@ subjectequipment.get('/getEquipment/:subjectId', (req, res) => {
       );
     }
   });
-});
+});*/
 
 // Adding a equipment requirement to teaching/subject
-subjectequipment.post(
+/*subjectequipment.post(
   '/post',
   validateSubjectEquipmentPostAndPut,
   (req: Request, res: Response) => {
@@ -89,7 +90,7 @@ subjectequipment.post(
       },
     );
   },
-);
+);*/
 
 // Modifying the equipment required by the subject/teaching
 subjectequipment.put(
@@ -151,5 +152,81 @@ subjectequipment.delete('/delete/:subjectId/:equipmentId', (req, res) => {
     }
   });
 });
+
+// Getting all equipment requirement rows for a subject based on the subject id using knex
+subjectequipment.get('/getEquipment/:subjectId', (req, res) => {
+  const subjectId = req.params.subjectId;
+  db_knex
+    .select(
+      'se.subjectId',
+      'e.name',
+      'e.description',
+      'se.equipmentId',
+      'se.priority',
+      'se.obligatory',
+    )
+    .from('SubjectEquipment as se')
+    .innerJoin('Equipment as e', 'se.equipmentId', 'e.id')
+    .where('se.subjectId', subjectId)
+    .then((result) => {
+      successHandler(
+        req,
+        res,
+        result,
+        'getEquipment successful - SubjectEquipment',
+      );
+    })
+    .catch((error) => {
+      dbErrorHandler(
+        req,
+        res,
+        error,
+        'Oops! Nothing came through - SubjectEquipment',
+      );
+    });
+});
+
+// Adding a equipment requirement to teaching/subject using knex
+subjectequipment.post(
+  '/post',
+  validateSubjectEquipmentPostAndPut,
+  (req: Request, res: Response) => {
+    const subjectId = req.body.subjectId;
+    const equipmentId = req.body.equipmentId;
+    const priority = req.body.priority;
+    const obligatory = req.body.obligatory;
+
+    const subjectEquipmentData = {
+      subjectId,
+      equipmentId,
+      priority,
+      obligatory,
+    };
+
+    db_knex('SubjectEquipment')
+      .insert(subjectEquipmentData)
+      .returning('id') // Return the inserted ID
+      .then((result) => {
+        const insertId = result[0];
+        successHandler(
+          req,
+          res,
+          { insertId },
+          'Create successful - SubjectEquipment',
+        );
+        logger.info(
+          `SubjectEquipment created subjectId ${subjectId} & ${equipmentId}`,
+        );
+      })
+      .catch((error) => {
+        dbErrorHandler(
+          req,
+          res,
+          error,
+          'Oops! Create failed - SubjectEquipment',
+        );
+      });
+  },
+);
 
 export default subjectequipment;
