@@ -95,7 +95,7 @@ subject.get(
 );
 
 // Adding a subject/teaching
-subject.post(
+/*subject.post(
   '/',
   validateSubjectPost,
   [authenticator, admin, planner, roleChecker, validate],
@@ -139,7 +139,7 @@ subject.post(
       },
     );
   },
-);
+);*/
 
 // Removing a subject/teaching
 subject.delete(
@@ -248,6 +248,44 @@ subject.get(
       })
       .catch((error) => {
         dbErrorHandler(req, res, error, 'Oops! Nothing came through - Subject');
+      });
+  },
+);
+
+// Adding a subject/teaching using knex
+subject.post(
+  '/',
+  validateSubjectPost,
+  [authenticator, admin, planner, roleChecker, validate],
+  (req: Request, res: Response) => {
+    const subjectData = {
+      name: req.body.name,
+      groupSize: req.body.groupSize,
+      groupCount: req.body.groupCount,
+      sessionLength: req.body.sessionLength,
+      sessionCount: req.body.sessionCount,
+      area: req.body.area,
+      programId: req.body.programId,
+      spaceTypeId: req.body.spaceTypeId,
+    };
+
+    db_knex('Subject')
+      .insert(subjectData)
+      .then((result) => {
+        if (result.length === 0) {
+          requestErrorHandler(req, res, 'Nothing to insert');
+        } else {
+          successHandler(
+            req,
+            res,
+            { insertId: result[0] }, // Assuming auto-incremented ID
+            'Create successful - Subject',
+          );
+          logger.info(`Subject ${subjectData.name} created`);
+        }
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Oops! Create failed - Subject');
       });
   },
 );
