@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { Result, ValidationError, validationResult } from 'express-validator'; // import { body,} ??
 
 import db from '../db/index.js';
+import db_knex from '../db/index_knex.js'; // knex available for new database operations
 import logger from '../utils/logger.js';
 import {
   dbErrorHandler,
@@ -15,7 +16,7 @@ import { validateSubjectEquipmentPostAndPut } from '../validationHandler/subject
 const subjectequipment = express.Router();
 
 // Getting all equipment requirement rows for a subject based on the subject id
-subjectequipment.get('/getEquipment/:subjectId', (req, res) => {
+/*subjectequipment.get('/getEquipment/:subjectId', (req, res) => {
   const subjectId = req.params.subjectId;
   const sqlGetEquipmentBySubjectId =
     'SELECT se.subjectId , e.name,e.description, se.equipmentId, se.priority, se.obligatory FROM SubjectEquipment se JOIN Equipment e ON se.equipmentId = e.id WHERE se.subjectid = ?;';
@@ -36,7 +37,7 @@ subjectequipment.get('/getEquipment/:subjectId', (req, res) => {
       );
     }
   });
-});
+});*/
 
 // Adding a equipment requirement to teaching/subject
 subjectequipment.post(
@@ -150,6 +151,39 @@ subjectequipment.delete('/delete/:subjectId/:equipmentId', (req, res) => {
       logger.info('SubjectEquipment deleted');
     }
   });
+});
+
+// Getting all equipment requirement rows for a subject based on the subject id using knex
+subjectequipment.get('/getEquipment/:subjectId', (req, res) => {
+  const subjectId = req.params.subjectId;
+  db_knex
+    .select(
+      'se.subjectId',
+      'e.name',
+      'e.description',
+      'se.equipmentId',
+      'se.priority',
+      'se.obligatory',
+    )
+    .from('SubjectEquipment as se')
+    .innerJoin('Equipment as e', 'se.equipmentId', 'e.id')
+    .where('se.subjectId', subjectId)
+    .then((result) => {
+      successHandler(
+        req,
+        res,
+        result,
+        'getEquipment successful - SubjectEquipment',
+      );
+    })
+    .catch((error) => {
+      dbErrorHandler(
+        req,
+        res,
+        error,
+        'Oops! Nothing came through - SubjectEquipment',
+      );
+    });
 });
 
 export default subjectequipment;
