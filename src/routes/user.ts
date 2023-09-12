@@ -14,7 +14,6 @@ import { authenticator } from '../authorization/userValidation.js';
 import { admin } from '../authorization/admin.js';
 import { roleChecker } from '../authorization/roleChecker.js';
 import { validate } from '../validationHandler/index.js';
-import knex from 'knex';
 
 dotenv.config({});
 
@@ -64,7 +63,7 @@ user.get(
         'u.isPlanner',
         'u.isStatist',
         db_knex.raw(
-          "GROUP_CONCAT(d.name SEPARATOR ' | ') as 'Planner for Departments'",
+          "GROUP_CONCAT(d.name SEPARATOR ' | ') as 'plannerdepartment'",
         ),
       )
       .from('User as u')
