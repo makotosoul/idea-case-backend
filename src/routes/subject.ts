@@ -47,7 +47,7 @@ const subject = express.Router();
 );*/
 
 // SPECIAL Listing all the subjects for selection dropdown etc. (Just name and id)
-subject.get(
+/*subject.get(
   '/getNames',
   [authenticator, roleChecker, validate],
   (req: Request, res: Response) => {
@@ -60,7 +60,7 @@ subject.get(
       }
     });
   },
-);
+);*/
 
 // Fetching one subject by id   A new one with Knex for a model
 subject.get(
@@ -95,7 +95,7 @@ subject.get(
 );
 
 // Adding a subject/teaching
-subject.post(
+/*subject.post(
   '/',
   validateSubjectPost,
   [authenticator, admin, planner, roleChecker, validate],
@@ -139,7 +139,7 @@ subject.post(
       },
     );
   },
-);
+);*/
 
 // Removing a subject/teaching
 subject.delete(
@@ -231,6 +231,61 @@ subject.get(
       })
       .catch((error) => {
         dbErrorHandler(req, res, error, 'Oops! Nothing came through - Subject');
+      });
+  },
+);
+
+// SPECIAL Listing all the subjects for selection dropdown etc. (Just name and id) using knex
+subject.get(
+  '/getNames',
+  [authenticator, roleChecker, validate],
+  (req: Request, res: Response) => {
+    db_knex
+      .select('id', 'name')
+      .from('Subject')
+      .then((subjectNames) => {
+        successHandler(req, res, subjectNames, 'getNames successful - Subject');
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Oops! Nothing came through - Subject');
+      });
+  },
+);
+
+// Adding a subject/teaching using knex
+subject.post(
+  '/',
+  validateSubjectPost,
+  [authenticator, admin, planner, roleChecker, validate],
+  (req: Request, res: Response) => {
+    const subjectData = {
+      name: req.body.name,
+      groupSize: req.body.groupSize,
+      groupCount: req.body.groupCount,
+      sessionLength: req.body.sessionLength,
+      sessionCount: req.body.sessionCount,
+      area: req.body.area,
+      programId: req.body.programId,
+      spaceTypeId: req.body.spaceTypeId,
+    };
+
+    db_knex('Subject')
+      .insert(subjectData)
+      .then((result) => {
+        if (result.length === 0) {
+          requestErrorHandler(req, res, 'Nothing to insert');
+        } else {
+          successHandler(
+            req,
+            res,
+            { insertId: result[0] }, // Assuming auto-incremented ID
+            'Create successful - Subject',
+          );
+          logger.info(`Subject ${subjectData.name} created`);
+        }
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Oops! Create failed - Subject');
       });
   },
 );
