@@ -40,7 +40,7 @@ const subjectequipment = express.Router();
 });*/
 
 // Adding a equipment requirement to teaching/subject
-subjectequipment.post(
+/*subjectequipment.post(
   '/post',
   validateSubjectEquipmentPostAndPut,
   (req: Request, res: Response) => {
@@ -90,7 +90,7 @@ subjectequipment.post(
       },
     );
   },
-);
+);*/
 
 // Modifying the equipment required by the subject/teaching
 subjectequipment.put(
@@ -185,5 +185,48 @@ subjectequipment.get('/getEquipment/:subjectId', (req, res) => {
       );
     });
 });
+
+// Adding a equipment requirement to teaching/subject using knex
+subjectequipment.post(
+  '/post',
+  validateSubjectEquipmentPostAndPut,
+  (req: Request, res: Response) => {
+    const subjectId = req.body.subjectId;
+    const equipmentId = req.body.equipmentId;
+    const priority = req.body.priority;
+    const obligatory = req.body.obligatory;
+
+    const subjectEquipmentData = {
+      subjectId,
+      equipmentId,
+      priority,
+      obligatory,
+    };
+
+    db_knex('SubjectEquipment')
+      .insert(subjectEquipmentData)
+      .returning('id') // Return the inserted ID
+      .then((result) => {
+        const insertId = result[0];
+        successHandler(
+          req,
+          res,
+          { insertId },
+          'Create successful - SubjectEquipment',
+        );
+        logger.info(
+          `SubjectEquipment created subjectId ${subjectId} & ${equipmentId}`,
+        );
+      })
+      .catch((error) => {
+        dbErrorHandler(
+          req,
+          res,
+          error,
+          'Oops! Create failed - SubjectEquipment',
+        );
+      });
+  },
+);
 
 export default subjectequipment;
