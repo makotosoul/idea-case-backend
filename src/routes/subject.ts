@@ -47,7 +47,7 @@ const subject = express.Router();
 );*/
 
 // SPECIAL Listing all the subjects for selection dropdown etc. (Just name and id)
-subject.get(
+/*subject.get(
   '/getNames',
   [authenticator, roleChecker, validate],
   (req: Request, res: Response) => {
@@ -60,7 +60,7 @@ subject.get(
       }
     });
   },
-);
+);*/
 
 // Fetching one subject by id   A new one with Knex for a model
 subject.get(
@@ -228,6 +228,23 @@ subject.get(
       .leftJoin('SpaceType as st', 's.spaceTypeId', 'st.id')
       .then((subjects) => {
         successHandler(req, res, subjects, 'getAll successful - Subject');
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Oops! Nothing came through - Subject');
+      });
+  },
+);
+
+// SPECIAL Listing all the subjects for selection dropdown etc. (Just name and id) using knex
+subject.get(
+  '/getNames',
+  [authenticator, roleChecker, validate],
+  (req: Request, res: Response) => {
+    db_knex
+      .select('id', 'name')
+      .from('Subject')
+      .then((subjectNames) => {
+        successHandler(req, res, subjectNames, 'getNames successful - Subject');
       })
       .catch((error) => {
         dbErrorHandler(req, res, error, 'Oops! Nothing came through - Subject');
