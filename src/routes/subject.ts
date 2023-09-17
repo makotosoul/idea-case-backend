@@ -46,6 +46,37 @@ const subject = express.Router();
   },
 );*/
 
+// Fetching all subjects, joining to each subject the program, and needed spacetype using Knex
+subject.get(
+  '/',
+  [authenticator, admin, planner, statist, roleChecker, validate],
+  (req: Request, res: Response) => {
+    db_knex
+      .select(
+        's.id',
+        's.name AS subjectName',
+        's.groupSize',
+        's.groupCount',
+        's.sessionLength',
+        's.sessionCount',
+        's.area',
+        's.programId',
+        'p.name AS programName',
+        's.spaceTypeId',
+        'st.name AS spaceTypeName',
+      )
+      .from('Subject as s')
+      .innerJoin('Program as p', 's.programId', 'p.id')
+      .leftJoin('SpaceType as st', 's.spaceTypeId', 'st.id')
+      .then((subjects) => {
+        successHandler(req, res, subjects, 'getAll successful - Subject');
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Oops! Nothing came through - Subject');
+      });
+  },
+);
+
 // SPECIAL Listing all the subjects for selection dropdown etc. (Just name and id)
 /*subject.get(
   '/getNames',
@@ -61,6 +92,23 @@ const subject = express.Router();
     });
   },
 );*/
+
+// SPECIAL Listing all the subjects for selection dropdown etc. (Just name and id) using knex
+subject.get(
+  '/getNames',
+  [authenticator, admin, roleChecker],
+  (req: Request, res: Response) => {
+    db_knex
+      .select('id', 'name')
+      .from('Subject')
+      .then((subjectNames) => {
+        successHandler(req, res, subjectNames, 'getNames successful - Subject');
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Oops! Nothing came through - Subject');
+      });
+  },
+);
 
 // Fetching one subject by id   A new one with Knex for a model
 subject.get(
@@ -141,22 +189,41 @@ subject.get(
   },
 );*/
 
-// Removing a subject/teaching
-subject.delete(
-  '/:id',
-  validateIdObl,
+// Adding a subject/teaching using knex
+subject.post(
+  '/',
+  validateSubjectPost,
   [authenticator, admin, planner, roleChecker, validate],
   (req: Request, res: Response) => {
-    const id = req.params.id;
-    const sqlDelete = 'DELETE FROM Subject WHERE id = ?;';
-    db.query(sqlDelete, id, (err, result) => {
-      if (err) {
-        dbErrorHandler(req, res, err, 'Oops! Delete failed - Subject');
-      } else {
-        successHandler(req, res, result, 'Delete successful - Subject');
-        logger.info('Subject deleted');
-      }
-    });
+    const subjectData = {
+      name: req.body.name,
+      groupSize: req.body.groupSize,
+      groupCount: req.body.groupCount,
+      sessionLength: req.body.sessionLength,
+      sessionCount: req.body.sessionCount,
+      area: req.body.area,
+      programId: req.body.programId,
+      spaceTypeId: req.body.spaceTypeId,
+    };
+
+    db_knex('Subject')
+      .insert(subjectData)
+      .then((result) => {
+        if (result.length === 0) {
+          requestErrorHandler(req, res, 'Nothing to insert');
+        } else {
+          successHandler(
+            req,
+            res,
+            { insertId: result[0] }, // Assuming auto-incremented ID
+            'Create successful - Subject',
+          );
+          logger.info(`Subject ${subjectData.name} created`);
+        }
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Oops! Create failed - Subject');
+      });
   },
 );
 
@@ -204,89 +271,22 @@ subject.put(
   },
 );
 
-// Fetching all subjects, joining to each subject the program, and needed spacetype using Knex
-subject.get(
-  '/',
-  [authenticator, admin, planner, statist, roleChecker, validate],
-  (req: Request, res: Response) => {
-    db_knex
-      .select(
-        's.id',
-        's.name AS subjectName',
-        's.groupSize',
-        's.groupCount',
-        's.sessionLength',
-        's.sessionCount',
-        's.area',
-        's.programId',
-        'p.name AS programName',
-        's.spaceTypeId',
-        'st.name AS spaceTypeName',
-      )
-      .from('Subject as s')
-      .innerJoin('Program as p', 's.programId', 'p.id')
-      .leftJoin('SpaceType as st', 's.spaceTypeId', 'st.id')
-      .then((subjects) => {
-        successHandler(req, res, subjects, 'getAll successful - Subject');
-      })
-      .catch((error) => {
-        dbErrorHandler(req, res, error, 'Oops! Nothing came through - Subject');
-      });
-  },
-);
-
-// SPECIAL Listing all the subjects for selection dropdown etc. (Just name and id) using knex
-subject.get(
-  '/getNames',
-  [authenticator, roleChecker, validate],
-  (req: Request, res: Response) => {
-    db_knex
-      .select('id', 'name')
-      .from('Subject')
-      .then((subjectNames) => {
-        successHandler(req, res, subjectNames, 'getNames successful - Subject');
-      })
-      .catch((error) => {
-        dbErrorHandler(req, res, error, 'Oops! Nothing came through - Subject');
-      });
-  },
-);
-
-// Adding a subject/teaching using knex
-subject.post(
-  '/',
-  validateSubjectPost,
+// Removing a subject/teaching
+subject.delete(
+  '/:id',
+  validateIdObl,
   [authenticator, admin, planner, roleChecker, validate],
   (req: Request, res: Response) => {
-    const subjectData = {
-      name: req.body.name,
-      groupSize: req.body.groupSize,
-      groupCount: req.body.groupCount,
-      sessionLength: req.body.sessionLength,
-      sessionCount: req.body.sessionCount,
-      area: req.body.area,
-      programId: req.body.programId,
-      spaceTypeId: req.body.spaceTypeId,
-    };
-
-    db_knex('Subject')
-      .insert(subjectData)
-      .then((result) => {
-        if (result.length === 0) {
-          requestErrorHandler(req, res, 'Nothing to insert');
-        } else {
-          successHandler(
-            req,
-            res,
-            { insertId: result[0] }, // Assuming auto-incremented ID
-            'Create successful - Subject',
-          );
-          logger.info(`Subject ${subjectData.name} created`);
-        }
-      })
-      .catch((error) => {
-        dbErrorHandler(req, res, error, 'Oops! Create failed - Subject');
-      });
+    const id = req.params.id;
+    const sqlDelete = 'DELETE FROM Subject WHERE id = ?;';
+    db.query(sqlDelete, id, (err, result) => {
+      if (err) {
+        dbErrorHandler(req, res, err, 'Oops! Delete failed - Subject');
+      } else {
+        successHandler(req, res, result, 'Delete successful - Subject');
+        logger.info('Subject deleted');
+      }
+    });
   },
 );
 
