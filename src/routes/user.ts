@@ -9,7 +9,7 @@ import {
   requestErrorHandler,
   successHandler,
   authenticationErrorHandler,
-  authorizationErrorHandler,
+  
 } from '../responseHandler/index.js';
 import { authenticator } from '../authorization/userValidation.js';
 import { admin } from '../authorization/admin.js';
