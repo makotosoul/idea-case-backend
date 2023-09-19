@@ -9,6 +9,7 @@ import {
   requestErrorHandler,
   successHandler,
   authenticationErrorHandler,
+  
 } from '../responseHandler/index.js';
 import { authenticator } from '../authorization/userValidation.js';
 import { admin } from '../authorization/admin.js';
@@ -86,38 +87,46 @@ user.post('/login', (req, res) => {
     .select('email', 'password', 'isAdmin', 'isPlanner', 'isStatist')
     .where('email', req.body.email)
     .then((data) => {
-      bcrypt
-        .compare(req.body.password, data[0].password)
-        .then((passwordCheck) => {
-          if (!passwordCheck) {
-            authenticationErrorHandler(
+      if (data.length === 1) {
+        bcrypt
+          .compare(req.body.password, data[0].password)
+          .then((passwordCheck) => {
+            if (!passwordCheck) {
+              authenticationErrorHandler(
+                req,
+                res,
+                "/login: Passwords don't match!",
+              );
+              return;
+            } else {
+              const token = jsonwebtoken.sign(
+                {
+                  email: data[0].email,
+                  isAdmin: data[0].isAdmin,
+                  isPlanner: data[0].isPlanner,
+                  isStatist: data[0].isStatist,
+                },
+                process.env.SECRET_TOKEN as string,
+                { expiresIn: '24h' },
+              );
+              const updatedData = data.map((obj) => ({ ...obj, token }));
+              successHandler(req, res, updatedData, '/login: Ok');
+            }
+          })
+          .catch((err) => {
+            requestErrorHandler(
               req,
               res,
-              "/login: Passwords don't match!",
+              `${err} /login: Oops! Nothing came through - User`,
             );
-            return;
-          } else {
-            const token = jsonwebtoken.sign(
-              {
-                email: data[0].email,
-                isAdmin: data[0].isAdmin,
-                isPlanner: data[0].isPlanner,
-                isStatist: data[0].isStatist,
-              },
-              process.env.SECRET_TOKEN as string,
-              { expiresIn: '24h' },
-            );
-            const updatedData = data.map((obj) => ({ ...obj, token }));
-            successHandler(req, res, updatedData, '/login: Ok');
-          }
-        })
-        .catch((err) => {
-          requestErrorHandler(
-            req,
-            res,
-            `${err} /login: Oops! Nothing came through - User`,
-          );
-        });
+          });
+      } else {
+        authenticationErrorHandler(
+          req,
+          res,
+          `login with email '${req.body.email}' not found`,
+        );
+      }
     })
     .catch((error) => {
       dbErrorHandler(req, res, error, '/login: Database error');
