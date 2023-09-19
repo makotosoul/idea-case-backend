@@ -1,4 +1,4 @@
-import express, { Request, Response, request } from 'express';
+import express, { Request, Response } from 'express';
 import jsonwebtoken from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
