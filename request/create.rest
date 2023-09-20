@@ -1,0 +1,55 @@
+//Here are some examples for post requests
+//Multiple requests can be written in single file but works after separating them with ### only
+//You can create more requests as per your needs..just play around
+
+//creating a new user
+POST http://localhost:8764/api/user
+Authorization: Basic <put your token here>
+Content-Type: application/json
+
+{
+    "email": "example",
+    "password": "example",
+    "isAdmin": 1,
+    "isPlanner": 0,
+    "isStatist": 0
+}
+
+###
+//logging in with registered user and getting token
+POST http://localhost:8764/api/user/login
+Content-Type: application/json
+
+{
+    "email": "admin",
+    "password": "admin"
+}
+
+###
+POST http://localhost:8764/api/subject
+Authorization: Basic <put your token here>
+Content-Type: application/json
+
+{
+    "name": "Data structures",
+    "groupSize": 25,
+    "groupCount": 2,
+    "sessionLength": "02:30:00",
+    "sessionCount": 2,
+    "area": 35,
+    "programId": 3030,
+    "programName": "Avoin Kampus",
+    "spaceTypeId": 5002,
+    "spaceTypeName": "Luentoluokka"
+}
+
+###
+POST http://localhost:8764/api/department
+Authorization: Basic <put your token here>
+Content-Type: application/json
+
+{
+    "name": "IT",
+    "description": "Information technology"
+}
+
