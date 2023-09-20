@@ -1,5 +1,6 @@
 ## Using Rest Client plugin in VS Code instead of Postman
 Rest Client plugin can be used in VS Code to make requests in the running backend instead of Postman, which is convenient for developers to test apis. 
+***
 
 ### Steps 
 
@@ -8,18 +9,21 @@ Rest Client plugin can be used in VS Code to make requests in the running backen
 ```shell
  mkdir request
 ```
+***
 
 2. Change your directory to the request folder 
 
 ```shell
  cd request
 ```
+***
 
 3. Create a file for example subject.rest **Note: file extention should be .rest**
 
 ```shell
  touch subject.rest
 ``` 
+***
 
 4. Now you can write your requests inside the file subject.rest
     You can follow these examples below: 
@@ -30,6 +34,7 @@ Rest Client plugin can be used in VS Code to make requests in the running backen
  GET http://localhost:8764/api/subject
  Authorization: Basic <put your token here>
 ```
+***
 
 **Get subject by id**
 
@@ -37,6 +42,7 @@ Rest Client plugin can be used in VS Code to make requests in the running backen
 GET http://localhost:8764/api/subject/<put subject id here>
 Authorization: Basic <put your token here>
 ```
+***
 
 **Create subject**
 
@@ -58,6 +64,7 @@ Content-Type: application/json
     "spaceTypeName": "Luentoluokka"
 }
 ```
+***
 
 **Update subject**
 
@@ -80,6 +87,7 @@ Content-Type: application/json
     "spaceTypeName": "Luentoluokka"
   }
 ```
+***
 
 **Remove subject**
 
@@ -87,8 +95,11 @@ Content-Type: application/json
 DELETE http://localhost:8764/api/subject/<put subject id here>
 Authorization: Basic <put your token here>
 ```
+***
 
 For detail info, please visit **[here](https://github.com/Huachao/vscode-restclient)** and **[here](https://marketplace.visualstudio.com/items?itemName=humao.rest-client)**
+
+Enjoy!!
 
 
 
