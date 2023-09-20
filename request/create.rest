@@ -1,6 +1,4 @@
 //Here are some examples for post requests
-//Multiple requests can be written in single file but works after separating them with ### only
-//You can create more requests as per your needs..just play around
 
 //creating a new user
 POST http://localhost:8764/api/user
