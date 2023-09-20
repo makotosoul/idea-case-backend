@@ -26,7 +26,7 @@ Rest Client plugin can be used in VS Code to make requests in the running backen
 ***
 
 4. Now you can write your requests inside the file subject.rest
-  You can follow these examples below:
+  You can follow these examples below:<br>
   __Note: You need to seperate each next requests with ### to have more than one request in one file__
 
 **Get all subjects**
