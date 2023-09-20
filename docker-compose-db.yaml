@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  mariadock:
+    image: mariadb:latest
+    container_name: mariadock
+    environment:
+      - MARIADB_USER=alternate_user
+      - MARIADB_PASSWORD=alternate_user_psw
+      - MARIADB_ROOT_PASSWORD=root_psw
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+volumes:
+  mariadb_data:
