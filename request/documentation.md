@@ -1,5 +1,6 @@
 ## Using Rest Client plugin in VS Code instead of Postman
 Rest Client plugin can be used in VS Code to make requests in the running backend instead of Postman, which is convenient for developers to test apis. 
+**At first, install REST Client plugin in VS Code through extensions**
 ***
 
 ### Steps 
