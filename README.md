@@ -119,6 +119,33 @@ Backend side installation instructions
    ```sh
    docker-compose -f docker-compose-be.yaml up -d
    ```
+   
+### How to dockerize the local MariaDB database
 
+1. Edit the docker-compose-db.yaml file to the desired root password and secondary user/ user password
+
+2. Run this command to launch application:
+ 
+   ```sh
+   docker-compose -f docker-compose-db.yaml up -d
+   ```
+3. Alternatively run from command prompt:
+
+	```sh
+   docker run --detach --name mariadock --env MARIADB_USER=alternate_user --env MARIADB_PASSWORD=alternate_user_psw --env MARIADB_ROOT_PASSWORD=root_psw  mariadb:latest
+   ```
+4. Access the container terminal:
+	
+	```sh
+   docker exec -it mariadock bash
+   ```
+   
+5.	Access the DB directly using mysql terminal command:
+
+	```sh
+   mysql -u root -p
+   ```
+   
+6.	Continue the configuration of the local DB as described in the step by step guide located in Database/Documentation/local_mariadb_windows_installation.md
 
 <p align="right">(<a href="#top">back to top</a>)</p>
