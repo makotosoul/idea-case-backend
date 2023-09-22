@@ -1,11 +1,2 @@
-#!/bin/sh
-FILES=$(git diff --name-only --cached --diff-filter=d | grep -E '\.(js|ts)$')
-
-if [ -n "$FILES" ]; then
-    echo "Running formatter & linter.."
-    npx rome check $FILES --apply-suggested
-    npx rome format $FILES --write --indent-style space --indent-size 2 --quote-style single
-    git add $FILES
-else
-    echo "No files to format.."
-fi
+echo "Formatting and linting..."
+nano-staged
