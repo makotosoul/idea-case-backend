@@ -119,11 +119,3 @@ build
 ~$*
 
 #----------------------Above this line is a copy from .gitignore
-#Visual studio code files
-.vscode
-
-#Database folder
-Database
-
-#Postman
-Postman

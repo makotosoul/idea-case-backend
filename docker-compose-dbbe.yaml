@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  siba_db:
+    image: mariadb:11.1.2-jammy
+    container_name: mariadock
+    environment:
+      - MARIADB_DATABASE=casedb
+      - MARIADB_USER=alternate_user
+      - MARIADB_PASSWORD=alternate_user_psw
+      - MARIADB_ROOT_PASSWORD=root_psw
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./Database/SQL_Scripts/000__CreateALLdb.sql:/docker-entrypoint-initdb.d/init.sql
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - sibanetwork
+    
+  siba_be:
+    container_name: siba_be_dock
+    build: .
+    env_file: .env
+    depends_on:
+      - siba_db
+    environment:
+    - DB_HOST=siba_db
+    ports: 
+      - '${BE_SERVER_PORT}:${BE_SERVER_PORT}'
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      - sibanetwork
+
+networks:
+  sibanetwork:
+    driver: bridge
+    
+volumes:
+  mariadb_data:
