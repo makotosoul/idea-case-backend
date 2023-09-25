@@ -110,7 +110,7 @@ setting.post(
 
 //update setting
 setting.put(
-  '/',
+  '/:id',
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     if (!req.body.name) {
