@@ -3,13 +3,18 @@ import { Request, Response } from 'express';
 
 import db from '../db/index.js';
 import db_knex from '../db/index_knex.js';
-import { dbErrorHandler, successHandler } from '../responseHandler/index.js';
+import {
+  dbErrorHandler,
+  requestErrorHandler,
+  successHandler,
+} from '../responseHandler/index.js';
 import { authenticator } from '../authorization/userValidation.js';
 import { admin } from '../authorization/admin.js';
 import { planner } from '../authorization/planner.js';
 import { statist } from '../authorization/statist.js';
 import { roleChecker } from '../authorization/roleChecker.js';
 import { validate } from '../validationHandler/index.js';
+import logger from '../utils/logger.js';
 
 const program = express.Router();
 
@@ -47,6 +52,38 @@ program.get(
       })
       .catch((err) => {
         dbErrorHandler(req, res, err, 'Oops! Nothing came through - Program');
+      });
+  },
+);
+
+//create program
+//TODO: add validationHandler for validating program name and departmentId
+program.post(
+  '/',
+  [authenticator, admin, planner, roleChecker, validate],
+  (req: Request, res: Response) => {
+    const newProgram = {
+      name: req.body.name,
+      departmentId: req.body.departmentId,
+    };
+
+    db_knex('Program')
+      .insert(newProgram)
+      .then((result) => {
+        if (result.length === 0) {
+          requestErrorHandler(req, res, 'Nothing to insert');
+        } else {
+          successHandler(
+            req,
+            res,
+            { id: result[0] }, // Assuming auto-incremented ID
+            'Create successful - Program',
+          );
+          logger.info(`Program ${newProgram.name} created`);
+        }
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Oops! Create failed - Program');
       });
   },
 );
