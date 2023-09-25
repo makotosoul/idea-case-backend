@@ -110,7 +110,7 @@ Backend side installation instructions
 9. Attention! Follow the [Frontend repo](https://github.com/haagahelia/siba-fe) installation guide as well
 
 
-### How to run using docker-compose
+### How to run nodejs backend using docker-compose
 
 1. Follow installation steps from 1 to 5
 
@@ -142,10 +142,44 @@ Backend side installation instructions
    
 5.	Access the DB directly using mysql terminal command:
 
-	```sh
+   ```sh
    mysql -u root -p
    ```
    
 6.	Continue the configuration of the local DB as described in the step by step guide located in Database/Documentation/local_mariadb_windows_installation.md
+
+### How to run mariadb database and nodejs backend using docker-compose
+
+Configuration of the local DB is described in the guide located in Database/Documentation/local_mariadb_windows_installation.md. The docker-compose file covered the process and make the application ready to use.
+
+1. Follow installation steps from 1 to 5
+
+2. Edit the docker-compose-dbbe.yaml file to have the right configuration according to your environment (database, username, password, root password)
+
+3. Run this command to launch database and backend
+ 
+   ```sh
+   docker-compose -f docker-compose-dbbe.yaml up -d
+   ```
+
+4. Some useful commands:
+
+   Access mariadb container terminal:
+   
+   ```sh
+   docker exec -it mariadock sh
+   ```
+
+   Access mariadb container terminal:
+
+   ```sh
+   docker exec -it siba_be_dock sh
+   ```
+
+   Exit terminal inside container:
+
+   ```sh
+   exit
+   ```
 
 <p align="right">(<a href="#top">back to top</a>)</p>
