@@ -2,6 +2,7 @@ import express from 'express';
 
 import subject from './subject.js';
 import program from './program.js';
+import space from './space.js';
 import spaceType from './spaceType.js';
 import equipment from './equipment.js';
 import subjectequipment from './subjectEquipment.js';
@@ -21,6 +22,7 @@ routes.use('/department', department);
 routes.use('/equipment', equipment);
 routes.use('/program', program);
 routes.use('/setting', setting);
+routes.use('/space', space);
 routes.use('/spaceType', spaceType);
 routes.use('/subject', subject);
 routes.use('/subjectequipment', subjectequipment);
