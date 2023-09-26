@@ -51,3 +51,12 @@ Content-Type: application/json
     "description": "Information technology"
 }
 
+###
+POST http://localhost:8764/api/program
+Authorization: Basic <put your token here>
+Content-Type: application/json
+
+{
+    "name": "Dance Dance and Dance",
+    "departmentId": 124 //ensure that there is already existing departmentId in Department table
+}
