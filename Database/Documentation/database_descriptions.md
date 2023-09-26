@@ -124,6 +124,8 @@ name			| VARCHAR(255)	| 				| Name of the setting
 description		| VARCHAR(16000)|				| Description for the setting
 numberValue		| INTEGER		| 				| If setting needs a number value, it will be saved here, and read from here
 textValue		| VARCHAR(255)	|				| If setting needs a text value, it will be saved here, and read from here
+booleanValue    | BOOLEAN       |               | If setting needs a boolean value, it will be saved and read from here.
+decimalValue    | DECIMAL       |               | If setting needs a decimal value, it will be saved and read from here.
 
 </details>
 
@@ -159,7 +161,7 @@ spaceTypeId		| INTEGER		|FK(spaceType.id)	| E.g. theory classroom, music classro
 </details>
 
 <details><summary>SpaceEquipment</summary>
-<small> (Equipment found in a Space (instruments, appliances, furniture, ...) </small>
+<small> (Equipment found in a Space (instruments, appliances, furniture, ...)) </small>
 <small> (A pure join table) </small>
 
 Column				|	Datatype	|	Keys				|	Description
@@ -189,7 +191,7 @@ Column			|	Datatype	|	Keys			|	Description
 <u>id</u>		| INTEGER		| PK				|
 name			| VARCHAR(255)	|					| E.g. "Pianist individual piano lessons"
 groupSize		| INTEGER		|					| 
-groupCount		| INTEGER		|					| How manyu groups.
+groupCount		| INTEGER		|					| How many groups.
 sessionLength	| TIME			|					| How long teaching sessions
 sessionCount	| INTEGER		|					| How many sessions per week
 area			| DECIMAL(5,1)	|					| Needed room size (m²)
