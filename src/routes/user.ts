@@ -9,12 +9,13 @@ import {
   requestErrorHandler,
   successHandler,
   authenticationErrorHandler,
-  
 } from '../responseHandler/index.js';
 import { authenticator } from '../authorization/userValidation.js';
 import { admin } from '../authorization/admin.js';
 import { roleChecker } from '../authorization/roleChecker.js';
 import { validate } from '../validationHandler/index.js';
+import { validateUserPut } from '../validationHandler/user.js';
+import { validateIdObl } from '../validationHandler/index.js';
 
 dotenv.config({});
 
@@ -132,5 +133,57 @@ user.post('/login', (req, res) => {
       dbErrorHandler(req, res, error, '/login: Database error');
     });
 });
+
+//Changing userdata
+user.put(
+  '/',
+  validateUserPut,
+  [authenticator, admin, roleChecker, validate],
+  (req: Request, res: Response) => {
+    const userData = {
+      id: req.body.id,
+      email: req.body.email,
+      isAdmin: req.body.isAdmin,
+      isPlanner: req.body.isPlanner,
+      isStatist: req.body.isStatist,
+    };
+    db_knex('User')
+      .update(userData)
+      .where('id', req.body.id)
+      .then((result) => {
+        if (!result) {
+          requestErrorHandler(req, res, 'Nothing to update');
+        } else {
+          successHandler(req, res, result, 'Update successful - User');
+        }
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Oops! Update failed - User');
+      });
+  },
+);
+
+// Removing a user
+user.delete(
+  '/:id',
+  validateIdObl,
+  [authenticator, admin, roleChecker, validate],
+  (req: Request, res: Response) => {
+    const id = req.params.id;
+    db_knex('User')
+      .delete()
+      .where('id', id)
+      .then((result) => {
+        if (!result) {
+          requestErrorHandler(req, res, 'Nothing to delete');
+        } else {
+          successHandler(req, res, result, 'Delete successful - User');
+        }
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Oops! delete failed - User');
+      });
+  },
+);
 
 export default user;
