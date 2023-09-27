@@ -37,6 +37,8 @@ CREATE TABLE IF NOT EXISTS GlobalSetting (
     description VARCHAR(16000),
     numberValue INTEGER,
     textValue   VARCHAR(255),
+    booleanValue BOOLEAN DEFAULT 0,
+    decimalValue DECIMAL (6,2) DEFAULT 0,
     
     PRIMARY KEY (id)
 )   ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
