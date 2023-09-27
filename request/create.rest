@@ -58,5 +58,5 @@ Content-Type: application/json
 
 {
     "name": "Dance Dance and Dance",
-    "departmentId": 124 //ensure that there is already existing departmentId in Department table
+    "departmentId": 124
 }

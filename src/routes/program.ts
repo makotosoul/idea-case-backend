@@ -15,6 +15,7 @@ import { statist } from '../authorization/statist.js';
 import { roleChecker } from '../authorization/roleChecker.js';
 import { validate } from '../validationHandler/index.js';
 import logger from '../utils/logger.js';
+import { validateProgram } from '../validationHandler/program.js';
 
 const program = express.Router();
 
@@ -60,6 +61,7 @@ program.get(
 //TODO: add validationHandler for validating program name and departmentId
 program.post(
   '/',
+  validateProgram,
   [authenticator, admin, planner, roleChecker, validate],
   (req: Request, res: Response) => {
     const newProgram = {
