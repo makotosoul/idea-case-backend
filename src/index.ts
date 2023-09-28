@@ -1,10 +1,9 @@
-import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
-
-import logger from './utils/logger.js';
+import express from 'express';
 import routes from './routes/index.js';
+import logger from './utils/logger.js';
 
 const app = express();
 

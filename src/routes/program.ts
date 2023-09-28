@@ -1,6 +1,9 @@
-import express from 'express';
-import { Request, Response } from 'express';
-
+import express, { Request, Response } from 'express';
+import { admin } from '../authorization/admin.js';
+import { planner } from '../authorization/planner.js';
+import { roleChecker } from '../authorization/roleChecker.js';
+import { statist } from '../authorization/statist.js';
+import { authenticator } from '../authorization/userValidation.js';
 import db from '../db/index.js';
 import db_knex from '../db/index_knex.js';
 import {
@@ -8,13 +11,8 @@ import {
   requestErrorHandler,
   successHandler,
 } from '../responseHandler/index.js';
-import { authenticator } from '../authorization/userValidation.js';
-import { admin } from '../authorization/admin.js';
-import { planner } from '../authorization/planner.js';
-import { statist } from '../authorization/statist.js';
-import { roleChecker } from '../authorization/roleChecker.js';
-import { validate } from '../validationHandler/index.js';
 import logger from '../utils/logger.js';
+import { validate } from '../validationHandler/index.js';
 import { validateProgram } from '../validationHandler/program.js';
 
 const program = express.Router();
@@ -35,7 +33,7 @@ program.get(
   },
 );
 
-//get program by id
+// get program by id
 program.get(
   '/:id',
   [authenticator, admin, planner, statist, roleChecker, validate],
@@ -57,8 +55,8 @@ program.get(
   },
 );
 
-//create program
-//TODO: add validationHandler for validating program name and departmentId
+// create program
+// TODO: add validationHandler for validating program name and departmentId
 program.post(
   '/',
   validateProgram,

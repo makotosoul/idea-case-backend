@@ -1,9 +1,8 @@
-import { MysqlError } from 'mysql';
+import { Request, Response } from 'express';
 import { Result, ValidationError } from 'express-validator';
-import { Response, Request } from 'express';
-
-import { validationErrorFormatter } from '../validationHandler/index.js';
+import { MysqlError } from 'mysql';
 import logger from '../utils/logger.js';
+import { validationErrorFormatter } from '../validationHandler/index.js';
 
 const serverErrorMessage = 'Server error.';
 const requestErrorMessage = 'Request error';
@@ -11,7 +10,7 @@ const dbErrorMessage = serverErrorMessage;
 const successMessage = 'OK';
 const authenticationErrorMessage = requestErrorMessage;
 const authorizationErrorMessage = requestErrorMessage;
-const validationErrorMessage = requestErrorMessage; //'Formatting error';
+const validationErrorMessage = requestErrorMessage; // 'Formatting error';
 
 export const routePrinter = (req: Request): string => {
   let routeText = `${req.method} ${req.baseUrl.substring(4)}|`;
@@ -51,7 +50,8 @@ export const successHandler = (
   logger.http(logMessage);
 
   if (typeof data === 'number') {
-    data = { returnedNumberValue: data }; // If data is just a number, wrapping an object around it
+    // If data is just a number, wrapping an object around it
+    data = { returnedNumberValue: data };
     console.log(data);
   }
 

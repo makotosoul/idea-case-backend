@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS GlobalSetting (
     textValue   VARCHAR(255),
     booleanValue BOOLEAN DEFAULT 0,
     decimalValue DECIMAL (6,2) DEFAULT 0,
-    
+
     PRIMARY KEY (id)
 )   ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
@@ -39,18 +39,18 @@ CREATE TABLE IF NOT EXISTS DepartmentPlanner (
 
     PRIMARY KEY (departmentId, userId),
 
-    CONSTRAINT FOREIGN KEY (departmentId) REFERENCES Department(id) 
-        ON DELETE CASCADE 
+    CONSTRAINT FOREIGN KEY (departmentId) REFERENCES Department(id)
+        ON DELETE CASCADE
         ON UPDATE NO ACTION,
-    CONSTRAINT FOREIGN KEY (userId) REFERENCES `User`(id) 
-        ON DELETE CASCADE 
+    CONSTRAINT FOREIGN KEY (userId) REFERENCES `User`(id)
+        ON DELETE CASCADE
         ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS Building (
     id          INTEGER         NOT NULL AUTO_INCREMENT,
     name        VARCHAR(255)    UNIQUE NOT NULL,
-    description VARCHAR(16000), 
+    description VARCHAR(16000),
 
     PRIMARY KEY (id)
 
@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS `Space` (
     	FOREIGN KEY (`buildingId`) REFERENCES `Building`(id)
             ON DELETE CASCADE
             ON UPDATE CASCADE,
-    
+
     CONSTRAINT `FK_space_spaceType`
     	FOREIGN KEY (`spaceTypeId`) REFERENCES `SpaceType`(id)
             ON DELETE SET NULL
@@ -107,30 +107,30 @@ CREATE TABLE IF NOT EXISTS Equipment (
 CREATE TABLE IF NOT EXISTS SpaceEquipment (
     spaceId       INTEGER     NOT NULL,
     equipmentId   INTEGER     NOT NULL,
-    
+
     PRIMARY KEY(spaceId,equipmentId),
 
-    CONSTRAINT `FK_SpaceEquipment_Equipment` 
-        FOREIGN KEY (`equipmentId`) REFERENCES `Equipment` (id) 
-            ON DELETE CASCADE 
+    CONSTRAINT `FK_SpaceEquipment_Equipment`
+        FOREIGN KEY (`equipmentId`) REFERENCES `Equipment` (id)
+            ON DELETE CASCADE
             ON UPDATE CASCADE,
-    CONSTRAINT `FK_SpaceEquipment_Space` 
-        FOREIGN KEY (`spaceId`) REFERENCES `Space` (id) 
-            ON DELETE CASCADE 
+    CONSTRAINT `FK_SpaceEquipment_Space`
+        FOREIGN KEY (`spaceId`) REFERENCES `Space` (id)
+            ON DELETE CASCADE
             ON UPDATE CASCADE
 ) ENGINE = InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS Program (
   id            INTEGER         NOT NULL AUTO_INCREMENT,
   name          VARCHAR(255)    NOT NULL UNIQUE,
-  
+
   departmentId  INTEGER         NOT NULL,
 
   PRIMARY KEY (id),
-  
-  CONSTRAINT FOREIGN KEY (departmentId) REFERENCES Department(id) 
-    ON DELETE NO ACTION       
-    ON UPDATE NO ACTION       
+
+  CONSTRAINT FOREIGN KEY (departmentId) REFERENCES Department(id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=3001 DEFAULT CHARSET=latin1;
 
 
@@ -141,17 +141,17 @@ CREATE TABLE IF NOT EXISTS `Subject` (
     groupCount      INTEGER,
     sessionLength   TIME,
     sessionCount    INTEGER,
-    area            DECIMAL(5,1) DEFAULT NULL,         
+    area            DECIMAL(5,1) DEFAULT NULL,
     programId       INTEGER NOT NULL,
     spaceTypeId     INTEGER,
 
     CONSTRAINT AK_Subject_unique_name_in_program UNIQUE (programId, name),
-  
+
     PRIMARY KEY (id),
 
-    CONSTRAINT `FK_Subject_Program` FOREIGN KEY (`programId`) 
-        REFERENCES `Program`(id) 
-        ON DELETE NO ACTION 
+    CONSTRAINT `FK_Subject_Program` FOREIGN KEY (`programId`)
+        REFERENCES `Program`(id)
+        ON DELETE NO ACTION
         ON UPDATE NO ACTION,
 
     CONSTRAINT `FK_Subject_SpaceType` FOREIGN KEY (`SpaceTypeId`)
@@ -168,12 +168,12 @@ CREATE TABLE IF NOT EXISTS SubjectEquipment (
 
     PRIMARY KEY (subjectId, equipmentId),
 
-    CONSTRAINT `FK_SubjectEquipment_Subject` FOREIGN KEY (`subjectId`) REFERENCES `Subject`(id) 
-        ON DELETE CASCADE 
+    CONSTRAINT `FK_SubjectEquipment_Subject` FOREIGN KEY (`subjectId`) REFERENCES `Subject`(id)
+        ON DELETE CASCADE
         ON UPDATE CASCADE,
 
-    CONSTRAINT `FK_SubjectEquipment_Equipment` FOREIGN KEY (`equipmentId`) REFERENCES `Equipment`(id) 
-        ON DELETE CASCADE 
+    CONSTRAINT `FK_SubjectEquipment_Equipment` FOREIGN KEY (`equipmentId`) REFERENCES `Equipment`(id)
+        ON DELETE CASCADE
         ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -194,7 +194,7 @@ CREATE TABLE IF NOT EXISTS AllocRound (
     requireReset    BOOLEAN DEFAULT 0,
 
     PRIMARY KEY(id),
-    
+
     CONSTRAINT `FK_AllocRound_User` FOREIGN KEY (`userId`)
         REFERENCES `User`(id)
         ON DELETE NO ACTION
@@ -208,19 +208,19 @@ CREATE TABLE IF NOT EXISTS AllocSubject (
     isAllocated     BOOLEAN     DEFAULT 0,
     cantAllocate    BOOLEAN     DEFAULT 0,
     priority        INTEGER,
-    allocatedDate   TIMESTAMP, 
-    
-    PRIMARY KEY(subjectId, allocRound), 
+    allocatedDate   TIMESTAMP,
+
+    PRIMARY KEY(subjectId, allocRound),
 
     CONSTRAINT `FK_AllocSubject_Subject` FOREIGN KEY (`subjectId`)
         REFERENCES `Subject`(id)
-        ON DELETE CASCADE 
+        ON DELETE CASCADE
         ON UPDATE CASCADE,
 
     CONSTRAINT `FK_AllocSubject_AllocRound` FOREIGN KEY (`allocRound`)
         REFERENCES `AllocRound`(id)
         ON DELETE CASCADE
-        ON UPDATE CASCADE  
+        ON UPDATE CASCADE
 ) ENGINE=InnoDB CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS AllocSpace (
@@ -270,17 +270,17 @@ CREATE TABLE IF NOT EXISTS AllocSubjectSuitableSpace (
 CREATE TABLE IF NOT EXISTS AllocCurrentRoundUser (
     allocId     INTEGER     NOT NULL,
     userId      INTEGER,
-    
+
     PRIMARY KEY(allocId, userId),
-    
-    CONSTRAINT `FK_AllocCurrentRoundUser_AllocRound` 
-        FOREIGN KEY (`allocId`) 
+
+    CONSTRAINT `FK_AllocCurrentRoundUser_AllocRound`
+        FOREIGN KEY (`allocId`)
         REFERENCES `AllocRound` (id)
-        ON DELETE CASCADE 
+        ON DELETE CASCADE
         ON UPDATE CASCADE,
-        
-    CONSTRAINT `FK_AllocCurrentRoundUser_User` 
-        FOREIGN KEY (`userId`) 
+
+    CONSTRAINT `FK_AllocCurrentRoundUser_User`
+        FOREIGN KEY (`userId`)
         REFERENCES `User` (id)
         ON DELETE CASCADE
         ON UPDATE CASCADE

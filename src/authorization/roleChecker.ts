@@ -1,5 +1,4 @@
 import { Response } from 'express';
-
 import { authorizationErrorHandler } from '../responseHandler/index.js';
 
 export const roleListPrinter = (req: any): string => {
@@ -13,7 +12,8 @@ export const roleListPrinter = (req: any): string => {
 
 export const roleChecker = (req: any, res: Response, next: any) => {
   if (req.areRolesRequired !== 0 && req.areRolesRequired !== 1) {
-    // areRolesRequired is then supposed to be -1 = roles required, but none of the roles were present
+    // areRolesRequired is then supposed to be -1 = roles required,
+    // but none of the roles were present
     if (req.areRolesRequired === -1) {
       authorizationErrorHandler(
         req,

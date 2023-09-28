@@ -4,9 +4,9 @@
 
 ***Not in use, at least not yet**
 
-|Column			|	Datatype	|	Keys 	|	Description					
-|:-----			| :------- 		| 	------- 	|	------ 					
-|<u>allocId</u>	| INTEGER		| PK 			| 			
+|Column			|	Datatype	|	Keys 	|	Description
+|:-----			| :------- 		| 	------- 	|	------
+|<u>allocId</u>	| INTEGER		| PK 			|
 |<u>UserId</u>	| INTEGER		| PK, FK   		| => User.id
 
 </details>
@@ -16,9 +16,9 @@
 
 Column			|	Datatype	|	Keys		|	Description
 :-----			|	:---		|	-------		|	------
- <u>id</u>		| INTEGER		| PK			| 
+ <u>id</u>		| INTEGER		| PK			|
  date			| TIMESTAMP 	|				| Allocation's creation time
- name			| VARCHAR(255)	|				| Allocation's name. eg. "Syksyn 2022 virallinen"			
+ name			| VARCHAR(255)	|				| Allocation's name. eg. "Syksyn 2022 virallinen"
  isSeasonAlloc	| BOOLEAN 		|				| Whether semester active *NOT IN USE*
  userId			| INTEGER		| FK(User.id)	| Allocation's creator/maintainer
  description 	| VARCHAR(16000)|				| Possible description for allocation
@@ -35,9 +35,9 @@ Column			|	Datatype	|	Keys		|	Description
 
  Column			|	Datatype	|	Keys			            	|	Description
  :-----			|	:----		|	------			            	|	------
- subjectId      | INTEGER		| PK, FK(AllocSubject.subjectId)	| 
- allocRound     | INTEGER		| PK, FK(AllocSubject.allocRound)	| 
- spaceId 		| INTEGER		| PK, FK(Space.id)	            	| 
+ subjectId      | INTEGER		| PK, FK(AllocSubject.subjectId)	|
+ allocRound     | INTEGER		| PK, FK(AllocSubject.allocRound)	|
+ spaceId 		| INTEGER		| PK, FK(Space.id)	            	|
  totalTime		| TIME			|					            	| How many hours this subject took on that allocround in this room
 
 </details>
@@ -48,7 +48,7 @@ Column			|	Datatype	|	Keys		|	Description
 Column			    |	Datatype	|	Keys		        |	Description
 :-----			    |	:----		|	------		        |	------
 <u>subjectId</u>    | INTEGER		|PK,FK(Subject.id)      | Subject added to the allocation
-<u>allocRound</u>   | INTEGER		|PK,FK(AllocRound.id)   | 
+<u>allocRound</u>   | INTEGER		|PK,FK(AllocRound.id)   |
 isAllocated 	    | BOOLEAN		|				        | Whether subject already handled in this allocRound
 cantAllocate 	    | BOOLEAN		|				        | Marking True(1) when no suitable spaces found for this subject for this allocRound
 priority		    | INTEGER		|				        | Ordinal for subjects - Number one allocated first to spaces, then two and so on
@@ -61,9 +61,9 @@ allocatedDate 	    | TIMESTAMP		|				        | Timestamp of the allocation proce
 
 Column			    |	Datatype	|	Keys		                    |	Description
 :-----			    |	:----		|	------		                    |	------
-<u>allocRound</u>   |  INTEGER      | PK, FK(AllocSubject.allocRound)   | 
-<u>subjectId</u>    |  INTEGER      | PK, FK(AllocSubject.subjectId)    | 
-<u>spaceId</u>      |  INTEGER      | PK, FK(Space.id)                  | 
+<u>allocRound</u>   |  INTEGER      | PK, FK(AllocSubject.allocRound)   |
+<u>subjectId</u>    |  INTEGER      | PK, FK(AllocSubject.subjectId)    |
+<u>spaceId</u>      |  INTEGER      | PK, FK(Space.id)                  |
  missingItems       |  INTEGER		|									| Number of missing equipment, number of reasons why allocation could not happen
 </details>
 
@@ -73,9 +73,9 @@ Column			    |	Datatype	|	Keys		                    |	Description
 
 Column			|	Datatype	|	Keys		|	Description
 :-----			|	:----		|	------		|	------
-<u>id</u>		| INTEGER		| PK			| 
+<u>id</u>		| INTEGER		| PK			|
 name			| VARCHAR(255)	|				| e.g. "N-talo", "M-talo"
-description		| VARCHAR(16000)|				| 
+description		| VARCHAR(16000)|				|
 
 </details>
 
@@ -87,7 +87,7 @@ Column			|	Datatype	|	Keys		|	Description
 :-----			|	:----		|	------		|	------
 <u>id</u>		| INTEGER		| PK			|
 name			| VARCHAR(255)	|				| e.g "Jazz department", or "Church music"
-description		| VARCHAR(16000)|				| 
+description		| VARCHAR(16000)|				|
 
 </details>
 
@@ -96,8 +96,8 @@ description		| VARCHAR(16000)|				|
 
 Column				|	Datatype	|	Keys				|	Description
 :-----				|	:----		|	------				|	------
-<u>departmentId</u> | INTEGER		| PK, FK(deparment.id)	| 
-<u>userId</u>		| INTEGER		| PK, FK(user.id)		| 
+<u>departmentId</u> | INTEGER		| PK, FK(deparment.id)	|
+<u>userId</u>		| INTEGER		| PK, FK(user.id)		|
 
 </details>
 
@@ -110,7 +110,7 @@ Column			|	Datatype	|	Keys		|	Description
 name			| VARCHAR(255)	| 				| e.g. "Organ X", "Double concert piano", "Concert piano", "Vertical accompany piano"
 isMovable		| BOOLEAN		| 				| Whether equipment movable. E.g. huge organs are not.
 priority		| INTEGER		|				| (Is this in use in calculations yet?)
-description		| VARCHAR(16000)|				| 
+description		| VARCHAR(16000)|				|
 
 </details>
 
@@ -135,7 +135,7 @@ decimalValue    | DECIMAL       |               | If setting needs a decimal val
 Column			|	Datatype	|	Keys			|	Description
 :-----			|	:----		|	------			|	------
 <u>id</u>		| INTEGER		| PK				|
-name			| VARCHAR(255)	|					| 
+name			| VARCHAR(255)	|					|
 departmentId	| INTEGER		| FK(department.id)	| Under which Department this Program belongs to
 
 </details>
@@ -166,8 +166,8 @@ spaceTypeId		| INTEGER		|FK(spaceType.id)	| E.g. theory classroom, music classro
 
 Column				|	Datatype	|	Keys				|	Description
 :-----				|	:----		|	------				|	------
-<u>spaceId</u>		| INTEGER		|PK, FK(space.id)		| 
-<u>equipmentId</u>	| INTEGER		|PK, FK(equipment.id)	| 
+<u>spaceId</u>		| INTEGER		|PK, FK(space.id)		|
+<u>equipmentId</u>	| INTEGER		|PK, FK(equipment.id)	|
 
 </details>
 
@@ -176,8 +176,8 @@ Column				|	Datatype	|	Keys				|	Description
 
 Column			|	Datatype	|	Keys		|	Description
 :-----			|	:----		|	------		|	------
-<u>id</u>		| INTEGER		| PK			| 
-name			| VARCHAR(255)	|				| 
+<u>id</u>		| INTEGER		| PK			|
+name			| VARCHAR(255)	|				|
 description		| VARCHAR(16000)|				| Possible description
 
 </details>
@@ -190,7 +190,7 @@ Column			|	Datatype	|	Keys			|	Description
 :-----			|	:----		|	------			|	------
 <u>id</u>		| INTEGER		| PK				|
 name			| VARCHAR(255)	|					| E.g. "Pianist individual piano lessons"
-groupSize		| INTEGER		|					| 
+groupSize		| INTEGER		|					|
 groupCount		| INTEGER		|					| How many groups.
 sessionLength	| TIME			|					| How long teaching sessions
 sessionCount	| INTEGER		|					| How many sessions per week
@@ -217,7 +217,7 @@ obligatory			| BOOLEAN		|						| Whether equipment obligatory for Subject (Eleva
 Column			| Datatype		| Keys		    | Description
 :-----			| :----			| ------		| ------
 <u>id</u>		| INTEGER		| PK			|
-email			| VARCHAR(255)	|				| 
+email			| VARCHAR(255)	|				|
 isAdmin			| BOOLEAN		|				| Whether user has admin rights
 
 </details>

@@ -10,7 +10,7 @@ DROP TABLE IF EXISTS AllocSubject;
 DROP TABLE IF EXISTS AllocRound;
 DROP TABLE IF EXISTS SubjectEquipment;
 DROP TABLE IF EXISTS `Subject`;
-DROP TABLE IF EXISTS Program; 
+DROP TABLE IF EXISTS Program;
 DROP TABLE IF EXISTS SpaceEquipment;
 DROP TABLE IF EXISTS Equipment;
 DROP TABLE IF EXISTS `Space`;
@@ -18,7 +18,7 @@ DROP TABLE IF EXISTS SpaceType;
 DROP TABLE IF EXISTS Building;
 DROP TABLE IF EXISTS DepartmentPlanner;
 DROP TABLE IF EXISTS `User`;
-DROP TABLE IF EXISTS Department; 
+DROP TABLE IF EXISTS Department;
 DROP TABLE IF EXISTS GlobalSetting;
 
 
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS GlobalSetting (
     textValue   VARCHAR(255),
     booleanValue BOOLEAN DEFAULT 0,
     decimalValue DECIMAL (6,2) DEFAULT 0,
-    
+
     PRIMARY KEY (id)
 )   ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
@@ -68,18 +68,18 @@ CREATE TABLE IF NOT EXISTS DepartmentPlanner (
 
     PRIMARY KEY (departmentId, userId),
 
-    CONSTRAINT FOREIGN KEY (departmentId) REFERENCES Department(id) 
-        ON DELETE CASCADE 
+    CONSTRAINT FOREIGN KEY (departmentId) REFERENCES Department(id)
+        ON DELETE CASCADE
         ON UPDATE NO ACTION,
-    CONSTRAINT FOREIGN KEY (userId) REFERENCES `User`(id) 
-        ON DELETE CASCADE 
+    CONSTRAINT FOREIGN KEY (userId) REFERENCES `User`(id)
+        ON DELETE CASCADE
         ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS Building (
     id          INTEGER         NOT NULL AUTO_INCREMENT,
     name        VARCHAR(255)    UNIQUE NOT NULL,
-    description VARCHAR(16000), 
+    description VARCHAR(16000),
 
     PRIMARY KEY (id)
 
@@ -116,7 +116,7 @@ CREATE TABLE IF NOT EXISTS `Space` (
     	FOREIGN KEY (`buildingId`) REFERENCES `Building`(id)
             ON DELETE CASCADE
             ON UPDATE CASCADE,
-    
+
     CONSTRAINT `FK_space_spaceType`
     	FOREIGN KEY (`spaceTypeId`) REFERENCES `SpaceType`(id)
             ON DELETE SET NULL
@@ -136,30 +136,30 @@ CREATE TABLE IF NOT EXISTS Equipment (
 CREATE TABLE IF NOT EXISTS SpaceEquipment (
     spaceId       INTEGER     NOT NULL,
     equipmentId   INTEGER     NOT NULL,
-    
+
     PRIMARY KEY(spaceId,equipmentId),
 
-    CONSTRAINT `FK_SpaceEquipment_Equipment` 
-        FOREIGN KEY (`equipmentId`) REFERENCES `Equipment` (id) 
-            ON DELETE CASCADE 
+    CONSTRAINT `FK_SpaceEquipment_Equipment`
+        FOREIGN KEY (`equipmentId`) REFERENCES `Equipment` (id)
+            ON DELETE CASCADE
             ON UPDATE CASCADE,
-    CONSTRAINT `FK_SpaceEquipment_Space` 
-        FOREIGN KEY (`spaceId`) REFERENCES `Space` (id) 
-            ON DELETE CASCADE 
+    CONSTRAINT `FK_SpaceEquipment_Space`
+        FOREIGN KEY (`spaceId`) REFERENCES `Space` (id)
+            ON DELETE CASCADE
             ON UPDATE CASCADE
 ) ENGINE = InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS Program (
   id            INTEGER         NOT NULL AUTO_INCREMENT,
   name          VARCHAR(255)    NOT NULL UNIQUE,
-  
+
   departmentId  INTEGER         NOT NULL,
 
   PRIMARY KEY (id),
-  
-  CONSTRAINT FOREIGN KEY (departmentId) REFERENCES Department(id) 
-    ON DELETE NO ACTION       
-    ON UPDATE NO ACTION       
+
+  CONSTRAINT FOREIGN KEY (departmentId) REFERENCES Department(id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=3001 DEFAULT CHARSET=latin1;
 
 
@@ -170,17 +170,17 @@ CREATE TABLE IF NOT EXISTS `Subject` (
     groupCount      INTEGER,
     sessionLength   TIME,
     sessionCount    INTEGER,
-    area            DECIMAL(5,1) DEFAULT NULL,         
+    area            DECIMAL(5,1) DEFAULT NULL,
     programId       INTEGER NOT NULL,
     spaceTypeId     INTEGER,
 
     CONSTRAINT AK_Subject_unique_name_in_program UNIQUE (programId, name),
-  
+
     PRIMARY KEY (id),
 
-    CONSTRAINT `FK_Subject_Program` FOREIGN KEY (`programId`) 
-        REFERENCES `Program`(id) 
-        ON DELETE NO ACTION 
+    CONSTRAINT `FK_Subject_Program` FOREIGN KEY (`programId`)
+        REFERENCES `Program`(id)
+        ON DELETE NO ACTION
         ON UPDATE NO ACTION,
 
     CONSTRAINT `FK_Subject_SpaceType` FOREIGN KEY (`SpaceTypeId`)
@@ -197,12 +197,12 @@ CREATE TABLE IF NOT EXISTS SubjectEquipment (
 
     PRIMARY KEY (subjectId, equipmentId),
 
-    CONSTRAINT `FK_SubjectEquipment_Subject` FOREIGN KEY (`subjectId`) REFERENCES `Subject`(id) 
-        ON DELETE CASCADE 
+    CONSTRAINT `FK_SubjectEquipment_Subject` FOREIGN KEY (`subjectId`) REFERENCES `Subject`(id)
+        ON DELETE CASCADE
         ON UPDATE CASCADE,
 
-    CONSTRAINT `FK_SubjectEquipment_Equipment` FOREIGN KEY (`equipmentId`) REFERENCES `Equipment`(id) 
-        ON DELETE CASCADE 
+    CONSTRAINT `FK_SubjectEquipment_Equipment` FOREIGN KEY (`equipmentId`) REFERENCES `Equipment`(id)
+        ON DELETE CASCADE
         ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -223,7 +223,7 @@ CREATE TABLE IF NOT EXISTS AllocRound (
     requireReset    BOOLEAN DEFAULT 0,
 
     PRIMARY KEY(id),
-    
+
     CONSTRAINT `FK_AllocRound_User` FOREIGN KEY (`userId`)
         REFERENCES `User`(id)
         ON DELETE NO ACTION
@@ -237,19 +237,19 @@ CREATE TABLE IF NOT EXISTS AllocSubject (
     isAllocated     BOOLEAN     DEFAULT 0,
     cantAllocate    BOOLEAN     DEFAULT 0,
     priority        INTEGER,
-    allocatedDate   TIMESTAMP, 
-    
-    PRIMARY KEY(subjectId, allocRound), 
+    allocatedDate   TIMESTAMP,
+
+    PRIMARY KEY(subjectId, allocRound),
 
     CONSTRAINT `FK_AllocSubject_Subject` FOREIGN KEY (`subjectId`)
         REFERENCES `Subject`(id)
-        ON DELETE CASCADE 
+        ON DELETE CASCADE
         ON UPDATE CASCADE,
 
     CONSTRAINT `FK_AllocSubject_AllocRound` FOREIGN KEY (`allocRound`)
         REFERENCES `AllocRound`(id)
         ON DELETE CASCADE
-        ON UPDATE CASCADE  
+        ON UPDATE CASCADE
 ) ENGINE=InnoDB CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS AllocSpace (
@@ -299,17 +299,17 @@ CREATE TABLE IF NOT EXISTS AllocSubjectSuitableSpace (
 CREATE TABLE IF NOT EXISTS AllocCurrentRoundUser (
     allocId     INTEGER     NOT NULL,
     userId      INTEGER,
-    
+
     PRIMARY KEY(allocId, userId),
-    
-    CONSTRAINT `FK_AllocCurrentRoundUser_AllocRound` 
-        FOREIGN KEY (`allocId`) 
+
+    CONSTRAINT `FK_AllocCurrentRoundUser_AllocRound`
+        FOREIGN KEY (`allocId`)
         REFERENCES `AllocRound` (id)
-        ON DELETE CASCADE 
+        ON DELETE CASCADE
         ON UPDATE CASCADE,
-        
-    CONSTRAINT `FK_AllocCurrentRoundUser_User` 
-        FOREIGN KEY (`userId`) 
+
+    CONSTRAINT `FK_AllocCurrentRoundUser_User`
+        FOREIGN KEY (`userId`)
         REFERENCES `User` (id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
@@ -392,7 +392,7 @@ INSERT INTO DepartmentPlanner(userId, departmentId) VALUES
     (203, 104),
     (202, 102);
 
-    
+
 /* --- Insert: Building * --- */
 INSERT INTO `Building` (`name`, `description`) VALUES
 	('Musiikkitalo', 'Sibeliusakatemian päärakennus'),
@@ -414,9 +414,9 @@ INSERT INTO `Space` (`name`, `area`, `personLimit`, `buildingId`, `availableFrom
     ('S6114 Perkussioluokka/Marimbaluokka', 33.3, 4, 401, '08:00:00', '22:00:00', '09:00:00', '15:00:00', 'Vain lyömäsoittajat', 5004), -- 1004
     ('S1111 Studio Erkki', 36.0, 15, 401, '08:00:00', '22:00:00', '11:00:00', '15:00:00', 'Tilatyyppi: Studio', 5001), -- 1005
     ('S5109 Jazz/Bändiluokka', 17.5, 2, 401, '08:00:00', '20:00:00', '08:00:00', '16:00:00', 'ONLY FOR JAZZ DEPARTMENT', 5004), -- 1006
-    ('S6112 Harppuluokka', 28.8, 4, 401, '08:00:00', '17:00:00', '11:00:00', '16:00:00', 'Vain harpistit', 5004), -- 1007 
+    ('S6112 Harppuluokka', 28.8, 4, 401, '08:00:00', '17:00:00', '11:00:00', '16:00:00', 'Vain harpistit', 5004), -- 1007
     ('S6113 Puhaltimet/Klarinetti/Harppu', 18.1, 4, 401, '08:00:00', '19:00:00', '08:00:00', '19:00:00', 'Tilatyyppi: Musiikkiluokka', 5004), -- 1008
-    
+
     ('R312 Opetusluokka', 16.6, 6, 403, '08:00:00', '21:00:00', '08:00:00', '18:00:00', 'Tilatyyppi: Musiikkiluokka', 5004), -- 1009
     ('R530 Opetusluokka', 50.0, 18, 403, '08:00:00', '21:00:00', '08:00:00', '19:00:00', 'Luentoluokka', 5002), -- 1010
     ('R213 Harjoitushuone', 20.0, 4, 403, '08:00:00', '21:00:00', '10:00:00', '16:00:00', 'Ensisijainen varausoikeus vanhan musiikin aineryhmällä', 5004), -- 1011
@@ -454,12 +454,12 @@ INSERT INTO `Equipment` (`name`, `isMovable`, `priority`, `description`) VALUES
 	('Urut', 0, 600, 'Valtavan kokoinen soitin'), -- 2001
 	('Kantele', 1, 50, 'Väinämöisen soitin'), -- 2002
     ('Nokkahuilu', 1, 50, 'Kaikki rakastaa'), -- 2003
-    ('Rumpusetti', 1, 250, 'Ääntä riittää'), -- 2004 
-    ('Äänityslaitteisto Xyz', 0, 900, '8 kanavaa'), -- 2005 
-    ('Viulu', 1, 50, 'Jousisoitin, 4-kieltä'), -- 2006 
-    ('Alttoviulu', 1, 50, 'Jousisoitin, suurempi kuin viulu'), -- 2007 
+    ('Rumpusetti', 1, 250, 'Ääntä riittää'), -- 2004
+    ('Äänityslaitteisto Xyz', 0, 900, '8 kanavaa'), -- 2005
+    ('Viulu', 1, 50, 'Jousisoitin, 4-kieltä'), -- 2006
+    ('Alttoviulu', 1, 50, 'Jousisoitin, suurempi kuin viulu'), -- 2007
     ('Sello', 1, 100, 'Suuri, 4-kielinen jousisoitin'), -- 2008
-    ('Kontrabasso', 1, 100, 'Suurin jousisoitin'), -- 2009 
+    ('Kontrabasso', 1, 100, 'Suurin jousisoitin'), -- 2009
     ('Piano', 0, 900, 'Piano-opetus vaatii kaksi flyygeliä'), -- 2010
     ('Kitara', 1, 100, '6-kielinen soitin'), -- 2011
     ('Harmonikka', 1, 200, 'Hanuri'), -- 2012
@@ -480,7 +480,7 @@ INSERT INTO `Equipment` (`name`, `isMovable`, `priority`, `description`) VALUES
     ('Sähkökitara', 1, 100, 'Sähkökitara'), -- 2027
     ('Käyrätorvi', 1, 100, 'Puhallin'), -- 2028
     ('Cembalo', 0, 900, 'Pianon edeltäjä'); -- 2029
-    
+
 /* --- Insert: SpaceEquipment * --- */
 INSERT INTO `SpaceEquipment` (`spaceId`, `equipmentId`) VALUES
 	(1001, 2021),
@@ -520,7 +520,7 @@ INSERT INTO `SpaceEquipment` (`spaceId`, `equipmentId`) VALUES
     (1018, 2010),
     (1013, 2010),
     (1025, 2012), -- Harmoni
-    (1025, 2023), -- Äänentoisto (Ei PA-laitteet) 
+    (1025, 2023), -- Äänentoisto (Ei PA-laitteet)
     (1026, 2010), -- Piano
     (1026, 2022), -- DVD Soitin
     (1026, 2023), -- Äänentoisto (Ei PA-laitteet)
@@ -534,9 +534,9 @@ INSERT INTO `SpaceEquipment` (`spaceId`, `equipmentId`) VALUES
     (1028, 2022), -- DVD-soitin
     (1028, 2023), -- Äänentoisto (Ei PA-laitteet)
     (1028, 2025), -- Yhtyeluokan äänentoisto
-    (1029, 2029), -- Cembalo 
+    (1029, 2029), -- Cembalo
     (1029, 2023), -- Äänentoisto (Ei PA-laitteet)
-    (1030, 2029), -- Cembalo 
+    (1030, 2029), -- Cembalo
     (1030, 2023), -- Äänentoisto (Ei PA-laitteet)
     (1031, 2023), -- Äänentoisto (Ei PA-laitteet)
     (1032, 2021), -- Flyygeli
@@ -552,8 +552,8 @@ INSERT INTO `SpaceEquipment` (`spaceId`, `equipmentId`) VALUES
     (1034, 2022), -- DVD-soitin
     (1034, 2023), -- Äänentoisto (Ei PA-laitteet)
     (1035, 2021), -- Flyygeli
-    (1035, 2013), -- Fortepiano 
-    (1035, 2022), -- DVD-soitin 
+    (1035, 2013), -- Fortepiano
+    (1035, 2022), -- DVD-soitin
     (1035, 2023), -- Äänentoisto (Ei PA-laitteet)
     (1036, 2021), -- Flyygeli
     (1036, 2022), -- DVD-soitin
@@ -581,7 +581,7 @@ INSERT INTO Program (name , departmentId) VALUES
     ('Kitara', 103),
     ('Kantele', 103),
     ('Jazzsävellys', 101),
-    ('Musiikinteoria pääaineena', 104), 
+    ('Musiikinteoria pääaineena', 104),
     ('Jazzmusiikin instrumentti- tai lauluopinnot pääaineena', 102),
     ('Fortepiano', 103),
     ('Global Music', 112),
@@ -605,11 +605,11 @@ INSERT INTO Program (name , departmentId) VALUES
     ('Taidejohtaminen ja yrittäjyys', 109),
     ('Urut', 112),
     ('Vanha musiikki', 106),
-    ('Avoin Kampus', 110); 
+    ('Avoin Kampus', 110);
 
 /* --- Insert: Subject * --- */
 INSERT INTO Subject(name, groupSize, groupCount, sessionLength, sessionCount, area, programId, spaceTypeId) VALUES
-    ('Saksan kielen perusteet', 20, 2, '01:30:00', 2, 35, 3030, 5002), 
+    ('Saksan kielen perusteet', 20, 2, '01:30:00', 2, 35, 3030, 5002),
     ('Jazzimprovisoinnin ja -teorian perusteet', 17, 1, '02:30:00', 2, 35, 3005, 5004),
     ('Piano yksilöopetus', 1, 1, '02:30:00', 2, 10, 3001, 5004),
     ('Trumpetin ryhmäsoitto', 10, 1,'01:30:00', 3, 40, 3025, 5004),
@@ -700,8 +700,8 @@ INSERT INTO AllocSubject(subjectId, allocRound, isAllocated, allocatedDate, prio
     (4003, 10002, 1, '2022-10-28', 2), -- Piano yksilöopetus, 1ppl, 2:30/05:00, 10m2, musiikkiluokka
     (4005, 10002, 1, '2022-10-28', 3), -- Kirkkomusiikin ryhmäsoitto, 5ppl, 2:30/10:00, musiikkiluokka
     (4024, 10002, 1, '2022-10-28', 4), -- Global Orchestra, 12ppl, 2:30/10:00, 35m2, musiikkiluokka
-    (4004, 10002, 1, '2022-10-28', 5), -- Trumpetin ryhmäsoitto, 10ppl, 1:30/4:30, 40m2 
-    (4014, 10002, 1, '2022-10-28', 6), -- fortepianosoitto, 1ppl, 16:20, 30m2, musiikkiluokka, 
+    (4004, 10002, 1, '2022-10-28', 5), -- Trumpetin ryhmäsoitto, 10ppl, 1:30/4:30, 40m2
+    (4014, 10002, 1, '2022-10-28', 6), -- fortepianosoitto, 1ppl, 16:20, 30m2, musiikkiluokka,
     (4019, 10002, 1, '2022-10-28', 7), -- jazz rummut, 1ppl, 4:00, 15m2, musiikkiluokka
     (4013, 10002, 1, '2022-10-28', 8), -- huilujensoitto taso a, 1ppl, 05:00, 10m2, musiikkiluokka
     (4002, 10002, 1, '2022-10-28', 9), -- jazz improvisoinnin perusteet, 17ppl, 2:30/5:00, 35m2, musiikkiluokka
@@ -724,14 +724,14 @@ INSERT INTO AllocSubject(subjectId, allocRound, isAllocated, allocatedDate, prio
     (4009, 10002, 1, '2022-10-28', 26), -- kanteleensoitto, 1ppl, 01:00/04:00, 10m2, musiikkiluokka
     (4032, 10002, 1, '2022-10-28', 27), -- the jazz line, 14ppl, 02:00, 20m2, musiikkiluokka
     (4033, 10002, 1, '2022-10-28', 28), -- Jazzensemble, 5ppl, 02:00, 20m2, musiikkiluokka
-    (4034, 10002, 1, '2022-10-28', 29), -- Äänenkäyttö ja huolto / korrepetitiokoulutus, 
+    (4034, 10002, 1, '2022-10-28', 29), -- Äänenkäyttö ja huolto / korrepetitiokoulutus,
     (4035, 10002, 1, '2022-10-28', 30), -- Prima vista / korrepetitiokoulutus
     (4036, 10002, 1, '2022-10-28', 31), -- Musiikinhistorian lukupiiri
     (4037, 10002, 1, '2022-10-28', 32), -- Tohtoriseminaari (sävellys)
     (4038, 10002, 1, '2022-10-28', 33), -- Musiikkiteknologian perusteet
     (4039, 10002, 1, '2022-10-28', 34), -- Johtamisen pedagogiikka -luentosarja
 
-    (4001, 10003, 0, '2022-09-21', 1),  
+    (4001, 10003, 0, '2022-09-21', 1),
     (4002, 10003, 0, '2022-09-21', 2),
     (4003, 10003, 0, '2022-09-21', 3),
     (4004, 10003, 0, '2022-09-21', 4),
@@ -769,8 +769,8 @@ INSERT INTO AllocSpace(subjectId, allocRound, spaceId, totalTime) VALUES
     (4009, 10002, 1016, '04:00:00'), -- kanteleensoitto / N517 Musiikkiluokka, 15.5m2, 3ppl
     (4032, 10002, 1010, '02:00:00'), -- jazz line / Studio Erkki, 36m2, 15ppl
     (4033, 10002, 1018, '02:00:00'), -- jazz endemble / N319 Jazz/Lyömä/piano/yhtyeet, 34m2, 5ppl
-    (4034, 10002, 1016, '03:00:00'), -- Äänenkäyttö ja huolto / korrepetitiokoulutus 4ppl, N522 Säestysluokka, 33m2, 8m2 
-    (4035, 10002, 1018, '06:00:00'), -- Prima vista / korrepetitiokoulutus 2ppl, N319 piano, 34m2, 5ppl 
+    (4034, 10002, 1016, '03:00:00'), -- Äänenkäyttö ja huolto / korrepetitiokoulutus 4ppl, N522 Säestysluokka, 33m2, 8m2
+    (4035, 10002, 1018, '06:00:00'), -- Prima vista / korrepetitiokoulutus 2ppl, N319 piano, 34m2, 5ppl
     (4036, 10002, 1010, '01:00:00'), -- Musiikinhistorian lukupiiri 10ppl / R530 Opetusluokka, 50m2, 18ppl
     (4037, 10002, 1010, '02:00:00'), -- Tohtoriseminaari (sävellys) 17ppl / R530 Opetusluokka, 59m2, 18ppl
     (4038, 10002, 1010, '01:00:00'), -- Musiikkiteknologian perusteet 10ppl
@@ -811,7 +811,7 @@ BEGIN
 	DECLARE debug INTEGER;
 
 	SET debug := (SELECT numberValue FROM GlobalSetting WHERE name='allocation-debug');
-	
+
 	IF debug = 1 AND logId IS NOT NULL AND logId != 0 THEN
 		INSERT INTO log_event(log_id, stage, status, information) VALUES(logId, stage, status, msg);
 	END IF;
@@ -823,7 +823,7 @@ DELIMITER ;
 
 DELIMITER //
 CREATE OR REPLACE PROCEDURE prioritizeSubjects(allocRoundId INT, priority_option INT, logId INT)
-BEGIN 
+BEGIN
 	DECLARE priorityNow INTEGER;
 
 	SET priorityNow = (SELECT IFNULL(MAX(priority),0) FROM AllocSubject WHERE allocRound = allocRoundId);
@@ -831,28 +831,28 @@ BEGIN
 	IF priority_option = 1 THEN -- subject_equipment.priority >= X
 		INSERT INTO AllocSubject (subjectId, allocRound, priority)
 			SELECT allSub.subjectId, allSub.allocRound, ROW_NUMBER() OVER (ORDER BY MAX(sub_eqp.priority) DESC, Subject.groupSize ASC) + priorityNow as "row"
-    		FROM AllocSubject allSub 
+    		FROM AllocSubject allSub
     		LEFT JOIN SubjectEquipment sub_eqp ON allSub.subjectId = sub_eqp.subjectId
     		JOIN Subject ON allSub.subjectId = Subject.id
     		WHERE allSub.allocRound = allocRoundId AND allSub.priority IS NULL
     		AND (sub_eqp.priority) >= (SELECT numberValue FROM GlobalSetting gs WHERE name="x")
-    		GROUP BY allSub.subjectId 
+    		GROUP BY allSub.subjectId
 		ON DUPLICATE KEY UPDATE priority = VALUES(priority);
 	ELSEIF priority_option = 2 THEN -- subject_equipment.priority < X
 		INSERT INTO AllocSubject (subjectId, allocRound, priority)
 			SELECT allSub.subjectId, allSub.allocRound, ROW_NUMBER() OVER (ORDER BY MAX(sub_eqp.priority) DESC, Subject.groupSize ASC) + priorityNow as "row"
-       		FROM AllocSubject allSub 
+       		FROM AllocSubject allSub
         	LEFT JOIN SubjectEquipment sub_eqp ON allSub.subjectId = sub_eqp.subjectId
         	JOIN Subject ON allSub.subjectId = Subject.id
         	WHERE allSub.allocRound = allocRoundId
         	AND allSub.priority IS NULL
         	AND (sub_eqp.priority) < (SELECT numberValue FROM GlobalSetting gs WHERE name="x")
-        	GROUP BY allSub.subjectId 
+        	GROUP BY allSub.subjectId
         	ORDER BY sub_eqp.priority DESC
         ON DUPLICATE KEY UPDATE priority = VALUES(priority);
     ELSEIF priority_option = 3 THEN -- all others (subjects without equipment)
     	INSERT INTO AllocSubject (subjectId, allocRound, priority)
-    		SELECT AllocSubject.subjectId, AllocSubject.allocRound, ROW_NUMBER() OVER (ORDER BY Subject.groupSize ASC) + priorityNow as "row" 
+    		SELECT AllocSubject.subjectId, AllocSubject.allocRound, ROW_NUMBER() OVER (ORDER BY Subject.groupSize ASC) + priorityNow as "row"
 			FROM AllocSubject
 			LEFT JOIN Subject ON AllocSubject.subjectId = Subject.id
 			WHERE priority IS NULL
@@ -870,7 +870,7 @@ DELIMITER ;
 DELIMITER //
 
 CREATE OR REPLACE PROCEDURE setSuitableRooms(allocRouId INT, subId INT)
-BEGIN 
+BEGIN
 	INSERT INTO AllocSubjectSuitableSpace (allocRound, subjectId, spaceId, missingItems)
 		SELECT allocRouId, subId, sp.id, getMissingItemAmount(subId, sp.id) AS "missingItems"
 		FROM Space sp
@@ -886,7 +886,7 @@ DELIMITER ;
 /*--- Procedure: SPACE ALLOCATION ---*/
 DELIMITER //
 
-CREATE PROCEDURE allocateSpace(allocRouId INT, subId INT, logId INT) 
+CREATE PROCEDURE allocateSpace(allocRouId INT, subId INT, logId INT)
 BEGIN
 	DECLARE spaceTo INTEGER DEFAULT NULL;
 	DECLARE i INTEGER DEFAULT 0; -- loop index
@@ -899,38 +899,38 @@ BEGIN
 	SET sessions := (SELECT groupCount * sessionCount FROM Subject WHERE id = subId); -- total amount of sessions in subject
    	SET allocated := 0; -- How many sessions allocated
    	SET sessionSeconds := (SELECT TIME_TO_SEC(sessionLength) FROM Subject WHERE id = subId); -- Session length in seconds
-	
+
 	SET spaceTo := ( -- to check if subject can be allocated
         	SELECT ass.spaceId FROM AllocSubjectSuitableSpace ass
-        	WHERE ass.missingItems = 0 AND ass.subjectId = subId AND ass.allocRound = allocRouId 
+        	WHERE ass.missingItems = 0 AND ass.subjectId = subId AND ass.allocRound = allocRouId
  			LIMIT 1);
- 		
+
 	IF spaceTo IS NULL THEN -- If can't find suitable spaces
 		SET suitableSpaces := FALSE;
    	ELSE -- Find for each session space with free time
    		SET i := 0;
-   		WHILE loopOn DO -- Try add all sessions to the space	
+   		WHILE loopOn DO -- Try add all sessions to the space
    			SET spaceTo := (SELECT sp.id FROM AllocSubjectSuitableSpace ass
 							LEFT JOIN Space sp ON ass.spaceId = sp.id
 							WHERE ass.subjectId = subId AND ass.missingItems = 0 AND ass.allocRound = allocRouId
 							GROUP BY sp.id
-							HAVING 
-							((SELECT TIME_TO_SEC(TIMEDIFF(availableTo, availableFrom)) *5 FROM Space WHERE id = sp.id) - 
+							HAVING
+							((SELECT TIME_TO_SEC(TIMEDIFF(availableTo, availableFrom)) *5 FROM Space WHERE id = sp.id) -
 								(SELECT IFNULL(SUM(TIME_TO_SEC(totalTime)), 0) FROM AllocSpace WHERE allocRound = allocRouId AND spaceId = sp.id)
 								>
 								(sessionSeconds * (sessions - i - allocated)))
 							ORDER BY sp.personLimit ASC, sp.area ASC
 							LIMIT 1);
-			
+
 			IF spaceTo IS NULL THEN -- If can't find space with freetime for specific amount sessions
 				SET i := i+1;
-				IF i = sessions - allocated THEN -- If checked all 
+				IF i = sessions - allocated THEN -- If checked all
 					SET loopOn = FALSE;
 				END IF;
 			ELSE -- if can find space with freetime for specific amount sessions
 			INSERT INTO AllocSpace
-					(subjectId, allocRound, spaceId, totalTime) 
-				VALUES 
+					(subjectId, allocRound, spaceId, totalTime)
+				VALUES
 					(subId, allocRouId, spaceTo, SEC_TO_TIME((sessionSeconds * (sessions - i - allocated))))
 				ON DUPLICATE KEY UPDATE totalTime = ADDTIME(totalTime, (SEC_TO_TIME(sessionSeconds * (sessions - i - allocated))));
 				-- LOG HERE
@@ -943,7 +943,7 @@ BEGIN
 			END IF;
    		END WHILE;
    END IF;
-   
+
    IF sessions = allocated THEN -- If all sessions allocated
    	UPDATE AllocSubject SET isAllocated = 1 WHERE subjectId = subId AND allocRound = allocRouId;
    ELSEIF suitableSpaces = FALSE THEN -- if can't find any suitable space for the subject
@@ -958,20 +958,20 @@ BEGIN
 			WHERE alpa.subjectId = subId
 			AND alpa.missingItems = 0
 			AND alpa.allocRound = allocRouId
-			GROUP BY alpa.spaceId 
-			ORDER BY ((TIME_TO_SEC(TIMEDIFF(spa.availableTO, spa.availableFrom)) *5) - 
+			GROUP BY alpa.spaceId
+			ORDER BY ((TIME_TO_SEC(TIMEDIFF(spa.availableTO, spa.availableFrom)) *5) -
 			(SELECT IFNULL((SUM(TIME_TO_SEC(totalTime))), 0) FROM AllocSpace WHERE allocRound = allocRouId AND spaceId = alpa.spaceId)) DESC
 			LIMIT 1
-		);		
-   		INSERT INTO AllocSpace (subjectId, allocRound, spaceId, totalTime) 
-   			VALUES (subId, allocRouId, spaceTo, SEC_TO_TIME(sessionSeconds * sessions)); 
+		);
+   		INSERT INTO AllocSpace (subjectId, allocRound, spaceId, totalTime)
+   			VALUES (subId, allocRouId, spaceTo, SEC_TO_TIME(sessionSeconds * sessions));
    		UPDATE AllocSubject SET isAllocated = 1 WHERE subjectId = subId AND allocRound = allocRouId;
    		-- LOG HERE
 		CALL LogAllocation(logId, "Space-allocation", "Warning", CONCAT("Subject : ", subId, " - Allocate ", sessions, " of ", sessions, " sessions to space: ", spaceTo, " - All suitable spaces are full."));
-   	 
+
    	ELSEIF allocated < sessions AND suitableSpaces = TRUE THEN -- if there is free time for some of the sessions but not all, add rest to same space than others
    		SET spaceTo := (SELECT spaceId FROM AllocSpace WHERE subjectId = subId AND allocRound = allocRouId ORDER BY totalTime ASC LIMIT 1);
-		
+
 		UPDATE AllocSpace SET totalTime=ADDTIME(totalTime,(SEC_TO_TIME(sessionSeconds * (sessions - allocated))))
 		WHERE subjectId=subID AND spaceId = spaceTO AND allocRound = allocRouId;
 		UPDATE AllocSubject SET isAllocated = 1 WHERE subjectId = subId AND allocRound = allocRouId;
@@ -987,7 +987,7 @@ DELIMITER //
 
 CREATE PROCEDURE IF NOT EXISTS  resetAllocation(allocR INTEGER)
 BEGIN
-	
+
 	-- Handler for the error
 	DECLARE processBusy CONDITION FOR SQLSTATE '50000';
 	DECLARE EXIT HANDLER FOR processBusy
@@ -1002,13 +1002,13 @@ BEGIN
 		SET @message_text = CONCAT("The allocation with allocRound:", allocR, " is currently in progress.");
 		SIGNAL processBusy SET MESSAGE_TEXT = @message_text, MYSQL_ERRNO = 1192;
 	END IF;
-	
+
 	-- Delete all allocation data and reset variables
 	DELETE FROM AllocSpace WHERE allocRound = allocR;
 	DELETE FROM AllocSubjectSuitableSpace WHERE allocRound = allocR;
     IF (allocR = 10004) THEN
         DELETE FROM AllocSubject WHERE allocRound = 10004;
-    ELSE 
+    ELSE
 	    UPDATE AllocSubject SET isAllocated = 0, priority = null, cantAllocate = 0 WHERE allocRound = allocR;
     END IF;
     UPDATE AllocRound SET isAllocated = 0, requireReset = FALSE WHERE id = allocR;
@@ -1016,7 +1016,7 @@ END; //
 
 DELIMITER ;
 
-/* Procedure: START ALLOCATION */ 
+/* Procedure: START ALLOCATION */
 DELIMITER //
 
 CREATE OR REPLACE PROCEDURE startAllocation(allocRouId INT)
@@ -1035,27 +1035,27 @@ BEGIN
     DECLARE processBusy CONDITION FOR SQLSTATE '50000';
     DECLARE alreadyAllocated CONDITION FOR SQLSTATE '50001';
 	DECLARE abortAllocation	CONDITION FOR SQLSTATE '50002';
-	DECLARE require_reset	CONDITION FOR SQLSTATE '50003';   
+	DECLARE require_reset	CONDITION FOR SQLSTATE '50003';
 
-	-- Cursor for subject loop / SELECT priority order 
-	DECLARE subjects CURSOR FOR 
-		SELECT allSub.subjectId 
-       	FROM AllocSubject allSub 
-        WHERE allSub.allocRound = allocRouId 
+	-- Cursor for subject loop / SELECT priority order
+	DECLARE subjects CURSOR FOR
+		SELECT allSub.subjectId
+       	FROM AllocSubject allSub
+        WHERE allSub.allocRound = allocRouId
         ORDER BY priority ASC;
-              
+
 	DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished = 1;
 
 	-- IF user tell to abort the process
-	DECLARE EXIT HANDLER FOR abortAllocation 
+	DECLARE EXIT HANDLER FOR abortAllocation
 	BEGIN
 		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
 		SET @full_error = CONCAT("Error: ", @errno, " (", @sqlstate, "): ", @text);
 		CALL LogAllocation(logId, "Allocation", "Error", (SELECT @full_error));
-		UPDATE AllocRound SET abortProcess = 0, processOn = 0 WHERE id = allocRouId;	
+		UPDATE AllocRound SET abortProcess = 0, processOn = 0 WHERE id = allocRouId;
 		RESIGNAL SET MESSAGE_TEXT = @full_error;
 	END;
-	
+
 	-- IF Procedure already running, is already allocated
 	DECLARE EXIT HANDLER FOR processBusy, alreadyAllocated, require_reset
 	BEGIN
@@ -1064,7 +1064,7 @@ BEGIN
 		CALL LogAllocation(logId, "Allocation", "Error", (SELECT @full_error));
 		RESIGNAL SET MESSAGE_TEXT = @full_error;
 	END;
-	
+
 	-- IF ANY ERROR HAPPEN INSERT IT TO DEBUG LOG
 	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION
 		BEGIN
@@ -1073,7 +1073,7 @@ BEGIN
 			SET @full_error = CONCAT("ERROR ", @errno, " (", @sqlstate, "): ", @text);
 			CALL LogAllocation(logId, "Allocation", "Error", (SELECT @full_error));
 		END;
-	
+
 	-- IF debug mode on, start logging.
 	SET debug := (SELECT numberValue FROM GlobalSetting WHERE name='allocation-debug');
 	IF debug = 1 THEN
@@ -1095,7 +1095,7 @@ BEGIN
 		SET @message_text = CONCAT("The allocRound: ", allocRouId, " require reset before allocation.");
 		SIGNAL require_reset SET MESSAGE_TEXT = @message_text, MYSQL_ERRNO = 1192;
 	END IF;
-	-- IF Allocation already running with allocRound id raise error 
+	-- IF Allocation already running with allocRound id raise error
 	SET procedure_active = (SELECT processOn FROM AllocRound WHERE id = allocRouId);
 	IF procedure_active = 1 THEN
 		SET @message_text = CONCAT("The allocation with allocRound:", allocRouId, " is already running.");
@@ -1103,7 +1103,7 @@ BEGIN
 	END IF;
 	-- SET procedure running
 	UPDATE AllocRound SET processOn = 1 WHERE id = allocRouId;
-	
+
 	/* ONLY FOR DEMO PURPOSES */
 	IF (allocRouID = 10004) THEN
 		INSERT INTO AllocSubject(subjectId, allocRound)
@@ -1116,27 +1116,27 @@ BEGIN
 	CALL prioritizeSubjects(allocRouId, 1, logId); -- sub_eq.prior >= X ORDER BY sub_eq.prior DESC, groupSize ASC
 	CALL prioritizeSubjects(allocRouId, 2, logId); -- sub_eq.prior < X ORDER BY sub_eq.prior DESC, groupSize ASC
 	CALL prioritizeSubjects(allocRouId, 3, logId); -- without equipments ORDER BY groupSize ASC
-	
+
 	OPEN subjects;
 
 	subjectLoop : LOOP
 		FETCH subjects INTO subId;
 		IF finished = 1 THEN LEAVE subjectLoop;
 		END IF;
-	
+
 		-- IF user tells abort the process.
 		SET abort_round := (SELECT abortProcess FROM AllocRound WHERE id = allocRouId);
 		IF abort_round = 1 THEN
 			SET @message_text = CONCAT("The allocation been terminated by user. AllocRoundId: ", allocRouId, ".");
 			SIGNAL abortAllocation SET MESSAGE_TEXT = @message_text, MYSQL_ERRNO = 1192;
 		END IF;
-	
+
 		-- SET Suitable rooms for the subject
 		CALL LogAllocation(logId, "Allocation", "Info", CONCAT("SubjectId: ", subId, " - Search for suitable spaces"));
 	    CALL setSuitableRooms(allocRouId, subId);
 		-- SET cantAllocate or Insert subject to spaces
         CALL allocateSpace(allocRouId, subId, logId);
-       	
+
 	END LOOP subjectLoop;
 
 	CLOSE subjects;
@@ -1154,14 +1154,14 @@ DELIMITER $$
 CREATE PROCEDURE IF NOT EXISTS abortAllocation(allocR INT)
 BEGIN
 	DECLARE inProgress BOOLEAN DEFAULT FALSE;
-	
+
 	-- CHECK IF Allocation is active
 	SET inProgress := (SELECT processOn FROM AllocRound WHERE id = allocR);
 	-- IF in process tell to stop
 	IF inProgress = TRUE THEN
 		UPDATE AllocRound SET abortProcess = 1 WHERE id = allocR;
 	END IF;
-	
+
 END; $$
 
 DELIMITER ;
@@ -1178,7 +1178,7 @@ RETURN (SELECT COUNT(*)
         FROM
     (SELECT equipmentId  FROM SubjectEquipment
     WHERE subjectId = subId
-    EXCEPT 
+    EXCEPT
     SELECT equipmentId FROM SpaceEquipment
     WHERE spaceId = spaId) a
 );

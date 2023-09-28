@@ -1,37 +1,37 @@
+import bcrypt from 'bcrypt';
+import dotenv from 'dotenv';
 import express, { Request, Response } from 'express';
 import jsonwebtoken from 'jsonwebtoken';
-import dotenv from 'dotenv';
-import bcrypt from 'bcrypt';
-
+import { admin } from '../authorization/admin.js';
+import { roleChecker } from '../authorization/roleChecker.js';
+import { authenticator } from '../authorization/userValidation.js';
 import db_knex from '../db/index_knex.js';
 import {
+  authenticationErrorHandler,
   dbErrorHandler,
   requestErrorHandler,
   successHandler,
-  authenticationErrorHandler,
 } from '../responseHandler/index.js';
-import { authenticator } from '../authorization/userValidation.js';
-import { admin } from '../authorization/admin.js';
-import { roleChecker } from '../authorization/roleChecker.js';
-import { validate } from '../validationHandler/index.js';
+import { validate, validateIdObl } from '../validationHandler/index.js';
 import { validateUserPut } from '../validationHandler/user.js';
-import { validateIdObl } from '../validationHandler/index.js';
 
 dotenv.config({});
 
 const user = express.Router();
 
-//adding user
+// adding user
 user.post(
   '/',
   [authenticator, admin, roleChecker],
   (req: Request, res: Response) => {
     const hashedPassword = bcrypt.hashSync(req.body.password, 10);
+    // REMOVE AFTER SOME TESTING!!! SECURITY!!!
     console.log(
       `Register, clear text password from frontend: ${req.body.password}`,
-    ); // REMOVE AFTER SOME TESTING!!! SECURITY!!!
+    );
     req.body.password = hashedPassword;
-    console.log(`Register, password hashed for DB: ${req.body.password}`); // REMOVE AFTER SOME TESTING!!! SECURITY!!!
+    // REMOVE AFTER SOME TESTING!!! SECURITY!!!
+    console.log(`Register, password hashed for DB: ${req.body.password}`);
     db_knex
       .insert(req.body)
       .into('User')
@@ -81,7 +81,7 @@ user.get(
   },
 );
 
-//handling login for registered user
+// handling login for registered user
 user.post('/login', (req, res) => {
   console.log(`Login, password: ${req.body.password}`);
   db_knex('User')
@@ -134,7 +134,7 @@ user.post('/login', (req, res) => {
     });
 });
 
-//Changing userdata
+// Changing userdata
 user.put(
   '/',
   validateUserPut,

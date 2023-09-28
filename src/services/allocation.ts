@@ -1,5 +1,5 @@
-import db_knex from '../db/index_knex.js';
 import db from '../db/index.js';
+import db_knex from '../db/index_knex.js';
 import {
   AllocatedRoomsByProgramType,
   AllocatedSubjectsByProgramType,
@@ -25,7 +25,7 @@ const getById = (id: number): Promise<string> => {
 	            ar.isSeasonAlloc,
 	            ar.description,
 	            ar.lastModified,
-	            ar.isAllocated, 
+	            ar.isAllocated,
 	            ar.processOn,
 	            (SELECT COUNT(*) FROM AllocSubject WHERE AllocRound = ${db.escape(
                 id,
@@ -36,7 +36,7 @@ const getById = (id: number): Promise<string> => {
 	            (SELECT COUNT(*) FROM AllocSubject WHERE isAllocated = 0 AND AllocRound = ${db.escape(
                 id,
               )}) AS 'unAllocated'
-	            FROM AllocRound ar 
+	            FROM AllocRound ar
 	            WHERE ar.id=${db.escape(id)}`;
   return new Promise((resolve, reject) => {
     db.query(sqlQuery, (err, result) => {
@@ -49,10 +49,10 @@ const getById = (id: number): Promise<string> => {
 // Get all subjects in allocation by id
 const getAllSubjectsById = (id: number) => {
   const allocRound = id;
-  const sqlQuery = `SELECT 
-        s.id, 
-        s.name, 
-        as2.isAllocated, 
+  const sqlQuery = `SELECT
+        s.id,
+        s.name,
+        as2.isAllocated,
         as2.cantAllocate,
         as2.priority,
         IFNULL((SELECT CAST(SUM(TIME_TO_SEC(al_sp.totalTime)/3600) AS DECIMAL(10,1))
@@ -91,9 +91,9 @@ const getRoomsByAllocId = (allocRoundId: number): Promise<RoomsByAllocId[]> => {
     .select('id', 'name')
     .select({
       allocatedHours: db_knex.raw(
-        `(SELECT IFNULL(CAST(SUM(TIME_TO_SEC(AllocSpace.totalTime))/3600 AS DECIMAL(10,1)), 0) 
-    FROM AllocSpace 
-    WHERE spaceId = id 
+        `(SELECT IFNULL(CAST(SUM(TIME_TO_SEC(AllocSpace.totalTime))/3600 AS DECIMAL(10,1)), 0)
+    FROM AllocSpace
+    WHERE spaceId = id
     AND allocRound = ?
 )`,
         allocRoundId,
@@ -114,11 +114,11 @@ const getAllocatedRoomsByProgram = async (
   programId: number,
   allocId: number,
 ): Promise<AllocatedRoomsByProgramType> => {
-  const sqlQuery = `SELECT DISTINCT s.id, s.name, CAST(SUM(TIME_TO_SEC(as2.totalTime)/3600) AS DECIMAL(10,1)) AS allocatedHours 
+  const sqlQuery = `SELECT DISTINCT s.id, s.name, CAST(SUM(TIME_TO_SEC(as2.totalTime)/3600) AS DECIMAL(10,1)) AS allocatedHours
                     FROM AllocSpace as2
                     LEFT JOIN Space s ON as2.spaceId = s.id
                     LEFT JOIN Subject s2 ON as2.subjectId = s2.id
-                    LEFT JOIN Program p ON s2.programId = p.id 
+                    LEFT JOIN Program p ON s2.programId = p.id
                     WHERE p.id = ? AND as2.allocRound = ?
                     GROUP BY s.id
                     ;`;
@@ -162,7 +162,7 @@ const getSubjectsByProgram = (
   programId: number,
 ): Promise<AllocatedSubjectsByProgramType> => {
   const sqlQuery = `
-    SELECT alsub.subjectId AS "id", 
+    SELECT alsub.subjectId AS "id",
             sub.name,
             IFNULL(CAST(SUM(TIME_TO_SEC(alspace.totalTime) / 3600) AS DECIMAL(10,1)), 0) AS "allocatedHours",
             CAST((sub.groupCount * TIME_TO_SEC(sub.sessionLength) * sub.sessionCount / 3600) AS DECIMAL(10,1)) as "requiredHours"
@@ -250,7 +250,7 @@ const abortAllocation = (allocRound: number) => {
   });
 };
 
-//for test round 10004
+// for test round 10004
 const getUnAllocableSubjects = (allocRoundId = 10004): Promise<string> => {
   const sqlQuery = `SELECT all_sub.subjectId, s.name, s.groupSize, s.area, st.name AS "spaceType"
     FROM AllocSubject all_sub
@@ -266,16 +266,16 @@ const getUnAllocableSubjects = (allocRoundId = 10004): Promise<string> => {
   });
 };
 
-//work in progress
+// work in progress
 const getSpacesForSubject = (subjectId: number): Promise<string> => {
-  const sqlQuery = `SELECT 
-    s.id, 
-    s.name, 
+  const sqlQuery = `SELECT
+    s.id,
+    s.name,
     s.area,
     getMissingItemAmount(?, s.id) AS "missingItems",
-    IF(s.area >= (SELECT area FROM Subject WHERE id = ?), TRUE, FALSE) AS areaOk, 
+    IF(s.area >= (SELECT area FROM Subject WHERE id = ?), TRUE, FALSE) AS areaOk,
     s.personLimit,
-    IF(s.personLimit >= (SELECT groupSize FROM Subject WHERE id = ?), TRUE, FALSE) AS personLimitOk, 
+    IF(s.personLimit >= (SELECT groupSize FROM Subject WHERE id = ?), TRUE, FALSE) AS personLimitOk,
     s.inUse,
     st.name as "spaceType",
     IF(st.id = (SELECT spaceTypeId FROM Subject WHERE id = ?), TRUE, FALSE) AS spaceTypeOk
@@ -286,7 +286,7 @@ const getSpacesForSubject = (subjectId: number): Promise<string> => {
     ORDER BY FIELD(st.id, (SELECT spaceTypeId FROM Subject WHERE id = ?)) DESC,
     missingItems,
     personLimitOk DESC,
-    areaOk DESC 
+    areaOk DESC
     ;`;
   return new Promise((resolve, reject) => {
     db.query(
@@ -305,9 +305,9 @@ const getMissingEquipmentForRoom = (
   spaceId: number,
 ): Promise<string> => {
   const sqlQuery = `SELECT equipmentId, e.name FROM SubjectEquipment sub_eq
-    JOIN Equipment e ON sub_eq.equipmentId = e.id 
+    JOIN Equipment e ON sub_eq.equipmentId = e.id
     WHERE subjectId = ?
-        EXCEPT 
+        EXCEPT
     SELECT equipmentId, e2.name FROM SpaceEquipment sp_eq
     JOIN Equipment e2 ON sp_eq.equipmentId = e2.id
         WHERE spaceId = ?;`;

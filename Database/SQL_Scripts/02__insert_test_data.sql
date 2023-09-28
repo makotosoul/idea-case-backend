@@ -5,7 +5,7 @@ USE casedb;
 INSERT INTO GlobalSetting(name, description, numberValue, textValue) VALUES
     ('X', 'Korkea prioriteettiarvo', 800, NULL),
     ("allocation-debug", "Onko allokoinnin logitus päällä. numberValue : 0 = OFF, 1 = ON", 0, NULL);
-    
+
 /* --- Insert: Department --- */
 INSERT INTO Department(name, description) VALUES
 	('Jazz', 'Aineryhmän kuvaus'),
@@ -40,7 +40,7 @@ INSERT INTO DepartmentPlanner(userId, departmentId) VALUES
     (203, 104),
     (202, 102);
 
-    
+
 /* --- Insert: Building * --- */
 INSERT INTO `Building` (`name`, `description`) VALUES
 	('Musiikkitalo', 'Sibeliusakatemian päärakennus'),
@@ -62,9 +62,9 @@ INSERT INTO `Space` (`name`, `area`, `personLimit`, `buildingId`, `availableFrom
     ('S6114 Perkussioluokka/Marimbaluokka', 33.3, 4, 401, '08:00:00', '22:00:00', '09:00:00', '15:00:00', 'Vain lyömäsoittajat', 5004), -- 1004
     ('S1111 Studio Erkki', 36.0, 15, 401, '08:00:00', '22:00:00', '11:00:00', '15:00:00', 'Tilatyyppi: Studio', 5001), -- 1005
     ('S5109 Jazz/Bändiluokka', 17.5, 2, 401, '08:00:00', '20:00:00', '08:00:00', '16:00:00', 'ONLY FOR JAZZ DEPARTMENT', 5004), -- 1006
-    ('S6112 Harppuluokka', 28.8, 4, 401, '08:00:00', '17:00:00', '11:00:00', '16:00:00', 'Vain harpistit', 5004), -- 1007 
+    ('S6112 Harppuluokka', 28.8, 4, 401, '08:00:00', '17:00:00', '11:00:00', '16:00:00', 'Vain harpistit', 5004), -- 1007
     ('S6113 Puhaltimet/Klarinetti/Harppu', 18.1, 4, 401, '08:00:00', '19:00:00', '08:00:00', '19:00:00', 'Tilatyyppi: Musiikkiluokka', 5004), -- 1008
-    
+
     ('R312 Opetusluokka', 16.6, 6, 403, '08:00:00', '21:00:00', '08:00:00', '18:00:00', 'Tilatyyppi: Musiikkiluokka', 5004), -- 1009
     ('R530 Opetusluokka', 50.0, 18, 403, '08:00:00', '21:00:00', '08:00:00', '19:00:00', 'Luentoluokka', 5002), -- 1010
     ('R213 Harjoitushuone', 20.0, 4, 403, '08:00:00', '21:00:00', '10:00:00', '16:00:00', 'Ensisijainen varausoikeus vanhan musiikin aineryhmällä', 5004), -- 1011
@@ -102,12 +102,12 @@ INSERT INTO `Equipment` (`name`, `isMovable`, `priority`, `description`) VALUES
 	('Urut', 0, 600, 'Valtavan kokoinen soitin'), -- 2001
 	('Kantele', 1, 50, 'Väinämöisen soitin'), -- 2002
     ('Nokkahuilu', 1, 50, 'Kaikki rakastaa'), -- 2003
-    ('Rumpusetti', 1, 250, 'Ääntä riittää'), -- 2004 
-    ('Äänityslaitteisto Xyz', 0, 900, '8 kanavaa'), -- 2005 
-    ('Viulu', 1, 50, 'Jousisoitin, 4-kieltä'), -- 2006 
-    ('Alttoviulu', 1, 50, 'Jousisoitin, suurempi kuin viulu'), -- 2007 
+    ('Rumpusetti', 1, 250, 'Ääntä riittää'), -- 2004
+    ('Äänityslaitteisto Xyz', 0, 900, '8 kanavaa'), -- 2005
+    ('Viulu', 1, 50, 'Jousisoitin, 4-kieltä'), -- 2006
+    ('Alttoviulu', 1, 50, 'Jousisoitin, suurempi kuin viulu'), -- 2007
     ('Sello', 1, 100, 'Suuri, 4-kielinen jousisoitin'), -- 2008
-    ('Kontrabasso', 1, 100, 'Suurin jousisoitin'), -- 2009 
+    ('Kontrabasso', 1, 100, 'Suurin jousisoitin'), -- 2009
     ('Piano', 0, 900, 'Piano-opetus vaatii kaksi flyygeliä'), -- 2010
     ('Kitara', 1, 100, '6-kielinen soitin'), -- 2011
     ('Harmonikka', 1, 200, 'Hanuri'), -- 2012
@@ -128,7 +128,7 @@ INSERT INTO `Equipment` (`name`, `isMovable`, `priority`, `description`) VALUES
     ('Sähkökitara', 1, 100, 'Sähkökitara'), -- 2027
     ('Käyrätorvi', 1, 100, 'Puhallin'), -- 2028
     ('Cembalo', 0, 900, 'Pianon edeltäjä'); -- 2029
-    
+
 /* --- Insert: SpaceEquipment * --- */
 INSERT INTO `SpaceEquipment` (`spaceId`, `equipmentId`) VALUES
 	(1001, 2021),
@@ -168,7 +168,7 @@ INSERT INTO `SpaceEquipment` (`spaceId`, `equipmentId`) VALUES
     (1018, 2010),
     (1013, 2010),
     (1025, 2012), -- Harmoni
-    (1025, 2023), -- Äänentoisto (Ei PA-laitteet) 
+    (1025, 2023), -- Äänentoisto (Ei PA-laitteet)
     (1026, 2010), -- Piano
     (1026, 2022), -- DVD Soitin
     (1026, 2023), -- Äänentoisto (Ei PA-laitteet)
@@ -182,9 +182,9 @@ INSERT INTO `SpaceEquipment` (`spaceId`, `equipmentId`) VALUES
     (1028, 2022), -- DVD-soitin
     (1028, 2023), -- Äänentoisto (Ei PA-laitteet)
     (1028, 2025), -- Yhtyeluokan äänentoisto
-    (1029, 2029), -- Cembalo 
+    (1029, 2029), -- Cembalo
     (1029, 2023), -- Äänentoisto (Ei PA-laitteet)
-    (1030, 2029), -- Cembalo 
+    (1030, 2029), -- Cembalo
     (1030, 2023), -- Äänentoisto (Ei PA-laitteet)
     (1031, 2023), -- Äänentoisto (Ei PA-laitteet)
     (1032, 2021), -- Flyygeli
@@ -200,8 +200,8 @@ INSERT INTO `SpaceEquipment` (`spaceId`, `equipmentId`) VALUES
     (1034, 2022), -- DVD-soitin
     (1034, 2023), -- Äänentoisto (Ei PA-laitteet)
     (1035, 2021), -- Flyygeli
-    (1035, 2013), -- Fortepiano 
-    (1035, 2022), -- DVD-soitin 
+    (1035, 2013), -- Fortepiano
+    (1035, 2022), -- DVD-soitin
     (1035, 2023), -- Äänentoisto (Ei PA-laitteet)
     (1036, 2021), -- Flyygeli
     (1036, 2022), -- DVD-soitin
@@ -229,7 +229,7 @@ INSERT INTO Program (name , departmentId) VALUES
     ('Kitara', 103),
     ('Kantele', 103),
     ('Jazzsävellys', 101),
-    ('Musiikinteoria pääaineena', 104), 
+    ('Musiikinteoria pääaineena', 104),
     ('Jazzmusiikin instrumentti- tai lauluopinnot pääaineena', 102),
     ('Fortepiano', 103),
     ('Global Music', 112),
@@ -253,11 +253,11 @@ INSERT INTO Program (name , departmentId) VALUES
     ('Taidejohtaminen ja yrittäjyys', 109),
     ('Urut', 112),
     ('Vanha musiikki', 106),
-    ('Avoin Kampus', 110); 
+    ('Avoin Kampus', 110);
 
 /* --- Insert: Subject * --- */
 INSERT INTO Subject(name, groupSize, groupCount, sessionLength, sessionCount, area, programId, spaceTypeId) VALUES
-    ('Saksan kielen perusteet', 20, 2, '01:30:00', 2, 35, 3030, 5002), 
+    ('Saksan kielen perusteet', 20, 2, '01:30:00', 2, 35, 3030, 5002),
     ('Jazzimprovisoinnin ja -teorian perusteet', 17, 1, '02:30:00', 2, 35, 3005, 5004),
     ('Piano yksilöopetus', 1, 1, '02:30:00', 2, 10, 3001, 5004),
     ('Trumpetin ryhmäsoitto', 10, 1,'01:30:00', 3, 40, 3025, 5004),
@@ -348,8 +348,8 @@ INSERT INTO AllocSubject(subjectId, allocRound, isAllocated, allocatedDate, prio
     (4003, 10002, 1, '2022-10-28', 2), -- Piano yksilöopetus, 1ppl, 2:30/05:00, 10m2, musiikkiluokka
     (4005, 10002, 1, '2022-10-28', 3), -- Kirkkomusiikin ryhmäsoitto, 5ppl, 2:30/10:00, musiikkiluokka
     (4024, 10002, 1, '2022-10-28', 4), -- Global Orchestra, 12ppl, 2:30/10:00, 35m2, musiikkiluokka
-    (4004, 10002, 1, '2022-10-28', 5), -- Trumpetin ryhmäsoitto, 10ppl, 1:30/4:30, 40m2 
-    (4014, 10002, 1, '2022-10-28', 6), -- fortepianosoitto, 1ppl, 16:20, 30m2, musiikkiluokka, 
+    (4004, 10002, 1, '2022-10-28', 5), -- Trumpetin ryhmäsoitto, 10ppl, 1:30/4:30, 40m2
+    (4014, 10002, 1, '2022-10-28', 6), -- fortepianosoitto, 1ppl, 16:20, 30m2, musiikkiluokka,
     (4019, 10002, 1, '2022-10-28', 7), -- jazz rummut, 1ppl, 4:00, 15m2, musiikkiluokka
     (4013, 10002, 1, '2022-10-28', 8), -- huilujensoitto taso a, 1ppl, 05:00, 10m2, musiikkiluokka
     (4002, 10002, 1, '2022-10-28', 9), -- jazz improvisoinnin perusteet, 17ppl, 2:30/5:00, 35m2, musiikkiluokka
@@ -372,14 +372,14 @@ INSERT INTO AllocSubject(subjectId, allocRound, isAllocated, allocatedDate, prio
     (4009, 10002, 1, '2022-10-28', 26), -- kanteleensoitto, 1ppl, 01:00/04:00, 10m2, musiikkiluokka
     (4032, 10002, 1, '2022-10-28', 27), -- the jazz line, 14ppl, 02:00, 20m2, musiikkiluokka
     (4033, 10002, 1, '2022-10-28', 28), -- Jazzensemble, 5ppl, 02:00, 20m2, musiikkiluokka
-    (4034, 10002, 1, '2022-10-28', 29), -- Äänenkäyttö ja huolto / korrepetitiokoulutus, 
+    (4034, 10002, 1, '2022-10-28', 29), -- Äänenkäyttö ja huolto / korrepetitiokoulutus,
     (4035, 10002, 1, '2022-10-28', 30), -- Prima vista / korrepetitiokoulutus
     (4036, 10002, 1, '2022-10-28', 31), -- Musiikinhistorian lukupiiri
     (4037, 10002, 1, '2022-10-28', 32), -- Tohtoriseminaari (sävellys)
     (4038, 10002, 1, '2022-10-28', 33), -- Musiikkiteknologian perusteet
     (4039, 10002, 1, '2022-10-28', 34), -- Johtamisen pedagogiikka -luentosarja
 
-    (4001, 10003, 0, '2022-09-21', 1),  
+    (4001, 10003, 0, '2022-09-21', 1),
     (4002, 10003, 0, '2022-09-21', 2),
     (4003, 10003, 0, '2022-09-21', 3),
     (4004, 10003, 0, '2022-09-21', 4),
@@ -417,8 +417,8 @@ INSERT INTO AllocSpace(subjectId, allocRound, spaceId, totalTime) VALUES
     (4009, 10002, 1016, '04:00:00'), -- kanteleensoitto / N517 Musiikkiluokka, 15.5m2, 3ppl
     (4032, 10002, 1010, '02:00:00'), -- jazz line / Studio Erkki, 36m2, 15ppl
     (4033, 10002, 1018, '02:00:00'), -- jazz endemble / N319 Jazz/Lyömä/piano/yhtyeet, 34m2, 5ppl
-    (4034, 10002, 1016, '03:00:00'), -- Äänenkäyttö ja huolto / korrepetitiokoulutus 4ppl, N522 Säestysluokka, 33m2, 8m2 
-    (4035, 10002, 1018, '06:00:00'), -- Prima vista / korrepetitiokoulutus 2ppl, N319 piano, 34m2, 5ppl 
+    (4034, 10002, 1016, '03:00:00'), -- Äänenkäyttö ja huolto / korrepetitiokoulutus 4ppl, N522 Säestysluokka, 33m2, 8m2
+    (4035, 10002, 1018, '06:00:00'), -- Prima vista / korrepetitiokoulutus 2ppl, N319 piano, 34m2, 5ppl
     (4036, 10002, 1010, '01:00:00'), -- Musiikinhistorian lukupiiri 10ppl / R530 Opetusluokka, 50m2, 18ppl
     (4037, 10002, 1010, '02:00:00'), -- Tohtoriseminaari (sävellys) 17ppl / R530 Opetusluokka, 59m2, 18ppl
     (4038, 10002, 1010, '01:00:00'), -- Musiikkiteknologian perusteet 10ppl

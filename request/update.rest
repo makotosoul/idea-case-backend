@@ -3,15 +3,15 @@ Authorization: Basic <put your token here>
 Content-Type: application/json
 
  {
-    "id": 4042,
-    "name": "Data structures and algorithm",
-    "groupSize": 25,
-    "groupCount": 2,
-    "sessionLength": "02:30:00",
-    "sessionCount": 2,
-    "area": 35,
-    "programId": 3030,
-    "programName": "Avoin Kampus",
-    "spaceTypeId": 5002,
-    "spaceTypeName": "Luentoluokka"
-  }
+  "id": 4042,
+  "name": "Data structures and algorithm",
+  "groupSize": 25,
+  "groupCount": 2,
+  "sessionLength": "02:30:00",
+  "sessionCount": 2,
+  "area": 35,
+  "programId": 3030,
+  "programName": "Avoin Kampus",
+  "spaceTypeId": 5002,
+  "spaceTypeName": "Luentoluokka"
+}
