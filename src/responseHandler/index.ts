@@ -50,13 +50,10 @@ export const successHandler = (
 
   logger.http(logMessage);
 
-  if (typeof data === 'number') {
-    // If data is just a number, wrapping an object around it
-    data = { returnedNumberValue: data };
-    console.log(data);
-  }
+  // If data is just a number, wrap an object around it
+  const body = typeof data === 'number' ? { returnedNumberValue: data } : data;
 
-  res.status(200).send(data);
+  res.status(200).send(body);
 };
 
 export const requestErrorHandler = (
