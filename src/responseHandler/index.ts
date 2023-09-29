@@ -13,7 +13,7 @@ const authorizationErrorMessage = requestErrorMessage;
 const validationErrorMessage = requestErrorMessage; // 'Formatting error';
 
 export const routePrinter = (req: Request): string => {
-  let routeText = `${req.method} ${req.baseUrl.substring(4)}|`;
+  const routeText = `${req.method} ${req.baseUrl.substring(4)}|`;
   return routeText;
 };
 
@@ -45,7 +45,8 @@ export const successHandler = (
   data: any,
   message: string,
 ) => {
-  let logMessage = routePrinter(req) + messagePrinter(message, successMessage);
+  const logMessage =
+    routePrinter(req) + messagePrinter(message, successMessage);
 
   logger.http(logMessage);
 
@@ -63,7 +64,7 @@ export const requestErrorHandler = (
   res: Response,
   message: string,
 ) => {
-  let logMessage =
+  const logMessage =
     routePrinter(req) + messagePrinter(message, requestErrorMessage);
   logger.error(logMessage);
 
@@ -75,7 +76,7 @@ export const authenticationErrorHandler = (
   res: Response,
   message: string,
 ) => {
-  let logMessage =
+  const logMessage =
     routePrinter(req) + messagePrinter(message, authenticationErrorMessage);
   logger.error(logMessage);
 
@@ -87,7 +88,7 @@ export const authorizationErrorHandler = (
   res: Response,
   message: string,
 ) => {
-  let logMessage =
+  const logMessage =
     routePrinter(req) + messagePrinter(message, authorizationErrorMessage);
   logger.error(logMessage);
 
@@ -105,7 +106,7 @@ export const validationErrorHandler = (
     validationResultMessage += validationErrorFormatter(validationResults);
   }
   validationResultMessage += `|${message}`;
-  let logMessage =
+  const logMessage =
     routePrinter(req) +
     messagePrinter(validationResultMessage, validationErrorMessage);
 

@@ -48,11 +48,11 @@ allocation.get(
       .then(async (programs) => {
         return await Promise.all(
           programs.map(async (program) => {
-            let rooms = await allocationService.getAllocatedRoomsByProgram(
+            const rooms = await allocationService.getAllocatedRoomsByProgram(
               program.id,
               Number(id),
             );
-            let subjects = await allocationService.getSubjectsByProgram(
+            const subjects = await allocationService.getSubjectsByProgram(
               Number(id),
               program.id,
             );

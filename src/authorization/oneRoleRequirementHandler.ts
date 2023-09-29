@@ -7,9 +7,9 @@ export const oneRoleRequirementHandler = (
   roleName: string,
 ) => {
   req.requiredRolesList.push(roleName);
-  let rolePropertyName = `is${roleName.substring(0, 1).toUpperCase()}${roleName
-    .substring(1)
-    .toLowerCase()}`;
+  const rolePropertyName = `is${roleName
+    .substring(0, 1)
+    .toUpperCase()}${roleName.substring(1).toLowerCase()}`;
   // e.g. isAdmin
   if (req.user[rolePropertyName] === 1) {
     req.areRolesRequired = 1;
