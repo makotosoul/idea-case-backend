@@ -1,8 +1,8 @@
 # Setting up a local MariaDB installation on Linux
 
-1. **Install MariaDB through the package manager**: 
-   - Open a terminal and type 
-   ``` sudo apt-get install mariadb-server ``` 
+1. **Install MariaDB through the package manager**:
+   - Open a terminal and type
+   ``` sudo apt-get install mariadb-server ```
    - If you're using a different Linux distribution, replace 'apt-get' with the appropriate package manager for your system (like 'yum' for CentOS or 'dnf' for Fedora).
 
 2. **Check the status and start the MariaDB service**:
@@ -109,7 +109,7 @@
    - If you don't already have nvm (Node Version Manager) installed, you can use it to manage multiple Node.js versions on your system.
    - To install nvm, run the following command in the terminal:
     `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash`
-   - After installing nvm, you should close and reopen your terminal or run 
+   - After installing nvm, you should close and reopen your terminal or run
    `source ~/.bashrc` to load nvm
    - Now that you have nvm installed, you can use it to install Node.js version 16.x. with
     `nvm install 16`

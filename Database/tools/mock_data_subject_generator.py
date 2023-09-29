@@ -1,6 +1,6 @@
 """
 1. Copy this file to your folder
-2. Choose amount of subjects in amount variable 
+2. Choose amount of subjects in amount variable
 3. Run file (python3 filename)
 4. Use insert_subject.sql file in database
 5. Use insert_allocsub.sql file in database

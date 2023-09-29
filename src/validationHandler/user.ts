@@ -1,4 +1,4 @@
-import { check, body } from 'express-validator';
+import { check } from 'express-validator';
 import { validateIdObl } from './index.js';
 
 export const validateUserPut = [

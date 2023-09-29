@@ -82,7 +82,7 @@ Endpoint    | /api/allocation/subject/:subjectId/rooms
 Method      | GET
 Parameters  | subject.id
 Returns     | Suitability of spaces for a certain Subject
-Contents    | space.id, space.name, space.area, missingItems, areaOk, space.personLimit, personLimitOk, space.inUse, space.spaceType, spaceTypeOk 
+Contents    | space.id, space.name, space.area, missingItems, areaOk, space.personLimit, personLimitOk, space.inUse, space.spaceType, spaceTypeOk
 Used in     | AllocationSubjectFailureView
 
 | Missing equipment in a certain space for a certain subject |   |

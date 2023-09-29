@@ -4,7 +4,7 @@ These instructions will guide you through the process of setting up a local Mari
 
 ## MariaDB Installation
 
-1. **Download MariaDB**: 
+1. **Download MariaDB**:
    - Visit [MariaDB Download Page](https://mariadb.org/download/?t=mariadb&p=mariadb&r=10.10.6&os=windows&cpu=x86_64&pkg=msi&m=xtom_tal).
    - Download MariaDB for your Windows; tested versions 10.10.x and 10.6.x.
 
@@ -22,7 +22,7 @@ These instructions will guide you through the process of setting up a local Mari
 ## Database Setup
 
 5. **Create a Local Database**:
-   - Run the following SQL command to create a local database: 
+   - Run the following SQL command to create a local database:
      ```sql
      CREATE DATABASE db_name;
      ```

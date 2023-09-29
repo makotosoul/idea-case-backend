@@ -1,34 +1,45 @@
-import express, { Response, Request } from 'express';
-import db_knex from '../db/index_knex.js';
+import express, { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
-
+import { admin } from '../authorization/admin.js';
+import { planner } from '../authorization/planner.js';
+import { roleChecker } from '../authorization/roleChecker.js';
+import { statist } from '../authorization/statist.js';
+import { authenticator } from '../authorization/userValidation.js';
+import db_knex from '../db/index_knex.js';
 import {
   dbErrorHandler,
-  successHandler,
   requestErrorHandler,
+  successHandler,
   validationErrorHandler,
 } from '../responseHandler/index.js';
 import {
-  validateBuildingPost,
-  validateBuildingMultiPost,
   validate,
+  validateBuildingMultiPost,
+  validateBuildingPost,
 } from '../validationHandler/index.js';
-import { authenticator } from '../authorization/userValidation.js';
-import { admin } from '../authorization/admin.js';
-import { planner } from '../authorization/planner.js';
-import { statist } from '../authorization/statist.js';
-import { roleChecker } from '../authorization/roleChecker.js';
 
 const building = express.Router();
 
-
-function handleErrorBasedOnErrno(req: Request, res: Response, error: any, defaultMessage: string) {
+function handleErrorBasedOnErrno(
+  req: Request,
+  res: Response,
+  error: any,
+  defaultMessage: string,
+) {
   switch (error.errno) {
     case 1062:
-      requestErrorHandler(req, res, `Conflict: Building with the name ${req.body.name} already exists!`);
+      requestErrorHandler(
+        req,
+        res,
+        `Conflict: Building with the name ${req.body.name} already exists!`,
+      );
       break;
     case 1054:
-      requestErrorHandler(req, res, "error in spelling [either in 'name' and/or in 'description'].");
+      requestErrorHandler(
+        req,
+        res,
+        "error in spelling [either in 'name' and/or in 'description'].",
+      );
       break;
     default:
       dbErrorHandler(req, res, error, defaultMessage);
@@ -36,7 +47,7 @@ function handleErrorBasedOnErrno(req: Request, res: Response, error: any, defaul
   }
 }
 
-//get all buildings
+// get all buildings
 building.get(
   '/',
   [authenticator, admin, statist, planner, roleChecker, validate],
@@ -84,8 +95,7 @@ building.get(
   },
 );
 
-
-//adding single building
+// adding single building
 building.post(
   '/',
   [authenticator, admin, roleChecker, validate],
@@ -117,7 +127,7 @@ building.post(
   },
 );
 
-//adding single or multiple building
+// adding single or multiple building
 building.post(
   '/multi',
   [authenticator, admin, roleChecker, validate],
@@ -152,7 +162,7 @@ building.post(
   },
 );
 
-//updating building information
+// updating building information
 building.put(
   '/',
   [authenticator, admin, roleChecker, validate],
@@ -186,8 +196,7 @@ building.put(
   },
 );
 
-
-//delete building by id
+// delete building by id
 building.delete(
   '/:id',
   [authenticator, admin, roleChecker, validate],
@@ -213,6 +222,5 @@ building.delete(
       });
   },
 );
-
 
 export default building;

@@ -1,26 +1,23 @@
-import express from 'express';
-import { Response, Request } from 'express';
-
-import db from '../db/index.js';
-import db_knex from '../db/index_knex.js'; // knex available for new database operations
-
-import logger from '../utils/logger.js';
-import {
-  dbErrorHandler,
-  successHandler,
-  requestErrorHandler,
-} from '../responseHandler/index.js';
-
-import { authenticator } from '../authorization/userValidation.js';
+import express, { Request, Response } from 'express';
 import { admin } from '../authorization/admin.js';
 import { planner } from '../authorization/planner.js';
-import { statist } from '../authorization/statist.js';
 import { roleChecker } from '../authorization/roleChecker.js';
+import { statist } from '../authorization/statist.js';
+import { authenticator } from '../authorization/userValidation.js';
+import db from '../db/index.js';
+// knex available for new database operations
+import db_knex from '../db/index_knex.js';
 import {
+  dbErrorHandler,
+  requestErrorHandler,
+  successHandler,
+} from '../responseHandler/index.js';
+import logger from '../utils/logger.js';
+import {
+  // This is the new validation result handler
+  validate,
+  // (our express-compatible middleware function for the req handling chain)
   validateIdObl,
-  validate, // This is the new validation result handler
-  // (our express-compatible middleware function
-  // for the req handling chain)
 } from '../validationHandler/index.js';
 import {
   validateSubjectPost,
@@ -29,8 +26,9 @@ import {
 
 const subject = express.Router();
 
-// Fetching all subjects, joining to each subject the program, and needed spacetype
-/*subject.get(
+// Fetching all subjects, joining to each subject the program,
+// and needed spacetype
+/* subject.get(
   '/',
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
@@ -44,9 +42,10 @@ const subject = express.Router();
       }
     });
   },
-);*/
+); */
 
-// Fetching all subjects, joining to each subject the program, and needed spacetype using Knex
+// Fetching all subjects, joining to each subject the program,
+// and needed spacetype using Knex
 subject.get(
   '/',
   [authenticator, admin, planner, statist, roleChecker, validate],
@@ -77,8 +76,9 @@ subject.get(
   },
 );
 
-// SPECIAL Listing all the subjects for selection dropdown etc. (Just name and id)
-/*subject.get(
+// SPECIAL Listing all the subjects for selection dropdown etc.
+// (Just name and id)
+/* subject.get(
   '/getNames',
   [authenticator, roleChecker, validate],
   (req: Request, res: Response) => {
@@ -91,9 +91,10 @@ subject.get(
       }
     });
   },
-);*/
+); */
 
-// SPECIAL Listing all the subjects for selection dropdown etc. (Just name and id) using knex
+// SPECIAL Listing all the subjects for selection dropdown etc.
+// (Just name and id) using knex
 subject.get(
   '/getNames',
   [authenticator, admin, roleChecker],
@@ -143,7 +144,7 @@ subject.get(
 );
 
 // Adding a subject/teaching
-/*subject.post(
+/* subject.post(
   '/',
   validateSubjectPost,
   [authenticator, admin, planner, roleChecker, validate],
@@ -187,7 +188,7 @@ subject.get(
       },
     );
   },
-);*/
+); */
 
 // Adding a subject/teaching using knex
 subject.post(

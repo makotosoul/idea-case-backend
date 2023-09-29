@@ -1,17 +1,18 @@
+import dotenv from 'dotenv';
 import { Response } from 'express';
 import jsonwebtoken, { JwtPayload } from 'jsonwebtoken';
-import dotenv from 'dotenv';
-
 import { authenticationErrorHandler } from '../responseHandler/index.js';
 import logger from '../utils/logger.js';
 
-dotenv.config(); //In order to load environment variables to process.env
+dotenv.config(); // In order to load environment variables to process.env
 
 export const authenticator = (req: any, res: Response, next: any) => {
   const authHeader: any = req.get('Authorization');
-  //logger.debug("Header: " +req.get('Authorization'))
-  //logger.debug("Old version stopped working: ") + req.headers['Authorization'] );
-  const token = authHeader?.split(' ')[1]; // Taking the leading 'Bearer' and space ' ' out
+  // logger.debug('Header: ' + req.get('Authorization'));
+  // logger.debug('Old version stopped working: ' + req.headers['Authorization']);
+
+  // Taking the leading 'Bearer' and space ' ' out
+  const token = authHeader?.split(' ')[1];
 
   if (token == null) {
     logger.error(`Token: ${token}`);
@@ -33,8 +34,8 @@ export const authenticator = (req: any, res: Response, next: any) => {
       }
 
       req.user = verified;
+      // 0: none required, -1: at least one required, 1: role need satisfied
       req.areRolesRequired = 0;
-      // 0:none required, -1:at least one required, 1: role need satisfied
       req.requiredRolesList = [];
       next();
     } catch (err) {

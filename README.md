@@ -3,7 +3,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  
+
 <h1 align="center">Siba project - Backend</h1>
 
 <h3 align="center">
@@ -86,7 +86,6 @@ Backend side installation instructions
    DB_CONNECTION_POOL_MIN=1
    DB_CONNECTION_POOL_MAX=7
    SECRET_TOKEN=<<Secret token here for the JWT>>
-
    ```
 
    The secret_token has to be something of the length and format of: A3fs9t395dsgSDf3fRsTse349. But not that one! Hardening process should
@@ -115,17 +114,17 @@ Backend side installation instructions
 1. Follow installation steps from 1 to 5
 
 2. Run this command to launch application
- 
+
    ```sh
    docker-compose -f docker-compose-be.yaml up -d
    ```
-   
+
 ### How to dockerize the local MariaDB database
 
 1. Edit the docker-compose-db.yaml file to the desired root password and secondary user/ user password
 
 2. Run this command to launch application:
- 
+
    ```sh
    docker-compose -f docker-compose-db.yaml up -d
    ```
@@ -135,17 +134,17 @@ Backend side installation instructions
    docker run --detach --name mariadock --env MARIADB_USER=alternate_user --env MARIADB_PASSWORD=alternate_user_psw --env MARIADB_ROOT_PASSWORD=root_psw  mariadb:latest
    ```
 4. Access the container terminal:
-	
+
 	```sh
    docker exec -it mariadock bash
    ```
-   
+
 5.	Access the DB directly using mysql terminal command:
 
    ```sh
    mysql -u root -p
    ```
-   
+
 6.	Continue the configuration of the local DB as described in the step by step guide located in Database/Documentation/local_mariadb_windows_installation.md
 
 ### How to run mariadb database and nodejs backend using docker-compose
@@ -157,7 +156,7 @@ Configuration of the local DB is described in the guide located in Database/Docu
 2. Edit the docker-compose-dbbe.yaml file to have the right configuration according to your environment (database, username, password, root password)
 
 3. Run this command to launch database and backend
- 
+
    ```sh
    docker-compose -f docker-compose-dbbe.yaml up -d
    ```
@@ -165,7 +164,7 @@ Configuration of the local DB is described in the guide located in Database/Docu
 4. Some useful commands:
 
    Access mariadb container terminal:
-   
+
    ```sh
    docker exec -it mariadock sh
    ```

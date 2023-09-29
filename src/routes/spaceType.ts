@@ -1,32 +1,31 @@
 import express, { Request, Response } from 'express';
-
-import db_knex from '../db/index_knex.js';
-import {
-  successHandler,
-  requestErrorHandler,
-} from '../responseHandler/index.js';
-import { authenticator } from '../authorization/userValidation.js';
 import { admin } from '../authorization/admin.js';
 import { planner } from '../authorization/planner.js';
-import { statist } from '../authorization/statist.js';
 import { roleChecker } from '../authorization/roleChecker.js';
+import { statist } from '../authorization/statist.js';
+import { authenticator } from '../authorization/userValidation.js';
+import db_knex from '../db/index_knex.js';
+import {
+  requestErrorHandler,
+  successHandler,
+} from '../responseHandler/index.js';
 import { validate } from '../validationHandler/index.js';
 
 const spaceType = express.Router();
 
 // Get space type id:s and name:s, for populating a select list
-// spaceType.get("/getSelectData", (req, res) => {
-//   const sqlSelectName = "SELECT id, name FROM SpaceType";
+// spaceType.get('/getSelectData', (req, res) => {
+//   const sqlSelectName = 'SELECT id, name FROM SpaceType';
 //   db.query(sqlSelectName, (err, result) => {
 //     if (err) {
-//       dbErrorHandler(req,res, err, "Oops! Nothing came through - SpaceType");
+//       dbErrorHandler(req, res, err, 'Oops! Nothing came through - SpaceType');
 //     } else {
-//       successHandler(req,res, result, "getNames successful - SpaceType");
+//       successHandler(req, res, result, 'getNames successful - SpaceType');
 //     }
 //   });
 // });
 
-//get all spacetypes
+// get all spacetypes
 spaceType.get(
   '/',
   [authenticator, admin, planner, statist, roleChecker, validate],

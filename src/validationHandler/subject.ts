@@ -1,4 +1,4 @@
-import { check, body } from 'express-validator';
+import { check } from 'express-validator';
 import { validateIdObl, validateNameObl } from './index.js';
 
 /* ---- SUBJECT ---- */

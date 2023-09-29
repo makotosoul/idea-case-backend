@@ -47,7 +47,7 @@ The command should be run in the Terminal. Also, for clear instructions on how t
 `brew services start mariadb`
 The command starts MariaDB running.
 
-1. Run in Terminal the command 
+1. Run in Terminal the command
 `mysql -u root -p`
 The command lets you into MariaDB.
 
@@ -63,15 +63,15 @@ Ensure that serverhost is 'localhost' and port is '3306'. The username should be
 
 1. After creating the connection, click 'Database' and create a new database, 'casedb.
 
-1. Next, copy SQL scripts from 
-https://github.com/haagahelia/Siba_be/blob/main/Database/SQL_Scripts/000__CreateALLdb.sql 
+1. Next, copy SQL scripts from
+https://github.com/haagahelia/Siba_be/blob/main/Database/SQL_Scripts/000__CreateALLdb.sql
 and paste them to execute SQL scripts. Shortcut to execute: option + X
 
-1. Go to the director Siba_be and create the .env file according to the main README.md instructions.     
+1. Go to the director Siba_be and create the .env file according to the main README.md instructions.
 
 1. Change DB_USER and DB_PASSWORD to the ones you selected.
 
-1. Open Terminal in the Siba_be folder and run the command 
+1. Open Terminal in the Siba_be folder and run the command
 
     `npm start`
 

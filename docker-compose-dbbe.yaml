@@ -16,7 +16,7 @@ services:
       - mariadb_data:/var/lib/mysql
     networks:
       - sibanetwork
-    
+
   siba_be:
     container_name: siba_be_dock
     build: .
@@ -25,7 +25,7 @@ services:
       - siba_db
     environment:
     - DB_HOST=siba_db
-    ports: 
+    ports:
       - '${BE_SERVER_PORT}:${BE_SERVER_PORT}'
     volumes:
       - .:/app
@@ -36,6 +36,6 @@ services:
 networks:
   sibanetwork:
     driver: bridge
-    
+
 volumes:
   mariadb_data:

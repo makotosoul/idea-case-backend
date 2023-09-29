@@ -53,7 +53,7 @@ Contents    | subject.id, subject.name, allocatedHours, requiredHours
 |---|---|
 Method      | startAllocation
 Parameters  | allocRound (id)
-Returns     | - 
+Returns     | -
 Contents    | Starts calculation/allocation round
 
 
@@ -61,7 +61,7 @@ Contents    | Starts calculation/allocation round
 |---|---|
 Method      | resetAllocation
 Parameters  | allocRound (id)
-Returns     | - 
+Returns     | -
 Contents    | Resets the allocSubject, AllocSpace and AllocSubjectSuitableSpace tables
 
 | Interrupt/stop the allocation process | |
@@ -89,7 +89,7 @@ Contents    | Space.id, Space.name, Space.area, missingItems, areaOk, Space.pers
 |---|---|
 Method      | getMissingEquipmentForRoom
 Parameters  | subject.id, space.id
-Returns     | missing equipment for certain space and certain subject 
+Returns     | missing equipment for certain space and certain subject
 Contents    | Equipment.id, Equipment.name, SpaceEquipment.name (Really this? Why this???)
 
 

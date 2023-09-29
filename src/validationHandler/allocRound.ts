@@ -1,7 +1,7 @@
 import {
+  validateDescriptionObl,
   validateIdObl,
   validateNameObl,
-  validateDescriptionObl,
 } from './index.js';
 
 export const validateAllocRoundPost = [

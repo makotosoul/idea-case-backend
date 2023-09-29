@@ -1,16 +1,16 @@
 /*
   ---- EXPRESS VALIDATOR ----
-  Express-validator is a library that can be used to validate the data coming from 
-  the frontend or other client
+  Express-validator is a library that can be used to validate the data
+  coming from the frontend or other client
   https://express-validator.github.io/docs/
 */
 import {
-  check,
-  body,
   Result,
   ValidationError,
+  body,
+  check,
   validationResult,
-} from 'express-validator'; //import { body, validationResult,} ???
+} from 'express-validator'; // import { body, validationResult } ???
 import { validationErrorHandler } from '../responseHandler/index.js';
 
 // Formatter for printing the first validation error (index 0) out as string
@@ -33,7 +33,8 @@ export const validate = (req: any, res: any, next: any) => {
 
 export const validateIdObl = [
   check('id')
-    // .isLength({ min: 1, max: 1 })    // Nice way to make e.g.  valid id 4015 fail for testing
+    // Nice way to make e.g. valid id 4015 fail for testing
+    // .isLength({ min: 1, max: 1 })
     // .withMessage('Id Must be between 1-1 characters long')
     // .bail()
     .matches(/^[0-9]+$/)
@@ -70,7 +71,7 @@ export const validateDescription = [
     .matches(/^[A-Za-zäöåÄÖÅ0-9\s-]*$/)
     .withMessage('Must contain only letters, numbers and -')
     .bail(),
-*/
+  */
 ];
 
 export const validateDescriptionObl = [

@@ -1,22 +1,21 @@
-import express from 'express';
-import { Request, Response } from 'express';
-import { Result, ValidationError, validationResult } from 'express-validator'; // import { body,} ??
-
+import express, { Request, Response } from 'express';
+import { validationResult } from 'express-validator'; // import { body } ??
 import db from '../db/index.js';
-import db_knex from '../db/index_knex.js'; // knex available for new database operations
-import logger from '../utils/logger.js';
+// knex available for new database operations
+import db_knex from '../db/index_knex.js';
 import {
   dbErrorHandler,
-  successHandler,
   requestErrorHandler,
+  successHandler,
   validationErrorHandler,
 } from '../responseHandler/index.js';
+import logger from '../utils/logger.js';
 import { validateSubjectEquipmentPostAndPut } from '../validationHandler/subjectEquipment.js';
 
 const subjectequipment = express.Router();
 
 // Getting all equipment requirement rows for a subject based on the subject id
-/*subjectequipment.get('/getEquipment/:subjectId', (req, res) => {
+/* subjectequipment.get('/getEquipment/:subjectId', (req, res) => {
   const subjectId = req.params.subjectId;
   const sqlGetEquipmentBySubjectId =
     'SELECT se.subjectId , e.name,e.description, se.equipmentId, se.priority, se.obligatory FROM SubjectEquipment se JOIN Equipment e ON se.equipmentId = e.id WHERE se.subjectid = ?;';
@@ -37,10 +36,10 @@ const subjectequipment = express.Router();
       );
     }
   });
-});*/
+}); */
 
 // Adding a equipment requirement to teaching/subject
-/*subjectequipment.post(
+/* subjectequipment.post(
   '/post',
   validateSubjectEquipmentPostAndPut,
   (req: Request, res: Response) => {
@@ -90,7 +89,7 @@ const subjectequipment = express.Router();
       },
     );
   },
-);*/
+); */
 
 // Modifying the equipment required by the subject/teaching
 subjectequipment.put(

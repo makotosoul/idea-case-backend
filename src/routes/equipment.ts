@@ -1,24 +1,23 @@
-import express from 'express';
-import { Request, Response } from 'express';
-
-import db_knex from '../db/index_knex.js';
+import express, { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
+import { admin } from '../authorization/admin.js';
+import { planner } from '../authorization/planner.js';
+import { roleChecker } from '../authorization/roleChecker.js';
+import { statist } from '../authorization/statist.js';
+import { authenticator } from '../authorization/userValidation.js';
+import db_knex from '../db/index_knex.js';
 import {
   dbErrorHandler,
   requestErrorHandler,
   successHandler,
   validationErrorHandler,
 } from '../responseHandler/index.js';
-import { authenticator } from '../authorization/userValidation.js';
-import { admin } from '../authorization/admin.js';
-import { planner } from '../authorization/planner.js';
-import { statist } from '../authorization/statist.js';
-import { roleChecker } from '../authorization/roleChecker.js';
-import { validateAddEquipment, validate } from '../validationHandler/index.js';
+import { validate, validateAddEquipment } from '../validationHandler/index.js';
 
 const equipment = express.Router();
 
-// Equipment id:s and name:s, for a select list and for the default priority done with Knex
+// Equipment id:s and name:s,
+// for a select list and for the default priority done with Knex
 equipment.get(
   '/',
   [authenticator, admin, planner, statist, roleChecker, validate],
@@ -38,7 +37,7 @@ equipment.get(
   },
 );
 
-//get equipment by id
+// get equipment by id
 equipment.get(
   '/:id',
   [authenticator, admin, planner, statist, roleChecker, validate],
@@ -60,7 +59,7 @@ equipment.get(
   },
 );
 
-//adding an equipment
+// adding an equipment
 equipment.post(
   '/',
   [authenticator, admin, roleChecker, validate],
@@ -92,7 +91,7 @@ equipment.post(
   },
 );
 
-//updating an equipment
+// updating an equipment
 equipment.put(
   '/:id',
   [authenticator, admin, roleChecker, validate],
@@ -114,7 +113,7 @@ equipment.put(
   },
 );
 
-//deleting an equipment
+// deleting an equipment
 equipment.delete(
   '/:id',
   [authenticator, admin, roleChecker, validate],

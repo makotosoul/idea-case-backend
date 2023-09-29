@@ -1,13 +1,12 @@
 /*
 ---- WINSTON LOGGER ----
-Winston logger is a generic JavaScript logger. We can use it to log events and errors that
-happen on the backend.
+Winston logger is a generic JavaScript logger.
+We can use it to log events and errors that happen on the backend.
 It's possible to edit the logging formats and the logging levels.
 NPM: https://www.npmjs.com/package//winston
 */
-
-import { createLogger, transports, format } from 'winston';
-//const LEVEL = 'level';
+import { createLogger, format, transports } from 'winston';
+// const LEVEL = 'level';
 
 // Modifying the log for easier reading
 const customFormat = format.combine(

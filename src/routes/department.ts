@@ -1,23 +1,25 @@
-import express, { Response, Request } from 'express';
-import db_knex from '../db/index_knex.js';
+import express, { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
-
+import { admin } from '../authorization/admin.js';
+import { planner } from '../authorization/planner.js';
+import { roleChecker } from '../authorization/roleChecker.js';
+import { statist } from '../authorization/statist.js';
+import { authenticator } from '../authorization/userValidation.js';
+import db_knex from '../db/index_knex.js';
 import {
   dbErrorHandler,
   requestErrorHandler,
   successHandler,
   validationErrorHandler,
 } from '../responseHandler/index.js';
-import { validate, validateAddUpdateDepartment } from '../validationHandler/index.js';
-import { authenticator } from '../authorization/userValidation.js';
-import { admin } from '../authorization/admin.js';
-import { planner } from '../authorization/planner.js';
-import { statist } from '../authorization/statist.js';
-import { roleChecker } from '../authorization/roleChecker.js';
+import {
+  validate,
+  validateAddUpdateDepartment,
+} from '../validationHandler/index.js';
 
 const department = express.Router();
 
-//get all departments
+// get all departments
 department.get(
   '/',
   [authenticator, admin, planner, statist, roleChecker],
@@ -37,7 +39,7 @@ department.get(
   },
 );
 
-//get department by id
+// get department by id
 department.get(
   '/:id',
   [authenticator, admin, planner, statist, roleChecker, validate],
@@ -64,7 +66,7 @@ department.get(
   },
 );
 
-//add department
+// add department
 department.post(
   '/',
   [authenticator, admin, roleChecker, validate],
@@ -110,7 +112,7 @@ department.post(
   },
 );
 
-//update department
+// update department
 department.put(
   '/',
   [authenticator, admin, roleChecker],
@@ -131,7 +133,7 @@ department.put(
   },
 );
 
-//delete department by id
+// delete department by id
 department.delete(
   '/:id',
   [authenticator, admin, roleChecker, validate],

@@ -1,25 +1,26 @@
 {
   "compilerOptions": {
-      "target": "ES2015",
-      "module": "ES2015",
-      "outDir": "dist",
-      "strict": true,
-      "esModuleInterop": true,
-      "allowSyntheticDefaultImports": true,
-      "moduleResolution": "node",
-      "checkJs": true,
+    "target": "ES2015",
+    "module": "ES2015",
+    "outDir": "dist",
+    "strict": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node",
+    "checkJs": true,
   },
   "include": [
-      "src/db/**/*",
-      "src/responseHandler/**/*",
-      "src/routes/**/*",
-      "src/services/**/*",
-      "src/utils/**/*",
-      "src/validationHandler/**/*",
-      "src/index.ts"
-, "src/authorization/userValidation.ts"  ],
+    "src/db/**/*",
+    "src/responseHandler/**/*",
+    "src/routes/**/*",
+    "src/services/**/*",
+    "src/utils/**/*",
+    "src/validationHandler/**/*",
+    "src/index.ts",
+    "src/authorization/userValidation.ts"
+  ],
   "exclude": [
-      "node_modules",
-      "dist"
+    "node_modules",
+    "dist"
   ]
 }

@@ -1,17 +1,16 @@
 import express from 'express';
-
+import { admin } from '../authorization/admin.js';
+import { planner } from '../authorization/planner.js';
+import { roleChecker } from '../authorization/roleChecker.js';
+import { statist } from '../authorization/statist.js';
+import { authenticator } from '../authorization/userValidation.js';
 import {
   dbErrorHandler,
   successHandler,
   validationErrorHandler,
 } from '../responseHandler/index.js';
-import programService from '../services/program.js';
 import allocationService from '../services/allocation.js';
-import { authenticator } from '../authorization/userValidation.js';
-import { admin } from '../authorization/admin.js';
-import { planner } from '../authorization/planner.js';
-import { statist } from '../authorization/statist.js';
-import { roleChecker } from '../authorization/roleChecker.js';
+import programService from '../services/program.js';
 import { validate } from '../validationHandler/index.js';
 
 const allocation = express.Router();
@@ -114,7 +113,7 @@ allocation.get(
   },
 );
 
-/*gets unallocated subjects*/
+/* gets unallocated subjects */
 allocation.get(
   '/:id/subject/unallocated',
   [authenticator, admin, planner, statist, roleChecker, validate],
@@ -214,7 +213,10 @@ allocation.get(
   },
 );
 
-/* Reset allocation = remove all subjects from allocSpace and reset isAllocated, prioritynumber and cantAllocate in allocSubject */
+/*
+  Reset allocation = remove all subjects from allocSpace
+  and reset isAllocated, prioritynumber and cantAllocate in allocSubject
+*/
 allocation.post(
   '/reset',
   [authenticator, admin, roleChecker, validate],
