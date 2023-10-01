@@ -50,4 +50,47 @@ space.get(
   },
 );
 
+// Adding a space
+space.post(
+  '/',
+  [authenticator, admin, planner, roleChecker, validate],
+  (req: Request, res: Response) => {
+    const spaceData = {
+      name: req.body.name,
+      area: req.body.area,
+      info: req.body.info,
+      personLimit: req.body.personLimit,
+      buildingId: req.body.buildingId,
+      availableFrom: req.body.availableFrom,
+      availableTo: req.body.availableTo,
+      classesFrom: req.body.classesFrom,
+      classesTo: req.body.classesTo,
+      inUse: req.body.inUse || true, // Default to true if not provided
+      spaceTypeId: req.body.spaceTypeId,
+    };
+
+    db_knex('Space')
+      .insert(spaceData)
+      .then((result) => {
+        if (result.length === 0) {
+          requestErrorHandler(req, res, 'Nothing to insert');
+        } else {
+          successHandler(
+            req,
+            res,
+            { insertId: result[0] }, // Assuming auto-incremented ID
+            'Space created successfully.',
+          );
+        }
+      })
+      .catch((error) => {
+        requestErrorHandler(
+          req,
+          res,
+          `Oops! Create failed - Space: ${error.message}`,
+        );
+      });
+  },
+);
+
 export default space;
