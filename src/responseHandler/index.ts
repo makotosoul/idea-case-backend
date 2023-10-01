@@ -42,7 +42,7 @@ export const dbErrorHandler = (
 export const successHandler = (
   req: Request,
   res: Response,
-  data: any,
+  data: unknown,
   message: string,
 ) => {
   const logMessage =

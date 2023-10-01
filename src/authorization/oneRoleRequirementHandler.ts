@@ -1,16 +1,16 @@
-import { Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
+import { RoleName, RolePropertyName } from '../types/custom.js';
 
 export const oneRoleRequirementHandler = (
-  req: any,
+  req: Request,
   res: Response,
-  next: any,
-  roleName: string,
+  next: NextFunction,
+  roleName: RoleName,
 ) => {
   req.requiredRolesList.push(roleName);
   const rolePropertyName = `is${roleName
     .substring(0, 1)
-    .toUpperCase()}${roleName.substring(1).toLowerCase()}`;
-  // e.g. isAdmin
+    .toUpperCase()}${roleName.substring(1).toLowerCase()}` as RolePropertyName;
   if (req.user[rolePropertyName] === 1) {
     req.areRolesRequired = 1;
     console.log(`Logged in User has role: ${roleName}`);

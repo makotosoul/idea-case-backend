@@ -1,6 +1,6 @@
-import { Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { oneRoleRequirementHandler } from './oneRoleRequirementHandler.js';
 
-export const admin = (req: any, res: Response, next: any) => {
+export const admin = (req: Request, res: Response, next: NextFunction) => {
   oneRoleRequirementHandler(req, res, next, 'admin');
 };

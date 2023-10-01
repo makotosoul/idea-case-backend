@@ -71,7 +71,7 @@ department.post(
   '/',
   [authenticator, admin, roleChecker, validate],
   validateAddUpdateDepartment,
-  (req: any, res: any) => {
+  (req: Request, res: Response) => {
     const valResult = validationResult(req);
 
     if (!valResult.isEmpty()) {

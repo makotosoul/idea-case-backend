@@ -1,5 +1,5 @@
 import db from '../db/index.js';
-import { Program } from '../types';
+import { Program } from '../types/custom.js';
 
 const getAll = (): Promise<Program[]> => {
   const sqlQuery = 'SELECT p.id, p.name FROM Program p;';

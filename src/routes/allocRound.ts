@@ -43,7 +43,7 @@ allocround.get(
 allocround.get(
   '/:id',
   [authenticator, admin, planner, statist, roleChecker, validate],
-  async (req: any, res: any) => {
+  async (req: Request, res: Response) => {
     db_knex('AllocRound')
       .select()
       .where('id', req.params.id)
