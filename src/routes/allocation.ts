@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import { admin } from '../authorization/admin.js';
 import { planner } from '../authorization/planner.js';
 import { roleChecker } from '../authorization/roleChecker.js';
@@ -19,7 +19,7 @@ const allocation = express.Router();
 allocation.get(
   '/:id/rooms',
   [authenticator, admin, planner, statist, roleChecker, validate],
-  (req: any, res: any) => {
+  (req: Request, res: Response) => {
     const id = req.params.id;
     allocationService
       .getRoomsByAllocId(Number(id))
@@ -41,18 +41,18 @@ allocation.get(
 allocation.get(
   '/:id/program',
   [authenticator, admin, planner, statist, roleChecker, validate],
-  async (req: any, res: any) => {
+  async (req: Request, res: Response) => {
     const id = req.params.id;
     programService
       .getAll()
       .then(async (programs) => {
         return await Promise.all(
           programs.map(async (program) => {
-            let rooms = await allocationService.getAllocatedRoomsByProgram(
+            const rooms = await allocationService.getAllocatedRoomsByProgram(
               program.id,
               Number(id),
             );
-            let subjects = await allocationService.getSubjectsByProgram(
+            const subjects = await allocationService.getSubjectsByProgram(
               Number(id),
               program.id,
             );
@@ -87,7 +87,7 @@ allocation.get(
 allocation.get(
   '/:id/rooms/:subjectId',
   [authenticator, admin, planner, statist, roleChecker, validate],
-  async (req: any, res: any) => {
+  async (req: Request, res: Response) => {
     const allocId = req.params.id;
     const subjectId = req.params.subjectId;
     const rooms = await allocationService
@@ -117,7 +117,7 @@ allocation.get(
 allocation.get(
   '/:id/subject/unallocated',
   [authenticator, admin, planner, statist, roleChecker, validate],
-  async (req: any, res: any) => {
+  async (req: Request, res: Response) => {
     const allocId = req.params.id;
     await allocationService
       .getUnAllocableSubjects(Number(allocId))
@@ -138,7 +138,7 @@ allocation.get(
 allocation.get(
   '/subject/:id/rooms',
   [authenticator, admin, planner, statist, roleChecker, validate],
-  async (req: any, res: any) => {
+  async (req: Request, res: Response) => {
     const subjectId = req.params.id;
     await allocationService
       .getSpacesForSubject(Number(subjectId))
@@ -160,7 +160,7 @@ allocation.get(
 allocation.get(
   '/missing-eqpt/subject/:subid/room/:roomid',
   [authenticator, admin, planner, statist, roleChecker, validate],
-  async (req: any, res: any) => {
+  async (req: Request, res: Response) => {
     const subjectId = req.params.subid;
     const spaceId = req.params.roomid;
     await allocationService
@@ -188,7 +188,7 @@ allocation.get(
 allocation.get(
   '/:id/subjects/:roomId',
   [authenticator, admin, planner, statist, roleChecker, validate],
-  async (req: any, res: any) => {
+  async (req: Request, res: Response) => {
     const allocId = req.params.id;
     const roomId = req.params.roomId;
     const subjects = await allocationService
@@ -220,7 +220,7 @@ allocation.get(
 allocation.post(
   '/reset',
   [authenticator, admin, roleChecker, validate],
-  async (req: any, res: any) => {
+  async (req: Request, res: Response) => {
     const allocRound = req.body.allocRound;
     if (!allocRound) {
       return validationErrorHandler(
@@ -254,7 +254,7 @@ allocation.post(
 allocation.post(
   '/abort',
   [authenticator, admin, roleChecker, validate],
-  async (req: any, res: any) => {
+  async (req: Request, res: Response) => {
     const allocRound = req.body.allocRound;
     if (!allocRound) {
       return validationErrorHandler(
@@ -288,7 +288,7 @@ allocation.post(
 allocation.post(
   '/start',
   [authenticator, admin, roleChecker, validate],
-  async (req: any, res: any) => {
+  async (req: Request, res: Response) => {
     const allocRound = req.body.allocRound;
     if (!allocRound) {
       return validationErrorHandler(

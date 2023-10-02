@@ -1,3 +1,4 @@
+import { NextFunction, Request, Response } from 'express';
 /*
   ---- EXPRESS VALIDATOR ----
   Express-validator is a library that can be used to validate the data
@@ -20,7 +21,7 @@ export const validationErrorFormatter = (result: Result<ValidationError>) => {
   }`;
 };
 
-export const validate = (req: any, res: any, next: any) => {
+export const validate = (req: Request, res: Response, next: NextFunction) => {
   const validationResults: Result<ValidationError> = validationResult(req);
 
   if (!validationResults.isEmpty()) {

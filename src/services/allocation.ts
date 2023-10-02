@@ -3,7 +3,7 @@ import db_knex from '../db/index_knex.js';
 import {
   AllocatedRoomsByProgramType,
   AllocatedSubjectsByProgramType,
-} from '../types.js';
+} from '../types/custom.js';
 
 /* Get all allocations */
 

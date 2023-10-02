@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
+import { MysqlError } from 'mysql';
 import { admin } from '../authorization/admin.js';
 import { planner } from '../authorization/planner.js';
 import { roleChecker } from '../authorization/roleChecker.js';
@@ -23,7 +24,7 @@ const building = express.Router();
 function handleErrorBasedOnErrno(
   req: Request,
   res: Response,
-  error: any,
+  error: MysqlError,
   defaultMessage: string,
 ) {
   switch (error.errno) {

@@ -13,7 +13,7 @@ const authorizationErrorMessage = requestErrorMessage;
 const validationErrorMessage = requestErrorMessage; // 'Formatting error';
 
 export const routePrinter = (req: Request): string => {
-  let routeText = `${req.method} ${req.baseUrl.substring(4)}|`;
+  const routeText = `${req.method} ${req.baseUrl.substring(4)}|`;
   return routeText;
 };
 
@@ -42,20 +42,18 @@ export const dbErrorHandler = (
 export const successHandler = (
   req: Request,
   res: Response,
-  data: any,
+  data: unknown,
   message: string,
 ) => {
-  let logMessage = routePrinter(req) + messagePrinter(message, successMessage);
+  const logMessage =
+    routePrinter(req) + messagePrinter(message, successMessage);
 
   logger.http(logMessage);
 
-  if (typeof data === 'number') {
-    // If data is just a number, wrapping an object around it
-    data = { returnedNumberValue: data };
-    console.log(data);
-  }
+  // If data is just a number, wrap an object around it
+  const body = typeof data === 'number' ? { returnedNumberValue: data } : data;
 
-  res.status(200).send(data);
+  res.status(200).send(body);
 };
 
 export const requestErrorHandler = (
@@ -63,7 +61,7 @@ export const requestErrorHandler = (
   res: Response,
   message: string,
 ) => {
-  let logMessage =
+  const logMessage =
     routePrinter(req) + messagePrinter(message, requestErrorMessage);
   logger.error(logMessage);
 
@@ -75,7 +73,7 @@ export const authenticationErrorHandler = (
   res: Response,
   message: string,
 ) => {
-  let logMessage =
+  const logMessage =
     routePrinter(req) + messagePrinter(message, authenticationErrorMessage);
   logger.error(logMessage);
 
@@ -87,7 +85,7 @@ export const authorizationErrorHandler = (
   res: Response,
   message: string,
 ) => {
-  let logMessage =
+  const logMessage =
     routePrinter(req) + messagePrinter(message, authorizationErrorMessage);
   logger.error(logMessage);
 
@@ -105,7 +103,7 @@ export const validationErrorHandler = (
     validationResultMessage += validationErrorFormatter(validationResults);
   }
   validationResultMessage += `|${message}`;
-  let logMessage =
+  const logMessage =
     routePrinter(req) +
     messagePrinter(validationResultMessage, validationErrorMessage);
 
