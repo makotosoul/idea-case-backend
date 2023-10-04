@@ -156,7 +156,7 @@ user.post('/forget-password', (req, res) => {
         token: token,
       };
 
-      res.send(user);
+      successHandler(req, res, user, 'Token regenerated successfully');
     });
 });
 
