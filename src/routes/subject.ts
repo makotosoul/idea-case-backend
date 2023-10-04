@@ -12,6 +12,7 @@ import {
   requestErrorHandler,
   successHandler,
 } from '../responseHandler/index.js';
+import { Subject } from '../types/custom.js';
 import logger from '../utils/logger.js';
 import {
   // This is the new validation result handler
@@ -20,6 +21,7 @@ import {
   validateIdObl,
 } from '../validationHandler/index.js';
 import {
+  validateSubjectMultiPost,
   validateSubjectPost,
   validateSubjectPut,
 } from '../validationHandler/subject.js';
@@ -220,6 +222,64 @@ subject.post(
             'Create successful - Subject',
           );
           logger.info(`Subject ${subjectData.name} created`);
+        }
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Oops! Create failed - Subject');
+      });
+  },
+);
+
+// Adding multiple subjects/teachings using knex
+subject.post(
+  '/multi',
+  validateSubjectMultiPost,
+  [authenticator, admin, planner, roleChecker, validate],
+  async (req: Request, res: Response) => {
+    console.log(req.body);
+    const subjectData: Subject[] = [];
+
+    for (const subject of req.body) {
+      const [program] = await db_knex('Program')
+        .select('id')
+        .where('name', subject.major);
+      const [space] = await db_knex('SpaceType')
+        .select('id')
+        .where('name', subject.roomType);
+
+      if (!program) {
+        console.log(program);
+        console.log(space);
+        return requestErrorHandler(req, res, 'Program not found');
+      }
+
+      subjectData.push({
+        name: subject.name,
+        groupSize: subject.groupSize,
+        groupCount: subject.groupCount,
+        sessionLength: subject.sessionLength,
+        sessionCount: subject.sessionCount,
+        area: subject.area,
+        programId: program.id,
+        spaceTypeId: space.id,
+      });
+    }
+
+    console.log(subjectData);
+
+    db_knex('Subject')
+      .insert(subjectData)
+      .then((result) => {
+        if (result.length === 0) {
+          requestErrorHandler(req, res, 'Nothing to insert');
+        } else {
+          successHandler(
+            req,
+            res,
+            { insertId: result }, // Assuming auto-incremented ID
+            'Create successful - Subjects',
+          );
+          logger.info('Subjects created');
         }
       })
       .catch((error) => {
