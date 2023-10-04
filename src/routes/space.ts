@@ -93,4 +93,30 @@ space.post(
   },
 );
 
+// delete space by id
+space.delete(
+  '/:id',
+  [authenticator, admin, roleChecker, validate],
+  (req: Request, res: Response) => {
+    db_knex('Space')
+      .where('id', req.params.id)
+      .del()
+      .then((rowsAffected) => {
+        if (rowsAffected === 1) {
+          successHandler(
+            req,
+            res,
+            rowsAffected,
+            `Delete successful! Count of deleted rows: ${rowsAffected}`,
+          );
+        } else {
+          requestErrorHandler(req, res, `Invalid space ID: ${req.params.id}`);
+        }
+      })
+      .catch((error) => {
+        requestErrorHandler(req, res, `Error deleting space: ${error.message}`);
+      });
+  },
+);
+
 export default space;
