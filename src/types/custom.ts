@@ -11,6 +11,17 @@ export type User = {
   [key in RolePropertyName]: RoleRequired;
 };
 
+export interface Subject {
+  name: string;
+  groupSize: number;
+  groupCount: number;
+  sessionLength: string;
+  sessionCount: number;
+  area: number;
+  programId: number;
+  spaceTypeId: number;
+}
+
 export interface Program {
   id: number;
   name: string;
