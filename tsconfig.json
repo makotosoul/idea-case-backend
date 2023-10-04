@@ -1,27 +1,11 @@
 {
   "compilerOptions": {
-    "target": "ES2015",
-    "module": "ES2015",
+    "target": "es2022",
+    "module": "nodenext",
     "outDir": "dist",
-    "strict": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "moduleResolution": "node",
-    "checkJs": true,
+    "strict": true
   },
   "include": [
-    "src/db/**/*",
-    "src/responseHandler/**/*",
-    "src/routes/**/*",
-    "src/services/**/*",
-    "src/utils/**/*",
-    "src/validationHandler/**/*",
-    "src/index.ts",
-    "src/authorization/userValidation.ts",
-    "src/types/express/index.d.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
+    "src"
   ]
 }
