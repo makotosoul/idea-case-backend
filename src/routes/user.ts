@@ -134,6 +134,64 @@ user.post('/login', (req, res) => {
     });
 });
 
+//forget password handling
+user.post('/forget-password', (req, res) => {
+  const { email } = req.body;
+  db_knex('User')
+    .select('id', 'email')
+    .where('email', email)
+    .then((data) => {
+      if (data.length === 0) {
+        requestErrorHandler(req, res, 'Email not registered yet!');
+      }
+
+      const token = jsonwebtoken.sign(
+        { id: data[0].id, email: email },
+        process.env.SECRET_TOKEN as string,
+        { expiresIn: '24h' },
+      );
+
+      const user = {
+        id: data[0].id,
+        token: token,
+      };
+
+      res.send(user);
+    });
+});
+
+//reset password handling
+user.post('/reset-password/:id/:token', (req: Request, res: Response) => {
+  const { id, token } = req.params;
+  const { password } = req.body;
+
+  jsonwebtoken.verify(
+    token,
+    process.env.SECRET_TOKEN as string,
+    (err, decoded) => {
+      console.log('decoded: ', decoded);
+      if (err) {
+        requestErrorHandler(req, res, 'Could not verify token!');
+      } else {
+        const hashedPassword = bcrypt.hashSync(password, 10);
+        db_knex('User')
+          .update('password', hashedPassword)
+          .where('id', id)
+          .then((data) => {
+            if (data) {
+              successHandler(req, res, data, 'Password reset successful');
+            } else {
+              requestErrorHandler(req, res, 'Could not reset! Sorry');
+            }
+          })
+          .catch((error) => {
+            dbErrorHandler(req, res, error, 'Reset failed!');
+          });
+      }
+    },
+  );
+});
+
 // Changing userdata
 user.put(
   '/',
