@@ -1,11 +1,5 @@
 import dotenv from 'dotenv';
-
-// Work around the incompatibility between Knex typings
-// and the "module": "nodenext" TS config
-// Will be fixed once a new version of Knex with the following PR is released:
-// https://github.com/knex/knex/pull/5659
-import * as knexModule from 'knex';
-const { knex } = knexModule.default;
+import knex from 'knex';
 
 dotenv.config({});
 
