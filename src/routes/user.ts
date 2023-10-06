@@ -143,20 +143,23 @@ user.post('/forget-password', (req, res) => {
     .then((data) => {
       if (data.length === 0) {
         requestErrorHandler(req, res, 'Email not registered yet!');
+      } else {
+        const token = jsonwebtoken.sign(
+          { id: data[0].id, email: email },
+          process.env.SECRET_TOKEN as string,
+          { expiresIn: '24h' },
+        );
+
+        const user = {
+          id: data[0].id,
+          token: token,
+        };
+
+        successHandler(req, res, user, 'Token regenerated successfully');
       }
-
-      const token = jsonwebtoken.sign(
-        { id: data[0].id, email: email },
-        process.env.SECRET_TOKEN as string,
-        { expiresIn: '24h' },
-      );
-
-      const user = {
-        id: data[0].id,
-        token: token,
-      };
-
-      successHandler(req, res, user, 'Token regenerated successfully');
+    })
+    .catch((error) => {
+      dbErrorHandler(req, res, error, '/forget-password: Database error');
     });
 });
 
