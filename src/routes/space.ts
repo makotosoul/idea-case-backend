@@ -13,19 +13,7 @@ import { validate } from '../validationHandler/index.js';
 
 const space = express.Router();
 
-// Get space type id:s and name:s, for populating a select list
-// spaceType.get('/getSelectData', (req, res) => {
-//   const sqlSelectName = 'SELECT id, name FROM SpaceType';
-//   db.query(sqlSelectName, (err, result) => {
-//     if (err) {
-//       dbErrorHandler(req, res, err, 'Oops! Nothing came through - SpaceType');
-//     } else {
-//       successHandler(req, res, result, 'getNames successful - SpaceType');
-//     }
-//   });
-// });
-
-// get all spaces
+// Get all spaces
 space.get(
   '/',
   [authenticator, admin, planner, statist, roleChecker, validate],
@@ -93,7 +81,7 @@ space.post(
   },
 );
 
-// delete space by id
+// Delete space by id
 space.delete(
   '/:id',
   [authenticator, admin, roleChecker, validate],
@@ -115,6 +103,47 @@ space.delete(
       })
       .catch((error) => {
         requestErrorHandler(req, res, `Error deleting space: ${error.message}`);
+      });
+  },
+);
+
+// Update space by ID
+space.put(
+  '/:id',
+  [authenticator, admin, planner, roleChecker, validate],
+  (req: Request, res: Response) => {
+    const spaceId = req.params.id;
+    const updatedSpaceData = {
+      name: req.body.name,
+      area: req.body.area,
+      info: req.body.info,
+      personLimit: req.body.personLimit,
+      buildingId: req.body.buildingId,
+      availableFrom: req.body.availableFrom,
+      availableTo: req.body.availableTo,
+      classesFrom: req.body.classesFrom,
+      classesTo: req.body.classesTo,
+      inUse: req.body.inUse || true, // Default to true if not provided
+      spaceTypeId: req.body.spaceTypeId,
+    };
+
+    db_knex('Space')
+      .where('id', spaceId)
+      .update(updatedSpaceData)
+      .then((rowsAffected) => {
+        if (rowsAffected === 1) {
+          successHandler(
+            req,
+            res,
+            rowsAffected,
+            `Update successful! Count of modified rows: ${rowsAffected}`,
+          );
+        } else {
+          requestErrorHandler(req, res, `Invalid space ID: ${spaceId}`);
+        }
+      })
+      .catch((error) => {
+        requestErrorHandler(req, res, `Error updating space: ${error.message}`);
       });
   },
 );
