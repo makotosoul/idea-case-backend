@@ -18,21 +18,34 @@ space.get(
   '/',
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
-    db_knex('Space')
-      .select('id', 'name', 'area')
-      .then((data) => {
-        successHandler(
-          req,
-          res,
-          data,
-          'All Spaces fetched succesfully from DB.',
-        );
+    db_knex
+      .select(
+        's.id',
+        's.name',
+        's.area',
+        's.info',
+        's.personLimit',
+        's.buildingId',
+        's.availableFrom',
+        's.availableTo',
+        's.classesFrom',
+        's.classesTo',
+        's.inUse',
+        's.spaceTypeId',
+        'b.name AS buildingName',
+        'st.name AS spaceTypeName',
+      )
+      .from('Space as s')
+      .innerJoin('Building as b', 's.buildingId', 'b.id')
+      .leftJoin('SpaceType as st', 's.spaceTypeId', 'st.id')
+      .then((spaces) => {
+        successHandler(req, res, spaces, 'getAll successful - Space');
       })
       .catch((err) => {
         requestErrorHandler(
           req,
           res,
-          `${err}Oops! Nothing came through - Space`,
+          `Oops! Nothing came through - Space: ${err.message}`,
         );
       });
   },
