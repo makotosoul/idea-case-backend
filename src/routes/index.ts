@@ -3,6 +3,7 @@ import allocround from './allocRound.js';
 import allocation from './allocation.js';
 import building from './building.js';
 import department from './department.js';
+import departmentplanner from './departmentplanner.js';
 import equipment from './equipment.js';
 import program from './program.js';
 import setting from './setting.js';
@@ -26,5 +27,6 @@ routes.use('/spaceType', spaceType);
 routes.use('/subject', subject);
 routes.use('/subjectequipment', subjectequipment);
 routes.use('/user', user);
+routes.use('/departmentplanner', departmentplanner);
 
 export default routes;
