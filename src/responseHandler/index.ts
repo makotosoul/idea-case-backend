@@ -1,3 +1,4 @@
+import dotenv from 'dotenv';
 import { Request, Response } from 'express';
 import { Result, ValidationError } from 'express-validator';
 import { MysqlError } from 'mysql';
@@ -6,22 +7,37 @@ import { validationErrorFormatter } from '../validationHandler/index.js';
 
 const serverErrorMessage = 'Server error.';
 const requestErrorMessage = 'Request error';
-const dbErrorMessage = serverErrorMessage;
+const dbErrorMessage = 'Database error';
 const successMessage = 'OK';
-const authenticationErrorMessage = requestErrorMessage;
-const authorizationErrorMessage = requestErrorMessage;
-const validationErrorMessage = requestErrorMessage; // 'Formatting error';
+const authenticationErrorMessage = 'Authentication error';
+const authorizationErrorMessage = 'Authorization error';
+const validationErrorMessage = 'Validation error';
+
+dotenv.config({});
 
 export const routePrinter = (req: Request): string => {
-  const routeText = `${req.method}|${req.baseUrl.substring(4)}${req.path}|`;
+  const routeText = `${req.method} ${req.baseUrl.substring(4)}${req.path} `;
   return routeText;
 };
 
-const messagePrinter = (
+// Add to BE .env file this line to get more info to FE:
+// BE_DEVELOPMENT_PHASE=true
+export const responseMessagePrinter = (
+  defaultMessage: string,
+  logMessage: string,
+): string => {
+  return `${
+    process.env.BE_DEVELOPMENT_PHASE
+      ? `${defaultMessage}: ${logMessage}`
+      : 'Message hidden if in production. Look at backend logs.'
+  }`;
+};
+
+const logMessagePrinter = (
   providedMessage: string,
   defaultMessage: string,
 ): string => {
-  return `${providedMessage ? providedMessage : defaultMessage}|`;
+  return `${providedMessage ? providedMessage : defaultMessage} `;
 };
 
 export const dbErrorHandler = (
@@ -30,13 +46,14 @@ export const dbErrorHandler = (
   error: MysqlError,
   message: string,
 ): void => {
-  let logMessage = routePrinter(req) + messagePrinter(message, dbErrorMessage);
+  let logMessage =
+    routePrinter(req) + logMessagePrinter(message, dbErrorMessage);
 
   logMessage += `. Db error code: ${error.errno}`;
   logMessage += `. Db error message: ${error.message}`;
   logger.error(logMessage);
 
-  res.status(500).send(dbErrorMessage);
+  res.status(500).send(responseMessagePrinter(dbErrorMessage, logMessage));
 };
 
 export const successHandler = (
@@ -46,7 +63,7 @@ export const successHandler = (
   message: string,
 ) => {
   const logMessage =
-    routePrinter(req) + messagePrinter(message, successMessage);
+    routePrinter(req) + logMessagePrinter(message, successMessage);
 
   logger.http(logMessage);
 
@@ -62,10 +79,10 @@ export const requestErrorHandler = (
   message: string,
 ) => {
   const logMessage =
-    routePrinter(req) + messagePrinter(message, requestErrorMessage);
+    routePrinter(req) + logMessagePrinter(message, requestErrorMessage);
   logger.error(logMessage);
 
-  res.status(400).send(requestErrorMessage);
+  res.status(400).send(responseMessagePrinter(requestErrorMessage, logMessage));
 };
 
 export const authenticationErrorHandler = (
@@ -74,10 +91,12 @@ export const authenticationErrorHandler = (
   message: string,
 ) => {
   const logMessage =
-    routePrinter(req) + messagePrinter(message, authenticationErrorMessage);
+    routePrinter(req) + logMessagePrinter(message, authenticationErrorMessage);
   logger.error(logMessage);
 
-  res.status(401).send(authenticationErrorMessage);
+  res
+    .status(401)
+    .send(responseMessagePrinter(authenticationErrorMessage, logMessage));
 };
 
 export const authorizationErrorHandler = (
@@ -86,10 +105,12 @@ export const authorizationErrorHandler = (
   message: string,
 ) => {
   const logMessage =
-    routePrinter(req) + messagePrinter(message, authorizationErrorMessage);
+    routePrinter(req) + logMessagePrinter(message, authorizationErrorMessage);
   logger.error(logMessage);
 
-  res.status(403).send(authorizationErrorMessage);
+  res
+    .status(403)
+    .send(responseMessagePrinter(authorizationErrorMessage, logMessage));
 };
 
 export const validationErrorHandler = (
@@ -105,9 +126,11 @@ export const validationErrorHandler = (
   validationResultMessage += `|${message}`;
   const logMessage =
     routePrinter(req) +
-    messagePrinter(validationResultMessage, validationErrorMessage);
+    logMessagePrinter(validationResultMessage, validationErrorMessage);
 
   logger.error(logMessage);
 
-  res.status(400).send(validationErrorMessage);
+  res
+    .status(400)
+    .send(responseMessagePrinter(validationErrorMessage, logMessage));
 };
