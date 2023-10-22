@@ -102,3 +102,49 @@ Authorization: Basic <put your token here>
 For detail info, please visit **[here](https://github.com/Huachao/vscode-restclient)** and **[here](https://marketplace.visualstudio.com/items?itemName=humao.rest-client)**
 
 Enjoy!!
+
+# Improvements 2023-10-22:
+## These have been already done
+1. Ctrl+Shift+P, settings => select Preferences: Open Settings (UI)
+1. select Workspace          (creates a .vscode folder to root root folder "Siba")
+1. look for: rest client
+1. select rest client environment settings
+1. Creates Write to that settings.json:
+  ```
+  {
+    "rest-client.environmentVariables": {       
+      "$shared": {
+      }
+    }
+  }
+  ```
+## You need to do this once for each machine where your work:
+1. create a folder .vscode to the root root folder, the folder where you have Siba_be and siba-fe folders - if none yet
+1. create there settings.json - if none yet
+1. Then make it look like this:
+  ```
+  {
+    "rest-client.environmentVariables": {         
+      "$shared": {
+        "host":"http://localhost:8764/api"
+      },
+
+      "adminEnv": {
+        "token":"fasdflöjaösdlfkjöasdlkjf",
+      },
+      "plannerEnv": {
+        "token":"asdfasjdflöakjsdfölajsdf",
+      },
+      "statistEnv": {
+        "token":"asdfasdjfölasdkjfölasj",
+      }
+    }
+  }
+  ```
+
+  Well, the tokens you get by logging in as respective role user. See the Logins.rest.
+
+1. Then you can switch between different environments simply from lower right corner, when .rest file is open in VS Code
+
+1. Then we create one file per database table. And in that file have at least C,R,U,D,L test cases, in the order: LRCUD, same order as the route file
+

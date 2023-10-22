@@ -65,10 +65,6 @@ equipment.post(
   [authenticator, admin, roleChecker, validate],
   validateAddEquipment,
   (req: Request, res: Response) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return validationErrorHandler(req, res, 'Formatting problem');
-    }
     db_knex
       .insert(req.body)
       .into('Equipment')

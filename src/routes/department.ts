@@ -72,15 +72,6 @@ department.post(
   [authenticator, admin, roleChecker, validate],
   validateAddUpdateDepartment,
   (req: Request, res: Response) => {
-    const valResult = validationResult(req);
-
-    if (!valResult.isEmpty()) {
-      return validationErrorHandler(
-        req,
-        res,
-        `${valResult}validateAddUpdateDepartment error`,
-      );
-    }
     db_knex('Department')
       .insert(req.body)
       .into('Department')

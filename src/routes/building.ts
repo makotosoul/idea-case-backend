@@ -102,15 +102,6 @@ building.post(
   [authenticator, admin, roleChecker, validate],
   validateBuildingPost,
   (req: Request, res: Response) => {
-    const valResult = validationResult(req);
-
-    if (!valResult.isEmpty()) {
-      return validationErrorHandler(
-        req,
-        res,
-        `${valResult}validateAddUpdateBuilding error`,
-      );
-    }
     db_knex('Building')
       .insert(req.body)
       .into('Building')
@@ -134,18 +125,6 @@ building.post(
   [authenticator, admin, roleChecker, validate],
   validateBuildingMultiPost,
   (req: Request, res: Response) => {
-    const valResult = validationResult(req);
-
-    if (!valResult.isEmpty()) {
-      validationErrorHandler(
-        req,
-        res,
-        `${valResult} validateAddBuildings error`,
-      );
-
-      return;
-    }
-
     db_knex('Building')
       .insert(req.body)
       .into('Building')

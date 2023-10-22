@@ -66,15 +66,6 @@ setting.post(
   [authenticator, admin, planner, roleChecker, validate],
   validateAddSetting,
   (req: Request, res: Response) => {
-    const valResult = validationResult(req);
-
-    if (!valResult.isEmpty()) {
-      return validationErrorHandler(
-        req,
-        res,
-        `${valResult}validateAddSetting error`,
-      );
-    }
     db('GlobalSetting')
       .insert(req.body)
       .into('GlobalSetting')

@@ -10,6 +10,7 @@ import {
   validationErrorHandler,
 } from '../responseHandler/index.js';
 import logger from '../utils/logger.js';
+import { validate } from '../validationHandler/index.js';
 import { validateSubjectEquipmentPostAndPut } from '../validationHandler/subjectEquipment.js';
 
 const subjectequipment = express.Router();
@@ -43,18 +44,7 @@ const subjectequipment = express.Router();
   '/post',
   validateSubjectEquipmentPostAndPut,
   (req: Request, res: Response) => {
-    const validationResults: Result<ValidationError> = validationResult(req);
-    // if (!validationResults.isEmpty()) {
-    //   logger.error('Validation error:  %O', errors);
-    // }
-    if (!validationResults.isEmpty()) {
-      return validationErrorHandler(
-        req,
-        res,
-        'Formatting problem',
-        validationResults,
-      );
-    }
+ 
     const subjectId = req.body.subjectId;
     const equipmentId = req.body.equipmentId;
     const priority = req.body.priority;
@@ -94,15 +84,9 @@ const subjectequipment = express.Router();
 // Modifying the equipment required by the subject/teaching
 subjectequipment.put(
   '/update',
+  [validate],
   validateSubjectEquipmentPostAndPut,
   (req: Request, res: Response) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      logger.error('Validation error: %0', errors);
-    }
-    if (!errors.isEmpty()) {
-      return validationErrorHandler(req, res, 'Formatting problem');
-    }
     const priority = req.body.priority;
     const obligatory = req.body.obligatory;
     const subjectId = req.body.subjectId;

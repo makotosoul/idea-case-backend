@@ -1,0 +1,31 @@
+### This does not work for some reason. Add token to
+### root root root folder's .vscode folder's settings.json file 
+POST {{host}}/user/login
+Content-Type: application/json
+
+{
+  "email":"admin",
+  "password":"admin"
+}
+
+### 1. Get all
+GET {{host}}/setting
+Authorization: Basic {{token}}
+
+### 2. Get one by id
+GET {{host}}/setting/1
+Authorization: Basic {{token}}
+
+### 3. Possibly other gets
+
+### 4. Post a new one
+POST {{host}}/setting/
+Authorization: Basic {{token}}
+Content-Type: application/json
+
+{
+  "name": "test setting xyz12345",
+  "description": "Setting for just Rest api test case",
+  "numberValue": 555,
+  "textValue": "Hello"
+}
