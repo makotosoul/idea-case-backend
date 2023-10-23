@@ -4,12 +4,15 @@ import { planner } from '../authorization/planner.js';
 import { roleChecker } from '../authorization/roleChecker.js';
 import { statist } from '../authorization/statist.js';
 import { authenticator } from '../authorization/userValidation.js';
+import db from '../db/index.js';
 import db_knex from '../db/index_knex.js';
 import {
+  dbErrorHandler,
   requestErrorHandler,
   successHandler,
 } from '../responseHandler/index.js';
-import { validate } from '../validationHandler/index.js';
+import logger from '../utils/logger.js';
+import { validate, validateIdObl } from '../validationHandler/index.js';
 
 const space = express.Router();
 
@@ -47,6 +50,24 @@ space.get(
           res,
           `Oops! Nothing came through - Space: ${err.message}`,
         );
+      });
+  },
+);
+
+// SPECIAL Listing all the spaces for selection dropdown etc.
+// (Just name and id) using knex
+space.get(
+  '/getNames',
+  [authenticator, admin, roleChecker],
+  (req: Request, res: Response) => {
+    db_knex
+      .select('id', 'name')
+      .from('Space')
+      .then((spaceNames) => {
+        successHandler(req, res, spaceNames, 'getNames successful - Space');
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Oops! Nothing came through - Space');
       });
   },
 );
@@ -95,6 +116,7 @@ space.post(
 );
 
 // Delete space by id
+/*
 space.delete(
   '/:id',
   [authenticator, admin, roleChecker, validate],
@@ -117,6 +139,24 @@ space.delete(
       .catch((error) => {
         requestErrorHandler(req, res, `Error deleting space: ${error.message}`);
       });
+  },
+);*/
+
+space.delete(
+  '/:id',
+  validateIdObl,
+  [authenticator, admin, planner, roleChecker, validate],
+  (req: Request, res: Response) => {
+    const id = req.params.id;
+    const sqlDelete = 'DELETE FROM Space WHERE id = ?;';
+    db.query(sqlDelete, id, (err, result) => {
+      if (err) {
+        dbErrorHandler(req, res, err, 'Oops! Delete failed - Space');
+      } else {
+        successHandler(req, res, result, 'Delete successful - Space');
+        logger.info('Space deleted');
+      }
+    });
   },
 );
 
