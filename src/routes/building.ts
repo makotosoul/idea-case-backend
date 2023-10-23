@@ -97,8 +97,8 @@ building.get(
 // adding single building
 building.post(
   '/',
-  [authenticator, admin, roleChecker, validate],
   validateBuildingPost,
+  [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Building')
       .insert(req.body)
@@ -120,8 +120,8 @@ building.post(
 // adding single or multiple building
 building.post(
   '/multi',
-  [authenticator, admin, roleChecker, validate],
   validateBuildingMultiPost,
+  [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Building')
       .insert(req.body)

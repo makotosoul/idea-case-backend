@@ -1,0 +1,59 @@
+### Remember to select the proper rest client environment
+
+### Get all
+GET {{host}}/building
+Authorization: Basic {{token}}
+
+### Get one by id 
+GET {{host}}/building/411
+Authorization: Basic {{token}}
+
+### Create one
+POST {{host}}/building
+Authorization: Basic {{token}}
+Content-Type: application/json
+
+{
+    "name": "M",
+    "description": "Sibeliusakatemian päärakennus"
+}
+
+### Create multi
+POST {{host}}/building/multi
+Authorization: Basic {{token}}
+Content-Type: application/json
+
+[
+    {
+    "name": "XYG",
+    "description": "Sibeliusakatemian päärakennus"
+    }, 
+
+    {
+    "name": "MNO",
+    "description": "Sibeliusakatemian päärakennus"
+    }
+]
+
+### Update one
+PUT {{host}}/building
+Authorization: Basic {{token}}
+Content-Type: application/json
+
+{
+    "id": 411,
+    "name": "YYY",
+    "description": "Sibeliusakatemian päärakennus"
+}
+
+### Delete one
+DELETE {{host}}/building/411
+Authorization: Basic {{token}}
+
+
+
+
+
+
+
+
