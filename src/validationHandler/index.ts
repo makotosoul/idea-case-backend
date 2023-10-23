@@ -39,7 +39,7 @@ export const validateIdObl = [
     // .withMessage('Id Must be between 1-1 characters long')
     // .bail()
     .matches(/^[0-9]+$/)
-    .withMessage('Must be a number')
+    .withMessage('Id must be a number')
     .bail()
     .notEmpty()
     .withMessage('Cannot be empty')
