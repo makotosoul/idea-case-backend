@@ -22,7 +22,7 @@ const user = express.Router();
 // adding user
 user.post(
   '/',
-  [authenticator, admin, roleChecker],
+  [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     const hashedPassword = bcrypt.hashSync(req.body.password, 10);
     // REMOVE AFTER SOME TESTING!!! SECURITY!!!

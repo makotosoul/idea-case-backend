@@ -1,0 +1,49 @@
+### token to
+### root root root folder's .vscode folder's settings.json file 
+
+### 1. Get all
+GET {{host}}/setting
+Authorization: Basic {{token}}
+
+### 2. Get one by id
+GET {{host}}/setting/1
+Authorization: Basic {{token}}
+
+### 3. Possibly other gets
+
+### 4. Post a new one
+POST {{host}}/setting/
+Authorization: Basic {{token}}
+Content-Type: application/json
+
+{
+  "name": "test setting xyz123456",
+  "description": "Setting for just Rest api test case",
+  "numberValue": 555,
+  "textValue": "Hello"
+}
+
+### 5. Update existing one
+PUT {{host}}/setting/1
+Authorization: Basic {{token}}
+Content-Type: application/json
+
+{
+  "id": 1,
+  "name": "X",
+  "description": "Korkeampi prioriteettiarvo",
+  "numberValue": 800,
+  "textValue": null
+}
+
+###
+GET {{host}}/setting/1
+Authorization: Basic {{token}}
+
+### 6. Delete one by id
+DELETE {{host}}/setting/9
+Authorization: Basic {{token}}
+
+###
+GET {{host}}/setting/11
+Authorization: Basic {{token}}
