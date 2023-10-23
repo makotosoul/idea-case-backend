@@ -31,7 +31,7 @@ Content-Type: application/json
 {
   "id": 1,
   "name": "X",
-  "description": "Korkeahko prioriteettiarvo",
+  "description": "Korkeampi prioriteettiarvo",
   "numberValue": 800,
   "textValue": null
 }
@@ -41,7 +41,7 @@ GET {{host}}/setting/1
 Authorization: Basic {{token}}
 
 ### 6. Delete one by id
-DELETE {{host}}/setting/ab
+DELETE {{host}}/setting/9
 Authorization: Basic {{token}}
 
 ###

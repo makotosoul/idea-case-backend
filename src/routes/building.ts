@@ -1,5 +1,4 @@
 import express, { Request, Response } from 'express';
-import { validationResult } from 'express-validator';
 import { MysqlError } from 'mysql';
 import { admin } from '../authorization/admin.js';
 import { planner } from '../authorization/planner.js';
@@ -11,13 +10,12 @@ import {
   dbErrorHandler,
   requestErrorHandler,
   successHandler,
-  validationErrorHandler,
 } from '../responseHandler/index.js';
 import {
-  validate,
   validateBuildingMultiPost,
   validateBuildingPost,
-} from '../validationHandler/index.js';
+} from '../validationHandler/building.js';
+import { validate } from '../validationHandler/index.js';
 
 const building = express.Router();
 

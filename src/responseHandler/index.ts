@@ -27,7 +27,7 @@ export const responseMessagePrinter = (
   logMessage: string,
 ): string => {
   return `${
-    process.env.BE_DEVELOPMENT_PHASE
+    process.env.BE_DEVELOPMENT_PHASE === 'true'
       ? `${defaultMessage}: ${logMessage}`
       : 'Message hidden if in production. Look at backend logs.'
   }`;
