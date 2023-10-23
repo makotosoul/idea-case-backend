@@ -68,7 +68,7 @@ These instructions will guide you through the process of setting up a local Mari
 
     ```plaintext
     BE_API_URL_PREFIX=/api
-    BE_SERVER_PORT=8764
+    BE_SERVER_PORT=1234
     DB_DRIVER_MODULE=mysql
     DB_HOST=localhost
     DB_PORT=3306
@@ -91,4 +91,4 @@ These instructions will guide you through the process of setting up a local Mari
 
 12. **Testing the Backend**:
     - To quickly test the backend and local database link, try accessing:
-      [http://localhost:8764/api/subject/getAll](http://localhost:8764/api/subject/getAll)
+      [http://localhost:1234/api/subject/getAll](http://localhost:1234/api/subject/getAll)

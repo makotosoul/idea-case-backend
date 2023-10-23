@@ -33,7 +33,7 @@ touch subject.rest
 **Get all subjects**
 
 ```shell
-GET http://localhost:8764/api/subject
+GET http://localhost:1234/api/subject
 Authorization: Basic <put your token here>
 ```
 ***
@@ -41,7 +41,7 @@ Authorization: Basic <put your token here>
 **Get subject by id**
 
 ```shell
-GET http://localhost:8764/api/subject/<put subject id here>
+GET http://localhost:1234/api/subject/<put subject id here>
 Authorization: Basic <put your token here>
 ```
 ***
@@ -49,7 +49,7 @@ Authorization: Basic <put your token here>
 **Create subject**
 
 ```shell
-POST http://localhost:8764/api/subject
+POST http://localhost:1234/api/subject
 Authorization: Basic <put your token here>
 Content-Type: application/json
 
@@ -71,7 +71,7 @@ Content-Type: application/json
 **Update subject**
 
 ```shell
-PUT http://localhost:8764/api/subject
+PUT http://localhost:1234/api/subject
 Authorization: Basic <put your token here>
 Content-Type: application/json
 
@@ -94,7 +94,7 @@ Content-Type: application/json
 **Remove subject**
 
 ```shell
-DELETE http://localhost:8764/api/subject/<put subject id here>
+DELETE http://localhost:1234/api/subject/<put subject id here>
 Authorization: Basic <put your token here>
 ```
 ***
@@ -126,7 +126,7 @@ Enjoy!!
   {
     "rest-client.environmentVariables": {         
       "$shared": {
-        "host":"http://localhost:8764/api"
+        "host":"http://localhost:1234/api"
       },
 
       "adminEnv": {

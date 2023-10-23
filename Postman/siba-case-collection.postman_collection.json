@@ -173,7 +173,7 @@
     },
     {
       "key": "SIBA_BE_PORT",
-      "value": "8764",
+      "value": "1234",
       "type": "string"
     },
     {
