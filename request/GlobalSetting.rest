@@ -1,49 +1,53 @@
 ### token to
 ### root root root folder's .vscode folder's settings.json file 
 
-### 1. Get all
+### next id after Testdata Reset:
+@nextId=16
+
+### 1. Get all   - L
 GET {{host}}/setting
 Authorization: Basic {{token}}
 
-### 2. Get one by id
+### 2. Get one by id   -  R
 GET {{host}}/setting/1
 Authorization: Basic {{token}}
 
-### 3. Possibly other gets
+### 3. Possibly other gets    -  L?R?
 
-### 4. Post a new one
+### 4. Post a new one    -   C
 POST {{host}}/setting/
 Authorization: Basic {{token}}
 Content-Type: application/json
 
 {
-  "name": "test setting xyz123456",
+  "name": "test setting xyz1234567",
   "description": "Setting for just Rest api test case",
   "numberValue": 555,
   "textValue": "Hello"
 }
 
-### 5. Update existing one
-PUT {{host}}/setting/1
+### 5. Update existing one  -   U
+### // id now removed from PUT URL! It's in JSON data
+PUT {{host}}/setting/         
 Authorization: Basic {{token}}
 Content-Type: application/json
 
 {
-  "id": 1,
-  "name": "X",
-  "description": "Korkeampi prioriteettiarvo",
-  "numberValue": 800,
+  "id": {{nextId}},
+  "name": "Changed name here",
+  "description": "fasdfasdfasdf sdfsadf",
+  "numberValue": 456,
   "textValue": null
 }
 
 ###
-GET {{host}}/setting/1
+GET {{host}}/setting/{{nextId}}
 Authorization: Basic {{token}}
 
-### 6. Delete one by id
-DELETE {{host}}/setting/9
+### 6. Delete one by id    -  D
+DELETE {{host}}/setting/{{nextId}}
 Authorization: Basic {{token}}
 
 ###
-GET {{host}}/setting/11
+GET {{host}}/setting/{{nextId}}
 Authorization: Basic {{token}}

@@ -1,5 +1,4 @@
 import express, { Request, Response } from 'express';
-import { validationResult } from 'express-validator';
 import { admin } from '../authorization/admin.js';
 import { planner } from '../authorization/planner.js';
 import { roleChecker } from '../authorization/roleChecker.js';
