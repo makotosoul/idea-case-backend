@@ -1,5 +1,4 @@
 import express, { Request, Response } from 'express';
-import { validationResult } from 'express-validator';
 import { admin } from '../authorization/admin.js';
 import { planner } from '../authorization/planner.js';
 import { roleChecker } from '../authorization/roleChecker.js';
@@ -103,7 +102,7 @@ setting.post(
 
 // update setting
 setting.put(
-  '/:id',
+  '/',
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     if (!req.body.name) {

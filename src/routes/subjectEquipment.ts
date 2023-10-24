@@ -1,5 +1,4 @@
 import express, { Request, Response } from 'express';
-import { validationResult } from 'express-validator'; // import { body } ??
 import db from '../db/index.js';
 // knex available for new database operations
 import db_knex from '../db/index_knex.js';
