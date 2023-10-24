@@ -1,0 +1,42 @@
+### Remember to select the proper rest client environment
+
+### Get all
+GET {{host}}/department
+Authorization: Basic {{token}}
+
+### Get one by id 
+GET {{host}}/department/103
+Authorization: Basic {{token}}
+
+### Create one
+POST {{host}}/department
+Authorization: Basic {{token}}
+Content-Type: application/json
+
+{
+    "name": "bazz",
+    "description": "Aineryhmän kuvaus"
+}
+
+### Update one
+PUT {{host}}/department
+Authorization: Basic {{token}}
+Content-Type: application/json
+
+{
+    "id": 104,
+    "name": "bazz2",
+    "description": "Aineryhmän kuvaus"
+}
+
+### Delete one
+DELETE {{host}}/department/105
+Authorization: Basic {{token}}
+
+
+
+
+
+
+
+
