@@ -1,12 +1,12 @@
 ### token to
 ### root root root folder's .vscode folder's settings.json file 
 
-### next id after Testdata Reset:
-@nextId=16
-
 ### 1. Get all   - L
 GET {{host}}/setting
 Authorization: Basic {{token}}
+
+### next id after Testdata Reset:
+@nextId=16
 
 ### 2. Get one by id   -  R
 GET {{host}}/setting/1
