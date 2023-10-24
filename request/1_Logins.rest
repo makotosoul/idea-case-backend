@@ -1,0 +1,36 @@
+### This does not work for some reason. Add token to
+### root root root folder's .vscode folder's settings.json file 
+POST {{host}}/user/login
+Content-Type: application/json
+
+{
+  "email":"admin",
+  "password":"superadmin"
+}
+
+###
+POST {{host}}/user/login
+Content-Type: application/json
+
+{
+  "email":"planner",
+  "password":"planner"
+}
+
+###
+POST {{host}}/user/login
+Content-Type: application/json
+
+{
+  "email":"statist",
+  "password":"statist"
+}
+
+###
+POST {{host}}/user/login
+Content-Type: application/json
+
+{
+  "email":"noroleuser",
+  "password":"noroleuser"
+}
