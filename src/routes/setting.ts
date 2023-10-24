@@ -9,7 +9,6 @@ import {
   dbErrorHandler,
   requestErrorHandler,
   successHandler,
-  validationErrorHandler,
 } from '../responseHandler/index.js';
 import {
   validate,
@@ -46,22 +45,31 @@ setting.get(
 );
 
 // get setting by id
-setting.get('/:id', (req, res) => {
-  db('GlobalSetting')
-    .select()
-    .where('id', req.params.id)
-    .then((data) => {
-      successHandler(req, res, data, 'Successfully read the settings from DB');
-    })
-    .catch((err) => {
-      dbErrorHandler(
-        req,
-        res,
-        err,
-        'Oops! Nothing came through - GlobalSetting',
-      );
-    });
-});
+setting.get(
+  '/:id',
+  [authenticator, admin, planner, statist, roleChecker, validate],
+  (req: Request, res: Response) => {
+    db('GlobalSetting')
+      .select()
+      .where('id', req.params.id)
+      .then((data) => {
+        successHandler(
+          req,
+          res,
+          data,
+          'Successfully read the settings from DB',
+        );
+      })
+      .catch((err) => {
+        dbErrorHandler(
+          req,
+          res,
+          err,
+          'Oops! Nothing came through - GlobalSetting',
+        );
+      });
+  },
+);
 
 // add setting
 setting.post(
