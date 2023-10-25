@@ -78,8 +78,4 @@ export const validateSubjectMultiPost = [
     .bail(),
 ];
 
-export const validateSubjectPut = [
-  ...validateIdObl,
-  ...validateSubjectPost,
-  ...validateSubjectMultiPost,
-];
+export const validateSubjectPut = [...validateIdObl, ...validateSubjectPost];
