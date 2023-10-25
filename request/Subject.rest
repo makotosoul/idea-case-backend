@@ -1,0 +1,50 @@
+### Used to test Subject table REST functions, following LCRUD. Ensure fresh environment tokens are in use (.vscode\settings.json) 
+
+### 1. List all subjects
+GET {{host}}/subject
+Authorization: Basic {{token}}
+
+### 2. Create new subject
+POST {{host}}/subject
+Authorization: Basic {{token}}
+Content-Type: application/json
+
+{
+    "name": "Test name",
+    "groupSize": 33,
+    "groupCount": 3,
+    "sessionLength": "03:00:00",
+    "sessionCount": 3,
+    "area": 33,
+    "programId": 3030,
+    "programName": "Test program name",
+    "spaceTypeId": 5004,
+    "spaceTypeName": "Musiikkiluokka"
+}
+
+### 3. Read subject by ID
+GET {{host}}/subject/4042
+Authorization: Basic {{token}}
+
+### 4. Update subject by ID (Not working)
+PUT {{host}}/subject
+Authorization: Basic {{token}}
+Content-Type: application/json
+
+{
+    "id": 4042,
+    "name": "Updated test name",
+    "groupSize": 33,
+    "groupCount": 3,
+    "sessionLength": "03:00:00",
+    "sessionCount": 3,
+    "area": 33,
+    "programId": 3030,
+    "programName": "Test program name",
+    "spaceTypeId": 5004,
+    "spaceTypeName": "Musiikkiluokka"
+}
+
+### 5. Delete subject
+DELETE {{host}}/subject/4042
+Authorization: Basic {{token}}
