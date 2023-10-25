@@ -79,3 +79,13 @@ export const validateSubjectMultiPost = [
 ];
 
 export const validateSubjectPut = [...validateIdObl, ...validateSubjectPost];
+
+export const validateSubjectId = [
+  check('subjectId')
+    .matches(/^[0-9]+$/)
+    .withMessage('subjectId must be a number')
+    .bail()
+    .notEmpty()
+    .withMessage('subjectId cannot be empty')
+    .bail(),
+];
