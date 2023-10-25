@@ -3,7 +3,6 @@ import { Request, Response } from 'express';
 import { Result, ValidationError } from 'express-validator';
 import { MysqlError } from 'mysql';
 import logger from '../utils/logger.js';
-import { validationErrorFormatter } from '../validationHandler/index.js';
 
 const serverErrorMessage = 'Server error.';
 const requestErrorMessage = 'Request error';
@@ -39,6 +38,15 @@ const logMessagePrinter = (
 ): string => {
   return `${providedMessage ? providedMessage : defaultMessage} `;
 };
+
+// Formatter for printing the first validation error (index 0) out as string
+export const validationErrorFormatter = (result: Result<ValidationError>) => {
+  return `${result.array()[0].location}[${result.array()[0].param}]: ${
+    result.array()[0].msg
+  }`;
+};
+
+// ***
 
 export const dbErrorHandler = (
   req: Request,
