@@ -8,18 +8,11 @@ import { NextFunction, Request, Response } from 'express';
 import {
   Result,
   ValidationError,
-  body,
   check,
   validationResult,
 } from 'express-validator'; // import { body, validationResult } ???
-import { validationErrorHandler } from '../responseHandler/index.js';
 
-// Formatter for printing the first validation error (index 0) out as string
-export const validationErrorFormatter = (result: Result<ValidationError>) => {
-  return `${result.array()[0].location}[${result.array()[0].param}]: ${
-    result.array()[0].msg
-  }`;
-};
+import { validationErrorHandler } from '../responseHandler/index.js';
 
 export const validate = (req: Request, res: Response, next: NextFunction) => {
   const validationResults: Result<ValidationError> = validationResult(req);

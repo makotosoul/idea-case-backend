@@ -9,7 +9,6 @@ import {
   dbErrorHandler,
   requestErrorHandler,
   successHandler,
-  validationErrorHandler,
 } from '../responseHandler/index.js';
 import {
   validate,
