@@ -4,23 +4,23 @@ import { planner } from '../authorization/planner.js';
 import { roleChecker } from '../authorization/roleChecker.js';
 import { statist } from '../authorization/statist.js';
 import { authenticator } from '../authorization/userValidation.js';
-import {
-  dbErrorHandler,
-  successHandler,
-  validationErrorHandler,
-} from '../responseHandler/index.js';
+import { dbErrorHandler, successHandler } from '../responseHandler/index.js';
 import allocationService from '../services/allocation.js';
 import programService from '../services/program.js';
-import { validate } from '../validationHandler/index.js';
+import {
+  validateAllocRoundId,
+  validateAllocRoundIdAndSubjectId,
+} from '../validationHandler/allocRound.js';
+import { validate, validateIdObl } from '../validationHandler/index.js';
 
 const allocation = express.Router();
 
-/* Get rooms with allocated hours by allocationId */
+/* Get rooms with allocated hours by allocationRoundId */
 allocation.get(
-  '/:id/rooms',
+  '/:allocationRoundId/rooms',
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
-    const id = req.params.id;
+    const id = req.params.allocationRoundId;
     allocationService
       .getRoomsByAllocId(Number(id))
       .then((data) => {
@@ -40,6 +40,7 @@ allocation.get(
 /* Get all allocated rooms in programs by allocationId and program */
 allocation.get(
   '/:id/program',
+  validateIdObl,
   [authenticator, admin, planner, statist, roleChecker, validate],
   async (req: Request, res: Response) => {
     const id = req.params.id;
@@ -83,15 +84,16 @@ allocation.get(
   },
 );
 
-/* Get all allocated rooms by ProgramId, allocRound */
+/* Get all allocated rooms by subjectId, allocRoundId */
 allocation.get(
-  '/:id/rooms/:subjectId',
+  '/:allocRoundId/rooms/:subjectId',
+  validateAllocRoundIdAndSubjectId,
   [authenticator, admin, planner, statist, roleChecker, validate],
   async (req: Request, res: Response) => {
-    const allocId = req.params.id;
+    const allocRoundId = req.params.allocRoundId;
     const subjectId = req.params.subjectId;
     const rooms = await allocationService
-      .getAllocatedRoomsBySubject(Number(subjectId), Number(allocId))
+      .getAllocatedRoomsBySubject(Number(subjectId), Number(allocRoundId))
       .then((rooms) => {
         successHandler(
           req,
@@ -219,16 +221,10 @@ allocation.get(
 */
 allocation.post(
   '/reset',
+  validateAllocRoundId,
   [authenticator, admin, roleChecker, validate],
   async (req: Request, res: Response) => {
-    const allocRound = req.body.allocRound;
-    if (!allocRound) {
-      return validationErrorHandler(
-        req,
-        res,
-        'Missing required parameter - allocation reset',
-      );
-    }
+    const allocRound = req.body.allocRoundId;
     allocationService
       .resetAllocation(allocRound)
       .then(() => {
@@ -253,16 +249,10 @@ allocation.post(
 /* Abort allocation = Stop allocation procedure */
 allocation.post(
   '/abort',
+  validateAllocRoundId,
   [authenticator, admin, roleChecker, validate],
   async (req: Request, res: Response) => {
-    const allocRound = req.body.allocRound;
-    if (!allocRound) {
-      return validationErrorHandler(
-        req,
-        res,
-        'Missing required parameter - allocation reset',
-      );
-    }
+    const allocRound = req.body.allocRoundId;
     allocationService
       .abortAllocation(allocRound)
       .then(() => {
@@ -287,17 +277,10 @@ allocation.post(
 // Starting the allocation calculation!
 allocation.post(
   '/start',
+  validateAllocRoundId,
   [authenticator, admin, roleChecker, validate],
   async (req: Request, res: Response) => {
-    const allocRound = req.body.allocRound;
-    if (!allocRound) {
-      return validationErrorHandler(
-        req,
-        res,
-        'Missing required parameter - allocation start',
-      );
-    }
-
+    const allocRound = req.body.allocRoundId;
     allocationService
       .startAllocation(allocRound)
       .then(() => {
