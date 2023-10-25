@@ -26,7 +26,7 @@ Content-Type: application/json
 GET {{host}}/subject/4042
 Authorization: Basic {{token}}
 
-### 4. Update subject by ID (Not working)
+### 4. Update subject by ID
 PUT {{host}}/subject
 Authorization: Basic {{token}}
 Content-Type: application/json
