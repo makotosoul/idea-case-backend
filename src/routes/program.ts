@@ -55,6 +55,34 @@ program.get(
   },
 );
 
+// get program by user ID
+program.get(
+  '/progName/:id',
+  [authenticator, admin, planner, statist, roleChecker, validate],
+  (req: Request, res: Response) => {
+    db_knex('Program')
+      .select('Program.name')
+      .join(
+        'DepartmentPlanner',
+        'Program.departmentId',
+        '=',
+        'DepartmentPlanner.departmentId',
+      )
+      .where('DepartmentPlanner.userId', '=', req.params.id)
+      .then((data) => {
+        successHandler(
+          req,
+          res,
+          data,
+          `Succesfully read the program from DB with dept id: ${req.params.id} `,
+        );
+      })
+      .catch((err) => {
+        dbErrorHandler(req, res, err, 'Oops! Nothing came through - Program');
+      });
+  },
+);
+
 // create program
 // TODO: add validationHandler for validating program name and departmentId
 program.post(
