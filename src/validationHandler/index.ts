@@ -25,6 +25,7 @@ export const validate = (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+// Common validator chain objects for: id, name, description, priority
 export const validateIdObl = [
   check('id')
     // Nice way to make e.g. valid id 4015 fail for testing
@@ -41,28 +42,28 @@ export const validateIdObl = [
 export const validateNameObl = [
   check('name')
     .isLength({ min: 2, max: 255 })
-    .withMessage('Must be between 2-255 characters long')
+    .withMessage('Name must be between 2-255 characters long')
     .bail()
     .matches(/^[A-Za-zäöåÄÖÅ0-9\s-]*$/)
-    .withMessage('Must contain only letters, numbers and -')
+    .withMessage('Name must contain only letters, numbers and -')
     .bail()
     .notEmpty()
-    .withMessage('Cannot be empty')
+    .withMessage('Name cannot be empty')
     .bail(),
 ];
 export const validateDescription = [
   check('description')
     .isLength({ min: 2, max: 255 })
-    .withMessage('Must be between 2-255 characters long')
+    .withMessage('Description must be between 2-255 characters long')
     .bail()
     .matches(/^[A-Za-zäöåÄÖÅ0-9\s-]*$/)
-    .withMessage('Must contain only letters, numbers and -')
+    .withMessage('Description must contain only letters, numbers and -')
     .bail(),
   /* LATER:
   check('description').isLength({ max: 16000 })
-    .withMessage('Must be at maximum 16000 characters long')
+    .withMessage('Description must be at maximum 16000 characters long')
     .matches(/^[A-Za-zäöåÄÖÅ0-9\s-]*$/)
-    .withMessage('Must contain only letters, numbers and -')
+    .withMessage('Description must contain only letters, numbers and -')
     .bail(),
   */
 ];
@@ -74,5 +75,8 @@ export const validateDescriptionObl = [
     .bail(),
 ];
 export const validatePriorityMustBeNumber = [
-  check('priority').matches(/^[0-9]+$/).withMessage('Must be a number').bail(),
+  check('priority')
+    .matches(/^[0-9]+$/)
+    .withMessage('Priority must be a number')
+    .bail(),
 ];
