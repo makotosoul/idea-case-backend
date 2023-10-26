@@ -30,41 +30,39 @@ const subject = express.Router();
 
 // Fetching all subjects, joining to each subject the program,
 // and needed spacetype using Knex
-subject.get(
-  '/',
-  [authenticator, admin, planner, statist, roleChecker, validate],
-  (req: Request, res: Response) => {
-    db_knex
-      .select(
-        's.id',
-        's.name AS subjectName',
-        's.groupSize',
-        's.groupCount',
-        's.sessionLength',
-        's.sessionCount',
-        's.area',
-        's.programId',
-        'p.name AS programName',
-        's.spaceTypeId',
-        'st.name AS spaceTypeName',
-      )
-      .from('Subject as s')
-      .innerJoin('Program as p', 's.programId', 'p.id')
-      .leftJoin('SpaceType as st', 's.spaceTypeId', 'st.id')
-      .then((subjects) => {
-        successHandler(req, res, subjects, 'getAll successful - Subject');
-      })
-      .catch((error) => {
-        dbErrorHandler(req, res, error, 'Oops! Nothing came through - Subject');
-      });
-  },
-);
+// Currently no login required for seeing the subjects
+subject.get('/', [validate], (req: Request, res: Response) => {
+  db_knex
+    .select(
+      's.id',
+      's.name AS subjectName',
+      's.groupSize',
+      's.groupCount',
+      's.sessionLength',
+      's.sessionCount',
+      's.area',
+      's.programId',
+      'p.name AS programName',
+      's.spaceTypeId',
+      'st.name AS spaceTypeName',
+    )
+    .from('Subject as s')
+    .innerJoin('Program as p', 's.programId', 'p.id')
+    .leftJoin('SpaceType as st', 's.spaceTypeId', 'st.id')
+    .then((subjects) => {
+      successHandler(req, res, subjects, 'getAll successful - Subject');
+    })
+    .catch((error) => {
+      dbErrorHandler(req, res, error, 'Oops! Nothing came through - Subject');
+    });
+});
 
 // SPECIAL Listing all the subjects for selection dropdown etc.
 // (Just name and id) using knex
+// Currently login and one of the three roles required to execute this one
 subject.get(
   '/getNames',
-  [authenticator, admin, roleChecker],
+  [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex
       .select('id', 'name')
@@ -79,6 +77,7 @@ subject.get(
 );
 
 // Fetching one subject by id   A new one with Knex for a model
+// Currently no login required for seeing one subject
 subject.get(
   '/:id',
   validateIdObl,
