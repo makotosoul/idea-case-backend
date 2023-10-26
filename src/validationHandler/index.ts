@@ -50,7 +50,6 @@ export const validateNameObl = [
     .withMessage('Cannot be empty')
     .bail(),
 ];
-
 export const validateDescription = [
   check('description')
     .isLength({ min: 2, max: 255 })
@@ -67,7 +66,6 @@ export const validateDescription = [
     .bail(),
   */
 ];
-
 export const validateDescriptionObl = [
   ...validateDescription,
   check('description')
@@ -75,27 +73,6 @@ export const validateDescriptionObl = [
     .withMessage('Description cannot be empty')
     .bail(),
 ];
-
 export const validatePriorityMustBeNumber = [
   check('priority').matches(/^[0-9]+$/).withMessage('Must be a number').bail(),
-];
-
-export const validateAddEquipment = [
-  ...validateNameObl,
-  ...validateDescriptionObl,
-  ...validatePriorityMustBeNumber,
-  check('isMovable')
-    .matches(/^[01]$/)
-    .withMessage('isMovable needs to be 1 = can be moved, 0 = cannot be moved.')
-    .bail(),
-];
-
-export const validateAddSetting = [
-  ...validateNameObl,
-  ...validateDescriptionObl,
-];
-
-export const validateAddUpdateDepartment = [
-  ...validateNameObl,
-  ...validateDescriptionObl,
 ];

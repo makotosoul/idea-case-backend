@@ -10,7 +10,8 @@ import {
   requestErrorHandler,
   successHandler,
 } from '../responseHandler/index.js';
-import { validate, validateAddEquipment } from '../validationHandler/index.js';
+import { validateEquipmentPost } from '../validationHandler/equipment.js';
+import { validate } from '../validationHandler/index.js';
 
 const equipment = express.Router();
 
@@ -60,8 +61,8 @@ equipment.get(
 // adding an equipment
 equipment.post(
   '/',
+  validateEquipmentPost,
   [authenticator, admin, roleChecker, validate],
-  validateAddEquipment,
   (req: Request, res: Response) => {
     db_knex
       .insert(req.body)

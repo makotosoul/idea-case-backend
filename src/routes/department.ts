@@ -10,10 +10,8 @@ import {
   requestErrorHandler,
   successHandler,
 } from '../responseHandler/index.js';
-import {
-  validate,
-  validateAddUpdateDepartment,
-} from '../validationHandler/index.js';
+import { validateDepartmentPost } from '../validationHandler/department.js';
+import { validate } from '../validationHandler/index.js';
 
 const department = express.Router();
 
@@ -68,7 +66,7 @@ department.get(
 department.post(
   '/',
   [authenticator, admin, roleChecker, validate],
-  validateAddUpdateDepartment,
+  validateDepartmentPost,
   (req: Request, res: Response) => {
     db_knex('Department')
       .insert(req.body)
