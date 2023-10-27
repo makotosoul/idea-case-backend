@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import express, { Request, Response } from 'express';
 import jsonwebtoken from 'jsonwebtoken';
 import { admin } from '../authorization/admin.js';
+import { planner } from '../authorization/planner.js';
 import { roleChecker } from '../authorization/roleChecker.js';
 import { authenticator } from '../authorization/userValidation.js';
 import db_knex from '../db/index_knex.js';
@@ -55,7 +56,7 @@ user.post(
 // Fetching all users
 user.get(
   '/',
-  [authenticator, admin, roleChecker, validate],
+  [authenticator, admin, planner, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex
       .select(
