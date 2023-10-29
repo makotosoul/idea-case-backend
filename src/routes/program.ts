@@ -13,7 +13,7 @@ import {
 } from '../responseHandler/index.js';
 import logger from '../utils/logger.js';
 import { validate } from '../validationHandler/index.js';
-import { validateProgram } from '../validationHandler/program.js';
+import { validateProgramPost } from '../validationHandler/program.js';
 
 const program = express.Router();
 
@@ -87,7 +87,7 @@ program.get(
 // TODO: add validationHandler for validating program name and departmentId
 program.post(
   '/',
-  validateProgram,
+  validateProgramPost,
   [authenticator, admin, planner, roleChecker, validate],
   (req: Request, res: Response) => {
     const newProgram = {
