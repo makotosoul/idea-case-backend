@@ -27,8 +27,6 @@ DROP TABLE IF EXISTS GlobalSetting;
 
 /* --- 01 CREATE TABLES --- */
 
-USE casedb;
-
 /* --- 01 CREATE TABLES --- */
 
 CREATE TABLE IF NOT EXISTS GlobalSetting (
@@ -357,7 +355,7 @@ CONSTRAINT FOREIGN KEY (log_id) REFERENCES log_list(id)
 /* --- Insert: GlobalSettings --- */
 INSERT INTO GlobalSetting(name, description, numberValue, textValue) VALUES
     ('X', 'Korkea prioriteettiarvo', 800, NULL),
-    ("allocation-debug", "Onko allokoinnin logitus päällä. numberValue : 0 = OFF, 1 = ON", 0, NULL);
+    ("allocation-debug", "Onko allokoinnin logitus päällä. numberValue : 0 = OFF, 1 = ON", 1, NULL);
 
 /* --- Insert: Department --- */
 INSERT INTO Department(name, description) VALUES
