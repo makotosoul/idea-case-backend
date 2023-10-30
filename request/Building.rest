@@ -1,11 +1,12 @@
 ### Remember to select the proper rest client environment
+@id = 410
 
 ### Get all
 GET {{host}}/building
 Authorization: Basic {{token}}
 
 ### Get one by id 
-GET {{host}}/building/411
+GET {{host}}/building/{{id}}
 Authorization: Basic {{token}}
 
 ### Create one
@@ -14,9 +15,13 @@ Authorization: Basic {{token}}
 Content-Type: application/json
 
 {
-    "name": "M",
+    "name": "MYoN",
     "description": "Sibeliusakatemian päärakennus"
 }
+
+### Get all
+GET {{host}}/building
+Authorization: Basic {{token}}
 
 ### Create multi
 POST {{host}}/building/multi
@@ -25,15 +30,19 @@ Content-Type: application/json
 
 [
     {
-    "name": "XYG",
+    "name": "XYgdfG",
     "description": "Sibeliusakatemian päärakennus"
     }, 
 
     {
-    "name": "MNO",
+    "name": "MNfdO",
     "description": "Sibeliusakatemian päärakennus"
     }
 ]
+
+### Get all
+GET {{host}}/building
+Authorization: Basic {{token}}
 
 ### Update one
 PUT {{host}}/building
@@ -41,13 +50,21 @@ Authorization: Basic {{token}}
 Content-Type: application/json
 
 {
-    "id": 411,
+    "id": {{id}},
     "name": "YYY",
     "description": "Sibeliusakatemian päärakennus"
 }
 
+### Get one by id 
+GET {{host}}/building/{{id}}
+Authorization: Basic {{token}}
+
 ### Delete one
-DELETE {{host}}/building/411
+DELETE {{host}}/building/{{id}}
+Authorization: Basic {{token}}
+
+### Get one by id 
+GET {{host}}/building/{{id}}
 Authorization: Basic {{token}}
 
 
