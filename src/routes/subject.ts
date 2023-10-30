@@ -164,10 +164,14 @@ subject.post(
         .select('id')
         .where('name', subject.roomType);
 
-      if (!program) {
-        console.log(program);
-        console.log(space);
-        return requestErrorHandler(req, res, 'Program not found');
+      if (!program || !space) {
+        return !program
+          ? requestErrorHandler(req, res, `'Program ${subject.major} not found`)
+          : requestErrorHandler(
+              req,
+              res,
+              `Space ${subject.roomType} not found`,
+            );
       }
 
       subjectData.push({
