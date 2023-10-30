@@ -57,7 +57,7 @@ program.get(
 
 // get program by user ID
 program.get(
-  '/progName/:id',
+  '/programName/:email',
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Program')
@@ -68,13 +68,14 @@ program.get(
         '=',
         'DepartmentPlanner.departmentId',
       )
-      .where('DepartmentPlanner.userId', '=', req.params.id)
+      .join('User', 'DepartmentPlanner.userId', '=', 'User.id')
+      .where('User.email', '=', req.params.email)
       .then((data) => {
         successHandler(
           req,
           res,
           data,
-          `Succesfully read the program from DB with dept id: ${req.params.id} `,
+          `Succesfully read the program from DB with user email: ${req.params.email} `,
         );
       })
       .catch((err) => {
