@@ -29,77 +29,40 @@ import {
 const subject = express.Router();
 
 // Fetching all subjects, joining to each subject the program,
-// and needed spacetype
-/* subject.get(
-  '/',
-  [authenticator, admin, planner, statist, roleChecker, validate],
-  (req: Request, res: Response) => {
-    const sqlSelectSubjectProgram =
-      '  SELECT s.id, s.name AS subjectName, s.groupSize, s.groupCount, s.sessionLength, s.sessionCount, s.area, s.programId, p.name AS programName, s.spaceTypeId, st.name AS spaceTypeName FROM Subject s JOIN Program p ON s.programId = p.id LEFT JOIN SpaceType st ON s.spaceTypeId = st.id;';
-    db.query(sqlSelectSubjectProgram, (err, result) => {
-      if (err) {
-        dbErrorHandler(req, res, err, 'Oops! Nothing came through - Subject');
-      } else {
-        successHandler(req, res, result, 'getAll successful - Subject');
-      }
-    });
-  },
-); */
-
-// Fetching all subjects, joining to each subject the program,
 // and needed spacetype using Knex
-subject.get(
-  '/',
-  [authenticator, admin, planner, statist, roleChecker, validate],
-  (req: Request, res: Response) => {
-    db_knex
-      .select(
-        's.id',
-        's.name AS subjectName',
-        's.groupSize',
-        's.groupCount',
-        's.sessionLength',
-        's.sessionCount',
-        's.area',
-        's.programId',
-        'p.name AS programName',
-        's.spaceTypeId',
-        'st.name AS spaceTypeName',
-      )
-      .from('Subject as s')
-      .innerJoin('Program as p', 's.programId', 'p.id')
-      .leftJoin('SpaceType as st', 's.spaceTypeId', 'st.id')
-      .then((subjects) => {
-        successHandler(req, res, subjects, 'getAll successful - Subject');
-      })
-      .catch((error) => {
-        dbErrorHandler(req, res, error, 'Oops! Nothing came through - Subject');
-      });
-  },
-);
-
-// SPECIAL Listing all the subjects for selection dropdown etc.
-// (Just name and id)
-/* subject.get(
-  '/getNames',
-  [authenticator, roleChecker, validate],
-  (req: Request, res: Response) => {
-    const sqlSelectSubjectNames = 'SELECT id, name FROM Subject;';
-    db.query(sqlSelectSubjectNames, (err, result) => {
-      if (err) {
-        dbErrorHandler(req, res, err, 'Oops! Nothing came through - Subject');
-      } else {
-        successHandler(req, res, result, 'getNames successful - Subject');
-      }
+// Currently no login required for seeing the subjects
+subject.get('/', [validate], (req: Request, res: Response) => {
+  db_knex
+    .select(
+      's.id',
+      's.name AS subjectName',
+      's.groupSize',
+      's.groupCount',
+      's.sessionLength',
+      's.sessionCount',
+      's.area',
+      's.programId',
+      'p.name AS programName',
+      's.spaceTypeId',
+      'st.name AS spaceTypeName',
+    )
+    .from('Subject as s')
+    .innerJoin('Program as p', 's.programId', 'p.id')
+    .leftJoin('SpaceType as st', 's.spaceTypeId', 'st.id')
+    .then((subjects) => {
+      successHandler(req, res, subjects, 'getAll successful - Subject');
+    })
+    .catch((error) => {
+      dbErrorHandler(req, res, error, 'Oops! Nothing came through - Subject');
     });
-  },
-); */
+});
 
 // SPECIAL Listing all the subjects for selection dropdown etc.
 // (Just name and id) using knex
+// Currently login and one of the three roles required to execute this one
 subject.get(
   '/getNames',
-  [authenticator, admin, roleChecker],
+  [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex
       .select('id', 'name')
@@ -114,6 +77,7 @@ subject.get(
 );
 
 // Fetching one subject by id   A new one with Knex for a model
+// Currently no login required for seeing one subject
 subject.get(
   '/:id',
   validateIdObl,
@@ -144,53 +108,6 @@ subject.get(
       });
   },
 );
-
-// Adding a subject/teaching
-/* subject.post(
-  '/',
-  validateSubjectPost,
-  [authenticator, admin, planner, roleChecker, validate],
-  (req: Request, res: Response) => {
-    const name = req.body.name;
-    const groupSize = req.body.groupSize;
-    const groupCount = req.body.groupCount;
-    const sessionLength = req.body.sessionLength;
-    const sessionCount = req.body.sessionCount;
-    const area = req.body.area;
-    const programId = req.body.programId;
-    const spaceTypeId = req.body.spaceTypeId;
-    const sqlInsert =
-      'INSERT INTO Subject (name, groupSize, groupCount, sessionLength, sessionCount, area, programId, spaceTypeId) VALUES (?,?,?,?,?,?,?,?)';
-    db.query(
-      sqlInsert,
-      [
-        name,
-        groupSize,
-        groupCount,
-        sessionLength,
-        sessionCount,
-        area,
-        programId,
-        spaceTypeId,
-      ],
-      (err, result) => {
-        if (!result) {
-          requestErrorHandler(req, res, `${err}: Nothing to insert`);
-        } else if (err) {
-          dbErrorHandler(req, res, err, 'Oops! Create failed - Subject');
-        } else {
-          successHandler(
-            req,
-            res,
-            { insertId: result.insertId },
-            'Create successful - Subject',
-          );
-          logger.info(`Subject ${req.body.name} created`);
-        }
-      },
-    );
-  },
-); */
 
 // Adding a subject/teaching using knex
 subject.post(
@@ -247,10 +164,14 @@ subject.post(
         .select('id')
         .where('name', subject.roomType);
 
-      if (!program) {
-        console.log(program);
-        console.log(space);
-        return requestErrorHandler(req, res, 'Program not found');
+      if (!program || !space) {
+        return !program
+          ? requestErrorHandler(req, res, `'Program ${subject.major} not found`)
+          : requestErrorHandler(
+              req,
+              res,
+              `Space ${subject.roomType} not found`,
+            );
       }
 
       subjectData.push({

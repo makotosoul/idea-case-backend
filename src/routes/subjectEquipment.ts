@@ -6,7 +6,6 @@ import {
   dbErrorHandler,
   requestErrorHandler,
   successHandler,
-  validationErrorHandler,
 } from '../responseHandler/index.js';
 import logger from '../utils/logger.js';
 import { validate } from '../validationHandler/index.js';

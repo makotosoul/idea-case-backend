@@ -13,7 +13,7 @@ import {
 } from '../responseHandler/index.js';
 import logger from '../utils/logger.js';
 import { validate } from '../validationHandler/index.js';
-import { validateProgram } from '../validationHandler/program.js';
+import { validateProgramPost } from '../validationHandler/program.js';
 
 const program = express.Router();
 
@@ -55,11 +55,40 @@ program.get(
   },
 );
 
+// get program by user ID
+program.get(
+  '/programName/:email',
+  [authenticator, admin, planner, statist, roleChecker, validate],
+  (req: Request, res: Response) => {
+    db_knex('Program')
+      .select('Program.name')
+      .join(
+        'DepartmentPlanner',
+        'Program.departmentId',
+        '=',
+        'DepartmentPlanner.departmentId',
+      )
+      .join('User', 'DepartmentPlanner.userId', '=', 'User.id')
+      .where('User.email', '=', req.params.email)
+      .then((data) => {
+        successHandler(
+          req,
+          res,
+          data,
+          `Succesfully read the program from DB with user email: ${req.params.email} `,
+        );
+      })
+      .catch((err) => {
+        dbErrorHandler(req, res, err, 'Oops! Nothing came through - Program');
+      });
+  },
+);
+
 // create program
 // TODO: add validationHandler for validating program name and departmentId
 program.post(
   '/',
-  validateProgram,
+  validateProgramPost,
   [authenticator, admin, planner, roleChecker, validate],
   (req: Request, res: Response) => {
     const newProgram = {

@@ -1,0 +1,46 @@
+### 1. List all spaces
+GET {{host}}/space
+Authorization: Basic {{token}}
+
+### 2. Create new space
+POST {{host}}/space
+Authorization: Basic {{token}}
+Content-Type: application/json
+
+{
+    "name": "12345 a space",
+    "area": 77,
+    "personLimit": 150, 
+    "buildingId": 402,
+    "availableFrom": "08:00:00",
+    "availableTo": "10:00:00",
+    "classesFrom": "08:00:00",
+    "classesTo": "10:00:00",
+    "inUse": 1,
+    "spaceTypeId": 5001
+}
+
+### 3. Get space by ID (Does not exist in DAO)
+
+### 4. Update space by ID
+PUT {{host}}/space/1038
+Authorization: Basic {{token}}
+Content-Type: application/json
+
+{
+    "id": 1037,
+    "name": "1234asdf",
+    "area": 2.0,
+    "personLimit": 150, 
+    "buildingId": 402,
+    "availableFrom": "08:00:00",
+    "availableTo": "10:00:00",
+    "classesFrom": "08:00:00",
+    "classesTo": "10:00:00",
+    "inUse": 1,
+    "spaceTypeId": 5001
+}
+
+### 5. Delete space
+DELETE {{host}}/space/1038
+Authorization: Basic {{token}}

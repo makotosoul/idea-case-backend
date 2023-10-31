@@ -1,5 +1,4 @@
-### This does not work for some reason. Add token to
-### root root root folder's .vscode folder's settings.json file 
+### Add received tokens to root root folder's .vscode folder's settings.json file 
 POST {{host}}/user/login
 Content-Type: application/json
 

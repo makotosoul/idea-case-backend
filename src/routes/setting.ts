@@ -10,11 +10,8 @@ import {
   requestErrorHandler,
   successHandler,
 } from '../responseHandler/index.js';
-import {
-  validate,
-  validateAddSetting,
-  validateIdObl,
-} from '../validationHandler/index.js';
+import { validate, validateIdObl } from '../validationHandler/index.js';
+import { validateSettingPost } from '../validationHandler/setting.js';
 
 const setting = express.Router();
 
@@ -74,7 +71,7 @@ setting.get(
 // add setting
 setting.post(
   '/',
-  validateAddSetting,
+  validateSettingPost,
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     db('GlobalSetting')
