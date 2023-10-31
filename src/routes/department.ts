@@ -21,6 +21,7 @@ const department = express.Router();
 // get all departments
 department.get(
   '/',
+
   [authenticator, admin, planner, statist, roleChecker],
   (req: Request, res: Response) => {
     db_knex('Department')
