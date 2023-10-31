@@ -17,8 +17,8 @@ import logger from '../utils/logger.js';
 import {
   // This is the new validation result handler
   validate,
-  // (our express-compatible middleware function for the req handling chain)
   validateIdObl,
+  // (our express-compatible middleware function for the req handling chain)
 } from '../validationHandler/index.js';
 import {
   validateSubjectMultiPost,

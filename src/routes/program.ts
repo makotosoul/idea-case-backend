@@ -12,7 +12,7 @@ import {
   successHandler,
 } from '../responseHandler/index.js';
 import logger from '../utils/logger.js';
-import { validate } from '../validationHandler/index.js';
+import { validate, validateIdObl } from '../validationHandler/index.js';
 import { validateProgramPost } from '../validationHandler/program.js';
 
 const program = express.Router();
@@ -36,6 +36,7 @@ program.get(
 // get program by id
 program.get(
   '/:id',
+  validateIdObl,
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Program')
@@ -55,7 +56,7 @@ program.get(
   },
 );
 
-// get program by user ID
+// get program by programName and email
 program.get(
   '/programName/:email',
   [authenticator, admin, planner, statist, roleChecker, validate],

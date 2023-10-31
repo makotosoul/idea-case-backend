@@ -14,13 +14,7 @@ import {
   validateDepartmentPost,
   validateDepartmentPut,
 } from '../validationHandler/department.js';
-import {
-  validate,
-  validateAddUpdateDepartment,
-  validateDescriptionObl,
-  validateIdObl,
-  validateNameObl,
-} from '../validationHandler/index.js';
+import { validate, validateIdObl } from '../validationHandler/index.js';
 
 const department = express.Router();
 

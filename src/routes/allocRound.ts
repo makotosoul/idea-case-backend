@@ -42,6 +42,7 @@ allocround.get(
 /* Get alloc round by id */
 allocround.get(
   '/:id',
+  validateIdObl,
   [authenticator, admin, planner, statist, roleChecker, validate],
   async (req: Request, res: Response) => {
     db_knex('AllocRound')

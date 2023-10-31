@@ -1,14 +1,11 @@
 import { check } from 'express-validator';
+import { createIdValidatorChain } from './index.js';
 
 /* ---- SUBJECTEQUIPMENT ---- */
-export const validateSubjectEquipmentPostAndPut = [
-  check('subjectId')
-    .matches(/^[0-9]+$/)
-    .withMessage('Must be a number')
-    .bail()
-    .notEmpty()
-    .withMessage('Cannot be empty')
-    .bail(),
+export const validateSubjectId = [...createIdValidatorChain('subjectId')];
+
+export const validateSubjectEquipmentPost = [
+  ...validateSubjectId,
   check('equipmentId')
     .matches(/^[0-9]+$/)
     .withMessage('Must be a number')

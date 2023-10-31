@@ -1,5 +1,4 @@
 import {
-  validateDescription,
   validateDescriptionObl,
   validateIdObl,
   validateNameObl,
@@ -14,4 +13,3 @@ export const validateDepartmentPut = [
   ...validateDepartmentPost,
   ...validateIdObl,
 ];
-

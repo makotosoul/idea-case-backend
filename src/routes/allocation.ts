@@ -118,6 +118,7 @@ allocation.get(
 /* gets unallocated subjects */
 allocation.get(
   '/:id/subject/unallocated',
+  validateIdObl,
   [authenticator, admin, planner, statist, roleChecker, validate],
   async (req: Request, res: Response) => {
     const allocId = req.params.id;
@@ -139,6 +140,7 @@ allocation.get(
 
 allocation.get(
   '/subject/:id/rooms',
+  validateIdObl,
   [authenticator, admin, planner, statist, roleChecker, validate],
   async (req: Request, res: Response) => {
     const subjectId = req.params.id;

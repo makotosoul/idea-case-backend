@@ -27,20 +27,6 @@ export const validate = (req: Request, res: Response, next: NextFunction) => {
 };
 
 // Common validator chain objects for: id, name, description, priority
-export const validateIdObl = [
-  check('id')
-    // Nice way to make e.g. valid id 4015 fail for testing
-    // .isLength({ min: 1, max: 1 })
-    // .withMessage('Id Must be between 1-1 characters long')
-    // .bail()
-    .matches(/^[0-9]+$/)
-    .withMessage('Id must be a number')
-    .bail()
-    .notEmpty()
-    .withMessage('Id cannot be empty')
-    .bail(),
-];
-
 export const createIdValidatorChain = (
   fieldName: string,
 ): ValidationChain[] => [
@@ -52,6 +38,8 @@ export const createIdValidatorChain = (
     .withMessage(`${fieldName} cannot be empty`)
     .bail(),
 ];
+
+export const validateIdObl = [...createIdValidatorChain('id')];
 
 export const validateNameObl = [
   check('name')

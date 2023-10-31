@@ -1,12 +1,18 @@
 import { body } from 'express-validator';
 
-import { validateDescriptionObl, validateNameObl } from './index.js';
+import {
+  validateDescriptionObl,
+  validateIdObl,
+  validateNameObl,
+} from './index.js';
 
 /* ---- BUILDING ---- */
 export const validateBuildingPost = [
   ...validateNameObl,
   ...validateDescriptionObl,
 ];
+
+export const validateBuildingPut = [...validateBuildingPost, ...validateIdObl];
 
 // This a bit different as body can have multiple objects,
 // => MultiPost!!!
