@@ -10,8 +10,11 @@ import {
   requestErrorHandler,
   successHandler,
 } from '../responseHandler/index.js';
-import { validateDepartmentPost } from '../validationHandler/department.js';
-import { validate } from '../validationHandler/index.js';
+import {
+  validateDepartmentPost,
+  validateDepartmentPut,
+} from '../validationHandler/department.js';
+import { validate, validateIdObl } from '../validationHandler/index.js';
 
 const department = express.Router();
 
@@ -38,6 +41,7 @@ department.get(
 // get department by id
 department.get(
   '/:id',
+  validateIdObl,
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Department')
@@ -65,8 +69,8 @@ department.get(
 // add department
 department.post(
   '/',
-  [authenticator, admin, roleChecker, validate],
   validateDepartmentPost,
+  [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Department')
       .insert(req.body)
@@ -102,6 +106,7 @@ department.post(
 // update department
 department.put(
   '/',
+  validateDepartmentPut,
   [authenticator, admin, roleChecker],
   (req: Request, res: Response) => {
     db_knex('Department')
@@ -123,6 +128,7 @@ department.put(
 // delete department by id
 department.delete(
   '/:id',
+  validateIdObl,
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Department')
