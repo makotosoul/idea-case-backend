@@ -1,5 +1,9 @@
 import { body, check } from 'express-validator';
-import { validateIdObl, validateNameObl } from './index.js';
+import {
+  createIdValidatorChain,
+  validateIdObl,
+  validateNameObl,
+} from './index.js';
 
 export const validateSubjectPost = [
   ...validateNameObl,
@@ -39,15 +43,7 @@ export const validateSubjectPost = [
 export const validateSubjectPut = [...validateIdObl, ...validateSubjectPost];
 
 // This is a validator used by other routes who need subjectId as foreign key
-export const validateSubjectId = [
-  check('subjectId')
-    .matches(/^[0-9]+$/)
-    .withMessage('subjectId must be a number')
-    .bail()
-    .notEmpty()
-    .withMessage('subjectId cannot be empty')
-    .bail(),
-];
+export const validateSubjectId = [...createIdValidatorChain('subjectId')];
 
 // This is an example of rare need: When posting several Subject objects in request
 // body as JSON array
