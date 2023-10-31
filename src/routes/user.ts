@@ -13,7 +13,7 @@ import {
   requestErrorHandler,
   successHandler,
 } from '../responseHandler/index.js';
-import { validate, validateId } from '../validationHandler/index.js';
+import { validate, validateIdObl } from '../validationHandler/index.js';
 import {
   validateUserPost,
   validateUserPut,
@@ -232,7 +232,7 @@ user.put(
 // Removing a user
 user.delete(
   '/:id',
-  validateId,
+  validateIdObl,
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     const id = req.params.id;

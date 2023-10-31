@@ -10,7 +10,7 @@ import {
   requestErrorHandler,
   successHandler,
 } from '../responseHandler/index.js';
-import { validate, validateId } from '../validationHandler/index.js';
+import { validate, validateIdObl } from '../validationHandler/index.js';
 import {
   validateSettingPost,
   validateSettingPut,
@@ -47,7 +47,7 @@ setting.get(
 // get setting by id
 setting.get(
   '/:id',
-  validateId,
+  validateIdObl,
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     db('GlobalSetting')
@@ -161,7 +161,7 @@ setting.put(
 // delete setting by id
 setting.delete(
   '/:id',
-  validateId,
+  validateIdObl,
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     db('GlobalSetting')

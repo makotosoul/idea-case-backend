@@ -17,7 +17,7 @@ import logger from '../utils/logger.js';
 import {
   // This is the new validation result handler
   validate,
-  validateId,
+  validateIdObl,
   // (our express-compatible middleware function for the req handling chain)
 } from '../validationHandler/index.js';
 import {
@@ -78,31 +78,36 @@ subject.get(
 
 // Fetching one subject by id   A new one with Knex for a model
 // Currently no login required for seeing one subject
-subject.get('/:id', validateId, [validate], (req: Request, res: Response) => {
-  db_knex
-    .select()
-    .from('Subject')
-    .where('id', req.params.id)
-    .then((data) => {
-      if (data.length === 1) {
-        successHandler(
-          req,
-          res,
-          data,
-          `Subject successfully fetched with id ${req.params.id}`,
-        );
-      } else {
-        requestErrorHandler(
-          req,
-          res,
-          `Non-existing subject id: ${req.params.id}`,
-        );
-      }
-    })
-    .catch((error) => {
-      dbErrorHandler(req, res, error, '');
-    });
-});
+subject.get(
+  '/:id',
+  validateIdObl,
+  [validate],
+  (req: Request, res: Response) => {
+    db_knex
+      .select()
+      .from('Subject')
+      .where('id', req.params.id)
+      .then((data) => {
+        if (data.length === 1) {
+          successHandler(
+            req,
+            res,
+            data,
+            `Subject successfully fetched with id ${req.params.id}`,
+          );
+        } else {
+          requestErrorHandler(
+            req,
+            res,
+            `Non-existing subject id: ${req.params.id}`,
+          );
+        }
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, '');
+      });
+  },
+);
 
 // Adding a subject/teaching using knex
 subject.post(
@@ -251,7 +256,7 @@ subject.put(
 // Removing a subject/teaching
 subject.delete(
   '/:id',
-  validateId,
+  validateIdObl,
   [authenticator, admin, planner, roleChecker, validate],
   (req: Request, res: Response) => {
     const id = req.params.id;

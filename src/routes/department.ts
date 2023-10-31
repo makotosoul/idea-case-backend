@@ -14,7 +14,7 @@ import {
   validateDepartmentPost,
   validateDepartmentPut,
 } from '../validationHandler/department.js';
-import { validate, validateId } from '../validationHandler/index.js';
+import { validate, validateIdObl } from '../validationHandler/index.js';
 
 const department = express.Router();
 
@@ -41,7 +41,7 @@ department.get(
 // get department by id
 department.get(
   '/:id',
-  validateId,
+  validateIdObl,
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Department')
@@ -128,7 +128,7 @@ department.put(
 // delete department by id
 department.delete(
   '/:id',
-  validateId,
+  validateIdObl,
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Department')

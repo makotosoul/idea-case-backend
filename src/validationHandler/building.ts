@@ -2,7 +2,7 @@ import { body } from 'express-validator';
 
 import {
   validateDescriptionObl,
-  validateId,
+  validateIdObl,
   validateNameObl,
 } from './index.js';
 
@@ -12,7 +12,7 @@ export const validateBuildingPost = [
   ...validateDescriptionObl,
 ];
 
-export const validateBuildingPut = [...validateBuildingPost, ...validateId];
+export const validateBuildingPut = [...validateBuildingPost, ...validateIdObl];
 
 // This a bit different as body can have multiple objects,
 // => MultiPost!!!

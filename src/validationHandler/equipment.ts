@@ -1,7 +1,7 @@
 import { check } from 'express-validator';
 import {
   validateDescriptionObl,
-  validateId,
+  validateIdObl,
   validateNameObl,
   validatePriorityMustBeNumber,
 } from './index.js';
@@ -16,4 +16,7 @@ export const validateEquipmentPost = [
     .bail(),
 ];
 
-export const validateEquipmentPut = [...validateEquipmentPost, ...validateId];
+export const validateEquipmentPut = [
+  ...validateEquipmentPost,
+  ...validateIdObl,
+];

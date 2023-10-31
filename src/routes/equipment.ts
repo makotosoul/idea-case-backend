@@ -14,7 +14,7 @@ import {
   validateEquipmentPost,
   validateEquipmentPut,
 } from '../validationHandler/equipment.js';
-import { validate, validateId } from '../validationHandler/index.js';
+import { validate, validateIdObl } from '../validationHandler/index.js';
 
 const equipment = express.Router();
 
@@ -42,7 +42,7 @@ equipment.get(
 // get equipment by id
 equipment.get(
   '/:id',
-  validateId,
+  validateIdObl,
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Equipment')
@@ -115,7 +115,7 @@ equipment.put(
 // deleting an equipment
 equipment.delete(
   '/:id',
-  validateId,
+  validateIdObl,
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Equipment')

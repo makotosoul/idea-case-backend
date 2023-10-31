@@ -16,7 +16,7 @@ import {
   validateBuildingPost,
   validateBuildingPut,
 } from '../validationHandler/building.js';
-import { validate, validateId } from '../validationHandler/index.js';
+import { validate, validateIdObl } from '../validationHandler/index.js';
 
 const building = express.Router();
 
@@ -76,7 +76,7 @@ building.get(
 // get building by id
 building.get(
   '/:id',
-  validateId,
+  validateIdObl,
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Building')
@@ -180,7 +180,7 @@ building.put(
 // delete building by id
 building.delete(
   '/:id',
-  validateId,
+  validateIdObl,
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Building')
