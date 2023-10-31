@@ -15,7 +15,7 @@ import {
 import logger from '../utils/logger.js';
 import { validate } from '../validationHandler/index.js';
 import { validateSubjectId } from '../validationHandler/subject.js';
-import { validateSubjectEquipmentPostAndPut } from '../validationHandler/subjectEquipment.js';
+import { validateSubjectEquipmentPost } from '../validationHandler/subjectEquipment.js';
 
 const subjectequipment = express.Router();
 
@@ -89,7 +89,7 @@ const subjectequipment = express.Router();
 subjectequipment.put(
   '/update',
   [validate],
-  validateSubjectEquipmentPostAndPut,
+  validateSubjectEquipmentPost,
   (req: Request, res: Response) => {
     const priority = req.body.priority;
     const obligatory = req.body.obligatory;
@@ -181,7 +181,7 @@ subjectequipment.get(
 // Adding a equipment requirement to teaching/subject using knex
 subjectequipment.post(
   '/post',
-  validateSubjectEquipmentPostAndPut,
+  validateSubjectEquipmentPost,
   (req: Request, res: Response) => {
     const subjectId = req.body.subjectId;
     const equipmentId = req.body.equipmentId;

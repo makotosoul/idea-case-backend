@@ -12,7 +12,7 @@ import {
   successHandler,
 } from '../responseHandler/index.js';
 import logger from '../utils/logger.js';
-import { validate, validateIdObl } from '../validationHandler/index.js';
+import { validate, validateId } from '../validationHandler/index.js';
 
 const space = express.Router();
 
@@ -144,7 +144,7 @@ space.delete(
 
 space.delete(
   '/:id',
-  validateIdObl,
+  validateId,
   [authenticator, admin, planner, roleChecker, validate],
   (req: Request, res: Response) => {
     const id = req.params.id;

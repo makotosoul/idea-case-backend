@@ -13,8 +13,11 @@ import {
   requestErrorHandler,
   successHandler,
 } from '../responseHandler/index.js';
-import { validate, validateIdObl } from '../validationHandler/index.js';
-import { validateUserPut } from '../validationHandler/user.js';
+import { validate, validateId } from '../validationHandler/index.js';
+import {
+  validateUserPost,
+  validateUserPut,
+} from '../validationHandler/user.js';
 
 dotenv.config({});
 
@@ -23,6 +26,7 @@ const user = express.Router();
 // adding user
 user.post(
   '/',
+  validateUserPost,
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     const hashedPassword = bcrypt.hashSync(req.body.password, 10);
@@ -228,7 +232,7 @@ user.put(
 // Removing a user
 user.delete(
   '/:id',
-  validateIdObl,
+  validateId,
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     const id = req.params.id;

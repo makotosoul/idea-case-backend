@@ -3,7 +3,6 @@ import { check } from 'express-validator';
 import {
   createIdValidatorChain,
   validateDescriptionObl,
-  validateIdObl,
   validateNameObl,
 } from './index.js';
 import { validateSubjectId } from './subject.js';
@@ -21,6 +20,6 @@ export const validateAllocRoundPost = [
 ];
 
 export const validateAllocRoundPut = [
-  ...validateIdObl,
+  ...createIdValidatorChain('id'),
   ...validateAllocRoundPost,
 ];

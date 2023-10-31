@@ -11,7 +11,7 @@ import {
   validateAllocRoundId,
   validateAllocRoundIdAndSubjectId,
 } from '../validationHandler/allocRound.js';
-import { validate, validateIdObl } from '../validationHandler/index.js';
+import { validate, validateId } from '../validationHandler/index.js';
 
 const allocation = express.Router();
 
@@ -40,7 +40,7 @@ allocation.get(
 /* Get all allocated rooms in programs by allocationId and program */
 allocation.get(
   '/:id/program',
-  validateIdObl,
+  validateId,
   [authenticator, admin, planner, statist, roleChecker, validate],
   async (req: Request, res: Response) => {
     const id = req.params.id;
@@ -118,6 +118,7 @@ allocation.get(
 /* gets unallocated subjects */
 allocation.get(
   '/:id/subject/unallocated',
+  validateId,
   [authenticator, admin, planner, statist, roleChecker, validate],
   async (req: Request, res: Response) => {
     const allocId = req.params.id;
@@ -139,6 +140,7 @@ allocation.get(
 
 allocation.get(
   '/subject/:id/rooms',
+  validateId,
   [authenticator, admin, planner, statist, roleChecker, validate],
   async (req: Request, res: Response) => {
     const subjectId = req.params.id;

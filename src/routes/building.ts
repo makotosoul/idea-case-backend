@@ -14,8 +14,9 @@ import {
 import {
   validateBuildingMultiPost,
   validateBuildingPost,
+  validateBuildingPut,
 } from '../validationHandler/building.js';
-import { validate } from '../validationHandler/index.js';
+import { validate, validateId } from '../validationHandler/index.js';
 
 const building = express.Router();
 
@@ -75,6 +76,7 @@ building.get(
 // get building by id
 building.get(
   '/:id',
+  validateId,
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Building')
@@ -143,6 +145,7 @@ building.post(
 // updating building information
 building.put(
   '/',
+  validateBuildingPut,
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     if (!req.body.name) {
@@ -177,6 +180,7 @@ building.put(
 // delete building by id
 building.delete(
   '/:id',
+  validateId,
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Building')

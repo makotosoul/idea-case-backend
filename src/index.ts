@@ -4,7 +4,6 @@ import dotenv from 'dotenv';
 import express from 'express';
 import routes from './routes/index.js';
 import logger from './utils/logger.js';
-import { validate } from './validationHandler/index.js';
 
 const app = express();
 

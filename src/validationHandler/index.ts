@@ -53,6 +53,8 @@ export const createIdValidatorChain = (
     .bail(),
 ];
 
+export const validateId = [...createIdValidatorChain('id')];
+
 export const validateNameObl = [
   check('name')
     .isLength({ min: 2, max: 255 })

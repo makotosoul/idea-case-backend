@@ -10,8 +10,11 @@ import {
   requestErrorHandler,
   successHandler,
 } from '../responseHandler/index.js';
-import { validate, validateIdObl } from '../validationHandler/index.js';
-import { validateSettingPost } from '../validationHandler/setting.js';
+import { validate, validateId } from '../validationHandler/index.js';
+import {
+  validateSettingPost,
+  validateSettingPut,
+} from '../validationHandler/setting.js';
 
 const setting = express.Router();
 
@@ -44,6 +47,7 @@ setting.get(
 // get setting by id
 setting.get(
   '/:id',
+  validateId,
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     db('GlobalSetting')
@@ -108,6 +112,7 @@ setting.post(
 // update setting
 setting.put(
   '/',
+  validateSettingPut,
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     if (!req.body.name) {
@@ -156,7 +161,7 @@ setting.put(
 // delete setting by id
 setting.delete(
   '/:id',
-  validateIdObl,
+  validateId,
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     db('GlobalSetting')

@@ -14,7 +14,7 @@ import {
   validateAllocRoundPost,
   validateAllocRoundPut,
 } from '../validationHandler/allocRound.js';
-import { validate, validateIdObl } from '../validationHandler/index.js';
+import { validate, validateId } from '../validationHandler/index.js';
 
 const allocround = express.Router();
 
@@ -42,6 +42,7 @@ allocround.get(
 /* Get alloc round by id */
 allocround.get(
   '/:id',
+  validateId,
   [authenticator, admin, planner, statist, roleChecker, validate],
   async (req: Request, res: Response) => {
     db_knex('AllocRound')
@@ -104,7 +105,7 @@ allocround.post(
 // Delete allocround round
 allocround.delete(
   '/:id',
-  validateIdObl,
+  validateId,
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('AllocRound')

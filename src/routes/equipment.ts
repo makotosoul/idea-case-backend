@@ -10,8 +10,11 @@ import {
   requestErrorHandler,
   successHandler,
 } from '../responseHandler/index.js';
-import { validateEquipmentPost } from '../validationHandler/equipment.js';
-import { validate } from '../validationHandler/index.js';
+import {
+  validateEquipmentPost,
+  validateEquipmentPut,
+} from '../validationHandler/equipment.js';
+import { validate, validateId } from '../validationHandler/index.js';
 
 const equipment = express.Router();
 
@@ -39,6 +42,7 @@ equipment.get(
 // get equipment by id
 equipment.get(
   '/:id',
+  validateId,
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Equipment')
@@ -89,6 +93,7 @@ equipment.post(
 // updating an equipment
 equipment.put(
   '/:id',
+  validateEquipmentPut,
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Equipment')
@@ -110,6 +115,7 @@ equipment.put(
 // deleting an equipment
 equipment.delete(
   '/:id',
+  validateId,
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Equipment')
