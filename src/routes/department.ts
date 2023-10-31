@@ -12,9 +12,15 @@ import {
   validationErrorHandler,
 } from '../responseHandler/index.js';
 import {
+  validateDepartmentPost,
+  validateDepartmentPut,
+} from '../validationHandler/department.js';
+import {
   validate,
   validateAddUpdateDepartment,
+  validateDescriptionObl,
   validateIdObl,
+  validateNameObl,
 } from '../validationHandler/index.js';
 
 const department = express.Router();
@@ -22,6 +28,7 @@ const department = express.Router();
 // get all departments
 department.get(
   '/',
+
   [authenticator, admin, planner, statist, roleChecker],
   (req: Request, res: Response) => {
     db_knex('Department')
@@ -42,6 +49,7 @@ department.get(
 // get department by id
 department.get(
   '/:id',
+  validateIdObl,
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Department')
@@ -69,8 +77,8 @@ department.get(
 // add department
 department.post(
   '/',
+  validateDepartmentPost,
   [authenticator, admin, roleChecker, validate],
-  validateAddUpdateDepartment,
   (req: Request, res: Response) => {
     db_knex('Department')
       .insert(req.body)
@@ -106,6 +114,7 @@ department.post(
 // update department
 department.put(
   '/',
+  validateDepartmentPut,
   [authenticator, admin, roleChecker],
   (req: Request, res: Response) => {
     db_knex('Department')
