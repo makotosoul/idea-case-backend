@@ -14,6 +14,7 @@ import {
 import {
   validate,
   validateAddUpdateDepartment,
+  validateIdObl,
 } from '../validationHandler/index.js';
 
 const department = express.Router();
@@ -126,6 +127,7 @@ department.put(
 // delete department by id
 department.delete(
   '/:id',
+  validateIdObl,
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Department')
