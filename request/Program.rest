@@ -23,7 +23,7 @@ Content-Type: application/json
 
 {
     "name": "Test 1",
-    "departmentId" : 101
+    "departmentId" : "fdasdf"
 }
 
 ###

@@ -7,6 +7,7 @@ import { NextFunction, Request, Response } from 'express';
 */
 import {
   Result,
+  ValidationChain,
   ValidationError,
   check,
   validationResult,
@@ -39,6 +40,19 @@ export const validateIdObl = [
     .withMessage('Id cannot be empty')
     .bail(),
 ];
+
+export const createIdValidatorChain = (
+  fieldName: string,
+): ValidationChain[] => [
+  check(`${fieldName}`)
+    .matches(/^[0-9]+$/)
+    .withMessage(`${fieldName} must be a number`)
+    .bail()
+    .notEmpty()
+    .withMessage(`${fieldName} cannot be empty`)
+    .bail(),
+];
+
 export const validateNameObl = [
   check('name')
     .isLength({ min: 2, max: 255 })
