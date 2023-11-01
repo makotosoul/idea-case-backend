@@ -1,0 +1,76 @@
+### Remember to select the proper rest client environment
+@nextId = 410
+
+### Get all
+GET {{host}}/building
+Authorization: Basic {{token}}
+
+### Get one by id 
+GET {{host}}/building/401
+Authorization: Basic {{token}}
+
+### Create one
+POST {{host}}/building
+Authorization: Basic {{token}}
+Content-Type: application/json
+
+{
+    "name": "MYoN",
+    "description": "Sibeliusakatemian päärakennus"
+}
+
+### Get all
+GET {{host}}/building
+Authorization: Basic {{token}}
+
+### Create multi
+POST {{host}}/building/multi
+Authorization: Basic {{token}}
+Content-Type: application/json
+
+[
+    {
+    "name": "XYgdfG",
+    "description": "Sibeliusakatemian päärakennus"
+    }, 
+
+    {
+    "name": "MNfdO",
+    "description": "Sibeliusakatemian päärakennus"
+    }
+]
+
+### Get all
+GET {{host}}/building
+Authorization: Basic {{token}}
+
+### Update one
+PUT {{host}}/building
+Authorization: Basic {{token}}
+Content-Type: application/json
+
+{
+    "id": {{nextId}},
+    "name": "YYY",
+    "description": "Sibeliusakatemian päärakennus"
+}
+
+### Get one by id 
+GET {{host}}/building/{{nextId}}
+Authorization: Basic {{token}}
+
+### Delete one
+DELETE {{host}}/building/{{nextId}}
+Authorization: Basic {{token}}
+
+### Get one by id 
+GET {{host}}/building/{{nextId}}
+Authorization: Basic {{token}}
+
+
+
+
+
+
+
+

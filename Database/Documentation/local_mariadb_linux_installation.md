@@ -73,7 +73,7 @@
 
          ```
          BE_API_URL_PREFIX=/api
-         BE_SERVER_PORT=8764
+         BE_SERVER_PORT=1234
          DB_DRIVER_MODULE=mysql
          DB_HOST=localhost
          DB_PORT=3306
@@ -97,7 +97,7 @@
 
 12. **Test the Backend**:
     - You can test the running backend by accessing the following URL in your web browser:
-      [http://localhost:8764/api/subject/getAll](http://localhost:8764/api/subject/getAll)
+      [http://localhost:1234/api/subject/getAll](http://localhost:1234/api/subject/getAll)
     - If everything is set up correctly, you should see the expected response from your backend.
 
 ## Troubleshooting

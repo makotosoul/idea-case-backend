@@ -11,6 +11,7 @@ import space from './space.js';
 import spaceType from './spaceType.js';
 import subject from './subject.js';
 import subjectequipment from './subjectEquipment.js';
+import template from './template.js';
 import user from './user.js';
 
 const routes = express.Router();
@@ -28,5 +29,6 @@ routes.use('/subject', subject);
 routes.use('/subjectequipment', subjectequipment);
 routes.use('/user', user);
 routes.use('/departmentplanner', departmentplanner);
+routes.use('/template', template);
 
 export default routes;

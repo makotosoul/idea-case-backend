@@ -1,5 +1,4 @@
 import express, { Request, Response } from 'express';
-import { validationResult } from 'express-validator';
 import { admin } from '../authorization/admin.js';
 import { planner } from '../authorization/planner.js';
 import { roleChecker } from '../authorization/roleChecker.js';
@@ -10,9 +9,12 @@ import {
   dbErrorHandler,
   requestErrorHandler,
   successHandler,
-  validationErrorHandler,
 } from '../responseHandler/index.js';
-import { validate, validateAddEquipment } from '../validationHandler/index.js';
+import {
+  validateEquipmentPost,
+  validateEquipmentPut,
+} from '../validationHandler/equipment.js';
+import { validate, validateIdObl } from '../validationHandler/index.js';
 
 const equipment = express.Router();
 
@@ -40,6 +42,7 @@ equipment.get(
 // get equipment by id
 equipment.get(
   '/:id',
+  validateIdObl,
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Equipment')
@@ -62,13 +65,9 @@ equipment.get(
 // adding an equipment
 equipment.post(
   '/',
+  validateEquipmentPost,
   [authenticator, admin, roleChecker, validate],
-  validateAddEquipment,
   (req: Request, res: Response) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return validationErrorHandler(req, res, 'Formatting problem');
-    }
     db_knex
       .insert(req.body)
       .into('Equipment')
@@ -94,8 +93,8 @@ equipment.post(
 // updating an equipment
 equipment.put(
   '/:id',
+  validateEquipmentPut,
   [authenticator, admin, roleChecker, validate],
-
   (req: Request, res: Response) => {
     db_knex('Equipment')
       .where('id', req.body.id)
@@ -116,6 +115,7 @@ equipment.put(
 // deleting an equipment
 equipment.delete(
   '/:id',
+  validateIdObl,
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Equipment')

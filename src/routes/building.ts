@@ -1,5 +1,4 @@
 import express, { Request, Response } from 'express';
-import { validationResult } from 'express-validator';
 import { MysqlError } from 'mysql';
 import { admin } from '../authorization/admin.js';
 import { planner } from '../authorization/planner.js';
@@ -11,13 +10,13 @@ import {
   dbErrorHandler,
   requestErrorHandler,
   successHandler,
-  validationErrorHandler,
 } from '../responseHandler/index.js';
 import {
-  validate,
   validateBuildingMultiPost,
   validateBuildingPost,
-} from '../validationHandler/index.js';
+  validateBuildingPut,
+} from '../validationHandler/building.js';
+import { validate, validateIdObl } from '../validationHandler/index.js';
 
 const building = express.Router();
 
@@ -77,6 +76,7 @@ building.get(
 // get building by id
 building.get(
   '/:id',
+  validateIdObl,
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Building')
@@ -99,18 +99,9 @@ building.get(
 // adding single building
 building.post(
   '/',
-  [authenticator, admin, roleChecker, validate],
   validateBuildingPost,
+  [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
-    const valResult = validationResult(req);
-
-    if (!valResult.isEmpty()) {
-      return validationErrorHandler(
-        req,
-        res,
-        `${valResult}validateAddUpdateBuilding error`,
-      );
-    }
     db_knex('Building')
       .insert(req.body)
       .into('Building')
@@ -131,21 +122,9 @@ building.post(
 // adding single or multiple building
 building.post(
   '/multi',
-  [authenticator, admin, roleChecker, validate],
   validateBuildingMultiPost,
+  [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
-    const valResult = validationResult(req);
-
-    if (!valResult.isEmpty()) {
-      validationErrorHandler(
-        req,
-        res,
-        `${valResult} validateAddBuildings error`,
-      );
-
-      return;
-    }
-
     db_knex('Building')
       .insert(req.body)
       .into('Building')
@@ -166,6 +145,7 @@ building.post(
 // updating building information
 building.put(
   '/',
+  validateBuildingPut,
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     if (!req.body.name) {
@@ -200,6 +180,7 @@ building.put(
 // delete building by id
 building.delete(
   '/:id',
+  validateIdObl,
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Building')

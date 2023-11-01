@@ -1,8 +1,9 @@
 import { check } from 'express-validator';
-import { validateIdObl } from './index.js';
+import { createIdValidatorChain } from './index.js';
 
-export const validateUserPut = [
-  ...validateIdObl,
+export const validateUserId = [...createIdValidatorChain('id')];
+
+export const validateUserPost = [
   check('isAdmin')
     .matches(/[0-1]/)
     .withMessage('Must be a number between 0 and 1')
@@ -25,3 +26,5 @@ export const validateUserPut = [
     .withMessage('Cannot be empty')
     .bail(),
 ];
+
+export const validateUserPut = [...validateUserId, ...validateUserPost];

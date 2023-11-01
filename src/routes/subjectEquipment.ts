@@ -1,5 +1,9 @@
 import express, { Request, Response } from 'express';
-import { validationResult } from 'express-validator'; // import { body } ??
+import { admin } from '../authorization/admin.js';
+import { planner } from '../authorization/planner.js';
+import { roleChecker } from '../authorization/roleChecker.js';
+import { statist } from '../authorization/statist.js';
+import { authenticator } from '../authorization/userValidation.js';
 import db from '../db/index.js';
 // knex available for new database operations
 import db_knex from '../db/index_knex.js';
@@ -7,10 +11,11 @@ import {
   dbErrorHandler,
   requestErrorHandler,
   successHandler,
-  validationErrorHandler,
 } from '../responseHandler/index.js';
 import logger from '../utils/logger.js';
-import { validateSubjectEquipmentPostAndPut } from '../validationHandler/subjectEquipment.js';
+import { validate } from '../validationHandler/index.js';
+import { validateSubjectId } from '../validationHandler/subject.js';
+import { validateSubjectEquipmentPost } from '../validationHandler/subjectEquipment.js';
 
 const subjectequipment = express.Router();
 
@@ -43,18 +48,7 @@ const subjectequipment = express.Router();
   '/post',
   validateSubjectEquipmentPostAndPut,
   (req: Request, res: Response) => {
-    const validationResults: Result<ValidationError> = validationResult(req);
-    // if (!validationResults.isEmpty()) {
-    //   logger.error('Validation error:  %O', errors);
-    // }
-    if (!validationResults.isEmpty()) {
-      return validationErrorHandler(
-        req,
-        res,
-        'Formatting problem',
-        validationResults,
-      );
-    }
+ 
     const subjectId = req.body.subjectId;
     const equipmentId = req.body.equipmentId;
     const priority = req.body.priority;
@@ -94,15 +88,9 @@ const subjectequipment = express.Router();
 // Modifying the equipment required by the subject/teaching
 subjectequipment.put(
   '/update',
-  validateSubjectEquipmentPostAndPut,
+  [validate],
+  validateSubjectEquipmentPost,
   (req: Request, res: Response) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      logger.error('Validation error: %0', errors);
-    }
-    if (!errors.isEmpty()) {
-      return validationErrorHandler(req, res, 'Formatting problem');
-    }
     const priority = req.body.priority;
     const obligatory = req.body.obligatory;
     const subjectId = req.body.subjectId;
@@ -153,42 +141,47 @@ subjectequipment.delete('/delete/:subjectId/:equipmentId', (req, res) => {
 });
 
 // Getting all equipment requirement rows for a subject based on the subject id using knex
-subjectequipment.get('/getEquipment/:subjectId', (req, res) => {
-  const subjectId = req.params.subjectId;
-  db_knex
-    .select(
-      'se.subjectId',
-      'e.name',
-      'e.description',
-      'se.equipmentId',
-      'se.priority',
-      'se.obligatory',
-    )
-    .from('SubjectEquipment as se')
-    .innerJoin('Equipment as e', 'se.equipmentId', 'e.id')
-    .where('se.subjectId', subjectId)
-    .then((result) => {
-      successHandler(
-        req,
-        res,
-        result,
-        'getEquipment successful - SubjectEquipment',
-      );
-    })
-    .catch((error) => {
-      dbErrorHandler(
-        req,
-        res,
-        error,
-        'Oops! Nothing came through - SubjectEquipment',
-      );
-    });
-});
+subjectequipment.get(
+  '/getEquipment/:subjectId',
+  validateSubjectId,
+  [authenticator, admin, planner, statist, roleChecker, validate],
+  (req: Request, res: Response) => {
+    const subjectId = req.params.subjectId;
+    db_knex
+      .select(
+        'se.subjectId',
+        'e.name',
+        'e.description',
+        'se.equipmentId',
+        'se.priority',
+        'se.obligatory',
+      )
+      .from('SubjectEquipment as se')
+      .innerJoin('Equipment as e', 'se.equipmentId', 'e.id')
+      .where('se.subjectId', subjectId)
+      .then((result) => {
+        successHandler(
+          req,
+          res,
+          result,
+          'getEquipment successful - SubjectEquipment',
+        );
+      })
+      .catch((error) => {
+        dbErrorHandler(
+          req,
+          res,
+          error,
+          'Oops! Nothing came through - SubjectEquipment',
+        );
+      });
+  },
+);
 
 // Adding a equipment requirement to teaching/subject using knex
 subjectequipment.post(
   '/post',
-  validateSubjectEquipmentPostAndPut,
+  validateSubjectEquipmentPost,
   (req: Request, res: Response) => {
     const subjectId = req.body.subjectId;
     const equipmentId = req.body.equipmentId;

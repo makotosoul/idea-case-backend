@@ -27,8 +27,6 @@ DROP TABLE IF EXISTS GlobalSetting;
 
 /* --- 01 CREATE TABLES --- */
 
-USE casedb;
-
 /* --- 01 CREATE TABLES --- */
 
 CREATE TABLE IF NOT EXISTS GlobalSetting (
@@ -357,7 +355,7 @@ CONSTRAINT FOREIGN KEY (log_id) REFERENCES log_list(id)
 /* --- Insert: GlobalSettings --- */
 INSERT INTO GlobalSetting(name, description, numberValue, textValue) VALUES
     ('X', 'Korkea prioriteettiarvo', 800, NULL),
-    ("allocation-debug", "Onko allokoinnin logitus päällä. numberValue : 0 = OFF, 1 = ON", 0, NULL);
+    ("allocation-debug", "Onko allokoinnin logitus päällä. numberValue : 0 = OFF, 1 = ON", 1, NULL);
 
 /* --- Insert: Department --- */
 INSERT INTO Department(name, description) VALUES
@@ -382,7 +380,8 @@ INSERT INTO Department(name, description) VALUES
 INSERT INTO `User`(email, password, isAdmin, isPlanner, isStatist) VALUES
     ('admin','$2a$10$My5c7qZPRzp2p5QpgzQ0kOt5Au1xdwIidJDegsEWpntwAWceUjdWa',1,0,0),
     ('planner','$2a$10$mKf/VHzIGyIfADKHFACEBuYTb0IbPv6sE/FqlsbLAKgfelMWwsnEm',0,1,0),
-    ('statist','$2a$10$3oFjcGMj3Zq.91PkbGuL9Oo1zowAU9WFNNWyYA018Rff5BpCEmQ8y',0,0,1);
+    ('statist','$2a$10$3oFjcGMj3Zq.91PkbGuL9Oo1zowAU9WFNNWyYA018Rff5BpCEmQ8y',0,0,1),
+    ('noroleuser','$2b$10$J7KRUTRemPc5dYEMnOSTueUKHFFc8T.HwkF7wveUHBj1HzN3yqHRK',0,0,0);
 
 /* --- Insert: DepartmentPlanner * --- */
 INSERT INTO DepartmentPlanner(userId, departmentId) VALUES

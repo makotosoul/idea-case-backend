@@ -1,5 +1,4 @@
 import express, { Request, Response } from 'express';
-import { validationResult } from 'express-validator';
 import { admin } from '../authorization/admin.js';
 import { planner } from '../authorization/planner.js';
 import { roleChecker } from '../authorization/roleChecker.js';
@@ -10,18 +9,19 @@ import {
   dbErrorHandler,
   requestErrorHandler,
   successHandler,
-  validationErrorHandler,
 } from '../responseHandler/index.js';
 import {
-  validate,
-  validateAddUpdateDepartment,
-} from '../validationHandler/index.js';
+  validateDepartmentPost,
+  validateDepartmentPut,
+} from '../validationHandler/department.js';
+import { validate, validateIdObl } from '../validationHandler/index.js';
 
 const department = express.Router();
 
 // get all departments
 department.get(
   '/',
+
   [authenticator, admin, planner, statist, roleChecker],
   (req: Request, res: Response) => {
     db_knex('Department')
@@ -42,6 +42,7 @@ department.get(
 // get department by id
 department.get(
   '/:id',
+  validateIdObl,
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Department')
@@ -69,18 +70,9 @@ department.get(
 // add department
 department.post(
   '/',
+  validateDepartmentPost,
   [authenticator, admin, roleChecker, validate],
-  validateAddUpdateDepartment,
   (req: Request, res: Response) => {
-    const valResult = validationResult(req);
-
-    if (!valResult.isEmpty()) {
-      return validationErrorHandler(
-        req,
-        res,
-        `${valResult}validateAddUpdateDepartment error`,
-      );
-    }
     db_knex('Department')
       .insert(req.body)
       .into('Department')
@@ -115,6 +107,7 @@ department.post(
 // update department
 department.put(
   '/',
+  validateDepartmentPut,
   [authenticator, admin, roleChecker],
   (req: Request, res: Response) => {
     db_knex('Department')
@@ -136,6 +129,7 @@ department.put(
 // delete department by id
 department.delete(
   '/:id',
+  validateIdObl,
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Department')

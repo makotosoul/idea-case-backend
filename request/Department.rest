@@ -1,0 +1,60 @@
+### Remember to select the proper rest client environment
+### Get all
+
+
+GET {{host}}/department
+Authorization: Basic {{token}}
+
+###
+@nextid = 117
+
+### Get one by id 
+GET {{host}}/department/102
+Authorization: Basic {{token}}
+
+
+### Create one
+POST {{host}}/department
+Authorization: Basic {{token}}
+Content-Type: application/json
+
+{
+    "name": "bazz26",
+    "description": "Aineryhmän kuvaus"
+}
+
+
+### Get one by id using nextId
+GET {{host}}/department/{{nextid}}
+Authorization: Basic {{token}}
+
+### Update one
+PUT {{host}}/department
+Authorization: Basic {{token}}
+Content-Type: application/json
+
+{
+    "id": {{nextid}},
+    "name": "bazz2",
+    "description": "Aineryhmän kuvaus"
+}
+
+### Get one by id using nextId
+GET {{host}}/department/{{nextid}}
+Authorization: Basic {{token}}
+
+
+### Delete one
+DELETE {{host}}/department/{{nextid}}
+Authorization: Basic {{token}}
+
+### Get one by id using nextId
+GET {{host}}/department/{{nextid}}
+Authorization: Basic {{token}}
+
+
+
+
+
+
+

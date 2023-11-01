@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import express, { Request, Response } from 'express';
 import jsonwebtoken from 'jsonwebtoken';
 import { admin } from '../authorization/admin.js';
+import { planner } from '../authorization/planner.js';
 import { roleChecker } from '../authorization/roleChecker.js';
 import { authenticator } from '../authorization/userValidation.js';
 import db_knex from '../db/index_knex.js';
@@ -13,7 +14,10 @@ import {
   successHandler,
 } from '../responseHandler/index.js';
 import { validate, validateIdObl } from '../validationHandler/index.js';
-import { validateUserPut } from '../validationHandler/user.js';
+import {
+  validateUserPost,
+  validateUserPut,
+} from '../validationHandler/user.js';
 
 dotenv.config({});
 
@@ -22,7 +26,8 @@ const user = express.Router();
 // adding user
 user.post(
   '/',
-  [authenticator, admin, roleChecker],
+  validateUserPost,
+  [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     const hashedPassword = bcrypt.hashSync(req.body.password, 10);
     // REMOVE AFTER SOME TESTING!!! SECURITY!!!
@@ -55,7 +60,7 @@ user.post(
 // Fetching all users
 user.get(
   '/',
-  [authenticator, admin, roleChecker, validate],
+  [authenticator, admin, planner, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex
       .select(

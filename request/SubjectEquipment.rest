@@ -1,0 +1,2 @@
+GET {{host}}/subjectequipment/getEquipment/fasfd
+Authorization: Basic {{token}}

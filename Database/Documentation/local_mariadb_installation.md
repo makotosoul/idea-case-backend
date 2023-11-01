@@ -31,7 +31,7 @@
 
 1. Run following command in Git Bash: npm start
 
-1. Test that backend is working with following link: <http://localhost:8764/api/subject/getAll>
+1. Test that backend is working with following link: <http://localhost:1234/api/subject/getAll>
 
 ## Local MariaDB installation on macOS using Homebrew and making Siba backend to use it instead of CSC cloud.
 ==================================================================================
@@ -75,4 +75,4 @@ and paste them to execute SQL scripts. Shortcut to execute: option + X
 
     `npm start`
 
-1. Test that the backend is working with the following link: <http://localhost:8764/api/subject/getAll>
+1. Test that the backend is working with the following link: <http://localhost:1234/api/subject/getAll>

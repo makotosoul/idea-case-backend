@@ -1,0 +1,35 @@
+### Add received tokens to root root folder's .vscode folder's settings.json file 
+POST {{host}}/user/login
+Content-Type: application/json
+
+{
+  "email":"admin",
+  "password":"admin"
+}
+
+###
+POST {{host}}/user/login
+Content-Type: application/json
+
+{
+  "email":"planner",
+  "password":"planner"
+}
+
+###
+POST {{host}}/user/login
+Content-Type: application/json
+
+{
+  "email":"statist",
+  "password":"statist"
+}
+
+###
+POST {{host}}/user/login
+Content-Type: application/json
+
+{
+  "email":"noroleuser",
+  "password":"noroleuser"
+}

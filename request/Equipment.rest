@@ -1,0 +1,44 @@
+### Remember to select the proper rest client environment
+
+### Get all
+GET {{host}}/equipment
+Authorization: Basic {{token}}
+
+### Get one by id 
+GET {{host}}/equipment/2033
+Authorization: Basic {{token}}
+### Create one
+POST {{host}}/equipment
+Authorization: Basic {{token}}
+Content-Type: application/json
+
+{
+    "name": "New name",
+    "description": "New description",
+    "priority": 70,
+    "isMovable": 1
+}
+
+### Update one
+PUT {{host}}/equipment/2033
+Authorization: Basic {{token}}
+Content-Type: application/json
+
+{
+    "id": 2033,
+    "name": "No name",
+    "priority": 101,
+    "description": "No descriprion"
+}
+
+### Delete one
+DELETE {{host}}/equipment/2033
+Authorization: Basic {{token}}
+Content-Type: application/json
+
+
+
+
+
+
+

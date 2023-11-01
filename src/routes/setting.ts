@@ -1,5 +1,4 @@
 import express, { Request, Response } from 'express';
-import { validationResult } from 'express-validator';
 import { admin } from '../authorization/admin.js';
 import { planner } from '../authorization/planner.js';
 import { roleChecker } from '../authorization/roleChecker.js';
@@ -10,9 +9,12 @@ import {
   dbErrorHandler,
   requestErrorHandler,
   successHandler,
-  validationErrorHandler,
 } from '../responseHandler/index.js';
-import { validate, validateAddSetting } from '../validationHandler/index.js';
+import { validate, validateIdObl } from '../validationHandler/index.js';
+import {
+  validateSettingPost,
+  validateSettingPut,
+} from '../validationHandler/setting.js';
 
 const setting = express.Router();
 
@@ -43,38 +45,39 @@ setting.get(
 );
 
 // get setting by id
-setting.get('/:id', (req, res) => {
-  db('GlobalSetting')
-    .select()
-    .where('id', req.params.id)
-    .then((data) => {
-      successHandler(req, res, data, 'Successfully read the settings from DB');
-    })
-    .catch((err) => {
-      dbErrorHandler(
-        req,
-        res,
-        err,
-        'Oops! Nothing came through - GlobalSetting',
-      );
-    });
-});
+setting.get(
+  '/:id',
+  validateIdObl,
+  [authenticator, admin, planner, statist, roleChecker, validate],
+  (req: Request, res: Response) => {
+    db('GlobalSetting')
+      .select()
+      .where('id', req.params.id)
+      .then((data) => {
+        successHandler(
+          req,
+          res,
+          data,
+          'Successfully read the settings from DB',
+        );
+      })
+      .catch((err) => {
+        dbErrorHandler(
+          req,
+          res,
+          err,
+          'Oops! Nothing came through - GlobalSetting',
+        );
+      });
+  },
+);
 
 // add setting
 setting.post(
   '/',
-  [authenticator, admin, planner, roleChecker, validate],
-  validateAddSetting,
+  validateSettingPost,
+  [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
-    const valResult = validationResult(req);
-
-    if (!valResult.isEmpty()) {
-      return validationErrorHandler(
-        req,
-        res,
-        `${valResult}validateAddSetting error`,
-      );
-    }
     db('GlobalSetting')
       .insert(req.body)
       .into('GlobalSetting')
@@ -108,7 +111,8 @@ setting.post(
 
 // update setting
 setting.put(
-  '/:id',
+  '/',
+  validateSettingPut,
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     if (!req.body.name) {
@@ -157,6 +161,7 @@ setting.put(
 // delete setting by id
 setting.delete(
   '/:id',
+  validateIdObl,
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     db('GlobalSetting')

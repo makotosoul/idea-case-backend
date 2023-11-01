@@ -4,12 +4,15 @@ import { planner } from '../authorization/planner.js';
 import { roleChecker } from '../authorization/roleChecker.js';
 import { statist } from '../authorization/statist.js';
 import { authenticator } from '../authorization/userValidation.js';
+import db from '../db/index.js';
 import db_knex from '../db/index_knex.js';
 import {
+  dbErrorHandler,
   requestErrorHandler,
   successHandler,
 } from '../responseHandler/index.js';
-import { validate } from '../validationHandler/index.js';
+import logger from '../utils/logger.js';
+import { validate, validateIdObl } from '../validationHandler/index.js';
 
 const space = express.Router();
 
@@ -18,22 +21,53 @@ space.get(
   '/',
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
-    db_knex('Space')
-      .select('id', 'name', 'area')
-      .then((data) => {
-        successHandler(
-          req,
-          res,
-          data,
-          'All Spaces fetched succesfully from DB.',
-        );
+    db_knex
+      .select(
+        's.id',
+        's.name',
+        's.area',
+        's.info',
+        's.personLimit',
+        's.buildingId',
+        's.availableFrom',
+        's.availableTo',
+        's.classesFrom',
+        's.classesTo',
+        's.inUse',
+        's.spaceTypeId',
+        'b.name AS buildingName',
+        'st.name AS spaceTypeName',
+      )
+      .from('Space as s')
+      .innerJoin('Building as b', 's.buildingId', 'b.id')
+      .leftJoin('SpaceType as st', 's.spaceTypeId', 'st.id')
+      .then((spaces) => {
+        successHandler(req, res, spaces, 'getAll successful - Space');
       })
       .catch((err) => {
         requestErrorHandler(
           req,
           res,
-          `${err}Oops! Nothing came through - Space`,
+          `Oops! Nothing came through - Space: ${err.message}`,
         );
+      });
+  },
+);
+
+// SPECIAL Listing all the spaces for selection dropdown etc.
+// (Just name and id) using knex
+space.get(
+  '/getNames',
+  [authenticator, admin, roleChecker],
+  (req: Request, res: Response) => {
+    db_knex
+      .select('id', 'name')
+      .from('Space')
+      .then((spaceNames) => {
+        successHandler(req, res, spaceNames, 'getNames successful - Space');
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Oops! Nothing came through - Space');
       });
   },
 );
@@ -82,6 +116,7 @@ space.post(
 );
 
 // Delete space by id
+/*
 space.delete(
   '/:id',
   [authenticator, admin, roleChecker, validate],
@@ -104,6 +139,24 @@ space.delete(
       .catch((error) => {
         requestErrorHandler(req, res, `Error deleting space: ${error.message}`);
       });
+  },
+);*/
+
+space.delete(
+  '/:id',
+  validateIdObl,
+  [authenticator, admin, planner, roleChecker, validate],
+  (req: Request, res: Response) => {
+    const id = req.params.id;
+    const sqlDelete = 'DELETE FROM Space WHERE id = ?;';
+    db.query(sqlDelete, id, (err, result) => {
+      if (err) {
+        dbErrorHandler(req, res, err, 'Oops! Delete failed - Space');
+      } else {
+        successHandler(req, res, result, 'Delete successful - Space');
+        logger.info('Space deleted');
+      }
+    });
   },
 );
 
