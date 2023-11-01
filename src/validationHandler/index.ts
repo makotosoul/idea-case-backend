@@ -39,46 +39,45 @@ export const createIdValidatorChain = (
     .bail(),
 ];
 
-export const validateIdObl = [...createIdValidatorChain('id')];
+export const createNameValidatorChain = (
+  fieldName: string,
+): ValidationChain[] => [
+  check(`${fieldName}`)
+    .isLength({ min: 2, max: 255 })
+    .withMessage(`${fieldName} must be between 2-255 characters long`)
+    .bail()
+    .matches(/^[A-Za-zäöåÄÖÅ0-9\s-]*$/)
+    .withMessage(`${fieldName} must contain only letters, numbers and -`)
+    .bail()
+    .notEmpty()
+    .withMessage(`${fieldName} cannot be empty`)
+    .bail(),
+];
 
-export const validateNameObl = [
-  check('name')
-    .isLength({ min: 2, max: 255 })
-    .withMessage('Name must be between 2-255 characters long')
+export const createDescriptionValidatorChain = (
+  fieldName: string,
+): ValidationChain[] => [
+  check(`${fieldName}`)
+    .isLength({ max: 16000 })
+    .withMessage(`${fieldName} can be at maximum 16000 characters long`)
     .bail()
     .matches(/^[A-Za-zäöåÄÖÅ0-9\s-]*$/)
-    .withMessage('Name must contain only letters, numbers and -')
+    .withMessage(`${fieldName} must contain only letters, numbers and -`)
     .bail()
     .notEmpty()
-    .withMessage('Name cannot be empty')
+    .withMessage(`${fieldName} cannot be empty`)
     .bail(),
 ];
-export const validateDescription = [
-  check('description')
-    .isLength({ min: 2, max: 255 })
-    .withMessage('Description must be between 2-255 characters long')
-    .bail()
-    .matches(/^[A-Za-zäöåÄÖÅ0-9\s-]*$/)
-    .withMessage('Description must contain only letters, numbers and -')
-    .bail(),
-  /* LATER:
-  check('description').isLength({ max: 16000 })
-    .withMessage('Description must be at maximum 16000 characters long')
-    .matches(/^[A-Za-zäöåÄÖÅ0-9\s-]*$/)
-    .withMessage('Description must contain only letters, numbers and -')
-    .bail(),
-  */
-];
-export const validateDescriptionObl = [
-  ...validateDescription,
-  check('description')
-    .notEmpty()
-    .withMessage('Description cannot be empty')
-    .bail(),
-];
+
 export const validatePriorityMustBeNumber = [
   check('priority')
     .matches(/^[0-9]+$/)
     .withMessage('Priority must be a number')
     .bail(),
+];
+
+export const validateIdObl = [...createIdValidatorChain('id')];
+export const validateNameObl = [...createNameValidatorChain('name')];
+export const validateDescriptionObl = [
+  ...createDescriptionValidatorChain('description'),
 ];
