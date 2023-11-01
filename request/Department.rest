@@ -19,8 +19,8 @@ Authorization: Basic {{token}}
 Content-Type: application/json
 
 {
-    "name": "bazz26",
-    "description": "Aineryhmän kuvaus"
+    "name": "",
+    "description": ""
 }
 
 
