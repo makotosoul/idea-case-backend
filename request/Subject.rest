@@ -1,4 +1,7 @@
-### Used to test Subject table REST functions, following LCRUD. Ensure fresh environment tokens are in use (.vscode\settings.json) 
+### Used to test the Subject table's REST functions, following LCRUD
+# Test structure: 1L-2C-3R-4U-5D
+# Ensure fresh environment tokens are in use (Siba_be\request\1_Logins.rest & .vscode\settings.json) 
+# The user can follow the tests using either hardcoded ID's or the testID  
 
 ### 1. List all subjects
 GET {{host}}/subject
@@ -22,17 +25,43 @@ Content-Type: application/json
     "spaceTypeName": "Musiikkiluokka"
 }
 
-### 3. Read subject by ID
-GET {{host}}/subject/4042
+### Add the insertID from the POST
+@testID=4042
+
+### 3. Read subject by custom ID
+GET {{host}}/subject/4040
 Authorization: Basic {{token}}
 
-### 4. Update subject by ID
+### Read subject by testID
+GET {{host}}/subject/{{testID}}
+Authorization: Basic {{token}}
+
+### 4. Update subject by custom ID
 PUT {{host}}/subject
 Authorization: Basic {{token}}
 Content-Type: application/json
 
 {
-    "id": 4042,
+    "id": 4040,
+    "name": "Updated test name",
+    "groupSize": 33,
+    "groupCount": 3,
+    "sessionLength": "03:00:00",
+    "sessionCount": 3,
+    "area": 33,
+    "programId": 3030,
+    "programName": "Test program name",
+    "spaceTypeId": 5004,
+    "spaceTypeName": "Musiikkiluokka"
+}
+
+### Update subject by testID
+PUT {{host}}/subject
+Authorization: Basic {{token}}
+Content-Type: application/json
+
+{
+    "id": {{testID}},
     "name": "Updated test name",
     "groupSize": 33,
     "groupCount": 3,
@@ -46,5 +75,9 @@ Content-Type: application/json
 }
 
 ### 5. Delete subject
-DELETE {{host}}/subject/4042
+DELETE {{host}}/subject/4040
+Authorization: Basic {{token}}
+
+### Delete subject by testID
+DELETE {{host}}/subject/{{testID}}
 Authorization: Basic {{token}}
