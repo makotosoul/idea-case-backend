@@ -34,7 +34,7 @@ departmentplanner.get('/:userId', (req, res) => {
     });
 });
 
-// Adding a space
+// Adding a new departmentplanner
 departmentplanner.post('/', (req, res) => {
   const plannerData = {
     userId: req.body.userId,
@@ -63,6 +63,7 @@ departmentplanner.post('/', (req, res) => {
     });
 });
 
+//deleting a departmentplanner
 departmentplanner.delete('/:userId/:departmentId', (req, res) => {
   const userId = req.params.userId;
   const departmentId = req.params.departmentId;
