@@ -1,7 +1,11 @@
 USE casedb; /* UPDATED 2023-11-05 */
 
 /* PROCEDURES */
+/* DELIMITER is explained here, just look at first two examples: https://mariadb.com/kb/en/delimiters/ */
+
+/* --- Procedure 1: Conditional database logger, used by other prodedures below --- */
 DELIMITER //
+
 CREATE PROCEDURE IF NOT EXISTS LogAllocation(logId INT, stage VARCHAR(255), status VARCHAR(255), msg VARCHAR(16000))
 BEGIN
 	DECLARE debug INTEGER;
@@ -11,11 +15,80 @@ BEGIN
 	IF debug = 1 AND logId IS NOT NULL AND logId != 0 THEN
 		INSERT INTO log_event(log_id, stage, status, information) VALUES(logId, stage, status, msg);
 	END IF;
-END; //
-
+END; 
+//
 DELIMITER ;
 
-/* space allocation */
+/* allocRid is now used for the frontend sent allocRoundId, to make it stand out e.g. in: 
+  AllocSpace.allocRoundId = allocRid;  
+  Easier to follow, Right? */
+
+
+/* --- Procedure 2: PRIORITIZE SUBJECTS -  TO ALLOCATION ORDER --- */
+DELIMITER //
+
+CREATE OR REPLACE PROCEDURE prioritizeSubjects(allocRid INT, priority_option INT, logId INT)
+BEGIN
+	DECLARE priorityNow INTEGER;
+
+	SET priorityNow = (SELECT IFNULL(MAX(priority),0) FROM AllocSubject allSub WHERE allSub.allocRoundId = allocRid);
+
+	IF priority_option = 1 THEN -- subject_equipment.priority >= X
+		INSERT INTO AllocSubject (subjectId, allocRoundId, priority)
+			SELECT allSub.subjectId, allSub.allocRoundId, ROW_NUMBER() OVER (ORDER BY MAX(sub_eqp.priority) DESC, Subject.groupSize ASC) + priorityNow as "row"
+    		FROM AllocSubject allSub
+    		LEFT JOIN SubjectEquipment sub_eqp ON allSub.subjectId = sub_eqp.subjectId
+    		JOIN Subject ON allSub.subjectId = Subject.id
+    		WHERE allSub.allocRoundId = allocRid AND allSub.priority IS NULL
+    		AND (sub_eqp.priority) >= (SELECT numberValue FROM GlobalSetting gs WHERE name="x")
+    		GROUP BY allSub.subjectId
+		ON DUPLICATE KEY UPDATE priority = VALUES(priority);
+	ELSEIF priority_option = 2 THEN -- subject_equipment.priority < X
+		INSERT INTO AllocSubject (subjectId, allocRoundId, priority)
+			SELECT allSub.subjectId, allSub.allocRoundId, ROW_NUMBER() OVER (ORDER BY MAX(sub_eqp.priority) DESC, Subject.groupSize ASC) + priorityNow as "row"
+       		FROM AllocSubject allSub
+        	LEFT JOIN SubjectEquipment sub_eqp ON allSub.subjectId = sub_eqp.subjectId
+        	JOIN Subject ON allSub.subjectId = Subject.id
+        	WHERE allSub.allocRoundId = allocRid
+        	AND allSub.priority IS NULL
+        	AND (sub_eqp.priority) < (SELECT numberValue FROM GlobalSetting gs WHERE name="x")
+        	GROUP BY allSub.subjectId
+        	ORDER BY sub_eqp.priority DESC
+        ON DUPLICATE KEY UPDATE priority = VALUES(priority);
+    ELSEIF priority_option = 3 THEN -- all others (subjects without equipment)
+    	INSERT INTO AllocSubject (subjectId, allocRoundId, priority)
+    		SELECT AllocSubject.subjectId, AllocSubject.allocRoundId, ROW_NUMBER() OVER (ORDER BY Subject.groupSize ASC) + priorityNow as "row"
+			FROM AllocSubject
+			LEFT JOIN Subject ON AllocSubject.subjectId = Subject.id
+			WHERE priority IS NULL
+			AND AllocSubject.allocRoundId = allocRid
+		ON DUPLICATE KEY UPDATE priority = VALUES(priority);
+	END IF;
+
+	CALL LogAllocation(logId, "Prioritization", "OK", CONCAT("Priority option: ", priority_option, " completed."));
+
+END; 
+//
+DELIMITER ;
+
+/* --- Procedure 3: SET SUITABLE ROOMS -  Find which spaces could be suitable for this subject id - ALLOCATION --- */
+DELIMITER //
+
+CREATE OR REPLACE PROCEDURE setSuitableRooms(allocRid INT, subId INT)
+BEGIN
+	INSERT INTO AllocSubjectSuitableSpace (allocRoundId, subjectId, spaceId, missingItems)
+		SELECT allocRid, subId, sp.id, getMissingItemAmount(subId, sp.id) AS "missingItems"
+		FROM Space sp
+		WHERE sp.personLimit >= (SELECT groupSize FROM Subject WHERE id=subId)
+		AND sp.area >= (SELECT s.area FROM Subject s WHERE id=subId)
+		AND sp.spaceTypeId = (SELECT s.spaceTypeId FROM Subject s WHERE id=subId)
+		AND sp.inUse=1
+		;
+END; 
+//
+DELIMITER ;
+
+/* --- Procedure 4: allocated space(s) to satisfy the subject's needs - until all needed hours have been allocated --- */
 DELIMITER //
 
 CREATE PROCEDURE allocateSpace(allocRid INT, subId INT, logId INT)
@@ -110,93 +183,12 @@ BEGIN
 		-- LOG HERE
 		CALL LogAllocation(logId, "Space-allocation", "Warning", CONCAT("Subject : ", subId, " - Add ", sessions - allocated, " to space: ", spaceTo, " - All suitable spaces are full"));
    	END IF;
-END; //
-
-DELIMITER ;
-
-/* --- Procedure: PRIORITIZE SUBJECTS -  ALLOCATION --- */
-
-DELIMITER //
-CREATE OR REPLACE PROCEDURE prioritizeSubjects(allocRid INT, priority_option INT, logId INT)
-BEGIN
-	DECLARE priorityNow INTEGER;
-
-	SET priorityNow = (SELECT IFNULL(MAX(priority),0) FROM AllocSubject allSub WHERE allSub.allocRoundId = allocRid);
-
-	IF priority_option = 1 THEN -- subject_equipment.priority >= X
-		INSERT INTO AllocSubject (subjectId, allocRoundId, priority)
-			SELECT allSub.subjectId, allSub.allocRoundId, ROW_NUMBER() OVER (ORDER BY MAX(sub_eqp.priority) DESC, Subject.groupSize ASC) + priorityNow as "row"
-    		FROM AllocSubject allSub
-    		LEFT JOIN SubjectEquipment sub_eqp ON allSub.subjectId = sub_eqp.subjectId
-    		JOIN Subject ON allSub.subjectId = Subject.id
-    		WHERE allSub.allocRoundId = allocRid AND allSub.priority IS NULL
-    		AND (sub_eqp.priority) >= (SELECT numberValue FROM GlobalSetting gs WHERE name="x")
-    		GROUP BY allSub.subjectId
-		ON DUPLICATE KEY UPDATE priority = VALUES(priority);
-	ELSEIF priority_option = 2 THEN -- subject_equipment.priority < X
-		INSERT INTO AllocSubject (subjectId, allocRoundId, priority)
-			SELECT allSub.subjectId, allSub.allocRoundId, ROW_NUMBER() OVER (ORDER BY MAX(sub_eqp.priority) DESC, Subject.groupSize ASC) + priorityNow as "row"
-       		FROM AllocSubject allSub
-        	LEFT JOIN SubjectEquipment sub_eqp ON allSub.subjectId = sub_eqp.subjectId
-        	JOIN Subject ON allSub.subjectId = Subject.id
-        	WHERE allSub.allocRoundId = allocRid
-        	AND allSub.priority IS NULL
-        	AND (sub_eqp.priority) < (SELECT numberValue FROM GlobalSetting gs WHERE name="x")
-        	GROUP BY allSub.subjectId
-        	ORDER BY sub_eqp.priority DESC
-        ON DUPLICATE KEY UPDATE priority = VALUES(priority);
-    ELSEIF priority_option = 3 THEN -- all others (subjects without equipment)
-    	INSERT INTO AllocSubject (subjectId, allocRoundId, priority)
-    		SELECT AllocSubject.subjectId, AllocSubject.allocRoundId, ROW_NUMBER() OVER (ORDER BY Subject.groupSize ASC) + priorityNow as "row"
-			FROM AllocSubject
-			LEFT JOIN Subject ON AllocSubject.subjectId = Subject.id
-			WHERE priority IS NULL
-			AND AllocSubject.allocRoundId = allocRid
-		ON DUPLICATE KEY UPDATE priority = VALUES(priority);
-	END IF;
-
-	CALL LogAllocation(logId, "Prioritization", "OK", CONCAT("Priority option: ", priority_option, " completed."));
-
-END; //
-
-DELIMITER ;
-
-/* --- Procedure: RESET ALLOCATION --- */
-DELIMITER //
-
-CREATE PROCEDURE IF NOT EXISTS  resetAllocation(allocRid INTEGER)
-BEGIN
-
-	-- Handler for the error
-	DECLARE processBusy CONDITION FOR SQLSTATE '50000';
-	DECLARE EXIT HANDLER FOR processBusy
-	BEGIN
-		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
-		SET @full_error = CONCAT("Error: ", @errno, " (", @sqlstate, "): ", @text);
-		RESIGNAL SET MESSAGE_TEXT = @full_error;
-	END;
-	-- Raise error if allocation in progress.
-	SET @procedure_active = (SELECT processOn FROM AllocRound WHERE id = allocRid);
-	IF @procedure_active = 1 THEN
-		SET @message_text = CONCAT("The allocation with allocRound:", allocRid, " is currently in progress.");
-		SIGNAL processBusy SET MESSAGE_TEXT = @message_text, MYSQL_ERRNO = 1192;
-	END IF;
-
-	-- Delete all allocation data and reset variables
-	DELETE FROM AllocSpace WHERE allocRoundId = allocRid;
-	DELETE FROM AllocSubjectSuitableSpace WHERE allocRoundId = allocRid;
-    IF (allocRid = 10004) THEN
-        DELETE FROM AllocSubject WHERE allocRoundId = 10004;
-    ELSE
-	    UPDATE AllocSubject SET isAllocated = 0, priority = null, cantAllocate = 0 WHERE allocRoundId = allocRid;
-    END IF;
-    UPDATE AllocRound SET isAllocated = 0, requireReset = FALSE WHERE id = allocRid;
-END; //
-
+END; 
+//
 DELIMITER ;
 
 
-/* --- Procedure: START ALLOCATION --- */
+/* --- Procedure 5 - A: START ALLOCATION --- */
 DELIMITER //
 
 CREATE OR REPLACE PROCEDURE startAllocation(allocRid INT)
@@ -326,28 +318,14 @@ BEGIN
 
 	UPDATE AllocRound SET processOn = 0 WHERE id = allocRid;
 
-END; //
+END; 
+//
 DELIMITER ;
 
-/* --- Procedure: SET SUITABLE ROOMS -  ALLOCATION --- */
+
+/* --- PROCEDURE 6 - B: Abort Allocation --- */
 DELIMITER //
 
-CREATE OR REPLACE PROCEDURE setSuitableRooms(allocRid INT, subId INT)
-BEGIN
-	INSERT INTO AllocSubjectSuitableSpace (allocRoundId, subjectId, spaceId, missingItems)
-		SELECT allocRid, subId, sp.id, getMissingItemAmount(subId, sp.id) AS "missingItems"
-		FROM Space sp
-		WHERE sp.personLimit >= (SELECT groupSize FROM Subject WHERE id=subId)
-		AND sp.area >= (SELECT s.area FROM Subject s WHERE id=subId)
-		AND sp.spaceTypeId = (SELECT s.spaceTypeId FROM Subject s WHERE id=subId)
-		AND sp.inUse=1
-		;
-END; //
-
-DELIMITER ;
-
-/* --- PROCEDURE: Abort Allocation --- */
-DELIMITER $$
 CREATE PROCEDURE IF NOT EXISTS abortAllocation(allocRid INT)
 BEGIN
 	DECLARE inProgress BOOLEAN DEFAULT FALSE;
@@ -359,25 +337,65 @@ BEGIN
 		UPDATE AllocRound SET abortProcess = 1 WHERE id = allocRid;
 	END IF;
 
-END; $$
-
+END; 
+//
 DELIMITER ;
+
+
+/* --- Procedure 7 - C: RESET ALLOCATION, will nullify all calculations/allocations for this alloc R(ound) Id --- */
+DELIMITER //
+
+CREATE PROCEDURE IF NOT EXISTS  resetAllocation(allocRid INTEGER)
+BEGIN
+
+	-- Handler for the error
+	DECLARE processBusy CONDITION FOR SQLSTATE '50000';
+	DECLARE EXIT HANDLER FOR processBusy
+	BEGIN
+		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
+		SET @full_error = CONCAT("Error: ", @errno, " (", @sqlstate, "): ", @text);
+		RESIGNAL SET MESSAGE_TEXT = @full_error;
+	END;
+	-- Raise error if allocation in progress.
+	SET @procedure_active = (SELECT processOn FROM AllocRound WHERE id = allocRid);
+	IF @procedure_active = 1 THEN
+		SET @message_text = CONCAT("The allocation with allocRound:", allocRid, " is currently in progress.");
+		SIGNAL processBusy SET MESSAGE_TEXT = @message_text, MYSQL_ERRNO = 1192;
+	END IF;
+
+	-- Delete all allocation data and reset variables
+	DELETE FROM AllocSpace WHERE allocRoundId = allocRid;
+	DELETE FROM AllocSubjectSuitableSpace WHERE allocRoundId = allocRid;
+    IF (allocRid = 10004) THEN
+        DELETE FROM AllocSubject WHERE allocRoundId = 10004;
+    ELSE
+	    UPDATE AllocSubject SET isAllocated = 0, priority = null, cantAllocate = 0 WHERE allocRoundId = allocRid;
+    END IF;
+    UPDATE AllocRound SET isAllocated = 0, requireReset = FALSE WHERE id = allocRid;
+END; 
+//
+DELIMITER ;
+
 
 /* ------------------------------------------------------ */
 /* FUNCTIONS */
 
-/* get missing equipment(subject) amount in space */
+/* Function 8 (well 1-7 were actually procedures, but similar) - Get missing equipment(subject) count in space */
 DELIMITER //
+
 CREATE FUNCTION IF NOT EXISTS getMissingItemAmount(subId INT, spaId INT) RETURNS INT
 NOT DETERMINISTIC
 BEGIN
-RETURN (SELECT COUNT(*)
-        FROM
-    (SELECT equipmentId  FROM SubjectEquipment
-    WHERE subjectId = subId
-    EXCEPT
-    SELECT equipmentId FROM SpaceEquipment
-    WHERE spaceId = spaId) a
+RETURN (
+	SELECT COUNT(*)
+        FROM(
+    		SELECT equipmentId  FROM SubjectEquipment
+    				WHERE SubjectEquipment.subjectId = subId
+    			EXCEPT
+    		SELECT equipmentId FROM SpaceEquipment
+    				WHERE SpaceEquipment.spaceId = spaId
+		) a
 );
-END; //
+END; 
+//
 DELIMITER ;
