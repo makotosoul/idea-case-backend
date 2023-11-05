@@ -1,0 +1,2 @@
+GET {{host}}/spaceequipment/getEquipment/1020
+Authorization: Basic {{token}}
