@@ -30,5 +30,7 @@ allocRound 3
 
 allocR 3
 
-2. 
+2. Check that nowhere doubles like:
+
+allocRoundIdId     (Id twice)
 

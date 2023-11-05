@@ -1,4 +1,4 @@
-USE casedb;
+USE casedb; /* UPDATED 2023-11-05 */
 
 /* INSERTS */
 /* --- Insert: GlobalSettings --- */
@@ -338,7 +338,7 @@ INSERT INTO AllocRound(name, isSeasonAlloc, userId, description) VALUES
     ('Demo', 0, 201, 'Allokointi demoamista varten');
 
 /* --- Insert: AllocSubject * --- */
-INSERT INTO AllocSubject(subjectId, allocRound, isAllocated, allocatedDate, priority) VALUES
+INSERT INTO AllocSubject(subjectId, allocRoundId, isAllocated, allocatedDate, priority) VALUES
     (4011, 10001, 0, '2022-10-28', 1),
     (4014, 10001, 0, '2022-10-28', 2),
     (4019, 10001, 0, '2022-10-28', 3),
@@ -388,7 +388,7 @@ INSERT INTO AllocSubject(subjectId, allocRound, isAllocated, allocatedDate, prio
     (4006, 10003, 0, '2022-09-21', 6),
     (4007, 10003, 0, '2022-09-21', 7);
 
-INSERT INTO AllocSpace(subjectId, allocRound, spaceId, totalTime) VALUES
+INSERT INTO AllocSpace(subjectId, allocRoundId, spaceId, totalTime) VALUES
     (4011, 10002, 1020, '04:30:00'), -- Urkujensoitto 1ppl/ N419 urkuluokka, 34m2, 5ppl
     (4003, 10002, 1009, '05:00:00'), -- Pianon yksilöopetus 1ppl/ musiikkiluokka 16.6m2, 6ppl
     (4005, 10002, 1020, '10:00:00'), -- Kirkkomusiikin ryhmäsoitto 5ppl/ N419 Kirkkomusiikki, 34m2, 5ppl

@@ -1,12 +1,24 @@
-use casedb;
+USE casedb; /* UPDATED 2023-11-05 */
 
 /* PROCEDURES */
+DELIMITER //
+CREATE PROCEDURE IF NOT EXISTS LogAllocation(logId INT, stage VARCHAR(255), status VARCHAR(255), msg VARCHAR(16000))
+BEGIN
+	DECLARE debug INTEGER;
 
+	SET debug := (SELECT numberValue FROM GlobalSetting WHERE name='allocation-debug');
+
+	IF debug = 1 AND logId IS NOT NULL AND logId != 0 THEN
+		INSERT INTO log_event(log_id, stage, status, information) VALUES(logId, stage, status, msg);
+	END IF;
+END; //
+
+DELIMITER ;
 
 /* space allocation */
 DELIMITER //
 
-CREATE PROCEDURE allocateSpace(allocRouId INT, subId INT, logId INT)
+CREATE PROCEDURE allocateSpace(allocRid INT, subId INT, logId INT)
 BEGIN
 	DECLARE spaceTo INTEGER DEFAULT NULL;
 	DECLARE i INTEGER DEFAULT 0; -- loop index
@@ -22,7 +34,7 @@ BEGIN
 
 	SET spaceTo := ( -- to check if subject can be allocated
         	SELECT ass.spaceId FROM AllocSubjectSuitableSpace ass
-        	WHERE ass.missingItems = 0 AND ass.subjectId = subId AND ass.allocRoundId = allocRouId
+        	WHERE ass.missingItems = 0 AND ass.subjectId = subId AND ass.allocRoundId = allocRid
  			LIMIT 1);
 
 	IF spaceTo IS NULL THEN -- If can't find suitable spaces
@@ -32,11 +44,11 @@ BEGIN
    		WHILE loopOn DO -- Try add all sessions to the space
    			SET spaceTo := (SELECT sp.id FROM AllocSubjectSuitableSpace ass
 							LEFT JOIN Space sp ON ass.spaceId = sp.id
-							WHERE ass.subjectId = subId AND ass.missingItems = 0 AND ass.allocRoundId = allocRouId
+							WHERE ass.subjectId = subId AND ass.missingItems = 0 AND ass.allocRoundId = allocRid
 							GROUP BY sp.id
 							HAVING
 							((SELECT TIME_TO_SEC(TIMEDIFF(availableTo, availableFrom)) *5 FROM Space WHERE id = sp.id) -
-								(SELECT IFNULL(SUM(TIME_TO_SEC(totalTime)), 0) FROM AllocSpace asp WHERE asp.allocRoundId = allocRouId AND spaceId = sp.id)
+								(SELECT IFNULL(SUM(TIME_TO_SEC(totalTime)), 0) FROM AllocSpace asp WHERE asp.allocRoundId = allocRid AND spaceId = sp.id)
 								>
 								(sessionSeconds * (sessions - i - allocated)))
 							ORDER BY sp.personLimit ASC, sp.area ASC
@@ -51,7 +63,7 @@ BEGIN
 			INSERT INTO AllocSpace
 					(subjectId, allocRoundId, spaceId, totalTime)
 				VALUES
-					(subId, allocRouId, spaceTo, SEC_TO_TIME((sessionSeconds * (sessions - i - allocated))))
+					(subId, allocRid, spaceTo, SEC_TO_TIME((sessionSeconds * (sessions - i - allocated))))
 				ON DUPLICATE KEY UPDATE totalTime = ADDTIME(totalTime, (SEC_TO_TIME(sessionSeconds * (sessions - i - allocated))));
 				-- LOG HERE
 				CALL LogAllocation(logId, "Space-allocation", "OK", CONCAT("Subject : ", subId, " - Allocate ", sessions - i - allocated, " of ", sessions, " sessions to space: ", spaceTo));
@@ -65,9 +77,9 @@ BEGIN
    END IF;
 
    IF sessions = allocated THEN -- If all sessions allocated
-   	UPDATE AllocSubject asu SET isAllocated = 1 WHERE asu.subjectId = subId AND asu.allocRoundId = allocRouId;
+   	UPDATE AllocSubject asu SET isAllocated = 1 WHERE asu.subjectId = subId AND asu.allocRoundId = allocRid;
    ELSEIF suitableSpaces = FALSE THEN -- if can't find any suitable space for the subject
-   	UPDATE AllocSubject asu SET cantAllocate = 1 WHERE asu.subjectId = subId AND asu.allocRoundId = allocRouId;
+   	UPDATE AllocSubject asu SET cantAllocate = 1 WHERE asu.subjectId = subId AND asu.allocRoundId = allocRid;
    	-- LOG HERE
     CALL LogAllocation(logId, "Space-allocation", "Warning", CONCAT("Subject : ", subId, " - Can't find suitable spaces" ));
    ELSEIF allocated = 0 AND suitableSpaces = TRUE THEN -- if can't find any space with free time, add all sessions to same space with most freetime
@@ -77,24 +89,24 @@ BEGIN
 			LEFT JOIN Space spa ON alpa.spaceId = spa.id
 			WHERE alpa.subjectId = subId
 			AND alpa.missingItems = 0
-			AND alpa.allocRoundId = allocRouId
+			AND alpa.allocRoundId = allocRid
 			GROUP BY alpa.spaceId
 			ORDER BY ((TIME_TO_SEC(TIMEDIFF(spa.availableTO, spa.availableFrom)) *5) -
-			(SELECT IFNULL((SUM(TIME_TO_SEC(totalTime))), 0) FROM AllocSpace asp WHERE asp.allocRoundId = allocRouId AND spaceId = alpa.spaceId)) DESC
+			(SELECT IFNULL((SUM(TIME_TO_SEC(totalTime))), 0) FROM AllocSpace asp WHERE asp.allocRoundId = allocRid AND spaceId = alpa.spaceId)) DESC
 			LIMIT 1
 		);
    		INSERT INTO AllocSpace (subjectId, allocRoundId, spaceId, totalTime)
-   			VALUES (subId, allocRouId, spaceTo, SEC_TO_TIME(sessionSeconds * sessions));
-   		UPDATE AllocSubject asu SET isAllocated = 1 WHERE asu.subjectId = subId AND asu.allocRoundId = allocRouId;
+   			VALUES (subId, allocRid, spaceTo, SEC_TO_TIME(sessionSeconds * sessions));
+   		UPDATE AllocSubject asu SET isAllocated = 1 WHERE asu.subjectId = subId AND asu.allocRoundId = allocRid;
    		-- LOG HERE
 		CALL LogAllocation(logId, "Space-allocation", "Warning", CONCAT("Subject : ", subId, " - Allocate ", sessions, " of ", sessions, " sessions to space: ", spaceTo, " - All suitable spaces are full."));
 
    	ELSEIF allocated < sessions AND suitableSpaces = TRUE THEN -- if there is free time for some of the sessions but not all, add rest to same space than others
-   		SET spaceTo := (SELECT spaceId FROM AllocSpace asp WHERE asp.subjectId = subId AND asp.allocRoundId = allocRouId ORDER BY totalTime ASC LIMIT 1);
+   		SET spaceTo := (SELECT spaceId FROM AllocSpace asp WHERE asp.subjectId = subId AND asp.allocRoundId = allocRid ORDER BY totalTime ASC LIMIT 1);
 
 		UPDATE AllocSpace asp SET totalTime=ADDTIME(totalTime,(SEC_TO_TIME(sessionSeconds * (sessions - allocated))))
-		WHERE asp.subjectId=subID AND asp.spaceId = spaceTO AND asp.allocRoundId = allocRouId;
-		UPDATE AllocSubject asu SET isAllocated = 1 WHERE asu.subjectId = subId AND asu.allocRoundId = allocRouId;
+		WHERE asp.subjectId=subID AND asp.spaceId = spaceTO AND asp.allocRoundId = allocRid;
+		UPDATE AllocSubject asu SET isAllocated = 1 WHERE asu.subjectId = subId AND asu.allocRoundId = allocRid;
 		-- LOG HERE
 		CALL LogAllocation(logId, "Space-allocation", "Warning", CONCAT("Subject : ", subId, " - Add ", sessions - allocated, " to space: ", spaceTo, " - All suitable spaces are full"));
    	END IF;
@@ -105,11 +117,11 @@ DELIMITER ;
 /* --- Procedure: PRIORITIZE SUBJECTS -  ALLOCATION --- */
 
 DELIMITER //
-CREATE OR REPLACE PROCEDURE prioritizeSubjects(allocRouId INT, priority_option INT, logId INT)
+CREATE OR REPLACE PROCEDURE prioritizeSubjects(allocRid INT, priority_option INT, logId INT)
 BEGIN
 	DECLARE priorityNow INTEGER;
 
-	SET priorityNow = (SELECT IFNULL(MAX(priority),0) FROM AllocSubject allSub WHERE allSub.allocRoundId = allocRouId);
+	SET priorityNow = (SELECT IFNULL(MAX(priority),0) FROM AllocSubject allSub WHERE allSub.allocRoundId = allocRid);
 
 	IF priority_option = 1 THEN -- subject_equipment.priority >= X
 		INSERT INTO AllocSubject (subjectId, allocRoundId, priority)
@@ -117,7 +129,7 @@ BEGIN
     		FROM AllocSubject allSub
     		LEFT JOIN SubjectEquipment sub_eqp ON allSub.subjectId = sub_eqp.subjectId
     		JOIN Subject ON allSub.subjectId = Subject.id
-    		WHERE allSub.allocRoundId = allocRouId AND allSub.priority IS NULL
+    		WHERE allSub.allocRoundId = allocRid AND allSub.priority IS NULL
     		AND (sub_eqp.priority) >= (SELECT numberValue FROM GlobalSetting gs WHERE name="x")
     		GROUP BY allSub.subjectId
 		ON DUPLICATE KEY UPDATE priority = VALUES(priority);
@@ -127,7 +139,7 @@ BEGIN
        		FROM AllocSubject allSub
         	LEFT JOIN SubjectEquipment sub_eqp ON allSub.subjectId = sub_eqp.subjectId
         	JOIN Subject ON allSub.subjectId = Subject.id
-        	WHERE allSub.allocRoundId = allocRouId
+        	WHERE allSub.allocRoundId = allocRid
         	AND allSub.priority IS NULL
         	AND (sub_eqp.priority) < (SELECT numberValue FROM GlobalSetting gs WHERE name="x")
         	GROUP BY allSub.subjectId
@@ -139,7 +151,7 @@ BEGIN
 			FROM AllocSubject
 			LEFT JOIN Subject ON AllocSubject.subjectId = Subject.id
 			WHERE priority IS NULL
-			AND AllocSubject.allocRoundId = allocRouId
+			AND AllocSubject.allocRoundId = allocRid
 		ON DUPLICATE KEY UPDATE priority = VALUES(priority);
 	END IF;
 
@@ -152,7 +164,7 @@ DELIMITER ;
 /* --- Procedure: RESET ALLOCATION --- */
 DELIMITER //
 
-CREATE PROCEDURE IF NOT EXISTS  resetAllocation(allocR INTEGER)
+CREATE PROCEDURE IF NOT EXISTS  resetAllocation(allocRid INTEGER)
 BEGIN
 
 	-- Handler for the error
@@ -164,21 +176,21 @@ BEGIN
 		RESIGNAL SET MESSAGE_TEXT = @full_error;
 	END;
 	-- Raise error if allocation in progress.
-	SET @procedure_active = (SELECT processOn FROM AllocRound WHERE id = allocR);
+	SET @procedure_active = (SELECT processOn FROM AllocRound WHERE id = allocRid);
 	IF @procedure_active = 1 THEN
-		SET @message_text = CONCAT("The allocation with allocRound:", allocR, " is currently in progress.");
+		SET @message_text = CONCAT("The allocation with allocRound:", allocRid, " is currently in progress.");
 		SIGNAL processBusy SET MESSAGE_TEXT = @message_text, MYSQL_ERRNO = 1192;
 	END IF;
 
 	-- Delete all allocation data and reset variables
-	DELETE FROM AllocSpace WHERE allocRoundId = allocR;
-	DELETE FROM AllocSubjectSuitableSpace WHERE allocRoundId = allocR;
-    IF (allocR = 10004) THEN
+	DELETE FROM AllocSpace WHERE allocRoundId = allocRid;
+	DELETE FROM AllocSubjectSuitableSpace WHERE allocRoundId = allocRid;
+    IF (allocRid = 10004) THEN
         DELETE FROM AllocSubject WHERE allocRoundId = 10004;
     ELSE
-	    UPDATE AllocSubject SET isAllocated = 0, priority = null, cantAllocate = 0 WHERE allocRoundId = allocR;
+	    UPDATE AllocSubject SET isAllocated = 0, priority = null, cantAllocate = 0 WHERE allocRoundId = allocRid;
     END IF;
-    UPDATE AllocRound SET isAllocated = 0, requireReset = FALSE WHERE id = allocR;
+    UPDATE AllocRound SET isAllocated = 0, requireReset = FALSE WHERE id = allocRid;
 END; //
 
 DELIMITER ;
@@ -187,7 +199,7 @@ DELIMITER ;
 /* --- Procedure: START ALLOCATION --- */
 DELIMITER //
 
-CREATE OR REPLACE PROCEDURE startAllocation(allocRouId INT)
+CREATE OR REPLACE PROCEDURE startAllocation(allocRid INT)
 BEGIN
 	DECLARE finished INTEGER DEFAULT 0; -- Marker for loop
 	DECLARE subId	INTEGER DEFAULT 0; -- SubjectId
@@ -209,7 +221,7 @@ BEGIN
 	DECLARE subjects CURSOR FOR
 		SELECT allSub.subjectId
        	FROM AllocSubject allSub
-        WHERE allSub.allocRoundId = allocRouId
+        WHERE allSub.allocRoundId = allocRid
         ORDER BY priority ASC;
 
 	DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished = 1;
@@ -220,7 +232,7 @@ BEGIN
 		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
 		SET @full_error = CONCAT("Error: ", @errno, " (", @sqlstate, "): ", @text);
 		CALL LogAllocation(logId, "Allocation", "Error", (SELECT @full_error));
-		UPDATE AllocRound SET abortProcess = 0, processOn = 0 WHERE id = allocRouId;
+		UPDATE AllocRound SET abortProcess = 0, processOn = 0 WHERE id = allocRid;
 		RESIGNAL SET MESSAGE_TEXT = @full_error;
 	END;
 
@@ -249,41 +261,41 @@ BEGIN
 		SET logId := (SELECT LAST_INSERT_ID()); -- SET log id number for the list
 	END IF;
 
-	CALL LogAllocation(logId, "Allocation", "Start", CONCAT("Start allocation. AllocRound: ", allocRouId));
+	CALL LogAllocation(logId, "Allocation", "Start", CONCAT("Start allocation. AllocRound: ", allocRid));
 
 	-- IF allocRound already allocated raise error
-	SET is_allocated = (SELECT isAllocated FROM AllocRound WHERE id = allocRouId);
+	SET is_allocated = (SELECT isAllocated FROM AllocRound WHERE id = allocRid);
 	IF is_allocated = 1 THEN
-		SET @message_text = CONCAT("The allocRound: ", allocRouId, " is already allocated.");
+		SET @message_text = CONCAT("The allocRound: ", allocRid, " is already allocated.");
 		SIGNAL alreadyAllocated SET MESSAGE_TEXT = @message_text, MYSQL_ERRNO = 1192;
 	END IF;
 	-- IF AllocRound require reset before allocation
-	SET reset_required = (SELECT requireReset FROM AllocRound WHERE id = allocRouId);
+	SET reset_required = (SELECT requireReset FROM AllocRound WHERE id = allocRid);
 	IF reset_required = TRUE THEN
-		SET @message_text = CONCAT("The allocRound: ", allocRouId, " require reset before allocation.");
+		SET @message_text = CONCAT("The allocRound: ", allocRid, " require reset before allocation.");
 		SIGNAL require_reset SET MESSAGE_TEXT = @message_text, MYSQL_ERRNO = 1192;
 	END IF;
 	-- IF Allocation already running with allocRound id raise error
-	SET procedure_active = (SELECT processOn FROM AllocRound WHERE id = allocRouId);
+	SET procedure_active = (SELECT processOn FROM AllocRound WHERE id = allocRid);
 	IF procedure_active = 1 THEN
-		SET @message_text = CONCAT("The allocation with allocRound:", allocRouId, " is already running.");
+		SET @message_text = CONCAT("The allocation with allocRound:", allocRid, " is already running.");
 		SIGNAL processBusy SET MESSAGE_TEXT = @message_text, MYSQL_ERRNO = 1192;
 	END IF;
 	-- SET procedure running
-	UPDATE AllocRound SET processOn = 1 WHERE id = allocRouId;
+	UPDATE AllocRound SET processOn = 1 WHERE id = allocRid;
 
 	/* ONLY FOR DEMO PURPOSES */
-	IF (allocRouID = 10004) THEN
+	IF (allocRid = 10004) THEN
 		INSERT INTO AllocSubject(subjectId, allocRoundId)
 		SELECT id, 10004 FROM Subject;
 	END IF;
 	/* DEMO PART ENDS */
 
-	UPDATE AllocRound SET requireReset = TRUE WHERE id = allocRouId;
+	UPDATE AllocRound SET requireReset = TRUE WHERE id = allocRid;
 
-	CALL prioritizeSubjects(allocRouId, 1, logId); -- sub_eq.prior >= X ORDER BY sub_eq.prior DESC, groupSize ASC
-	CALL prioritizeSubjects(allocRouId, 2, logId); -- sub_eq.prior < X ORDER BY sub_eq.prior DESC, groupSize ASC
-	CALL prioritizeSubjects(allocRouId, 3, logId); -- without equipments ORDER BY groupSize ASC
+	CALL prioritizeSubjects(allocRid, 1, logId); -- sub_eq.prior >= X ORDER BY sub_eq.prior DESC, groupSize ASC
+	CALL prioritizeSubjects(allocRid, 2, logId); -- sub_eq.prior < X ORDER BY sub_eq.prior DESC, groupSize ASC
+	CALL prioritizeSubjects(allocRid, 3, logId); -- without equipments ORDER BY groupSize ASC
 
 	OPEN subjects;
 
@@ -293,26 +305,26 @@ BEGIN
 		END IF;
 
 		-- IF user tells abort the process.
-		SET abort_round := (SELECT abortProcess FROM AllocRound WHERE id = allocRouId);
+		SET abort_round := (SELECT abortProcess FROM AllocRound WHERE id = allocRid);
 		IF abort_round = 1 THEN
-			SET @message_text = CONCAT("The allocation been terminated by user. AllocRoundId: ", allocRouId, ".");
+			SET @message_text = CONCAT("The allocation been terminated by user. AllocRoundId: ", allocRid, ".");
 			SIGNAL abortAllocation SET MESSAGE_TEXT = @message_text, MYSQL_ERRNO = 1192;
 		END IF;
 
 		-- SET Suitable rooms for the subject
 		CALL LogAllocation(logId, "Allocation", "Info", CONCAT("SubjectId: ", subId, " - Search for suitable spaces"));
-	    CALL setSuitableRooms(allocRouId, subId);
+	    CALL setSuitableRooms(allocRid, subId);
 		-- SET cantAllocate or Insert subject to spaces
-        CALL allocateSpace(allocRouId, subId, logId);
+        CALL allocateSpace(allocRid, subId, logId);
 
 	END LOOP subjectLoop;
 
 	CLOSE subjects;
 
-	UPDATE AllocRound SET isAllocated = 1 WHERE id = allocRouId;
+	UPDATE AllocRound SET isAllocated = 1 WHERE id = allocRid;
 	CALL LogAllocation(logId, "Allocation", "End", CONCAT("Errors: ", (SELECT errors)));
 
-	UPDATE AllocRound SET processOn = 0 WHERE id = allocRouId;
+	UPDATE AllocRound SET processOn = 0 WHERE id = allocRid;
 
 END; //
 DELIMITER ;
@@ -320,10 +332,10 @@ DELIMITER ;
 /* --- Procedure: SET SUITABLE ROOMS -  ALLOCATION --- */
 DELIMITER //
 
-CREATE OR REPLACE PROCEDURE setSuitableRooms(allocRouId INT, subId INT)
+CREATE OR REPLACE PROCEDURE setSuitableRooms(allocRid INT, subId INT)
 BEGIN
 	INSERT INTO AllocSubjectSuitableSpace (allocRoundId, subjectId, spaceId, missingItems)
-		SELECT allocRouId, subId, sp.id, getMissingItemAmount(subId, sp.id) AS "missingItems"
+		SELECT allocRid, subId, sp.id, getMissingItemAmount(subId, sp.id) AS "missingItems"
 		FROM Space sp
 		WHERE sp.personLimit >= (SELECT groupSize FROM Subject WHERE id=subId)
 		AND sp.area >= (SELECT s.area FROM Subject s WHERE id=subId)
@@ -336,15 +348,15 @@ DELIMITER ;
 
 /* --- PROCEDURE: Abort Allocation --- */
 DELIMITER $$
-CREATE PROCEDURE IF NOT EXISTS abortAllocation(allocRouId INT)
+CREATE PROCEDURE IF NOT EXISTS abortAllocation(allocRid INT)
 BEGIN
 	DECLARE inProgress BOOLEAN DEFAULT FALSE;
 
 	-- CHECK IF Allocation is active
-	SET inProgress := (SELECT processOn FROM AllocRound WHERE id = allocRouId);
+	SET inProgress := (SELECT processOn FROM AllocRound WHERE id = allocRid);
 	-- IF in process tell to stop
 	IF inProgress = TRUE THEN
-		UPDATE AllocRound SET abortProcess = 1 WHERE id = allocRouId;
+		UPDATE AllocRound SET abortProcess = 1 WHERE id = allocRid;
 	END IF;
 
 END; $$
