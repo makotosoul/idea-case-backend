@@ -426,7 +426,7 @@ INSERT INTO AllocSpace(subjectId, allocRound, spaceId, totalTime) VALUES
     (4039, 10002, 1010, '02:00:00'); -- Johtamisen pedagogiikka -luentosarja 15ppl
 
 /* --- Insert: AllocCurrentRoundUser * --- */
-INSERT INTO AllocCurrentRoundUser(allocId, userId) VALUES
+INSERT INTO AllocCurrentRoundUser(allocRoundId, userId) VALUES
     (10001, 201),
     (10001, 202),
     (10002, 201);

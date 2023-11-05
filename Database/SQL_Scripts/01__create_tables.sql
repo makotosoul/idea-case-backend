@@ -204,20 +204,20 @@ CREATE TABLE IF NOT EXISTS AllocRound (
 
 CREATE TABLE IF NOT EXISTS AllocSubject (
     subjectId       INTEGER     NOT NULL,
-    allocRound      INTEGER     NOT NULL,
+    allocRoundId      INTEGER     NOT NULL,
     isAllocated     BOOLEAN     DEFAULT 0,
     cantAllocate    BOOLEAN     DEFAULT 0,
     priority        INTEGER,
     allocatedDate   TIMESTAMP,
 
-    PRIMARY KEY(subjectId, allocRound),
+    PRIMARY KEY(subjectId, allocRoundId),
 
     CONSTRAINT `FK_AllocSubject_Subject` FOREIGN KEY (`subjectId`)
         REFERENCES `Subject`(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
 
-    CONSTRAINT `FK_AllocSubject_AllocRound` FOREIGN KEY (`allocRound`)
+    CONSTRAINT `FK_AllocSubject_AllocRound` FOREIGN KEY (`allocRoundId`)
         REFERENCES `AllocRound`(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
@@ -225,15 +225,15 @@ CREATE TABLE IF NOT EXISTS AllocSubject (
 
 CREATE TABLE IF NOT EXISTS AllocSpace (
     subjectId       INTEGER     NOT NULL,
-    allocRound      INTEGER     NOT NULL,
+    allocRoundId      INTEGER     NOT NULL,
     spaceId         INTEGER     NOT NULL,
     totalTime       TIME,
 
-    PRIMARY KEY(subjectId, allocRound, spaceId),
+    PRIMARY KEY(subjectId, allocRoundId, spaceId),
 
     CONSTRAINT `FK_AllocSpace_AllocSubject`
-        FOREIGN KEY (`subjectId`, `allocRound`)
-        REFERENCES `AllocSubject` (subjectId, allocRound)
+        FOREIGN KEY (`subjectId`, `allocRoundId`)
+        REFERENCES `AllocSubject` (subjectId, allocRoundId)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
 
@@ -246,16 +246,16 @@ CREATE TABLE IF NOT EXISTS AllocSpace (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS AllocSubjectSuitableSpace (
-    allocRound      INTEGER     NOT NULL,
+    allocRoundId      INTEGER     NOT NULL,
     subjectId       INTEGER     NOT NULL,
     spaceId         INTEGER     NOT NULL,
     missingItems    INTEGER,
 
-    PRIMARY KEY(allocRound, subjectId, spaceId),
+    PRIMARY KEY(allocRoundId, subjectId, spaceId),
 
     CONSTRAINT `FK_AllocSubjectSpace_AllocSubject`
-        FOREIGN KEY(`allocRound`, `subjectId`)
-        REFERENCES `AllocSubject` (allocRound, subjectId)
+        FOREIGN KEY(`allocRoundId`, `subjectId`)
+        REFERENCES `AllocSubject` (allocRoundId, subjectId)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
 
@@ -268,14 +268,14 @@ CREATE TABLE IF NOT EXISTS AllocSubjectSuitableSpace (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS AllocCurrentRoundUser (
-    allocId     INTEGER     NOT NULL,
-    userId      INTEGER,
+    allocRoundIdId    INTEGER     NOT NULL,
+    userId          INTEGER,
 
-    PRIMARY KEY(allocId, userId),
+    PRIMARY KEY(allocRoundIdId, userId),
 
     CONSTRAINT `FK_AllocCurrentRoundUser_AllocRound`
-        FOREIGN KEY (`allocId`)
-        REFERENCES `AllocRound` (id)
+        FOREIGN KEY (allocRoundIdId)
+        REFERENCES AllocRound(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
 

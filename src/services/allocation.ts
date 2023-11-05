@@ -112,7 +112,7 @@ const getRoomsByAllocId = (allocRoundId: number): Promise<RoomsByAllocId[]> => {
 
 const getAllocatedRoomsByProgram = async (
   programId: number,
-  allocId: number,
+  allocRoundId: number,
 ): Promise<AllocatedRoomsByProgramType> => {
   const sqlQuery = `SELECT DISTINCT s.id, s.name, CAST(SUM(TIME_TO_SEC(as2.totalTime)/3600) AS DECIMAL(10,1)) AS allocatedHours
                     FROM AllocSpace as2
@@ -123,7 +123,7 @@ const getAllocatedRoomsByProgram = async (
                     GROUP BY s.id
                     ;`;
   return new Promise((resolve, reject) => {
-    db.query(sqlQuery, [programId, allocId], (err, result) => {
+    db.query(sqlQuery, [programId, allocRoundId], (err, result) => {
       if (err) {
         return reject(err);
       } else {
@@ -136,7 +136,7 @@ const getAllocatedRoomsByProgram = async (
 /* Get allocated rooms by Subject.id and AllocRound.id */
 const getAllocatedRoomsBySubject = async (
   subjectId: number,
-  allocId: number,
+  allocRoundId: number,
 ): Promise<string> => {
   const sqlQuery = `SELECT DISTINCT s.id, s.name, CAST(SUM(TIME_TO_SEC(aspace.totalTime)/3600) AS DECIMAL(10,1)) AS allocatedHours
                     FROM AllocSpace AS aspace
@@ -146,7 +146,7 @@ const getAllocatedRoomsBySubject = async (
                     GROUP BY s.id
                     ;`;
   return new Promise((resolve, reject) => {
-    db.query(sqlQuery, [subjectId, allocId], (err, result) => {
+    db.query(sqlQuery, [subjectId, allocRoundId], (err, result) => {
       if (err) {
         return reject(err);
       } else {
@@ -158,7 +158,7 @@ const getAllocatedRoomsBySubject = async (
 /* Get subjects by Program.id and AllocRound.id */
 
 const getSubjectsByProgram = (
-  allocRound: number,
+  allocRoundId: number,
   programId: number,
 ): Promise<AllocatedSubjectsByProgramType> => {
   const sqlQuery = `
@@ -173,7 +173,7 @@ const getSubjectsByProgram = (
     WHERE p.id = ? AND alsub.allocRound = ?
     GROUP BY alsub.subjectId;`;
   return new Promise((resolve, reject) => {
-    db.query(sqlQuery, [programId, allocRound], (err, result) => {
+    db.query(sqlQuery, [programId, allocRoundId], (err, result) => {
       if (err) {
         return reject(err);
       } else {
@@ -187,7 +187,7 @@ const getSubjectsByProgram = (
 
 const getAllocatedSubjectsByRoom = (
   roomId: number,
-  allocRound: number,
+  allocRoundId: number,
 ): Promise<string> => {
   const sqlQuery = `
     SELECT su.id, su.name, allocSp.totalTime FROM AllocSpace allocSp
@@ -196,7 +196,7 @@ const getAllocatedSubjectsByRoom = (
     `;
 
   return new Promise((resolve, reject) => {
-    db.query(sqlQuery, [roomId, allocRound], (err, result) => {
+    db.query(sqlQuery, [roomId, allocRoundId], (err, result) => {
       if (err) {
         return reject(err);
       } else {
@@ -207,10 +207,10 @@ const getAllocatedSubjectsByRoom = (
 };
 
 /* START ALLOCATION - Procedure in database */
-const startAllocation = (allocRound: number) => {
+const startAllocation = (allocRoundId: number) => {
   const sqlQuery = 'CALL startAllocation(?)';
   return new Promise((resolve, reject) => {
-    db.query(sqlQuery, allocRound, (err, result) => {
+    db.query(sqlQuery, allocRoundId, (err, result) => {
       if (err) {
         return reject(err);
       } else {
@@ -221,11 +221,11 @@ const startAllocation = (allocRound: number) => {
 };
 
 /* RESET ALLOCATION - Procedure in database */
-const resetAllocation = (allocRound: number) => {
+const resetAllocation = (allocRoundId: number) => {
   const sqlQuery = 'CALL resetAllocation(?)';
 
   return new Promise((resolve, reject) => {
-    db.query(sqlQuery, allocRound, (err, result) => {
+    db.query(sqlQuery, allocRoundId, (err, result) => {
       if (err) {
         return reject(err);
       } else {
@@ -236,11 +236,11 @@ const resetAllocation = (allocRound: number) => {
 };
 
 /* ABORT ALLOCATION - Procedure in database */
-const abortAllocation = (allocRound: number) => {
+const abortAllocation = (allocRoundId: number) => {
   const sqlQuery = 'CALL abortAllocation(?)';
 
   return new Promise((resolve, reject) => {
-    db.query(sqlQuery, allocRound, (err, result) => {
+    db.query(sqlQuery, allocRoundId, (err, result) => {
       if (err) {
         return reject(err);
       } else {

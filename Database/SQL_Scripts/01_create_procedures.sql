@@ -22,7 +22,7 @@ BEGIN
 
 	SET spaceTo := ( -- to check if subject can be allocated
         	SELECT ass.spaceId FROM AllocSubjectSuitableSpace ass
-        	WHERE ass.missingItems = 0 AND ass.subjectId = subId AND ass.allocRound = allocRouId
+        	WHERE ass.missingItems = 0 AND ass.subjectId = subId AND ass.allocRoundId = allocRouId
  			LIMIT 1);
 
 	IF spaceTo IS NULL THEN -- If can't find suitable spaces
@@ -32,11 +32,11 @@ BEGIN
    		WHILE loopOn DO -- Try add all sessions to the space
    			SET spaceTo := (SELECT sp.id FROM AllocSubjectSuitableSpace ass
 							LEFT JOIN Space sp ON ass.spaceId = sp.id
-							WHERE ass.subjectId = subId AND ass.missingItems = 0 AND ass.allocRound = allocRouId
+							WHERE ass.subjectId = subId AND ass.missingItems = 0 AND ass.allocRoundId = allocRouId
 							GROUP BY sp.id
 							HAVING
 							((SELECT TIME_TO_SEC(TIMEDIFF(availableTo, availableFrom)) *5 FROM Space WHERE id = sp.id) -
-								(SELECT IFNULL(SUM(TIME_TO_SEC(totalTime)), 0) FROM AllocSpace WHERE allocRound = allocRouId AND spaceId = sp.id)
+								(SELECT IFNULL(SUM(TIME_TO_SEC(totalTime)), 0) FROM AllocSpace asp WHERE asp.allocRoundId = allocRouId AND spaceId = sp.id)
 								>
 								(sessionSeconds * (sessions - i - allocated)))
 							ORDER BY sp.personLimit ASC, sp.area ASC
@@ -49,7 +49,7 @@ BEGIN
 				END IF;
 			ELSE -- if can find space with freetime for specific amount sessions
 			INSERT INTO AllocSpace
-					(subjectId, allocRound, spaceId, totalTime)
+					(subjectId, allocRoundId, spaceId, totalTime)
 				VALUES
 					(subId, allocRouId, spaceTo, SEC_TO_TIME((sessionSeconds * (sessions - i - allocated))))
 				ON DUPLICATE KEY UPDATE totalTime = ADDTIME(totalTime, (SEC_TO_TIME(sessionSeconds * (sessions - i - allocated))));
@@ -65,9 +65,9 @@ BEGIN
    END IF;
 
    IF sessions = allocated THEN -- If all sessions allocated
-   	UPDATE AllocSubject SET isAllocated = 1 WHERE subjectId = subId AND allocRound = allocRouId;
+   	UPDATE AllocSubject asu SET isAllocated = 1 WHERE asu.subjectId = subId AND asu.allocRoundId = allocRouId;
    ELSEIF suitableSpaces = FALSE THEN -- if can't find any suitable space for the subject
-   	UPDATE AllocSubject SET cantAllocate = 1 WHERE subjectId = subId AND allocRound = allocRouId;
+   	UPDATE AllocSubject asu SET cantAllocate = 1 WHERE asu.subjectId = subId AND asu.allocRoundId = allocRouId;
    	-- LOG HERE
     CALL LogAllocation(logId, "Space-allocation", "Warning", CONCAT("Subject : ", subId, " - Can't find suitable spaces" ));
    ELSEIF allocated = 0 AND suitableSpaces = TRUE THEN -- if can't find any space with free time, add all sessions to same space with most freetime
@@ -77,24 +77,24 @@ BEGIN
 			LEFT JOIN Space spa ON alpa.spaceId = spa.id
 			WHERE alpa.subjectId = subId
 			AND alpa.missingItems = 0
-			AND alpa.allocRound = allocRouId
+			AND alpa.allocRoundId = allocRouId
 			GROUP BY alpa.spaceId
 			ORDER BY ((TIME_TO_SEC(TIMEDIFF(spa.availableTO, spa.availableFrom)) *5) -
-			(SELECT IFNULL((SUM(TIME_TO_SEC(totalTime))), 0) FROM AllocSpace WHERE allocRound = allocRouId AND spaceId = alpa.spaceId)) DESC
+			(SELECT IFNULL((SUM(TIME_TO_SEC(totalTime))), 0) FROM AllocSpace asp WHERE asp.allocRoundId = allocRouId AND spaceId = alpa.spaceId)) DESC
 			LIMIT 1
 		);
-   		INSERT INTO AllocSpace (subjectId, allocRound, spaceId, totalTime)
+   		INSERT INTO AllocSpace (subjectId, allocRoundId, spaceId, totalTime)
    			VALUES (subId, allocRouId, spaceTo, SEC_TO_TIME(sessionSeconds * sessions));
-   		UPDATE AllocSubject SET isAllocated = 1 WHERE subjectId = subId AND allocRound = allocRouId;
+   		UPDATE AllocSubject asu SET isAllocated = 1 WHERE asu.subjectId = subId AND asu.allocRoundId = allocRouId;
    		-- LOG HERE
 		CALL LogAllocation(logId, "Space-allocation", "Warning", CONCAT("Subject : ", subId, " - Allocate ", sessions, " of ", sessions, " sessions to space: ", spaceTo, " - All suitable spaces are full."));
 
    	ELSEIF allocated < sessions AND suitableSpaces = TRUE THEN -- if there is free time for some of the sessions but not all, add rest to same space than others
-   		SET spaceTo := (SELECT spaceId FROM AllocSpace WHERE subjectId = subId AND allocRound = allocRouId ORDER BY totalTime ASC LIMIT 1);
+   		SET spaceTo := (SELECT spaceId FROM AllocSpace asp WHERE asp.subjectId = subId AND asp.allocRoundId = allocRouId ORDER BY totalTime ASC LIMIT 1);
 
-		UPDATE AllocSpace SET totalTime=ADDTIME(totalTime,(SEC_TO_TIME(sessionSeconds * (sessions - allocated))))
-		WHERE subjectId=subID AND spaceId = spaceTO AND allocRound = allocRouId;
-		UPDATE AllocSubject SET isAllocated = 1 WHERE subjectId = subId AND allocRound = allocRouId;
+		UPDATE AllocSpace asp SET totalTime=ADDTIME(totalTime,(SEC_TO_TIME(sessionSeconds * (sessions - allocated))))
+		WHERE asp.subjectId=subID AND asp.spaceId = spaceTO AND asp.allocRoundId = allocRouId;
+		UPDATE AllocSubject asu SET isAllocated = 1 WHERE asu.subjectId = subId AND asu.allocRoundId = allocRouId;
 		-- LOG HERE
 		CALL LogAllocation(logId, "Space-allocation", "Warning", CONCAT("Subject : ", subId, " - Add ", sessions - allocated, " to space: ", spaceTo, " - All suitable spaces are full"));
    	END IF;
@@ -105,41 +105,41 @@ DELIMITER ;
 /* --- Procedure: PRIORITIZE SUBJECTS -  ALLOCATION --- */
 
 DELIMITER //
-CREATE OR REPLACE PROCEDURE prioritizeSubjects(allocRoundId INT, priority_option INT, logId INT)
+CREATE OR REPLACE PROCEDURE prioritizeSubjects(allocRouId INT, priority_option INT, logId INT)
 BEGIN
 	DECLARE priorityNow INTEGER;
 
-	SET priorityNow = (SELECT IFNULL(MAX(priority),0) FROM AllocSubject WHERE allocRound = allocRoundId);
+	SET priorityNow = (SELECT IFNULL(MAX(priority),0) FROM AllocSubject allSub WHERE allSub.allocRoundId = allocRouId);
 
 	IF priority_option = 1 THEN -- subject_equipment.priority >= X
-		INSERT INTO AllocSubject (subjectId, allocRound, priority)
-			SELECT allSub.subjectId, allSub.allocRound, ROW_NUMBER() OVER (ORDER BY MAX(sub_eqp.priority) DESC, Subject.groupSize ASC) + priorityNow as "row"
+		INSERT INTO AllocSubject (subjectId, allocRoundId, priority)
+			SELECT allSub.subjectId, allSub.allocRoundId, ROW_NUMBER() OVER (ORDER BY MAX(sub_eqp.priority) DESC, Subject.groupSize ASC) + priorityNow as "row"
     		FROM AllocSubject allSub
     		LEFT JOIN SubjectEquipment sub_eqp ON allSub.subjectId = sub_eqp.subjectId
     		JOIN Subject ON allSub.subjectId = Subject.id
-    		WHERE allSub.allocRound = allocRoundId AND allSub.priority IS NULL
+    		WHERE allSub.allocRoundId = allocRouId AND allSub.priority IS NULL
     		AND (sub_eqp.priority) >= (SELECT numberValue FROM GlobalSetting gs WHERE name="x")
     		GROUP BY allSub.subjectId
 		ON DUPLICATE KEY UPDATE priority = VALUES(priority);
 	ELSEIF priority_option = 2 THEN -- subject_equipment.priority < X
-		INSERT INTO AllocSubject (subjectId, allocRound, priority)
-			SELECT allSub.subjectId, allSub.allocRound, ROW_NUMBER() OVER (ORDER BY MAX(sub_eqp.priority) DESC, Subject.groupSize ASC) + priorityNow as "row"
+		INSERT INTO AllocSubject (subjectId, allocRoundId, priority)
+			SELECT allSub.subjectId, allSub.allocRoundId, ROW_NUMBER() OVER (ORDER BY MAX(sub_eqp.priority) DESC, Subject.groupSize ASC) + priorityNow as "row"
        		FROM AllocSubject allSub
         	LEFT JOIN SubjectEquipment sub_eqp ON allSub.subjectId = sub_eqp.subjectId
         	JOIN Subject ON allSub.subjectId = Subject.id
-        	WHERE allSub.allocRound = allocRoundId
+        	WHERE allSub.allocRoundId = allocRouId
         	AND allSub.priority IS NULL
         	AND (sub_eqp.priority) < (SELECT numberValue FROM GlobalSetting gs WHERE name="x")
         	GROUP BY allSub.subjectId
         	ORDER BY sub_eqp.priority DESC
         ON DUPLICATE KEY UPDATE priority = VALUES(priority);
     ELSEIF priority_option = 3 THEN -- all others (subjects without equipment)
-    	INSERT INTO AllocSubject (subjectId, allocRound, priority)
-    		SELECT AllocSubject.subjectId, AllocSubject.allocRound, ROW_NUMBER() OVER (ORDER BY Subject.groupSize ASC) + priorityNow as "row"
+    	INSERT INTO AllocSubject (subjectId, allocRoundId, priority)
+    		SELECT AllocSubject.subjectId, AllocSubject.allocRoundId, ROW_NUMBER() OVER (ORDER BY Subject.groupSize ASC) + priorityNow as "row"
 			FROM AllocSubject
 			LEFT JOIN Subject ON AllocSubject.subjectId = Subject.id
 			WHERE priority IS NULL
-			AND allocRound = allocRoundId
+			AND AllocSubject.allocRoundId = allocRouId
 		ON DUPLICATE KEY UPDATE priority = VALUES(priority);
 	END IF;
 
@@ -171,12 +171,12 @@ BEGIN
 	END IF;
 
 	-- Delete all allocation data and reset variables
-	DELETE FROM AllocSpace WHERE allocRound = allocR;
-	DELETE FROM AllocSubjectSuitableSpace WHERE allocRound = allocR;
+	DELETE FROM AllocSpace WHERE allocRoundId = allocR;
+	DELETE FROM AllocSubjectSuitableSpace WHERE allocRoundId = allocR;
     IF (allocR = 10004) THEN
-        DELETE FROM AllocSubject WHERE allocRound = 10004;
+        DELETE FROM AllocSubject WHERE allocRoundId = 10004;
     ELSE
-	    UPDATE AllocSubject SET isAllocated = 0, priority = null, cantAllocate = 0 WHERE allocRound = allocR;
+	    UPDATE AllocSubject SET isAllocated = 0, priority = null, cantAllocate = 0 WHERE allocRoundId = allocR;
     END IF;
     UPDATE AllocRound SET isAllocated = 0, requireReset = FALSE WHERE id = allocR;
 END; //
@@ -209,7 +209,7 @@ BEGIN
 	DECLARE subjects CURSOR FOR
 		SELECT allSub.subjectId
        	FROM AllocSubject allSub
-        WHERE allSub.allocRound = allocRouId
+        WHERE allSub.allocRoundId = allocRouId
         ORDER BY priority ASC;
 
 	DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished = 1;
@@ -274,7 +274,7 @@ BEGIN
 
 	/* ONLY FOR DEMO PURPOSES */
 	IF (allocRouID = 10004) THEN
-		INSERT INTO AllocSubject(subjectId, allocRound)
+		INSERT INTO AllocSubject(subjectId, allocRoundId)
 		SELECT id, 10004 FROM Subject;
 	END IF;
 	/* DEMO PART ENDS */
@@ -322,7 +322,7 @@ DELIMITER //
 
 CREATE OR REPLACE PROCEDURE setSuitableRooms(allocRouId INT, subId INT)
 BEGIN
-	INSERT INTO AllocSubjectSuitableSpace (allocRound, subjectId, spaceId, missingItems)
+	INSERT INTO AllocSubjectSuitableSpace (allocRoundId, subjectId, spaceId, missingItems)
 		SELECT allocRouId, subId, sp.id, getMissingItemAmount(subId, sp.id) AS "missingItems"
 		FROM Space sp
 		WHERE sp.personLimit >= (SELECT groupSize FROM Subject WHERE id=subId)
@@ -336,15 +336,15 @@ DELIMITER ;
 
 /* --- PROCEDURE: Abort Allocation --- */
 DELIMITER $$
-CREATE PROCEDURE IF NOT EXISTS abortAllocation(allocR INT)
+CREATE PROCEDURE IF NOT EXISTS abortAllocation(allocRouId INT)
 BEGIN
 	DECLARE inProgress BOOLEAN DEFAULT FALSE;
 
 	-- CHECK IF Allocation is active
-	SET inProgress := (SELECT processOn FROM AllocRound WHERE id = allocR);
+	SET inProgress := (SELECT processOn FROM AllocRound WHERE id = allocRouId);
 	-- IF in process tell to stop
 	IF inProgress = TRUE THEN
-		UPDATE AllocRound SET abortProcess = 1 WHERE id = allocR;
+		UPDATE AllocRound SET abortProcess = 1 WHERE id = allocRouId;
 	END IF;
 
 END; $$

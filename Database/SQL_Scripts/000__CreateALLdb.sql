@@ -231,13 +231,13 @@ CREATE TABLE IF NOT EXISTS AllocRound (
 
 CREATE TABLE IF NOT EXISTS AllocSubject (
     subjectId       INTEGER     NOT NULL,
-    allocRound      INTEGER     NOT NULL,
+    allocRoundId      INTEGER     NOT NULL,
     isAllocated     BOOLEAN     DEFAULT 0,
     cantAllocate    BOOLEAN     DEFAULT 0,
     priority        INTEGER,
     allocatedDate   TIMESTAMP,
 
-    PRIMARY KEY(subjectId, allocRound),
+    PRIMARY KEY(subjectId, allocRoundId),
 
     CONSTRAINT `FK_AllocSubject_Subject` FOREIGN KEY (`subjectId`)
         REFERENCES `Subject`(id)
@@ -265,8 +265,8 @@ CREATE TABLE IF NOT EXISTS AllocSpace (
         ON UPDATE CASCADE,
 
     CONSTRAINT `FK_AllocSpace_Space`
-        FOREIGN KEY (`spaceId`)
-        REFERENCES `Space` (id)
+        FOREIGN KEY (spaceId)
+        REFERENCES Space (id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
 
@@ -287,28 +287,28 @@ CREATE TABLE IF NOT EXISTS AllocSubjectSuitableSpace (
         ON UPDATE CASCADE,
 
     CONSTRAINT `FK_AllocSubjectSpace_Space`
-        FOREIGN KEY (`spaceId`)
-        REFERENCES `Space` (id)
+        FOREIGN KEY (spaceId)
+        REFERENCES Space(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
 
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS AllocCurrentRoundUser (
-    allocId     INTEGER     NOT NULL,
-    userId      INTEGER,
+    allocRoundId    INTEGER     NOT NULL,
+    userId          INTEGER,
 
-    PRIMARY KEY(allocId, userId),
+    PRIMARY KEY(allocRoundId, userId),
 
     CONSTRAINT `FK_AllocCurrentRoundUser_AllocRound`
-        FOREIGN KEY (`allocId`)
-        REFERENCES `AllocRound` (id)
+        FOREIGN KEY (allocRoundId)
+        REFERENCES AllocRound(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
 
     CONSTRAINT `FK_AllocCurrentRoundUser_User`
-        FOREIGN KEY (`userId`)
-        REFERENCES `User` (id)
+        FOREIGN KEY (userId)
+        REFERENCES User(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -776,7 +776,7 @@ INSERT INTO AllocSpace(subjectId, allocRound, spaceId, totalTime) VALUES
     (4039, 10002, 1010, '02:00:00'); -- Johtamisen pedagogiikka -luentosarja 15ppl
 
 /* --- Insert: AllocCurrentRoundUser * --- */
-INSERT INTO AllocCurrentRoundUser(allocId, userId) VALUES
+INSERT INTO AllocCurrentRoundUser(allocRoundId, userId) VALUES
     (10001, 201),
     (10001, 202),
     (10002, 201);
