@@ -13,7 +13,10 @@ import {
 } from '../responseHandler/index.js';
 import logger from '../utils/logger.js';
 import { validate, validateIdObl } from '../validationHandler/index.js';
-import { validateProgramPost } from '../validationHandler/program.js';
+import {
+  validateProgramPost,
+  validateProgramPut,
+} from '../validationHandler/program.js';
 
 const program = express.Router();
 
@@ -115,6 +118,32 @@ program.post(
       .catch((error) => {
         dbErrorHandler(req, res, error, 'Oops! Create failed - Program');
       });
+  },
+);
+
+// edit program by id
+program.put(
+  '/',
+  validateProgramPut,
+  [authenticator, admin, planner, roleChecker, validate],
+  (req: Request, res: Response) => {
+    const id = req.body.id;
+    const name = req.body.name;
+    const departmentId = req.body.departmentId;
+
+    const sqlUpdate =
+      'UPDATE Program SET name = ?, departmentId = ? WHERE id = ?';
+
+    db.query(sqlUpdate, [name, departmentId, id], (err, result) => {
+      if (!result) {
+        requestErrorHandler(req, res, `${err}: Nothing to update`);
+      } else if (err) {
+        dbErrorHandler(req, res, err, 'Oops! Update failed - Program');
+      } else {
+        successHandler(req, res, result, 'Update successful - Program');
+        logger.info(`Program ${req.body.name} updated`);
+      }
+    });
   },
 );
 
