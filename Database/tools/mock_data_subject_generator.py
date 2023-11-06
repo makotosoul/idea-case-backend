@@ -30,7 +30,7 @@ try:
     subj.write("INSERT IGNORE INTO Subject(name, groupSize, groupCount, sessionLength, sessionCount, area, programId, spaceTypeId) VALUES \n")
 
     allocSub = open('insert_allocsub.sql', 'w')
-    allocSub.write("INSERT IGNORE INTO AllocSubject(subjectId, allocRound) VALUES \n")
+    allocSub.write("INSERT IGNORE INTO AllocSubject(subjectId, allocRoundId) VALUES \n")
 
     for i in range (0, amount):
         name = '"' + ''.join(random.choice(letters) for i in range(15)) + '"'
