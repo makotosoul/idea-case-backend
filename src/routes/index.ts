@@ -6,6 +6,7 @@ import department from './department.js';
 import departmentplanner from './departmentplanner.js';
 import equipment from './equipment.js';
 import program from './program.js';
+import resetDatabase from './resetDatabase.js';
 import setting from './setting.js';
 import space from './space.js';
 import spaceType from './spaceType.js';
@@ -30,5 +31,6 @@ routes.use('/subjectequipment', subjectequipment);
 routes.use('/user', user);
 routes.use('/departmentplanner', departmentplanner);
 routes.use('/template', template);
+routes.use('/resetDatabase', resetDatabase);
 
 export default routes;
