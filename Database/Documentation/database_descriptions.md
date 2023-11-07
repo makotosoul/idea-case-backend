@@ -4,10 +4,10 @@
 
 ***Not in use, at least not yet**
 
-|Column			|	Datatype	|	Keys 	|	Description
-|:-----			| :------- 		| 	------- 	|	------
-|<u>allocId</u>	| INTEGER		| PK 			|
-|<u>UserId</u>	| INTEGER		| PK, FK   		| => User.id
+|Column			        |	Datatype	|	Keys 	    |	Description
+|:-----			        | :------- 		| 	------- 	|	------
+|<u>allocRoundId</u>	| INTEGER		| PK 			|
+|<u>UserId</u>          | INTEGER		| PK, FK   		| => User.id
 
 </details>
 
@@ -36,7 +36,7 @@ Column			|	Datatype	|	Keys		|	Description
  Column			|	Datatype	|	Keys			            	|	Description
  :-----			|	:----		|	------			            	|	------
  subjectId      | INTEGER		| PK, FK(AllocSubject.subjectId)	|
- allocRound     | INTEGER		| PK, FK(AllocSubject.allocRound)	|
+ allocRoundId     | INTEGER		| PK, FK(AllocSubject.allocRoundId)	|
  spaceId 		| INTEGER		| PK, FK(Space.id)	            	|
  totalTime		| TIME			|					            	| How many hours this subject took on that allocround in this room
 
@@ -48,7 +48,7 @@ Column			|	Datatype	|	Keys		|	Description
 Column			    |	Datatype	|	Keys		        |	Description
 :-----			    |	:----		|	------		        |	------
 <u>subjectId</u>    | INTEGER		|PK,FK(Subject.id)      | Subject added to the allocation
-<u>allocRound</u>   | INTEGER		|PK,FK(AllocRound.id)   |
+<u>allocRoundId</u>   | INTEGER		|PK,FK(AllocRound.id)   |
 isAllocated 	    | BOOLEAN		|				        | Whether subject already handled in this allocRound
 cantAllocate 	    | BOOLEAN		|				        | Marking True(1) when no suitable spaces found for this subject for this allocRound
 priority		    | INTEGER		|				        | Ordinal for subjects - Number one allocated first to spaces, then two and so on
@@ -61,7 +61,7 @@ allocatedDate 	    | TIMESTAMP		|				        | Timestamp of the allocation proce
 
 Column			    |	Datatype	|	Keys		                    |	Description
 :-----			    |	:----		|	------		                    |	------
-<u>allocRound</u>   |  INTEGER      | PK, FK(AllocSubject.allocRound)   |
+<u>allocRoundId</u>   |  INTEGER      | PK, FK(AllocSubject.allocRoundId)   |
 <u>subjectId</u>    |  INTEGER      | PK, FK(AllocSubject.subjectId)    |
 <u>spaceId</u>      |  INTEGER      | PK, FK(Space.id)                  |
  missingItems       |  INTEGER		|									| Number of missing equipment, number of reasons why allocation could not happen

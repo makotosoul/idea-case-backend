@@ -1,5 +1,6 @@
 import { body, check } from 'express-validator';
 import { validateIdObl, validateNameObl } from './index.js';
+import { createIdValidatorChain } from './index.js';
 
 export const validateSpacePost = [
   ...validateNameObl,
@@ -23,5 +24,7 @@ export const validateSpacePost = [
     .bail(),
   // Add more validation rules for other space properties
 ];
+
+export const validateSpaceId = [...createIdValidatorChain('spaceId')];
 
 export const validateSpacePut = [...validateIdObl, ...validateSpacePost];

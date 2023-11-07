@@ -1,4 +1,4 @@
-use casedb;
+USE casedb; /* UPDATED 2023-11-05 */
 
 /* PROCEDURES */
 DROP PROCEDURE IF EXISTS abortAllocation;

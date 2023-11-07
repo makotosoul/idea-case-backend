@@ -1,6 +1,10 @@
 ### token to
 ### root root root folder's .vscode folder's settings.json file 
 
+### Reset database before performing other tests
+GET {{host}}/resetDatabase
+Authorization: Basic {{token}}
+
 ### 1. Get all   - L
 GET {{host}}/setting
 Authorization: Basic {{token}}

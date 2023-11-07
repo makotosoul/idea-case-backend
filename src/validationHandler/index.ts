@@ -9,6 +9,7 @@ import {
   Result,
   ValidationChain,
   ValidationError,
+  body,
   check,
   validationResult,
 } from 'express-validator'; // import { body, validationResult } ???
@@ -76,8 +77,42 @@ export const validatePriorityMustBeNumber = [
     .bail(),
 ];
 
+export const createMultiNameValidatorChain = (
+  fieldName: string,
+): ValidationChain[] => [
+  body(`*.${fieldName}`)
+    .isLength({ min: 2, max: 255 })
+    .withMessage(`${fieldName} must be between 2-255 characters long`)
+    .bail()
+    .matches(/^[A-Za-zäöåÄÖÅ0-9\s-]*$/)
+    .withMessage(`${fieldName} must contain only letters, numbers and -`)
+    .bail()
+    .notEmpty()
+    .withMessage(`${fieldName} cannot be empty`)
+    .bail(),
+];
+
+export const createMultiDescriptionValidatorChain = (
+  fieldName: string,
+): ValidationChain[] => [
+  body(`*.${fieldName}`)
+    .isLength({ max: 16000 })
+    .withMessage(`${fieldName} can be at maximum 16000 characters long`)
+    .bail()
+    .matches(/^[A-Za-zäöåÄÖÅ0-9\s-]*$/)
+    .withMessage(`${fieldName} must contain only letters, numbers and -`)
+    .bail()
+    .notEmpty()
+    .withMessage(`${fieldName} cannot be empty`)
+    .bail(),
+];
+
 export const validateIdObl = [...createIdValidatorChain('id')];
 export const validateNameObl = [...createNameValidatorChain('name')];
 export const validateDescriptionObl = [
   ...createDescriptionValidatorChain('description'),
+];
+export const validateMultiNameObl = [...createMultiNameValidatorChain('name')];
+export const validateMultiDescriptionObl = [
+  ...createMultiDescriptionValidatorChain('description'),
 ];

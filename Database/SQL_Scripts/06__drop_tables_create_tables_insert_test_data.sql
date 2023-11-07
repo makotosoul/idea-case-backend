@@ -1,4 +1,355 @@
-USE casedb; /* UPDATED 2023-11-05 */
+USE casedb;
+
+DROP TABLE IF EXISTS log_event;
+DROP TABLE IF EXISTS log_list;
+DROP TABLE IF EXISTS log_type;
+DROP TABLE IF EXISTS AllocCurrentRoundUser;
+DROP TABLE IF EXISTS AllocSubjectSuitableSpace;
+DROP TABLE IF EXISTS AllocSpace;
+DROP TABLE IF EXISTS AllocSubject;
+DROP TABLE IF EXISTS AllocRound;
+DROP TABLE IF EXISTS SubjectEquipment;
+DROP TABLE IF EXISTS `Subject`;
+DROP TABLE IF EXISTS Program;
+DROP TABLE IF EXISTS SpaceEquipment;
+DROP TABLE IF EXISTS Equipment;
+DROP TABLE IF EXISTS `Space`;
+DROP TABLE IF EXISTS SpaceType;
+DROP TABLE IF EXISTS Building;
+DROP TABLE IF EXISTS DepartmentPlanner;
+DROP TABLE IF EXISTS `User`;
+DROP TABLE IF EXISTS Department;
+DROP TABLE IF EXISTS GlobalSetting;
+
+
+/* ------------------------------------------------------ */
+
+
+/* --- 01 CREATE TABLES --- */
+
+/* --- 01 CREATE TABLES --- */
+
+CREATE TABLE IF NOT EXISTS GlobalSetting (
+    id          INTEGER        NOT NULL AUTO_INCREMENT,
+    name        VARCHAR(255)   UNIQUE NOT NULL,
+    description VARCHAR(16000),
+    numberValue INTEGER,
+    textValue   VARCHAR(255),
+    booleanValue BOOLEAN DEFAULT 0,
+    decimalValue DECIMAL (6,2) DEFAULT 0,
+
+    PRIMARY KEY (id)
+)   ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS Department (
+    id          INTEGER         NOT NULL AUTO_INCREMENT,
+    name        VARCHAR(255)    UNIQUE NOT NULL,
+    description VARCHAR(16000)  ,
+
+    PRIMARY KEY (id)
+) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `User` (
+    id          INTEGER         NOT NULL AUTO_INCREMENT,
+    email       VARCHAR(255)    UNIQUE NOT NULL,
+    password    VARCHAR(255)    NOT NULL,
+    isAdmin     BOOLEAN         NOT NULL DEFAULT 0,
+    isPlanner   BOOLEAN         NOT NULL DEFAULT 0,
+    isStatist   BOOLEAN         NOT NULL DEFAULT 0,
+
+    PRIMARY KEY (id)
+) ENGINE=InnoDB AUTO_INCREMENT=201 DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS DepartmentPlanner (
+    departmentId    INTEGER     NOT NULL,
+    userId          INTEGER     NOT NULL,
+
+    PRIMARY KEY (departmentId, userId),
+
+    CONSTRAINT FOREIGN KEY (departmentId) REFERENCES Department(id)
+        ON DELETE CASCADE
+        ON UPDATE NO ACTION,
+    CONSTRAINT FOREIGN KEY (userId) REFERENCES `User`(id)
+        ON DELETE CASCADE
+        ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS Building (
+    id          INTEGER         NOT NULL AUTO_INCREMENT,
+    name        VARCHAR(255)    UNIQUE NOT NULL,
+    description VARCHAR(16000),
+
+    PRIMARY KEY (id)
+
+) ENGINE=InnoDB AUTO_INCREMENT=401 DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS SpaceType (
+    id      INTEGER NOT NULL AUTO_INCREMENT,
+    name    VARCHAR(255) NOT NULL,
+    description VARCHAR(16000),
+
+    PRIMARY KEY(id)
+
+) ENGINE=InnoDB AUTO_INCREMENT=5001 DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `Space` (
+    id              INTEGER NOT NULL AUTO_INCREMENT,
+    name            VARCHAR(255) NOT NULL,
+    area            DECIMAL(5,1),
+    info            VARCHAR(16000),
+    personLimit     INTEGER,
+    buildingId      INTEGER NOT NULL,
+    availableFrom   TIME,
+    availableTo     TIME,
+    classesFrom     TIME,
+    classesTo       TIME,
+	inUse			BOOLEAN DEFAULT 1,
+    spaceTypeId     INTEGER,
+
+    CONSTRAINT AK_UNIQUE_name_in_building UNIQUE(buildingId, name),
+
+    PRIMARY KEY (id),
+
+    CONSTRAINT `FK_space_building`
+    	FOREIGN KEY (`buildingId`) REFERENCES `Building`(id)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE,
+
+    CONSTRAINT `FK_space_spaceType`
+    	FOREIGN KEY (`spaceTypeId`) REFERENCES `SpaceType`(id)
+            ON DELETE SET NULL
+            ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=1001 DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS Equipment (
+    id            INTEGER             NOT NULL AUTO_INCREMENT,
+    name          VARCHAR(255)        UNIQUE NOT NULL,
+    isMovable     BOOLEAN             NOT NULL,
+    priority      INTEGER             NOT NULL DEFAULT 0,
+    description   VARCHAR(16000),
+
+    PRIMARY KEY (id)
+) ENGINE=InnoDB AUTO_INCREMENT=2001 DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS SpaceEquipment (
+    spaceId       INTEGER     NOT NULL,
+    equipmentId   INTEGER     NOT NULL,
+
+    PRIMARY KEY(spaceId,equipmentId),
+
+    CONSTRAINT `FK_SpaceEquipment_Equipment`
+        FOREIGN KEY (`equipmentId`) REFERENCES `Equipment` (id)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE,
+    CONSTRAINT `FK_SpaceEquipment_Space`
+        FOREIGN KEY (`spaceId`) REFERENCES `Space` (id)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE
+) ENGINE = InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS Program (
+  id            INTEGER         NOT NULL AUTO_INCREMENT,
+  name          VARCHAR(255)    NOT NULL UNIQUE,
+
+  departmentId  INTEGER         NOT NULL,
+
+  PRIMARY KEY (id),
+
+  CONSTRAINT FOREIGN KEY (departmentId) REFERENCES Department(id)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=3001 DEFAULT CHARSET=latin1;
+
+
+CREATE TABLE IF NOT EXISTS `Subject` (
+    id              INTEGER         NOT NULL AUTO_INCREMENT,
+    name            VARCHAR(255)    UNIQUE,
+    groupSize       INTEGER,
+    groupCount      INTEGER,
+    sessionLength   TIME,
+    sessionCount    INTEGER,
+    area            DECIMAL(5,1) DEFAULT NULL,
+    programId       INTEGER NOT NULL,
+    spaceTypeId     INTEGER,
+
+    CONSTRAINT AK_Subject_unique_name_in_program UNIQUE (programId, name),
+
+    PRIMARY KEY (id),
+
+    CONSTRAINT `FK_Subject_Program` FOREIGN KEY (`programId`)
+        REFERENCES `Program`(id)
+        ON DELETE NO ACTION
+        ON UPDATE NO ACTION,
+
+    CONSTRAINT `FK_Subject_SpaceType` FOREIGN KEY (`SpaceTypeId`)
+        REFERENCES `SpaceType`(id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=4001 DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS SubjectEquipment (
+    subjectId      INTEGER     NOT NULL,
+    equipmentId    INTEGER     NOT NULL,
+    priority       INTEGER     NOT NULL,
+    obligatory     BOOLEAN     DEFAULT 0,
+
+    PRIMARY KEY (subjectId, equipmentId),
+
+    CONSTRAINT `FK_SubjectEquipment_Subject` FOREIGN KEY (`subjectId`) REFERENCES `Subject`(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    CONSTRAINT `FK_SubjectEquipment_Equipment` FOREIGN KEY (`equipmentId`) REFERENCES `Equipment`(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+/* CREATE ALLOC TABLES */
+
+CREATE TABLE IF NOT EXISTS AllocRound (
+    id              INTEGER     NOT NULL AUTO_INCREMENT,
+    date            TIMESTAMP   NOT NULL DEFAULT current_timestamp(),
+    name            VARCHAR(255) UNIQUE NOT NULL,
+    isSeasonAlloc   BOOLEAN,
+    userId          INTEGER     NOT NULL,
+    description     VARCHAR(16000),
+    lastModified    TIMESTAMP   NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+    isAllocated     BOOLEAN DEFAULT 0,
+    processOn       BOOLEAN DEFAULT 0,
+    abortProcess    BOOLEAN DEFAULT 0,
+    requireReset    BOOLEAN DEFAULT 0,
+
+    PRIMARY KEY(id),
+
+    CONSTRAINT `FK_AllocRound_User` FOREIGN KEY (`userId`)
+        REFERENCES `User`(id)
+        ON DELETE NO ACTION
+        ON UPDATE CASCADE
+
+)ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS AllocSubject (
+    subjectId       INTEGER     NOT NULL,
+    allocRound      INTEGER     NOT NULL,
+    isAllocated     BOOLEAN     DEFAULT 0,
+    cantAllocate    BOOLEAN     DEFAULT 0,
+    priority        INTEGER,
+    allocatedDate   TIMESTAMP,
+
+    PRIMARY KEY(subjectId, allocRound),
+
+    CONSTRAINT `FK_AllocSubject_Subject` FOREIGN KEY (`subjectId`)
+        REFERENCES `Subject`(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    CONSTRAINT `FK_AllocSubject_AllocRound` FOREIGN KEY (`allocRound`)
+        REFERENCES `AllocRound`(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS AllocSpace (
+    subjectId       INTEGER     NOT NULL,
+    allocRound      INTEGER     NOT NULL,
+    spaceId         INTEGER     NOT NULL,
+    totalTime       TIME,
+
+    PRIMARY KEY(subjectId, allocRound, spaceId),
+
+    CONSTRAINT `FK_AllocSpace_AllocSubject`
+        FOREIGN KEY (`subjectId`, `allocRound`)
+        REFERENCES `AllocSubject` (subjectId, allocRound)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    CONSTRAINT `FK_AllocSpace_Space`
+        FOREIGN KEY (`spaceId`)
+        REFERENCES `Space` (id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS AllocSubjectSuitableSpace (
+    allocRound      INTEGER     NOT NULL,
+    subjectId       INTEGER     NOT NULL,
+    spaceId         INTEGER     NOT NULL,
+    missingItems    INTEGER,
+
+    PRIMARY KEY(allocRound, subjectId, spaceId),
+
+    CONSTRAINT `FK_AllocSubjectSpace_AllocSubject`
+        FOREIGN KEY(`allocRound`, `subjectId`)
+        REFERENCES `AllocSubject` (allocRound, subjectId)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    CONSTRAINT `FK_AllocSubjectSpace_Space`
+        FOREIGN KEY (`spaceId`)
+        REFERENCES `Space` (id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS AllocCurrentRoundUser (
+    allocId     INTEGER     NOT NULL,
+    userId      INTEGER,
+
+    PRIMARY KEY(allocId, userId),
+
+    CONSTRAINT `FK_AllocCurrentRoundUser_AllocRound`
+        FOREIGN KEY (`allocId`)
+        REFERENCES `AllocRound` (id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    CONSTRAINT `FK_AllocCurrentRoundUser_User`
+        FOREIGN KEY (`userId`)
+        REFERENCES `User` (id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+/* CREATE LOG TABLES */
+
+CREATE TABLE IF NOT EXISTS log_type (
+id 		INTEGER		NOT NULL AUTO_INCREMENT,
+name	VARCHAR(255)	NOT NULL UNIQUE,
+
+PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS log_list (
+id			INTEGER		NOT NULL AUTO_INCREMENT,
+log_type	INTEGER,
+created_at	TIMESTAMP	NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+
+PRIMARY KEY (id),
+
+CONSTRAINT FOREIGN KEY (log_type) REFERENCES log_type(id)
+	ON DELETE NO ACTION
+	ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS log_event (
+id 		INTEGER		NOT NULL AUTO_INCREMENT,
+log_id	INTEGER		NOT NULL,
+stage	VARCHAR(255),
+status	VARCHAR(255),
+information 	VARCHAR(16000),
+created_at	TIMESTAMP	NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+
+PRIMARY KEY (id),
+
+CONSTRAINT FOREIGN KEY (log_id) REFERENCES log_list(id)
+	ON DELETE CASCADE
+	ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+/* ------------------------------------------------------ */
 
 /* INSERTS */
 /* --- Insert: GlobalSettings --- */
@@ -26,7 +377,6 @@ INSERT INTO Department(name, description) VALUES
     ('Avoin Kampus', 'Aineryhmän kuvaus');
 
 /* --- Insert: `User` --- */
-/* SECURITY: Change these before deployment */
 INSERT INTO `User`(email, password, isAdmin, isPlanner, isStatist) VALUES
     ('admin','$2a$10$My5c7qZPRzp2p5QpgzQ0kOt5Au1xdwIidJDegsEWpntwAWceUjdWa',1,0,0),
     ('planner','$2a$10$mKf/VHzIGyIfADKHFACEBuYTb0IbPv6sE/FqlsbLAKgfelMWwsnEm',0,1,0),
@@ -338,7 +688,7 @@ INSERT INTO AllocRound(name, isSeasonAlloc, userId, description) VALUES
     ('Demo', 0, 201, 'Allokointi demoamista varten');
 
 /* --- Insert: AllocSubject * --- */
-INSERT INTO AllocSubject(subjectId, allocRoundId, isAllocated, allocatedDate, priority) VALUES
+INSERT INTO AllocSubject(subjectId, allocRound, isAllocated, allocatedDate, priority) VALUES
     (4011, 10001, 0, '2022-10-28', 1),
     (4014, 10001, 0, '2022-10-28', 2),
     (4019, 10001, 0, '2022-10-28', 3),
@@ -388,7 +738,7 @@ INSERT INTO AllocSubject(subjectId, allocRoundId, isAllocated, allocatedDate, pr
     (4006, 10003, 0, '2022-09-21', 6),
     (4007, 10003, 0, '2022-09-21', 7);
 
-INSERT INTO AllocSpace(subjectId, allocRoundId, spaceId, totalTime) VALUES
+INSERT INTO AllocSpace(subjectId, allocRound, spaceId, totalTime) VALUES
     (4011, 10002, 1020, '04:30:00'), -- Urkujensoitto 1ppl/ N419 urkuluokka, 34m2, 5ppl
     (4003, 10002, 1009, '05:00:00'), -- Pianon yksilöopetus 1ppl/ musiikkiluokka 16.6m2, 6ppl
     (4005, 10002, 1020, '10:00:00'), -- Kirkkomusiikin ryhmäsoitto 5ppl/ N419 Kirkkomusiikki, 34m2, 5ppl
@@ -426,7 +776,7 @@ INSERT INTO AllocSpace(subjectId, allocRoundId, spaceId, totalTime) VALUES
     (4039, 10002, 1010, '02:00:00'); -- Johtamisen pedagogiikka -luentosarja 15ppl
 
 /* --- Insert: AllocCurrentRoundUser * --- */
-INSERT INTO AllocCurrentRoundUser(allocRoundId, userId) VALUES
+INSERT INTO AllocCurrentRoundUser(allocId, userId) VALUES
     (10001, 201),
     (10001, 202),
     (10002, 201);
