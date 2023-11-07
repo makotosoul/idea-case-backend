@@ -1,7 +1,10 @@
 ### Remember to select the proper rest client environment
+
+### Reset database before performing other tests
+GET {{host}}/resetDatabase
+Authorization: Basic {{token}}
+
 ### Get all
-
-
 GET {{host}}/department
 Authorization: Basic {{token}}
 
@@ -19,8 +22,8 @@ Authorization: Basic {{token}}
 Content-Type: application/json
 
 {
-    "name": "",
-    "description": ""
+    "name": "Harmonium",
+    "description": "Just play harmonium there"
 }
 
 
