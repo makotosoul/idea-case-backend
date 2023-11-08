@@ -22,32 +22,35 @@ const connection = mysql.createConnection({
 
 //reading sql statements from the file
 const sqlStatements = fs
-  .readFileSync('./Database/SQL_Scripts/000__CreateALLdb.sql')
+  //.readFileSync('./Database/SQL_Scripts/000__CreateALLdb.sql')
+  .readFileSync(
+    './Database/SQL_Scripts/06__drop_tables_create_tables_insert_test_data.sql',
+  )
   .toString();
 
 // //executing the statements through the resetDatabase route with get method using mysql
-// resetDatabase.get(
-//   '/',
-//   [authenticator, admin, roleChecker, validate],
-//   (req: Request, res: Response) => {
-//     // connection.query(sqlStatements, (err, results, fields) => {
-//     //   !err
-//     //     ? successHandler(req, res, results, 'Database reset success!')
-//     //     : dbErrorHandler(req, res, err, 'Database reset failed!');
-//     // });
-//   },
-// );
-
-//executing the statements through the resetDatabase route with get method using knex
 resetDatabase.get(
   '/',
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
-    knex
-      .raw(sqlStatements)
-      .then((data) => successHandler(req, res, data, 'Database reset success!'))
-      .catch((err) => dbErrorHandler(req, res, err, 'Database reset failed!'));
+    connection.query(sqlStatements, (err, results, fields) => {
+      !err
+        ? successHandler(req, res, results, 'Database reset success!')
+        : dbErrorHandler(req, res, err, 'Database reset failed!');
+    });
   },
 );
+
+//executing the statements through the resetDatabase route with get method using knex
+// resetDatabase.get(
+//   '/',
+//   [authenticator, admin, roleChecker, validate],
+//   (req: Request, res: Response) => {
+//     knex
+//       .raw(sqlStatements)
+//       .then((data) => successHandler(req, res, data, 'Database reset success!'))
+//       .catch((err) => dbErrorHandler(req, res, err, 'Database reset failed!'));
+//   },
+// );
 
 export default resetDatabase;

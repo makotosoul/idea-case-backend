@@ -85,12 +85,12 @@ CREATE TABLE IF NOT EXISTS Space (
 
     CONSTRAINT `FK_space_building`
     	FOREIGN KEY (buildingId) REFERENCES Building(id)
-            ON DELETE CASCADE
+            ON DELETE NO ACTION
             ON UPDATE CASCADE,
 
     CONSTRAINT `FK_space_spaceType`
     	FOREIGN KEY (spaceTypeId) REFERENCES SpaceType(id)
-            ON DELETE SET NULL
+            ON DELETE NO ACTION
             ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=1001 DEFAULT CHARSET=latin1;
 
