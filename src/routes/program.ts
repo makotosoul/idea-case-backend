@@ -125,7 +125,7 @@ program.post(
 program.put(
   '/',
   validateProgramPut,
-  [authenticator, admin, planner, roleChecker, validate],
+  [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     const id = req.body.id;
     const name = req.body.name;
@@ -142,6 +142,25 @@ program.put(
       } else {
         successHandler(req, res, result, 'Update successful - Program');
         logger.info(`Program ${req.body.name} updated`);
+      }
+    });
+  },
+);
+
+// delete a program with id
+program.delete(
+  '/:id',
+  validateIdObl,
+  [authenticator, admin, roleChecker, validate],
+  (req: Request, res: Response) => {
+    const id = req.params.id;
+    const sqlDelete = 'DELETE FROM Program WHERE id = ?;';
+    db.query(sqlDelete, id, (err, result) => {
+      if (err) {
+        dbErrorHandler(req, res, err, 'Oops! Delete failed - Program');
+      } else {
+        successHandler(req, res, result, 'Delete successful - Program');
+        logger.info('Program deleted');
       }
     });
   },
