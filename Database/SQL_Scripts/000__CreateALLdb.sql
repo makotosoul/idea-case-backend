@@ -43,12 +43,14 @@ DROP FUNCTION IF EXISTS getMissingItemAmount;
 
 /* ------------------------------------------------------ */
 
+/* UPDATED 2023-11-08 */
+
 /* --- 01 CREATE TABLES --- */
 
 CREATE TABLE IF NOT EXISTS GlobalSetting (
     id              INTEGER                     NOT NULL AUTO_INCREMENT,
     name            VARCHAR(255)   UNIQUE       NOT NULL,
-    description     VARCHAR(16000),
+    description     VARCHAR(16000)              NOT NULL,
     numberValue     INTEGER,
     textValue       VARCHAR(255),
     booleanValue    BOOLEAN         DEFAULT 0,
@@ -111,16 +113,16 @@ CREATE TABLE IF NOT EXISTS SpaceType (
 CREATE TABLE IF NOT EXISTS Space (
     id              INTEGER         NOT NULL AUTO_INCREMENT,
     name            VARCHAR(255)    NOT NULL,
-    area            DECIMAL(5,1),
+    area            DECIMAL(5,1)    NOT NULL,
     info            VARCHAR(16000),
-    personLimit     INTEGER,
+    personLimit     INTEGER         NOT NULL,
     buildingId      INTEGER         NOT NULL,
-    availableFrom   TIME,
-    availableTo     TIME,
-    classesFrom     TIME,
-    classesTo       TIME,
-	inUse			BOOLEAN DEFAULT 1,
-    spaceTypeId     INTEGER,
+    availableFrom   TIME            NOT NULL,
+    availableTo     TIME            NOT NULL,
+    classesFrom     TIME            NOT NULL,
+    classesTo       TIME            NOT NULL,
+	inUse			BOOLEAN        DEFAULT 1,
+    spaceTypeId     INTEGER         NOT NULL,
 
     CONSTRAINT AK_UNIQUE_name_in_building UNIQUE(buildingId, name),
 
@@ -179,11 +181,11 @@ CREATE TABLE IF NOT EXISTS Program (
 
 CREATE TABLE IF NOT EXISTS Subject (
     id              INTEGER         NOT NULL AUTO_INCREMENT,
-    name            VARCHAR(255)                UNIQUE,
-    groupSize       INTEGER,
-    groupCount      INTEGER,
-    sessionLength   TIME,
-    sessionCount    INTEGER,
+    name            VARCHAR(255)    NOT NULL         UNIQUE,
+    groupSize       INTEGER         NOT NULL,
+    groupCount      INTEGER         NOT NULL,
+    sessionLength   TIME            NOT NULL,
+    sessionCount    INTEGER         NOT NULL,
     area            DECIMAL(5,1)                DEFAULT NULL,
     programId       INTEGER         NOT NULL,
     spaceTypeId     INTEGER,
@@ -207,7 +209,7 @@ CREATE TABLE IF NOT EXISTS SubjectEquipment (
     subjectId      INTEGER     NOT NULL,
     equipmentId    INTEGER     NOT NULL,
     priority       INTEGER     NOT NULL,
-    obligatory     BOOLEAN              DEFAULT 0,
+    obligatory     BOOLEAN     NOT NULL     DEFAULT 0,
 
     PRIMARY KEY (subjectId, equipmentId),
 
@@ -229,7 +231,7 @@ CREATE TABLE IF NOT EXISTS AllocRound (
     id              INTEGER         NOT NULL AUTO_INCREMENT,
     date            TIMESTAMP       NOT NULL DEFAULT current_timestamp(),
     name            VARCHAR(255)    NOT NULL UNIQUE,
-    isSeasonAlloc   BOOLEAN,
+    isSeasonAlloc   BOOLEAN         NOT NULL DEFAULT 0,
     userId          INTEGER         NOT NULL,
     description     VARCHAR(16000),
     lastModified    TIMESTAMP       NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
@@ -250,8 +252,8 @@ CREATE TABLE IF NOT EXISTS AllocRound (
 CREATE TABLE IF NOT EXISTS AllocSubject (
     allocRoundId    INTEGER     NOT NULL,    
     subjectId       INTEGER     NOT NULL,
-    isAllocated     BOOLEAN             DEFAULT 0,
-    cantAllocate    BOOLEAN             DEFAULT 0,
+    isAllocated     BOOLEAN     NOT NULL DEFAULT 0,
+    cantAllocate    BOOLEAN     NOT NULL DEFAULT 0,
     priority        INTEGER,
     allocatedDate   TIMESTAMP,
 
@@ -312,7 +314,7 @@ CREATE TABLE IF NOT EXISTS AllocSubjectSuitableSpace (
 
 CREATE TABLE IF NOT EXISTS AllocCurrentRoundUser (
     allocRoundId    INTEGER     NOT NULL,
-    userId          INTEGER,
+    userId          INTEGER     NOT NULL,
 
     PRIMARY KEY(allocRoundId, userId),
 
@@ -332,39 +334,38 @@ CREATE TABLE IF NOT EXISTS AllocCurrentRoundUser (
 /* CREATE LOG TABLES */
 
 CREATE TABLE IF NOT EXISTS log_type (
-id      INTEGER		    NOT NULL    AUTO_INCREMENT,
-name    VARCHAR(255)    NOT NULL    UNIQUE,
+    id      INTEGER		    NOT NULL    AUTO_INCREMENT,
+    name    VARCHAR(255)    NOT NULL    UNIQUE,
 
-PRIMARY KEY (id)
+    PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS log_list (
-id			INTEGER		NOT NULL AUTO_INCREMENT,
-log_type	INTEGER,
-created_at	TIMESTAMP	NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+    id			INTEGER		NOT NULL AUTO_INCREMENT,
+    log_type	INTEGER,
+    created_at	TIMESTAMP	NOT NULL DEFAULT CURRENT_TIMESTAMP(),
 
-PRIMARY KEY (id),
+    PRIMARY KEY (id),
 
-CONSTRAINT FOREIGN KEY (log_type) REFERENCES log_type(id)
-	ON DELETE NO ACTION
-	ON UPDATE NO ACTION
+    CONSTRAINT FOREIGN KEY (log_type) REFERENCES log_type(id)
+        ON DELETE NO ACTION
+        ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS log_event (
-id              INTEGER         NOT NULL    AUTO_INCREMENT,
-log_id          INTEGER         NOT NULL,
-stage           VARCHAR(255),
-status          VARCHAR(255),
-information 	VARCHAR(16000),
-created_at      TIMESTAMP       NOT NULL    DEFAULT CURRENT_TIMESTAMP(),
+    id              INTEGER         NOT NULL    AUTO_INCREMENT,
+    log_id          INTEGER         NOT NULL,
+    stage           VARCHAR(255),
+    status          VARCHAR(255),
+    information 	VARCHAR(16000),
+    created_at      TIMESTAMP       NOT NULL    DEFAULT CURRENT_TIMESTAMP(),
 
-PRIMARY KEY (id),
+    PRIMARY KEY (id),
 
-CONSTRAINT FOREIGN KEY (log_id) REFERENCES log_list(id)
-	ON DELETE CASCADE
-	ON UPDATE CASCADE
+    CONSTRAINT FOREIGN KEY (log_id) REFERENCES log_list(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
 
 /* ------------------------------------------------------ */
 
