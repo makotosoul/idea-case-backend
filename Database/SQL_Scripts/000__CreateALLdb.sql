@@ -1,5 +1,4 @@
-USE casedb; /* UPDATED 2023-11-05 */
-
+USE casedb; /* UPDATED 2023-11-08 */
 
 DROP TABLE IF EXISTS AllocCurrentRoundUser;
 DROP TABLE IF EXISTS AllocSpace;
@@ -121,7 +120,7 @@ CREATE TABLE IF NOT EXISTS Space (
     availableTo     TIME            NOT NULL,
     classesFrom     TIME            NOT NULL,
     classesTo       TIME            NOT NULL,
-	inUse			BOOLEAN        DEFAULT 1,
+	inUse			BOOLEAN         NOT NULL DEFAULT 1,
     spaceTypeId     INTEGER         NOT NULL,
 
     CONSTRAINT AK_UNIQUE_name_in_building UNIQUE(buildingId, name),
@@ -135,7 +134,7 @@ CREATE TABLE IF NOT EXISTS Space (
 
     CONSTRAINT `FK_space_spaceType`
     	FOREIGN KEY (spaceTypeId) REFERENCES SpaceType(id)
-            ON DELETE SET NULL
+            ON DELETE NO ACTION
             ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=1001 DEFAULT CHARSET=latin1;
 
@@ -370,10 +369,11 @@ CREATE TABLE IF NOT EXISTS log_event (
 /* ------------------------------------------------------ */
 
 /* PROCEDURES */
-/* DELIMITER is explained here, just look at first two examples: https://mariadb.com/kb/en/delimiters/ */
+/* DELIMITER is explained here, just look at first two examples: https:__mariadb.com/kb/en/delimiters/ */
 
 /* --- Procedure 1: Conditional database logger, used by other prodedures below --- */
-DELIMITER //
+
+DELIMITER __
 
 CREATE PROCEDURE IF NOT EXISTS LogAllocation(logId INT, stage VARCHAR(255), status VARCHAR(255), msg VARCHAR(16000))
 BEGIN
@@ -385,7 +385,7 @@ BEGIN
 		INSERT INTO log_event(log_id, stage, status, information) VALUES(logId, stage, status, msg);
 	END IF;
 END; 
-//
+__
 DELIMITER ;
 
 /* allocRid is now used for the frontend sent allocRoundId, to make it stand out e.g. in: 
@@ -394,7 +394,7 @@ DELIMITER ;
 
 
 /* --- Procedure 2: PRIORITIZE SUBJECTS -  TO ALLOCATION ORDER --- */
-DELIMITER //
+DELIMITER __
 
 CREATE OR REPLACE PROCEDURE prioritizeSubjects(allocRid INT, priority_option INT, logId INT)
 BEGIN
@@ -437,11 +437,11 @@ BEGIN
 	CALL LogAllocation(logId, "Prioritization", "OK", CONCAT("Priority option: ", priority_option, " completed."));
 
 END; 
-//
+__
 DELIMITER ;
 
 /* --- Procedure 3: SET SUITABLE ROOMS -  Find which spaces could be suitable for this subject id - ALLOCATION --- */
-DELIMITER //
+DELIMITER __
 
 CREATE OR REPLACE PROCEDURE setSuitableRooms(allocRid INT, subId INT)
 BEGIN
@@ -454,11 +454,11 @@ BEGIN
 		AND sp.inUse=1
 		;
 END; 
-//
+__
 DELIMITER ;
 
 /* --- Procedure 4: allocated space(s) to satisfy the subject's needs - until all needed hours have been allocated --- */
-DELIMITER //
+DELIMITER __
 
 CREATE PROCEDURE allocateSpace(allocRid INT, subId INT, logId INT)
 BEGIN
@@ -553,12 +553,12 @@ BEGIN
 		CALL LogAllocation(logId, "Space-allocation", "Warning", CONCAT("Subject : ", subId, " - Add ", sessions - allocated, " to space: ", spaceTo, " - All suitable spaces are full"));
    	END IF;
 END; 
-//
+__
 DELIMITER ;
 
 
 /* --- Procedure 5 - A: START ALLOCATION --- */
-DELIMITER //
+DELIMITER __
 
 CREATE OR REPLACE PROCEDURE startAllocation(allocRid INT)
 BEGIN
@@ -688,12 +688,12 @@ BEGIN
 	UPDATE AllocRound SET processOn = 0 WHERE id = allocRid;
 
 END; 
-//
+__
 DELIMITER ;
 
 
 /* --- PROCEDURE 6 - B: Abort Allocation --- */
-DELIMITER //
+DELIMITER __
 
 CREATE PROCEDURE IF NOT EXISTS abortAllocation(allocRid INT)
 BEGIN
@@ -707,12 +707,12 @@ BEGIN
 	END IF;
 
 END; 
-//
+__
 DELIMITER ;
 
 
 /* --- Procedure 7 - C: RESET ALLOCATION, will nullify all calculations/allocations for this alloc R(ound) Id --- */
-DELIMITER //
+DELIMITER __
 
 CREATE PROCEDURE IF NOT EXISTS  resetAllocation(allocRid INTEGER)
 BEGIN
@@ -742,7 +742,7 @@ BEGIN
     END IF;
     UPDATE AllocRound SET isAllocated = 0, requireReset = FALSE WHERE id = allocRid;
 END; 
-//
+__
 DELIMITER ;
 
 
@@ -750,7 +750,7 @@ DELIMITER ;
 /* FUNCTIONS */
 
 /* Function 8 (well 1-7 were actually procedures, but similar) - Get missing equipment(subject) count in space */
-DELIMITER //
+DELIMITER __
 
 CREATE FUNCTION IF NOT EXISTS getMissingItemAmount(subId INT, spaId INT) RETURNS INT
 NOT DETERMINISTIC
@@ -766,7 +766,7 @@ RETURN (
 		) a
 );
 END; 
-//
+__
 DELIMITER ;
 
 
