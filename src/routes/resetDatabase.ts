@@ -4,6 +4,7 @@ import mysql from 'mysql';
 import { admin } from '../authorization/admin.js';
 import { roleChecker } from '../authorization/roleChecker.js';
 import { authenticator } from '../authorization/userValidation.js';
+import knex from '../db/index_knex.js';
 import { dbErrorHandler, successHandler } from '../responseHandler/index.js';
 import { validate } from '../validationHandler/index.js';
 
@@ -26,16 +27,28 @@ const sqlStatements = fs
   )
   .toString();
 
-//executing the statements through the resetDatabase route with get method
+// //executing the statements through the resetDatabase route with get method using mysql
+// resetDatabase.get(
+//   '/',
+//   [authenticator, admin, roleChecker, validate],
+//   (req: Request, res: Response) => {
+//     // connection.query(sqlStatements, (err, results, fields) => {
+//     //   !err
+//     //     ? successHandler(req, res, results, 'Database reset success!')
+//     //     : dbErrorHandler(req, res, err, 'Database reset failed!');
+//     // });
+//   },
+// );
+
+//executing the statements through the resetDatabase route with get method using knex
 resetDatabase.get(
   '/',
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
-    connection.query(sqlStatements, (err, results, fields) => {
-      !err
-        ? successHandler(req, res, results, 'Database reset success!')
-        : dbErrorHandler(req, res, err, 'Database reset failed!');
-    });
+    knex
+      .raw(sqlStatements)
+      .then((data) => successHandler(req, res, data, 'Database reset success!'))
+      .catch((err) => dbErrorHandler(req, res, err, 'Database reset failed!'));
   },
 );
 
