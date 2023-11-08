@@ -22,9 +22,7 @@ const connection = mysql.createConnection({
 
 //reading sql statements from the file
 const sqlStatements = fs
-  .readFileSync(
-    './Database/SQL_Scripts/06__drop_tables_create_tables_insert_test_data.sql',
-  )
+  .readFileSync('./Database/SQL_Scripts/000_CreateALLdb.sql')
   .toString();
 
 // //executing the statements through the resetDatabase route with get method using mysql
