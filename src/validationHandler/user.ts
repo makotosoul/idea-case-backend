@@ -1,7 +1,7 @@
 import { check } from 'express-validator';
-import { createIdValidatorChain } from './index.js';
+import { createIdValidatorChain, validateIdObl } from './index.js';
 
-export const validateUserId = [...createIdValidatorChain('id')];
+export const validateUserId = [...createIdValidatorChain('userId')];
 
 export const validateUserPost = [
   check('isAdmin')
@@ -27,4 +27,4 @@ export const validateUserPost = [
     .bail(),
 ];
 
-export const validateUserPut = [...validateUserId, ...validateUserPost];
+export const validateUserPut = [...validateIdObl, ...validateUserPost];

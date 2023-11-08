@@ -5,11 +5,9 @@ import {
   requestErrorHandler,
   successHandler,
 } from '../responseHandler/index.js';
-import {
-  validateUserId,
-  validateUserIdAndDepartmentId,
-} from '../validationHandler/departmentPlanner.js';
+import { validateUserIdAndDepartmentId } from '../validationHandler/departmentPlanner.js';
 import { validate } from '../validationHandler/index.js';
+import { validateUserId } from '../validationHandler/user.js';
 
 const departmentplanner = express.Router();
 

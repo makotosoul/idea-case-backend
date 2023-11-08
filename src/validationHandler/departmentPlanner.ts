@@ -1,8 +1,7 @@
-import { createIdValidatorChain } from './index.js';
+import { validateDepartmentId } from './department.js';
+import { validateUserId } from './user.js';
 
-export const validateUserId = [...createIdValidatorChain('userId')];
-export const validateDepartmentId = [...createIdValidatorChain('departmentId')];
-
+// or:  validateDepartmentPlannerPost
 export const validateUserIdAndDepartmentId = [
   ...validateUserId,
   ...validateDepartmentId,
