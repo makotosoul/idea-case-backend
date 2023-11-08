@@ -1,6 +1,9 @@
 import { body } from 'express-validator';
 
+export const validateBuildingId = [...createIdValidatorChain('buildingId')];
+
 import {
+  createIdValidatorChain,
   validateDescriptionObl,
   validateIdObl,
   validateMultiDescriptionObl,

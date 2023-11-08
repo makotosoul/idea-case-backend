@@ -1,6 +1,10 @@
 import { body, check } from 'express-validator';
+import { validateBuildingId } from './building.js';
 import { validateIdObl, validateNameObl } from './index.js';
 import { createIdValidatorChain } from './index.js';
+import { validateSpaceTypeId } from './spaceType.js';
+
+export const validateSpaceId = [...createIdValidatorChain('spaceId')];
 
 export const validateSpacePost = [
   ...validateNameObl,
@@ -10,21 +14,9 @@ export const validateSpacePost = [
     .notEmpty()
     .withMessage('Cannot be empty')
     .bail(),
-  check('buildingId')
-    .isInt()
-    .withMessage('Must be an integer')
-    .notEmpty()
-    .withMessage('Cannot be empty')
-    .bail(),
-  check('spaceTypeId')
-    .isInt()
-    .withMessage('Must be an integer')
-    .notEmpty()
-    .withMessage('Cannot be empty')
-    .bail(),
+  ...validateBuildingId,
+  ...validateSpaceTypeId,
   // Add more validation rules for other space properties
 ];
-
-export const validateSpaceId = [...createIdValidatorChain('spaceId')];
 
 export const validateSpacePut = [...validateIdObl, ...validateSpacePost];
