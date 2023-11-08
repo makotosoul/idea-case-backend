@@ -7,7 +7,9 @@ import { NextFunction, Request, Response } from 'express';
 */
 import {
   Result,
+  ValidationChain,
   ValidationError,
+  body,
   check,
   validationResult,
 } from 'express-validator'; // import { body, validationResult } ???
@@ -26,57 +28,91 @@ export const validate = (req: Request, res: Response, next: NextFunction) => {
 };
 
 // Common validator chain objects for: id, name, description, priority
-export const validateIdObl = [
-  check('id')
-    // Nice way to make e.g. valid id 4015 fail for testing
-    // .isLength({ min: 1, max: 1 })
-    // .withMessage('Id Must be between 1-1 characters long')
-    // .bail()
+export const createIdValidatorChain = (
+  fieldName: string,
+): ValidationChain[] => [
+  check(`${fieldName}`)
     .matches(/^[0-9]+$/)
-    .withMessage('Id must be a number')
+    .withMessage(`${fieldName} must be a number`)
     .bail()
     .notEmpty()
-    .withMessage('Id cannot be empty')
+    .withMessage(`${fieldName} cannot be empty`)
     .bail(),
 ];
-export const validateNameObl = [
-  check('name')
+
+export const createNameValidatorChain = (
+  fieldName: string,
+): ValidationChain[] => [
+  check(`${fieldName}`)
     .isLength({ min: 2, max: 255 })
-    .withMessage('Name must be between 2-255 characters long')
+    .withMessage(`${fieldName} must be between 2-255 characters long`)
     .bail()
     .matches(/^[A-Za-zäöåÄÖÅ0-9\s-]*$/)
-    .withMessage('Name must contain only letters, numbers and -')
+    .withMessage(`${fieldName} must contain only letters, numbers and -`)
     .bail()
     .notEmpty()
-    .withMessage('Name cannot be empty')
+    .withMessage(`${fieldName} cannot be empty`)
     .bail(),
 ];
-export const validateDescription = [
-  check('description')
-    .isLength({ min: 2, max: 255 })
-    .withMessage('Description must be between 2-255 characters long')
+
+export const createDescriptionValidatorChain = (
+  fieldName: string,
+): ValidationChain[] => [
+  check(`${fieldName}`)
+    .isLength({ max: 16000 })
+    .withMessage(`${fieldName} can be at maximum 16000 characters long`)
     .bail()
     .matches(/^[A-Za-zäöåÄÖÅ0-9\s-]*$/)
-    .withMessage('Description must contain only letters, numbers and -')
-    .bail(),
-  /* LATER:
-  check('description').isLength({ max: 16000 })
-    .withMessage('Description must be at maximum 16000 characters long')
-    .matches(/^[A-Za-zäöåÄÖÅ0-9\s-]*$/)
-    .withMessage('Description must contain only letters, numbers and -')
-    .bail(),
-  */
-];
-export const validateDescriptionObl = [
-  ...validateDescription,
-  check('description')
+    .withMessage(`${fieldName} must contain only letters, numbers and -`)
+    .bail()
     .notEmpty()
-    .withMessage('Description cannot be empty')
+    .withMessage(`${fieldName} cannot be empty`)
     .bail(),
 ];
+
 export const validatePriorityMustBeNumber = [
   check('priority')
     .matches(/^[0-9]+$/)
     .withMessage('Priority must be a number')
     .bail(),
+];
+
+export const createMultiNameValidatorChain = (
+  fieldName: string,
+): ValidationChain[] => [
+  body(`*.${fieldName}`)
+    .isLength({ min: 2, max: 255 })
+    .withMessage(`${fieldName} must be between 2-255 characters long`)
+    .bail()
+    .matches(/^[A-Za-zäöåÄÖÅ0-9\s-]*$/)
+    .withMessage(`${fieldName} must contain only letters, numbers and -`)
+    .bail()
+    .notEmpty()
+    .withMessage(`${fieldName} cannot be empty`)
+    .bail(),
+];
+
+export const createMultiDescriptionValidatorChain = (
+  fieldName: string,
+): ValidationChain[] => [
+  body(`*.${fieldName}`)
+    .isLength({ max: 16000 })
+    .withMessage(`${fieldName} can be at maximum 16000 characters long`)
+    .bail()
+    .matches(/^[A-Za-zäöåÄÖÅ0-9\s-]*$/)
+    .withMessage(`${fieldName} must contain only letters, numbers and -`)
+    .bail()
+    .notEmpty()
+    .withMessage(`${fieldName} cannot be empty`)
+    .bail(),
+];
+
+export const validateIdObl = [...createIdValidatorChain('id')];
+export const validateNameObl = [...createNameValidatorChain('name')];
+export const validateDescriptionObl = [
+  ...createDescriptionValidatorChain('description'),
+];
+export const validateMultiNameObl = [...createMultiNameValidatorChain('name')];
+export const validateMultiDescriptionObl = [
+  ...createMultiDescriptionValidatorChain('description'),
 ];

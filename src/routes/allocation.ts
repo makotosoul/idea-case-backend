@@ -118,11 +118,12 @@ allocation.get(
 /* gets unallocated subjects */
 allocation.get(
   '/:id/subject/unallocated',
+  validateIdObl,
   [authenticator, admin, planner, statist, roleChecker, validate],
   async (req: Request, res: Response) => {
-    const allocId = req.params.id;
+    const allocRoundId = req.params.id;
     await allocationService
-      .getUnAllocableSubjects(Number(allocId))
+      .getUnAllocableSubjects(Number(allocRoundId))
       .then((data) => {
         successHandler(
           req,
@@ -139,6 +140,7 @@ allocation.get(
 
 allocation.get(
   '/subject/:id/rooms',
+  validateIdObl,
   [authenticator, admin, planner, statist, roleChecker, validate],
   async (req: Request, res: Response) => {
     const subjectId = req.params.id;
@@ -191,10 +193,10 @@ allocation.get(
   '/:id/subjects/:roomId',
   [authenticator, admin, planner, statist, roleChecker, validate],
   async (req: Request, res: Response) => {
-    const allocId = req.params.id;
+    const allocRoundId = req.params.id;
     const roomId = req.params.roomId;
     const subjects = await allocationService
-      .getAllocatedSubjectsByRoom(Number(roomId), Number(allocId))
+      .getAllocatedSubjectsByRoom(Number(roomId), Number(allocRoundId))
       .then((subs) => {
         successHandler(
           req,
@@ -224,9 +226,9 @@ allocation.post(
   validateAllocRoundId,
   [authenticator, admin, roleChecker, validate],
   async (req: Request, res: Response) => {
-    const allocRound = req.body.allocRoundId;
+    const allocRoundId = req.body.allocRoundId;
     allocationService
-      .resetAllocation(allocRound)
+      .resetAllocation(allocRoundId)
       .then(() => {
         successHandler(
           req,
@@ -252,9 +254,9 @@ allocation.post(
   validateAllocRoundId,
   [authenticator, admin, roleChecker, validate],
   async (req: Request, res: Response) => {
-    const allocRound = req.body.allocRoundId;
+    const allocRoundId = req.body.allocRoundId;
     allocationService
-      .abortAllocation(allocRound)
+      .abortAllocation(allocRoundId)
       .then(() => {
         successHandler(
           req,
@@ -280,9 +282,9 @@ allocation.post(
   validateAllocRoundId,
   [authenticator, admin, roleChecker, validate],
   async (req: Request, res: Response) => {
-    const allocRound = req.body.allocRoundId;
+    const allocRoundId = req.body.allocRoundId;
     allocationService
-      .startAllocation(allocRound)
+      .startAllocation(allocRoundId)
       .then(() => {
         successHandler(
           req,

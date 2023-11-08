@@ -1,61 +1,78 @@
-USE casedb;
+USE casedb; /* UPDATED 2023-11-08 */
+
+DROP TABLE IF EXISTS AllocCurrentRoundUser;
+DROP TABLE IF EXISTS AllocSpace;
+DROP TABLE IF EXISTS AllocSubjectSuitableSpace;
+DROP TABLE IF EXISTS AllocSubject;
+
+DROP TABLE IF EXISTS AllocRound;
+
+DROP TABLE IF EXISTS SubjectEquipment;
+DROP TABLE IF EXISTS SpaceEquipment;
+DROP TABLE IF EXISTS Equipment;
+DROP TABLE IF EXISTS Space;
+
+DROP TABLE IF EXISTS Building;
+DROP TABLE IF EXISTS DepartmentPlanner;
+DROP TABLE IF EXISTS User;
+DROP TABLE IF EXISTS Subject;
+DROP TABLE IF EXISTS Program;
+DROP TABLE IF EXISTS Department;
+DROP TABLE IF EXISTS SpaceType;
+DROP TABLE IF EXISTS GlobalSetting;
 
 DROP TABLE IF EXISTS log_event;
 DROP TABLE IF EXISTS log_list;
 DROP TABLE IF EXISTS log_type;
-DROP TABLE IF EXISTS AllocCurrentRoundUser;
-DROP TABLE IF EXISTS AllocSubjectSuitableSpace;
-DROP TABLE IF EXISTS AllocSpace;
-DROP TABLE IF EXISTS AllocSubject;
-DROP TABLE IF EXISTS AllocRound;
-DROP TABLE IF EXISTS SubjectEquipment;
-DROP TABLE IF EXISTS `Subject`;
-DROP TABLE IF EXISTS Program;
-DROP TABLE IF EXISTS SpaceEquipment;
-DROP TABLE IF EXISTS Equipment;
-DROP TABLE IF EXISTS `Space`;
-DROP TABLE IF EXISTS SpaceType;
-DROP TABLE IF EXISTS Building;
-DROP TABLE IF EXISTS DepartmentPlanner;
-DROP TABLE IF EXISTS `User`;
-DROP TABLE IF EXISTS Department;
-DROP TABLE IF EXISTS GlobalSetting;
 
 
 /* ------------------------------------------------------ */
 
+/* PROCEDURES */
+DROP PROCEDURE IF EXISTS abortAllocation;
+DROP PROCEDURE IF EXISTS startAllocation;
+DROP PROCEDURE IF EXISTS resetAllocation;
+DROP PROCEDURE IF EXISTS allocateSpace;
+DROP PROCEDURE IF EXISTS prioritizeSubjects;
+DROP PROCEDURE IF EXISTS setSuitableRooms;
+DROP PROCEDURE IF EXISTS LogAllocation;
 
-/* --- 01 CREATE TABLES --- */
+/* FUNCTIONS */
+DROP FUNCTION IF EXISTS getMissingItemAmount;
+
+/* ------------------------------------------------------ */
+
+/* UPDATED 2023-11-08 */
 
 /* --- 01 CREATE TABLES --- */
 
 CREATE TABLE IF NOT EXISTS GlobalSetting (
-    id          INTEGER        NOT NULL AUTO_INCREMENT,
-    name        VARCHAR(255)   UNIQUE NOT NULL,
-    description VARCHAR(16000),
-    numberValue INTEGER,
-    textValue   VARCHAR(255),
-    booleanValue BOOLEAN DEFAULT 0,
-    decimalValue DECIMAL (6,2) DEFAULT 0,
+    id              INTEGER                     NOT NULL AUTO_INCREMENT,
+    name            VARCHAR(255)   UNIQUE       NOT NULL,
+    description     VARCHAR(16000)              NOT NULL,
+    numberValue     INTEGER,
+    textValue       VARCHAR(255),
+    booleanValue    BOOLEAN         DEFAULT 0,
+    decimalValue    DECIMAL (6,2)   DEFAULT 0,
 
     PRIMARY KEY (id)
 )   ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS Department (
-    id          INTEGER         NOT NULL AUTO_INCREMENT,
-    name        VARCHAR(255)    UNIQUE NOT NULL,
-    description VARCHAR(16000)  ,
+    id          INTEGER                 NOT NULL AUTO_INCREMENT,
+    name        VARCHAR(255)    UNIQUE  NOT NULL,
+    description VARCHAR(16000),
 
     PRIMARY KEY (id)
 ) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=latin1;
 
-CREATE TABLE IF NOT EXISTS `User` (
-    id          INTEGER         NOT NULL AUTO_INCREMENT,
-    email       VARCHAR(255)    UNIQUE NOT NULL,
-    password    VARCHAR(255)    NOT NULL,
-    isAdmin     BOOLEAN         NOT NULL DEFAULT 0,
-    isPlanner   BOOLEAN         NOT NULL DEFAULT 0,
-    isStatist   BOOLEAN         NOT NULL DEFAULT 0,
+CREATE TABLE IF NOT EXISTS User (
+    id          INTEGER                 NOT NULL AUTO_INCREMENT,
+    email       VARCHAR(255)    UNIQUE  NOT NULL,
+    password    VARCHAR(255)            NOT NULL,
+    isAdmin     BOOLEAN                 NOT NULL DEFAULT 0,
+    isPlanner   BOOLEAN                 NOT NULL DEFAULT 0,
+    isStatist   BOOLEAN                 NOT NULL DEFAULT 0,
 
     PRIMARY KEY (id)
 ) ENGINE=InnoDB AUTO_INCREMENT=201 DEFAULT CHARSET=latin1;
@@ -69,14 +86,14 @@ CREATE TABLE IF NOT EXISTS DepartmentPlanner (
     CONSTRAINT FOREIGN KEY (departmentId) REFERENCES Department(id)
         ON DELETE CASCADE
         ON UPDATE NO ACTION,
-    CONSTRAINT FOREIGN KEY (userId) REFERENCES `User`(id)
+    CONSTRAINT FOREIGN KEY (userId) REFERENCES User(id)
         ON DELETE CASCADE
         ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS Building (
-    id          INTEGER         NOT NULL AUTO_INCREMENT,
-    name        VARCHAR(255)    UNIQUE NOT NULL,
+    id          INTEGER                 NOT NULL AUTO_INCREMENT,
+    name        VARCHAR(255)    UNIQUE  NOT NULL,
     description VARCHAR(16000),
 
     PRIMARY KEY (id)
@@ -84,48 +101,48 @@ CREATE TABLE IF NOT EXISTS Building (
 ) ENGINE=InnoDB AUTO_INCREMENT=401 DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS SpaceType (
-    id      INTEGER NOT NULL AUTO_INCREMENT,
-    name    VARCHAR(255) NOT NULL,
+    id          INTEGER         NOT NULL AUTO_INCREMENT,
+    name        VARCHAR(255)    NOT NULL,
     description VARCHAR(16000),
 
     PRIMARY KEY(id)
 
 ) ENGINE=InnoDB AUTO_INCREMENT=5001 DEFAULT CHARSET=latin1;
 
-CREATE TABLE IF NOT EXISTS `Space` (
-    id              INTEGER NOT NULL AUTO_INCREMENT,
-    name            VARCHAR(255) NOT NULL,
-    area            DECIMAL(5,1),
+CREATE TABLE IF NOT EXISTS Space (
+    id              INTEGER         NOT NULL AUTO_INCREMENT,
+    name            VARCHAR(255)    NOT NULL,
+    area            DECIMAL(5,1)    NOT NULL,
     info            VARCHAR(16000),
-    personLimit     INTEGER,
-    buildingId      INTEGER NOT NULL,
-    availableFrom   TIME,
-    availableTo     TIME,
-    classesFrom     TIME,
-    classesTo       TIME,
-	inUse			BOOLEAN DEFAULT 1,
-    spaceTypeId     INTEGER,
+    personLimit     INTEGER         NOT NULL,
+    buildingId      INTEGER         NOT NULL,
+    availableFrom   TIME            NOT NULL,
+    availableTo     TIME            NOT NULL,
+    classesFrom     TIME            NOT NULL,
+    classesTo       TIME            NOT NULL,
+	inUse			BOOLEAN         NOT NULL DEFAULT 1,
+    spaceTypeId     INTEGER         NOT NULL,
 
     CONSTRAINT AK_UNIQUE_name_in_building UNIQUE(buildingId, name),
 
     PRIMARY KEY (id),
 
     CONSTRAINT `FK_space_building`
-    	FOREIGN KEY (`buildingId`) REFERENCES `Building`(id)
+    	FOREIGN KEY (buildingId) REFERENCES Building(id)
             ON DELETE CASCADE
             ON UPDATE CASCADE,
 
     CONSTRAINT `FK_space_spaceType`
-    	FOREIGN KEY (`spaceTypeId`) REFERENCES `SpaceType`(id)
-            ON DELETE SET NULL
+    	FOREIGN KEY (spaceTypeId) REFERENCES SpaceType(id)
+            ON DELETE NO ACTION
             ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=1001 DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS Equipment (
-    id            INTEGER             NOT NULL AUTO_INCREMENT,
-    name          VARCHAR(255)        UNIQUE NOT NULL,
-    isMovable     BOOLEAN             NOT NULL,
-    priority      INTEGER             NOT NULL DEFAULT 0,
+    id            INTEGER                   NOT NULL AUTO_INCREMENT,
+    name          VARCHAR(255)      UNIQUE  NOT NULL,
+    isMovable     BOOLEAN                   NOT NULL,
+    priority      INTEGER                   NOT NULL DEFAULT 0,
     description   VARCHAR(16000),
 
     PRIMARY KEY (id)
@@ -138,11 +155,11 @@ CREATE TABLE IF NOT EXISTS SpaceEquipment (
     PRIMARY KEY(spaceId,equipmentId),
 
     CONSTRAINT `FK_SpaceEquipment_Equipment`
-        FOREIGN KEY (`equipmentId`) REFERENCES `Equipment` (id)
+        FOREIGN KEY (equipmentId) REFERENCES Equipment(id)
             ON DELETE CASCADE
             ON UPDATE CASCADE,
     CONSTRAINT `FK_SpaceEquipment_Space`
-        FOREIGN KEY (`spaceId`) REFERENCES `Space` (id)
+        FOREIGN KEY (spaceId) REFERENCES Space(id)
             ON DELETE CASCADE
             ON UPDATE CASCADE
 ) ENGINE = InnoDB DEFAULT CHARSET=latin1;
@@ -161,28 +178,28 @@ CREATE TABLE IF NOT EXISTS Program (
 ) ENGINE=InnoDB AUTO_INCREMENT=3001 DEFAULT CHARSET=latin1;
 
 
-CREATE TABLE IF NOT EXISTS `Subject` (
+CREATE TABLE IF NOT EXISTS Subject (
     id              INTEGER         NOT NULL AUTO_INCREMENT,
-    name            VARCHAR(255)    UNIQUE,
-    groupSize       INTEGER,
-    groupCount      INTEGER,
-    sessionLength   TIME,
-    sessionCount    INTEGER,
-    area            DECIMAL(5,1) DEFAULT NULL,
-    programId       INTEGER NOT NULL,
+    name            VARCHAR(255)    NOT NULL         UNIQUE,
+    groupSize       INTEGER         NOT NULL,
+    groupCount      INTEGER         NOT NULL,
+    sessionLength   TIME            NOT NULL,
+    sessionCount    INTEGER         NOT NULL,
+    area            DECIMAL(5,1)                DEFAULT NULL,
+    programId       INTEGER         NOT NULL,
     spaceTypeId     INTEGER,
 
     CONSTRAINT AK_Subject_unique_name_in_program UNIQUE (programId, name),
 
     PRIMARY KEY (id),
 
-    CONSTRAINT `FK_Subject_Program` FOREIGN KEY (`programId`)
-        REFERENCES `Program`(id)
+    CONSTRAINT `FK_Subject_Program` FOREIGN KEY (programId)
+        REFERENCES Program(id)
         ON DELETE NO ACTION
         ON UPDATE NO ACTION,
 
-    CONSTRAINT `FK_Subject_SpaceType` FOREIGN KEY (`SpaceTypeId`)
-        REFERENCES `SpaceType`(id)
+    CONSTRAINT `FK_Subject_SpaceType` FOREIGN KEY (SpaceTypeId)
+        REFERENCES SpaceType(id)
         ON DELETE SET NULL
         ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=4001 DEFAULT CHARSET=latin1;
@@ -191,15 +208,17 @@ CREATE TABLE IF NOT EXISTS SubjectEquipment (
     subjectId      INTEGER     NOT NULL,
     equipmentId    INTEGER     NOT NULL,
     priority       INTEGER     NOT NULL,
-    obligatory     BOOLEAN     DEFAULT 0,
+    obligatory     BOOLEAN     NOT NULL     DEFAULT 0,
 
     PRIMARY KEY (subjectId, equipmentId),
 
-    CONSTRAINT `FK_SubjectEquipment_Subject` FOREIGN KEY (`subjectId`) REFERENCES `Subject`(id)
+    CONSTRAINT `FK_SubjectEquipment_Subject` FOREIGN KEY (subjectId)
+                REFERENCES Subject(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
 
-    CONSTRAINT `FK_SubjectEquipment_Equipment` FOREIGN KEY (`equipmentId`) REFERENCES `Equipment`(id)
+    CONSTRAINT `FK_SubjectEquipment_Equipment` FOREIGN KEY (equipmentId)
+                REFERENCES Equipment(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -208,107 +227,105 @@ CREATE TABLE IF NOT EXISTS SubjectEquipment (
 /* CREATE ALLOC TABLES */
 
 CREATE TABLE IF NOT EXISTS AllocRound (
-    id              INTEGER     NOT NULL AUTO_INCREMENT,
-    date            TIMESTAMP   NOT NULL DEFAULT current_timestamp(),
-    name            VARCHAR(255) UNIQUE NOT NULL,
-    isSeasonAlloc   BOOLEAN,
-    userId          INTEGER     NOT NULL,
+    id              INTEGER         NOT NULL AUTO_INCREMENT,
+    date            TIMESTAMP       NOT NULL DEFAULT current_timestamp(),
+    name            VARCHAR(255)    NOT NULL UNIQUE,
+    isSeasonAlloc   BOOLEAN         NOT NULL DEFAULT 0,
+    userId          INTEGER         NOT NULL,
     description     VARCHAR(16000),
-    lastModified    TIMESTAMP   NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-    isAllocated     BOOLEAN DEFAULT 0,
-    processOn       BOOLEAN DEFAULT 0,
-    abortProcess    BOOLEAN DEFAULT 0,
-    requireReset    BOOLEAN DEFAULT 0,
+    lastModified    TIMESTAMP       NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+    isAllocated     BOOLEAN     DEFAULT 0,
+    processOn       BOOLEAN     DEFAULT 0,
+    abortProcess    BOOLEAN     DEFAULT 0,
+    requireReset    BOOLEAN     DEFAULT 0,
 
     PRIMARY KEY(id),
 
-    CONSTRAINT `FK_AllocRound_User` FOREIGN KEY (`userId`)
-        REFERENCES `User`(id)
+    CONSTRAINT `FK_AllocRound_User` FOREIGN KEY (userId)
+        REFERENCES User(id)
         ON DELETE NO ACTION
         ON UPDATE CASCADE
 
 )ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS AllocSubject (
+    allocRoundId    INTEGER     NOT NULL,    
     subjectId       INTEGER     NOT NULL,
-    allocRound      INTEGER     NOT NULL,
-    isAllocated     BOOLEAN     DEFAULT 0,
-    cantAllocate    BOOLEAN     DEFAULT 0,
+    isAllocated     BOOLEAN     NOT NULL DEFAULT 0,
+    cantAllocate    BOOLEAN     NOT NULL DEFAULT 0,
     priority        INTEGER,
     allocatedDate   TIMESTAMP,
 
-    PRIMARY KEY(subjectId, allocRound),
+    PRIMARY KEY(allocRoundId, subjectId),
 
-    CONSTRAINT `FK_AllocSubject_Subject` FOREIGN KEY (`subjectId`)
-        REFERENCES `Subject`(id)
+    CONSTRAINT `FK_AllocSubject_Subject` FOREIGN KEY (subjectId)
+        REFERENCES Subject(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
 
-    CONSTRAINT `FK_AllocSubject_AllocRound` FOREIGN KEY (`allocRound`)
-        REFERENCES `AllocRound`(id)
+    CONSTRAINT `FK_AllocSubject_AllocRound` FOREIGN KEY (allocRoundId)
+        REFERENCES AllocRound(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
 ) ENGINE=InnoDB CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS AllocSpace (
+    allocRoundId    INTEGER     NOT NULL,
     subjectId       INTEGER     NOT NULL,
-    allocRound      INTEGER     NOT NULL,
     spaceId         INTEGER     NOT NULL,
     totalTime       TIME,
 
-    PRIMARY KEY(subjectId, allocRound, spaceId),
+    PRIMARY KEY(subjectId, allocRoundId, spaceId),
 
-    CONSTRAINT `FK_AllocSpace_AllocSubject`
-        FOREIGN KEY (`subjectId`, `allocRound`)
-        REFERENCES `AllocSubject` (subjectId, allocRound)
+    CONSTRAINT `FK_AllocSpace_AllocSubject` FOREIGN KEY (allocRoundId,subjectId)
+        REFERENCES AllocSubject(allocRoundId, subjectId)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
 
-    CONSTRAINT `FK_AllocSpace_Space`
-        FOREIGN KEY (`spaceId`)
-        REFERENCES `Space` (id)
+    CONSTRAINT `FK_AllocSpace_Space` FOREIGN KEY (spaceId)
+        REFERENCES Space(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
 
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS AllocSubjectSuitableSpace (
-    allocRound      INTEGER     NOT NULL,
+    allocRoundId    INTEGER     NOT NULL,
     subjectId       INTEGER     NOT NULL,
     spaceId         INTEGER     NOT NULL,
     missingItems    INTEGER,
 
-    PRIMARY KEY(allocRound, subjectId, spaceId),
+    PRIMARY KEY(allocRoundId, subjectId, spaceId),
 
     CONSTRAINT `FK_AllocSubjectSpace_AllocSubject`
-        FOREIGN KEY(`allocRound`, `subjectId`)
-        REFERENCES `AllocSubject` (allocRound, subjectId)
+        FOREIGN KEY(allocRoundId, subjectId)
+        REFERENCES AllocSubject(allocRoundId, subjectId)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
 
     CONSTRAINT `FK_AllocSubjectSpace_Space`
-        FOREIGN KEY (`spaceId`)
-        REFERENCES `Space` (id)
+        FOREIGN KEY (spaceId)
+        REFERENCES Space(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
 
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS AllocCurrentRoundUser (
-    allocId     INTEGER     NOT NULL,
-    userId      INTEGER,
+    allocRoundId    INTEGER     NOT NULL,
+    userId          INTEGER     NOT NULL,
 
-    PRIMARY KEY(allocId, userId),
+    PRIMARY KEY(allocRoundId, userId),
 
     CONSTRAINT `FK_AllocCurrentRoundUser_AllocRound`
-        FOREIGN KEY (`allocId`)
-        REFERENCES `AllocRound` (id)
+        FOREIGN KEY (allocRoundId)
+        REFERENCES AllocRound(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
 
     CONSTRAINT `FK_AllocCurrentRoundUser_User`
-        FOREIGN KEY (`userId`)
-        REFERENCES `User` (id)
+        FOREIGN KEY (userId)
+        REFERENCES User(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -316,38 +333,442 @@ CREATE TABLE IF NOT EXISTS AllocCurrentRoundUser (
 /* CREATE LOG TABLES */
 
 CREATE TABLE IF NOT EXISTS log_type (
-id 		INTEGER		NOT NULL AUTO_INCREMENT,
-name	VARCHAR(255)	NOT NULL UNIQUE,
+    id      INTEGER		    NOT NULL    AUTO_INCREMENT,
+    name    VARCHAR(255)    NOT NULL    UNIQUE,
 
-PRIMARY KEY (id)
+    PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS log_list (
-id			INTEGER		NOT NULL AUTO_INCREMENT,
-log_type	INTEGER,
-created_at	TIMESTAMP	NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+    id			INTEGER		NOT NULL AUTO_INCREMENT,
+    log_type	INTEGER,
+    created_at	TIMESTAMP	NOT NULL DEFAULT CURRENT_TIMESTAMP(),
 
-PRIMARY KEY (id),
+    PRIMARY KEY (id),
 
-CONSTRAINT FOREIGN KEY (log_type) REFERENCES log_type(id)
-	ON DELETE NO ACTION
-	ON UPDATE NO ACTION
+    CONSTRAINT FOREIGN KEY (log_type) REFERENCES log_type(id)
+        ON DELETE NO ACTION
+        ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS log_event (
-id 		INTEGER		NOT NULL AUTO_INCREMENT,
-log_id	INTEGER		NOT NULL,
-stage	VARCHAR(255),
-status	VARCHAR(255),
-information 	VARCHAR(16000),
-created_at	TIMESTAMP	NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+    id              INTEGER         NOT NULL    AUTO_INCREMENT,
+    log_id          INTEGER         NOT NULL,
+    stage           VARCHAR(255),
+    status          VARCHAR(255),
+    information 	VARCHAR(16000),
+    created_at      TIMESTAMP       NOT NULL    DEFAULT CURRENT_TIMESTAMP(),
 
-PRIMARY KEY (id),
+    PRIMARY KEY (id),
 
-CONSTRAINT FOREIGN KEY (log_id) REFERENCES log_list(id)
-	ON DELETE CASCADE
-	ON UPDATE CASCADE
+    CONSTRAINT FOREIGN KEY (log_id) REFERENCES log_list(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+/* ------------------------------------------------------ */
+
+/* PROCEDURES */
+/* DELIMITER is explained here, just look at first two examples: https:__mariadb.com/kb/en/delimiters/ */
+
+/* --- Procedure 1: Conditional database logger, used by other prodedures below --- */
+
+DELIMITER __
+
+CREATE PROCEDURE IF NOT EXISTS LogAllocation(logId INT, stage VARCHAR(255), status VARCHAR(255), msg VARCHAR(16000))
+BEGIN
+	DECLARE debug INTEGER;
+
+	SET debug := (SELECT numberValue FROM GlobalSetting WHERE name='allocation-debug');
+
+	IF debug = 1 AND logId IS NOT NULL AND logId != 0 THEN
+		INSERT INTO log_event(log_id, stage, status, information) VALUES(logId, stage, status, msg);
+	END IF;
+END; 
+__
+DELIMITER ;
+
+/* allocRid is now used for the frontend sent allocRoundId, to make it stand out e.g. in: 
+  AllocSpace.allocRoundId = allocRid;  
+  Easier to follow, Right? */
+
+
+/* --- Procedure 2: PRIORITIZE SUBJECTS -  TO ALLOCATION ORDER --- */
+DELIMITER __
+
+CREATE OR REPLACE PROCEDURE prioritizeSubjects(allocRid INT, priority_option INT, logId INT)
+BEGIN
+	DECLARE priorityNow INTEGER;
+
+	SET priorityNow = (SELECT IFNULL(MAX(priority),0) FROM AllocSubject allSub WHERE allSub.allocRoundId = allocRid);
+
+	IF priority_option = 1 THEN -- subject_equipment.priority >= X
+		INSERT INTO AllocSubject (subjectId, allocRoundId, priority)
+			SELECT allSub.subjectId, allSub.allocRoundId, ROW_NUMBER() OVER (ORDER BY MAX(sub_eqp.priority) DESC, Subject.groupSize ASC) + priorityNow as "row"
+    		FROM AllocSubject allSub
+    		LEFT JOIN SubjectEquipment sub_eqp ON allSub.subjectId = sub_eqp.subjectId
+    		JOIN Subject ON allSub.subjectId = Subject.id
+    		WHERE allSub.allocRoundId = allocRid AND allSub.priority IS NULL
+    		AND (sub_eqp.priority) >= (SELECT numberValue FROM GlobalSetting gs WHERE name="x")
+    		GROUP BY allSub.subjectId
+		ON DUPLICATE KEY UPDATE priority = VALUES(priority);
+	ELSEIF priority_option = 2 THEN -- subject_equipment.priority < X
+		INSERT INTO AllocSubject (subjectId, allocRoundId, priority)
+			SELECT allSub.subjectId, allSub.allocRoundId, ROW_NUMBER() OVER (ORDER BY MAX(sub_eqp.priority) DESC, Subject.groupSize ASC) + priorityNow as "row"
+       		FROM AllocSubject allSub
+        	LEFT JOIN SubjectEquipment sub_eqp ON allSub.subjectId = sub_eqp.subjectId
+        	JOIN Subject ON allSub.subjectId = Subject.id
+        	WHERE allSub.allocRoundId = allocRid
+        	AND allSub.priority IS NULL
+        	AND (sub_eqp.priority) < (SELECT numberValue FROM GlobalSetting gs WHERE name="x")
+        	GROUP BY allSub.subjectId
+        	ORDER BY sub_eqp.priority DESC
+        ON DUPLICATE KEY UPDATE priority = VALUES(priority);
+    ELSEIF priority_option = 3 THEN -- all others (subjects without equipment)
+    	INSERT INTO AllocSubject (subjectId, allocRoundId, priority)
+    		SELECT AllocSubject.subjectId, AllocSubject.allocRoundId, ROW_NUMBER() OVER (ORDER BY Subject.groupSize ASC) + priorityNow as "row"
+			FROM AllocSubject
+			LEFT JOIN Subject ON AllocSubject.subjectId = Subject.id
+			WHERE priority IS NULL
+			AND AllocSubject.allocRoundId = allocRid
+		ON DUPLICATE KEY UPDATE priority = VALUES(priority);
+	END IF;
+
+	CALL LogAllocation(logId, "Prioritization", "OK", CONCAT("Priority option: ", priority_option, " completed."));
+
+END; 
+__
+DELIMITER ;
+
+/* --- Procedure 3: SET SUITABLE ROOMS -  Find which spaces could be suitable for this subject id - ALLOCATION --- */
+DELIMITER __
+
+CREATE OR REPLACE PROCEDURE setSuitableRooms(allocRid INT, subId INT)
+BEGIN
+	INSERT INTO AllocSubjectSuitableSpace (allocRoundId, subjectId, spaceId, missingItems)
+		SELECT allocRid, subId, sp.id, getMissingItemAmount(subId, sp.id) AS "missingItems"
+		FROM Space sp
+		WHERE sp.personLimit >= (SELECT groupSize FROM Subject WHERE id=subId)
+		AND sp.area >= (SELECT s.area FROM Subject s WHERE id=subId)
+		AND sp.spaceTypeId = (SELECT s.spaceTypeId FROM Subject s WHERE id=subId)
+		AND sp.inUse=1
+		;
+END; 
+__
+DELIMITER ;
+
+/* --- Procedure 4: allocated space(s) to satisfy the subject's needs - until all needed hours have been allocated --- */
+DELIMITER __
+
+CREATE PROCEDURE allocateSpace(allocRid INT, subId INT, logId INT)
+BEGIN
+	DECLARE spaceTo INTEGER DEFAULT NULL;
+	DECLARE i INTEGER DEFAULT 0; -- loop index
+	DECLARE sessions INTEGER DEFAULT 0; -- Total session amount = groupCount * sessionCount
+	DECLARE allocated INTEGER DEFAULT 0; -- How many sessions added to AllocSpace
+	DECLARE sessionSeconds INTEGER DEFAULT 0; -- How many seconds each session lasts
+	DECLARE suitableSpaces BOOLEAN DEFAULT TRUE; -- If can't allocate set false
+	DECLARE loopOn BOOLEAN DEFAULT TRUE; -- while loop condition
+
+	SET sessions := (SELECT groupCount * sessionCount FROM Subject WHERE id = subId); -- total amount of sessions in subject
+   	SET allocated := 0; -- How many sessions allocated
+   	SET sessionSeconds := (SELECT TIME_TO_SEC(sessionLength) FROM Subject WHERE id = subId); -- Session length in seconds
+
+	SET spaceTo := ( -- to check if subject can be allocated
+        	SELECT ass.spaceId FROM AllocSubjectSuitableSpace ass
+        	WHERE ass.missingItems = 0 AND ass.subjectId = subId AND ass.allocRoundId = allocRid
+ 			LIMIT 1);
+
+	IF spaceTo IS NULL THEN -- If can't find suitable spaces
+		SET suitableSpaces := FALSE;
+   	ELSE -- Find for each session space with free time
+   		SET i := 0;
+   		WHILE loopOn DO -- Try add all sessions to the space
+   			SET spaceTo := (SELECT sp.id FROM AllocSubjectSuitableSpace ass
+							LEFT JOIN Space sp ON ass.spaceId = sp.id
+							WHERE ass.subjectId = subId AND ass.missingItems = 0 AND ass.allocRoundId = allocRid
+							GROUP BY sp.id
+							HAVING
+							((SELECT TIME_TO_SEC(TIMEDIFF(availableTo, availableFrom)) *5 FROM Space WHERE id = sp.id) -
+								(SELECT IFNULL(SUM(TIME_TO_SEC(totalTime)), 0) FROM AllocSpace asp WHERE asp.allocRoundId = allocRid AND spaceId = sp.id)
+								>
+								(sessionSeconds * (sessions - i - allocated)))
+							ORDER BY sp.personLimit ASC, sp.area ASC
+							LIMIT 1);
+
+			IF spaceTo IS NULL THEN -- If can't find space with freetime for specific amount sessions
+				SET i := i+1;
+				IF i = sessions - allocated THEN -- If checked all
+					SET loopOn = FALSE;
+				END IF;
+			ELSE -- if can find space with freetime for specific amount sessions
+			INSERT INTO AllocSpace
+					(subjectId, allocRoundId, spaceId, totalTime)
+				VALUES
+					(subId, allocRid, spaceTo, SEC_TO_TIME((sessionSeconds * (sessions - i - allocated))))
+				ON DUPLICATE KEY UPDATE totalTime = ADDTIME(totalTime, (SEC_TO_TIME(sessionSeconds * (sessions - i - allocated))));
+				-- LOG HERE
+				CALL LogAllocation(logId, "Space-allocation", "OK", CONCAT("Subject : ", subId, " - Allocate ", sessions - i - allocated, " of ", sessions, " sessions to space: ", spaceTo));
+				SET allocated := allocated + (sessions - i - allocated);
+				SET i := 0;
+				IF allocated = sessions THEN
+					SET loopOn = FALSE;
+				END IF;
+			END IF;
+   		END WHILE;
+   END IF;
+
+   IF sessions = allocated THEN -- If all sessions allocated
+   	UPDATE AllocSubject asu SET isAllocated = 1 WHERE asu.subjectId = subId AND asu.allocRoundId = allocRid;
+   ELSEIF suitableSpaces = FALSE THEN -- if can't find any suitable space for the subject
+   	UPDATE AllocSubject asu SET cantAllocate = 1 WHERE asu.subjectId = subId AND asu.allocRoundId = allocRid;
+   	-- LOG HERE
+    CALL LogAllocation(logId, "Space-allocation", "Warning", CONCAT("Subject : ", subId, " - Can't find suitable spaces" ));
+   ELSEIF allocated = 0 AND suitableSpaces = TRUE THEN -- if can't find any space with free time, add all sessions to same space with most freetime
+   		SET spaceTo := (
+   			SELECT alpa.spaceId
+			FROM AllocSubjectSuitableSpace alpa
+			LEFT JOIN Space spa ON alpa.spaceId = spa.id
+			WHERE alpa.subjectId = subId
+			AND alpa.missingItems = 0
+			AND alpa.allocRoundId = allocRid
+			GROUP BY alpa.spaceId
+			ORDER BY ((TIME_TO_SEC(TIMEDIFF(spa.availableTO, spa.availableFrom)) *5) -
+			(SELECT IFNULL((SUM(TIME_TO_SEC(totalTime))), 0) FROM AllocSpace asp WHERE asp.allocRoundId = allocRid AND spaceId = alpa.spaceId)) DESC
+			LIMIT 1
+		);
+   		INSERT INTO AllocSpace (subjectId, allocRoundId, spaceId, totalTime)
+   			VALUES (subId, allocRid, spaceTo, SEC_TO_TIME(sessionSeconds * sessions));
+   		UPDATE AllocSubject asu SET isAllocated = 1 WHERE asu.subjectId = subId AND asu.allocRoundId = allocRid;
+   		-- LOG HERE
+		CALL LogAllocation(logId, "Space-allocation", "Warning", CONCAT("Subject : ", subId, " - Allocate ", sessions, " of ", sessions, " sessions to space: ", spaceTo, " - All suitable spaces are full."));
+
+   	ELSEIF allocated < sessions AND suitableSpaces = TRUE THEN -- if there is free time for some of the sessions but not all, add rest to same space than others
+   		SET spaceTo := (SELECT spaceId FROM AllocSpace asp WHERE asp.subjectId = subId AND asp.allocRoundId = allocRid ORDER BY totalTime ASC LIMIT 1);
+
+		UPDATE AllocSpace asp SET totalTime=ADDTIME(totalTime,(SEC_TO_TIME(sessionSeconds * (sessions - allocated))))
+		WHERE asp.subjectId=subID AND asp.spaceId = spaceTO AND asp.allocRoundId = allocRid;
+		UPDATE AllocSubject asu SET isAllocated = 1 WHERE asu.subjectId = subId AND asu.allocRoundId = allocRid;
+		-- LOG HERE
+		CALL LogAllocation(logId, "Space-allocation", "Warning", CONCAT("Subject : ", subId, " - Add ", sessions - allocated, " to space: ", spaceTo, " - All suitable spaces are full"));
+   	END IF;
+END; 
+__
+DELIMITER ;
+
+
+/* --- Procedure 5 - A: START ALLOCATION --- */
+DELIMITER __
+
+CREATE OR REPLACE PROCEDURE startAllocation(allocRid INT)
+BEGIN
+	DECLARE finished INTEGER DEFAULT 0; -- Marker for loop
+	DECLARE subId	INTEGER DEFAULT 0; -- SubjectId
+	DECLARE logId	INTEGER DEFAULT NULL;
+	DECLARE errors	INTEGER DEFAULT 0;
+	DECLARE debug	INTEGER DEFAULT 0;
+	DECLARE abort_round	BOOLEAN DEFAULT FALSE;
+	DECLARE reset_required	BOOLEAN DEFAULT FALSE;
+	DECLARE procedure_active	BOOLEAN DEFAULT FALSE;
+	DECLARE is_allocated 	BOOLEAN DEFAULT FALSE;
+
+	-- Error Handling declarations
+    DECLARE processBusy CONDITION FOR SQLSTATE '50000';
+    DECLARE alreadyAllocated CONDITION FOR SQLSTATE '50001';
+	DECLARE abortAllocation	CONDITION FOR SQLSTATE '50002';
+	DECLARE require_reset	CONDITION FOR SQLSTATE '50003';
+
+	-- Cursor for subject loop / SELECT priority order
+	DECLARE subjects CURSOR FOR
+		SELECT allSub.subjectId
+       	FROM AllocSubject allSub
+        WHERE allSub.allocRoundId = allocRid
+        ORDER BY priority ASC;
+
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished = 1;
+
+	-- IF user tell to abort the process
+	DECLARE EXIT HANDLER FOR abortAllocation
+	BEGIN
+		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
+		SET @full_error = CONCAT("Error: ", @errno, " (", @sqlstate, "): ", @text);
+		CALL LogAllocation(logId, "Allocation", "Error", (SELECT @full_error));
+		UPDATE AllocRound SET abortProcess = 0, processOn = 0 WHERE id = allocRid;
+		RESIGNAL SET MESSAGE_TEXT = @full_error;
+	END;
+
+	-- IF Procedure already running, is already allocated
+	DECLARE EXIT HANDLER FOR processBusy, alreadyAllocated, require_reset
+	BEGIN
+		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
+		SET @full_error = CONCAT("Error: ", @errno, " (", @sqlstate, "): ", @text);
+		CALL LogAllocation(logId, "Allocation", "Error", (SELECT @full_error));
+		RESIGNAL SET MESSAGE_TEXT = @full_error;
+	END;
+
+	-- IF ANY ERROR HAPPEN INSERT IT TO DEBUG LOG
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION
+		BEGIN
+			SET errors := errors +1;
+			GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
+			SET @full_error = CONCAT("ERROR ", @errno, " (", @sqlstate, "): ", @text);
+			CALL LogAllocation(logId, "Allocation", "Error", (SELECT @full_error));
+		END;
+
+	-- IF debug mode on, start logging.
+	SET debug := (SELECT numberValue FROM GlobalSetting WHERE name='allocation-debug');
+	IF debug = 1 THEN
+		INSERT INTO log_list(log_type) VALUES (1); -- START LOG
+		SET logId := (SELECT LAST_INSERT_ID()); -- SET log id number for the list
+	END IF;
+
+	CALL LogAllocation(logId, "Allocation", "Start", CONCAT("Start allocation. AllocRound: ", allocRid));
+
+	-- IF allocRound already allocated raise error
+	SET is_allocated = (SELECT isAllocated FROM AllocRound WHERE id = allocRid);
+	IF is_allocated = 1 THEN
+		SET @message_text = CONCAT("The allocRound: ", allocRid, " is already allocated.");
+		SIGNAL alreadyAllocated SET MESSAGE_TEXT = @message_text, MYSQL_ERRNO = 1192;
+	END IF;
+	-- IF AllocRound require reset before allocation
+	SET reset_required = (SELECT requireReset FROM AllocRound WHERE id = allocRid);
+	IF reset_required = TRUE THEN
+		SET @message_text = CONCAT("The allocRound: ", allocRid, " require reset before allocation.");
+		SIGNAL require_reset SET MESSAGE_TEXT = @message_text, MYSQL_ERRNO = 1192;
+	END IF;
+	-- IF Allocation already running with allocRound id raise error
+	SET procedure_active = (SELECT processOn FROM AllocRound WHERE id = allocRid);
+	IF procedure_active = 1 THEN
+		SET @message_text = CONCAT("The allocation with allocRound:", allocRid, " is already running.");
+		SIGNAL processBusy SET MESSAGE_TEXT = @message_text, MYSQL_ERRNO = 1192;
+	END IF;
+	-- SET procedure running
+	UPDATE AllocRound SET processOn = 1 WHERE id = allocRid;
+
+	/* ONLY FOR DEMO PURPOSES */
+	IF (allocRid = 10004) THEN
+		INSERT INTO AllocSubject(subjectId, allocRoundId)
+		SELECT id, 10004 FROM Subject;
+	END IF;
+	/* DEMO PART ENDS */
+
+	UPDATE AllocRound SET requireReset = TRUE WHERE id = allocRid;
+
+	CALL prioritizeSubjects(allocRid, 1, logId); -- sub_eq.prior >= X ORDER BY sub_eq.prior DESC, groupSize ASC
+	CALL prioritizeSubjects(allocRid, 2, logId); -- sub_eq.prior < X ORDER BY sub_eq.prior DESC, groupSize ASC
+	CALL prioritizeSubjects(allocRid, 3, logId); -- without equipments ORDER BY groupSize ASC
+
+	OPEN subjects;
+
+	subjectLoop : LOOP
+		FETCH subjects INTO subId;
+		IF finished = 1 THEN LEAVE subjectLoop;
+		END IF;
+
+		-- IF user tells abort the process.
+		SET abort_round := (SELECT abortProcess FROM AllocRound WHERE id = allocRid);
+		IF abort_round = 1 THEN
+			SET @message_text = CONCAT("The allocation been terminated by user. AllocRoundId: ", allocRid, ".");
+			SIGNAL abortAllocation SET MESSAGE_TEXT = @message_text, MYSQL_ERRNO = 1192;
+		END IF;
+
+		-- SET Suitable rooms for the subject
+		CALL LogAllocation(logId, "Allocation", "Info", CONCAT("SubjectId: ", subId, " - Search for suitable spaces"));
+	    CALL setSuitableRooms(allocRid, subId);
+		-- SET cantAllocate or Insert subject to spaces
+        CALL allocateSpace(allocRid, subId, logId);
+
+	END LOOP subjectLoop;
+
+	CLOSE subjects;
+
+	UPDATE AllocRound SET isAllocated = 1 WHERE id = allocRid;
+	CALL LogAllocation(logId, "Allocation", "End", CONCAT("Errors: ", (SELECT errors)));
+
+	UPDATE AllocRound SET processOn = 0 WHERE id = allocRid;
+
+END; 
+__
+DELIMITER ;
+
+
+/* --- PROCEDURE 6 - B: Abort Allocation --- */
+DELIMITER __
+
+CREATE PROCEDURE IF NOT EXISTS abortAllocation(allocRid INT)
+BEGIN
+	DECLARE inProgress BOOLEAN DEFAULT FALSE;
+
+	-- CHECK IF Allocation is active
+	SET inProgress := (SELECT processOn FROM AllocRound WHERE id = allocRid);
+	-- IF in process tell to stop
+	IF inProgress = TRUE THEN
+		UPDATE AllocRound SET abortProcess = 1 WHERE id = allocRid;
+	END IF;
+
+END; 
+__
+DELIMITER ;
+
+
+/* --- Procedure 7 - C: RESET ALLOCATION, will nullify all calculations/allocations for this alloc R(ound) Id --- */
+DELIMITER __
+
+CREATE PROCEDURE IF NOT EXISTS  resetAllocation(allocRid INTEGER)
+BEGIN
+
+	-- Handler for the error
+	DECLARE processBusy CONDITION FOR SQLSTATE '50000';
+	DECLARE EXIT HANDLER FOR processBusy
+	BEGIN
+		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
+		SET @full_error = CONCAT("Error: ", @errno, " (", @sqlstate, "): ", @text);
+		RESIGNAL SET MESSAGE_TEXT = @full_error;
+	END;
+	-- Raise error if allocation in progress.
+	SET @procedure_active = (SELECT processOn FROM AllocRound WHERE id = allocRid);
+	IF @procedure_active = 1 THEN
+		SET @message_text = CONCAT("The allocation with allocRound:", allocRid, " is currently in progress.");
+		SIGNAL processBusy SET MESSAGE_TEXT = @message_text, MYSQL_ERRNO = 1192;
+	END IF;
+
+	-- Delete all allocation data and reset variables
+	DELETE FROM AllocSpace WHERE allocRoundId = allocRid;
+	DELETE FROM AllocSubjectSuitableSpace WHERE allocRoundId = allocRid;
+    IF (allocRid = 10004) THEN
+        DELETE FROM AllocSubject WHERE allocRoundId = 10004;
+    ELSE
+	    UPDATE AllocSubject SET isAllocated = 0, priority = null, cantAllocate = 0 WHERE allocRoundId = allocRid;
+    END IF;
+    UPDATE AllocRound SET isAllocated = 0, requireReset = FALSE WHERE id = allocRid;
+END; 
+__
+DELIMITER ;
+
+
+/* ------------------------------------------------------ */
+/* FUNCTIONS */
+
+/* Function 8 (well 1-7 were actually procedures, but similar) - Get missing equipment(subject) count in space */
+DELIMITER __
+
+CREATE FUNCTION IF NOT EXISTS getMissingItemAmount(subId INT, spaId INT) RETURNS INT
+NOT DETERMINISTIC
+BEGIN
+RETURN (
+	SELECT COUNT(*)
+        FROM(
+    		SELECT equipmentId  FROM SubjectEquipment
+    				WHERE SubjectEquipment.subjectId = subId
+    			EXCEPT
+    		SELECT equipmentId FROM SpaceEquipment
+    				WHERE SpaceEquipment.spaceId = spaId
+		) a
+);
+END; 
+__
+DELIMITER ;
+
 
 /* ------------------------------------------------------ */
 
@@ -377,6 +798,7 @@ INSERT INTO Department(name, description) VALUES
     ('Avoin Kampus', 'Aineryhmän kuvaus');
 
 /* --- Insert: `User` --- */
+/* SECURITY: Change these before deployment */
 INSERT INTO `User`(email, password, isAdmin, isPlanner, isStatist) VALUES
     ('admin','$2a$10$My5c7qZPRzp2p5QpgzQ0kOt5Au1xdwIidJDegsEWpntwAWceUjdWa',1,0,0),
     ('planner','$2a$10$mKf/VHzIGyIfADKHFACEBuYTb0IbPv6sE/FqlsbLAKgfelMWwsnEm',0,1,0),
@@ -688,7 +1110,7 @@ INSERT INTO AllocRound(name, isSeasonAlloc, userId, description) VALUES
     ('Demo', 0, 201, 'Allokointi demoamista varten');
 
 /* --- Insert: AllocSubject * --- */
-INSERT INTO AllocSubject(subjectId, allocRound, isAllocated, allocatedDate, priority) VALUES
+INSERT INTO AllocSubject(subjectId, allocRoundId, isAllocated, allocatedDate, priority) VALUES
     (4011, 10001, 0, '2022-10-28', 1),
     (4014, 10001, 0, '2022-10-28', 2),
     (4019, 10001, 0, '2022-10-28', 3),
@@ -738,7 +1160,7 @@ INSERT INTO AllocSubject(subjectId, allocRound, isAllocated, allocatedDate, prio
     (4006, 10003, 0, '2022-09-21', 6),
     (4007, 10003, 0, '2022-09-21', 7);
 
-INSERT INTO AllocSpace(subjectId, allocRound, spaceId, totalTime) VALUES
+INSERT INTO AllocSpace(subjectId, allocRoundId, spaceId, totalTime) VALUES
     (4011, 10002, 1020, '04:30:00'), -- Urkujensoitto 1ppl/ N419 urkuluokka, 34m2, 5ppl
     (4003, 10002, 1009, '05:00:00'), -- Pianon yksilöopetus 1ppl/ musiikkiluokka 16.6m2, 6ppl
     (4005, 10002, 1020, '10:00:00'), -- Kirkkomusiikin ryhmäsoitto 5ppl/ N419 Kirkkomusiikki, 34m2, 5ppl
@@ -776,7 +1198,7 @@ INSERT INTO AllocSpace(subjectId, allocRound, spaceId, totalTime) VALUES
     (4039, 10002, 1010, '02:00:00'); -- Johtamisen pedagogiikka -luentosarja 15ppl
 
 /* --- Insert: AllocCurrentRoundUser * --- */
-INSERT INTO AllocCurrentRoundUser(allocId, userId) VALUES
+INSERT INTO AllocCurrentRoundUser(allocRoundId, userId) VALUES
     (10001, 201),
     (10001, 202),
     (10002, 201);
@@ -784,402 +1206,4 @@ INSERT INTO AllocCurrentRoundUser(allocId, userId) VALUES
 /* --- INSERT: LOG TYPE --- */
 INSERT INTO log_type(name) VALUES ("allocation");
 
-/* ------------------------------------------------------ */
-/* DROP PROCEDURES */
 
-DROP PROCEDURE IF EXISTS abortAllocation;
-DROP PROCEDURE IF EXISTS startAllocation;
-DROP PROCEDURE IF EXISTS resetAllocation;
-DROP PROCEDURE IF EXISTS allocateSpace;
-DROP PROCEDURE IF EXISTS prioritizeSubjects;
-DROP PROCEDURE IF EXISTS setSuitableRooms;
-DROP PROCEDURE IF EXISTS LogAllocation;
-
-/* ------------------------------------------------------ */
-/* DROP FUNCTIONS */
-
-DROP FUNCTION IF EXISTS getMissingItemAmount;
-
-/* ------------------------------------------------------ */
-/* PROCEDURES */
-
-/* --- Procedure: LogAllocation - Allocation */
-DELIMITER //
-CREATE PROCEDURE IF NOT EXISTS LogAllocation(logId INT, stage VARCHAR(255), status VARCHAR(255), msg VARCHAR(16000))
-BEGIN
-	DECLARE debug INTEGER;
-
-	SET debug := (SELECT numberValue FROM GlobalSetting WHERE name='allocation-debug');
-
-	IF debug = 1 AND logId IS NOT NULL AND logId != 0 THEN
-		INSERT INTO log_event(log_id, stage, status, information) VALUES(logId, stage, status, msg);
-	END IF;
-END; //
-
-DELIMITER ;
-
-/* --- Procedure: PRIORITIZE SUBJECTS -  ALLOCATION --- */
-
-DELIMITER //
-CREATE OR REPLACE PROCEDURE prioritizeSubjects(allocRoundId INT, priority_option INT, logId INT)
-BEGIN
-	DECLARE priorityNow INTEGER;
-
-	SET priorityNow = (SELECT IFNULL(MAX(priority),0) FROM AllocSubject WHERE allocRound = allocRoundId);
-
-	IF priority_option = 1 THEN -- subject_equipment.priority >= X
-		INSERT INTO AllocSubject (subjectId, allocRound, priority)
-			SELECT allSub.subjectId, allSub.allocRound, ROW_NUMBER() OVER (ORDER BY MAX(sub_eqp.priority) DESC, Subject.groupSize ASC) + priorityNow as "row"
-    		FROM AllocSubject allSub
-    		LEFT JOIN SubjectEquipment sub_eqp ON allSub.subjectId = sub_eqp.subjectId
-    		JOIN Subject ON allSub.subjectId = Subject.id
-    		WHERE allSub.allocRound = allocRoundId AND allSub.priority IS NULL
-    		AND (sub_eqp.priority) >= (SELECT numberValue FROM GlobalSetting gs WHERE name="x")
-    		GROUP BY allSub.subjectId
-		ON DUPLICATE KEY UPDATE priority = VALUES(priority);
-	ELSEIF priority_option = 2 THEN -- subject_equipment.priority < X
-		INSERT INTO AllocSubject (subjectId, allocRound, priority)
-			SELECT allSub.subjectId, allSub.allocRound, ROW_NUMBER() OVER (ORDER BY MAX(sub_eqp.priority) DESC, Subject.groupSize ASC) + priorityNow as "row"
-       		FROM AllocSubject allSub
-        	LEFT JOIN SubjectEquipment sub_eqp ON allSub.subjectId = sub_eqp.subjectId
-        	JOIN Subject ON allSub.subjectId = Subject.id
-        	WHERE allSub.allocRound = allocRoundId
-        	AND allSub.priority IS NULL
-        	AND (sub_eqp.priority) < (SELECT numberValue FROM GlobalSetting gs WHERE name="x")
-        	GROUP BY allSub.subjectId
-        	ORDER BY sub_eqp.priority DESC
-        ON DUPLICATE KEY UPDATE priority = VALUES(priority);
-    ELSEIF priority_option = 3 THEN -- all others (subjects without equipment)
-    	INSERT INTO AllocSubject (subjectId, allocRound, priority)
-    		SELECT AllocSubject.subjectId, AllocSubject.allocRound, ROW_NUMBER() OVER (ORDER BY Subject.groupSize ASC) + priorityNow as "row"
-			FROM AllocSubject
-			LEFT JOIN Subject ON AllocSubject.subjectId = Subject.id
-			WHERE priority IS NULL
-			AND allocRound = allocRoundId
-		ON DUPLICATE KEY UPDATE priority = VALUES(priority);
-	END IF;
-
-	CALL LogAllocation(logId, "Prioritization", "OK", CONCAT("Priority option: ", priority_option, " completed."));
-
-END; //
-
-DELIMITER ;
-
-/* --- Procedure: SET SUITABLE ROOMS -  ALLOCATION --- */
-DELIMITER //
-
-CREATE OR REPLACE PROCEDURE setSuitableRooms(allocRouId INT, subId INT)
-BEGIN
-	INSERT INTO AllocSubjectSuitableSpace (allocRound, subjectId, spaceId, missingItems)
-		SELECT allocRouId, subId, sp.id, getMissingItemAmount(subId, sp.id) AS "missingItems"
-		FROM Space sp
-		WHERE sp.personLimit >= (SELECT groupSize FROM Subject WHERE id=subId)
-		AND sp.area >= (SELECT s.area FROM Subject s WHERE id=subId)
-		AND sp.spaceTypeId = (SELECT s.spaceTypeId FROM Subject s WHERE id=subId)
-		AND sp.inUse=1
-		;
-END; //
-
-DELIMITER ;
-
-/*--- Procedure: SPACE ALLOCATION ---*/
-DELIMITER //
-
-CREATE PROCEDURE allocateSpace(allocRouId INT, subId INT, logId INT)
-BEGIN
-	DECLARE spaceTo INTEGER DEFAULT NULL;
-	DECLARE i INTEGER DEFAULT 0; -- loop index
-	DECLARE sessions INTEGER DEFAULT 0; -- Total session amount = groupCount * sessionCount
-	DECLARE allocated INTEGER DEFAULT 0; -- How many sessions added to AllocSpace
-	DECLARE sessionSeconds INTEGER DEFAULT 0; -- How many seconds each session lasts
-	DECLARE suitableSpaces BOOLEAN DEFAULT TRUE; -- If can't allocate set false
-	DECLARE loopOn BOOLEAN DEFAULT TRUE; -- while loop condition
-
-	SET sessions := (SELECT groupCount * sessionCount FROM Subject WHERE id = subId); -- total amount of sessions in subject
-   	SET allocated := 0; -- How many sessions allocated
-   	SET sessionSeconds := (SELECT TIME_TO_SEC(sessionLength) FROM Subject WHERE id = subId); -- Session length in seconds
-
-	SET spaceTo := ( -- to check if subject can be allocated
-        	SELECT ass.spaceId FROM AllocSubjectSuitableSpace ass
-        	WHERE ass.missingItems = 0 AND ass.subjectId = subId AND ass.allocRound = allocRouId
- 			LIMIT 1);
-
-	IF spaceTo IS NULL THEN -- If can't find suitable spaces
-		SET suitableSpaces := FALSE;
-   	ELSE -- Find for each session space with free time
-   		SET i := 0;
-   		WHILE loopOn DO -- Try add all sessions to the space
-   			SET spaceTo := (SELECT sp.id FROM AllocSubjectSuitableSpace ass
-							LEFT JOIN Space sp ON ass.spaceId = sp.id
-							WHERE ass.subjectId = subId AND ass.missingItems = 0 AND ass.allocRound = allocRouId
-							GROUP BY sp.id
-							HAVING
-							((SELECT TIME_TO_SEC(TIMEDIFF(availableTo, availableFrom)) *5 FROM Space WHERE id = sp.id) -
-								(SELECT IFNULL(SUM(TIME_TO_SEC(totalTime)), 0) FROM AllocSpace WHERE allocRound = allocRouId AND spaceId = sp.id)
-								>
-								(sessionSeconds * (sessions - i - allocated)))
-							ORDER BY sp.personLimit ASC, sp.area ASC
-							LIMIT 1);
-
-			IF spaceTo IS NULL THEN -- If can't find space with freetime for specific amount sessions
-				SET i := i+1;
-				IF i = sessions - allocated THEN -- If checked all
-					SET loopOn = FALSE;
-				END IF;
-			ELSE -- if can find space with freetime for specific amount sessions
-			INSERT INTO AllocSpace
-					(subjectId, allocRound, spaceId, totalTime)
-				VALUES
-					(subId, allocRouId, spaceTo, SEC_TO_TIME((sessionSeconds * (sessions - i - allocated))))
-				ON DUPLICATE KEY UPDATE totalTime = ADDTIME(totalTime, (SEC_TO_TIME(sessionSeconds * (sessions - i - allocated))));
-				-- LOG HERE
-				CALL LogAllocation(logId, "Space-allocation", "OK", CONCAT("Subject : ", subId, " - Allocate ", sessions - i - allocated, " of ", sessions, " sessions to space: ", spaceTo));
-				SET allocated := allocated + (sessions - i - allocated);
-				SET i := 0;
-				IF allocated = sessions THEN
-					SET loopOn = FALSE;
-				END IF;
-			END IF;
-   		END WHILE;
-   END IF;
-
-   IF sessions = allocated THEN -- If all sessions allocated
-   	UPDATE AllocSubject SET isAllocated = 1 WHERE subjectId = subId AND allocRound = allocRouId;
-   ELSEIF suitableSpaces = FALSE THEN -- if can't find any suitable space for the subject
-   	UPDATE AllocSubject SET cantAllocate = 1 WHERE subjectId = subId AND allocRound = allocRouId;
-   	-- LOG HERE
-    CALL LogAllocation(logId, "Space-allocation", "Warning", CONCAT("Subject : ", subId, " - Can't find suitable spaces" ));
-   ELSEIF allocated = 0 AND suitableSpaces = TRUE THEN -- if can't find any space with free time, add all sessions to same space with most freetime
-   		SET spaceTo := (
-   			SELECT alpa.spaceId
-			FROM AllocSubjectSuitableSpace alpa
-			LEFT JOIN Space spa ON alpa.spaceId = spa.id
-			WHERE alpa.subjectId = subId
-			AND alpa.missingItems = 0
-			AND alpa.allocRound = allocRouId
-			GROUP BY alpa.spaceId
-			ORDER BY ((TIME_TO_SEC(TIMEDIFF(spa.availableTO, spa.availableFrom)) *5) -
-			(SELECT IFNULL((SUM(TIME_TO_SEC(totalTime))), 0) FROM AllocSpace WHERE allocRound = allocRouId AND spaceId = alpa.spaceId)) DESC
-			LIMIT 1
-		);
-   		INSERT INTO AllocSpace (subjectId, allocRound, spaceId, totalTime)
-   			VALUES (subId, allocRouId, spaceTo, SEC_TO_TIME(sessionSeconds * sessions));
-   		UPDATE AllocSubject SET isAllocated = 1 WHERE subjectId = subId AND allocRound = allocRouId;
-   		-- LOG HERE
-		CALL LogAllocation(logId, "Space-allocation", "Warning", CONCAT("Subject : ", subId, " - Allocate ", sessions, " of ", sessions, " sessions to space: ", spaceTo, " - All suitable spaces are full."));
-
-   	ELSEIF allocated < sessions AND suitableSpaces = TRUE THEN -- if there is free time for some of the sessions but not all, add rest to same space than others
-   		SET spaceTo := (SELECT spaceId FROM AllocSpace WHERE subjectId = subId AND allocRound = allocRouId ORDER BY totalTime ASC LIMIT 1);
-
-		UPDATE AllocSpace SET totalTime=ADDTIME(totalTime,(SEC_TO_TIME(sessionSeconds * (sessions - allocated))))
-		WHERE subjectId=subID AND spaceId = spaceTO AND allocRound = allocRouId;
-		UPDATE AllocSubject SET isAllocated = 1 WHERE subjectId = subId AND allocRound = allocRouId;
-		-- LOG HERE
-		CALL LogAllocation(logId, "Space-allocation", "Warning", CONCAT("Subject : ", subId, " - Add ", sessions - allocated, " to space: ", spaceTo, " - All suitable spaces are full"));
-   	END IF;
-END; //
-
-DELIMITER ;
-
-/* --- Procedure: RESET ALLOCATION --- */
-DELIMITER //
-
-CREATE PROCEDURE IF NOT EXISTS  resetAllocation(allocR INTEGER)
-BEGIN
-
-	-- Handler for the error
-	DECLARE processBusy CONDITION FOR SQLSTATE '50000';
-	DECLARE EXIT HANDLER FOR processBusy
-	BEGIN
-		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
-		SET @full_error = CONCAT("Error: ", @errno, " (", @sqlstate, "): ", @text);
-		RESIGNAL SET MESSAGE_TEXT = @full_error;
-	END;
-	-- Raise error if allocation in progress.
-	SET @procedure_active = (SELECT processOn FROM AllocRound WHERE id = allocR);
-	IF @procedure_active = 1 THEN
-		SET @message_text = CONCAT("The allocation with allocRound:", allocR, " is currently in progress.");
-		SIGNAL processBusy SET MESSAGE_TEXT = @message_text, MYSQL_ERRNO = 1192;
-	END IF;
-
-	-- Delete all allocation data and reset variables
-	DELETE FROM AllocSpace WHERE allocRound = allocR;
-	DELETE FROM AllocSubjectSuitableSpace WHERE allocRound = allocR;
-    IF (allocR = 10004) THEN
-        DELETE FROM AllocSubject WHERE allocRound = 10004;
-    ELSE
-	    UPDATE AllocSubject SET isAllocated = 0, priority = null, cantAllocate = 0 WHERE allocRound = allocR;
-    END IF;
-    UPDATE AllocRound SET isAllocated = 0, requireReset = FALSE WHERE id = allocR;
-END; //
-
-DELIMITER ;
-
-/* Procedure: START ALLOCATION */
-DELIMITER //
-
-CREATE OR REPLACE PROCEDURE startAllocation(allocRouId INT)
-BEGIN
-	DECLARE finished INTEGER DEFAULT 0; -- Marker for loop
-	DECLARE subId	INTEGER DEFAULT 0; -- SubjectId
-	DECLARE logId	INTEGER DEFAULT NULL;
-	DECLARE errors	INTEGER DEFAULT 0;
-	DECLARE debug	INTEGER DEFAULT 0;
-	DECLARE abort_round	BOOLEAN DEFAULT FALSE;
-	DECLARE reset_required	BOOLEAN DEFAULT FALSE;
-	DECLARE procedure_active	BOOLEAN DEFAULT FALSE;
-	DECLARE is_allocated 	BOOLEAN DEFAULT FALSE;
-
-	-- Error Handling declarations
-    DECLARE processBusy CONDITION FOR SQLSTATE '50000';
-    DECLARE alreadyAllocated CONDITION FOR SQLSTATE '50001';
-	DECLARE abortAllocation	CONDITION FOR SQLSTATE '50002';
-	DECLARE require_reset	CONDITION FOR SQLSTATE '50003';
-
-	-- Cursor for subject loop / SELECT priority order
-	DECLARE subjects CURSOR FOR
-		SELECT allSub.subjectId
-       	FROM AllocSubject allSub
-        WHERE allSub.allocRound = allocRouId
-        ORDER BY priority ASC;
-
-	DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished = 1;
-
-	-- IF user tell to abort the process
-	DECLARE EXIT HANDLER FOR abortAllocation
-	BEGIN
-		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
-		SET @full_error = CONCAT("Error: ", @errno, " (", @sqlstate, "): ", @text);
-		CALL LogAllocation(logId, "Allocation", "Error", (SELECT @full_error));
-		UPDATE AllocRound SET abortProcess = 0, processOn = 0 WHERE id = allocRouId;
-		RESIGNAL SET MESSAGE_TEXT = @full_error;
-	END;
-
-	-- IF Procedure already running, is already allocated
-	DECLARE EXIT HANDLER FOR processBusy, alreadyAllocated, require_reset
-	BEGIN
-		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
-		SET @full_error = CONCAT("Error: ", @errno, " (", @sqlstate, "): ", @text);
-		CALL LogAllocation(logId, "Allocation", "Error", (SELECT @full_error));
-		RESIGNAL SET MESSAGE_TEXT = @full_error;
-	END;
-
-	-- IF ANY ERROR HAPPEN INSERT IT TO DEBUG LOG
-	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION
-		BEGIN
-			SET errors := errors +1;
-			GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
-			SET @full_error = CONCAT("ERROR ", @errno, " (", @sqlstate, "): ", @text);
-			CALL LogAllocation(logId, "Allocation", "Error", (SELECT @full_error));
-		END;
-
-	-- IF debug mode on, start logging.
-	SET debug := (SELECT numberValue FROM GlobalSetting WHERE name='allocation-debug');
-	IF debug = 1 THEN
-		INSERT INTO log_list(log_type) VALUES (1); -- START LOG
-		SET logId := (SELECT LAST_INSERT_ID()); -- SET log id number for the list
-	END IF;
-
-	CALL LogAllocation(logId, "Allocation", "Start", CONCAT("Start allocation. AllocRound: ", allocRouId));
-
-	-- IF allocRound already allocated raise error
-	SET is_allocated = (SELECT isAllocated FROM AllocRound WHERE id = allocRouId);
-	IF is_allocated = 1 THEN
-		SET @message_text = CONCAT("The allocRound: ", allocRouId, " is already allocated.");
-		SIGNAL alreadyAllocated SET MESSAGE_TEXT = @message_text, MYSQL_ERRNO = 1192;
-	END IF;
-	-- IF AllocRound require reset before allocation
-	SET reset_required = (SELECT requireReset FROM AllocRound WHERE id = allocRouId);
-	IF reset_required = TRUE THEN
-		SET @message_text = CONCAT("The allocRound: ", allocRouId, " require reset before allocation.");
-		SIGNAL require_reset SET MESSAGE_TEXT = @message_text, MYSQL_ERRNO = 1192;
-	END IF;
-	-- IF Allocation already running with allocRound id raise error
-	SET procedure_active = (SELECT processOn FROM AllocRound WHERE id = allocRouId);
-	IF procedure_active = 1 THEN
-		SET @message_text = CONCAT("The allocation with allocRound:", allocRouId, " is already running.");
-		SIGNAL processBusy SET MESSAGE_TEXT = @message_text, MYSQL_ERRNO = 1192;
-	END IF;
-	-- SET procedure running
-	UPDATE AllocRound SET processOn = 1 WHERE id = allocRouId;
-
-	/* ONLY FOR DEMO PURPOSES */
-	IF (allocRouID = 10004) THEN
-		INSERT INTO AllocSubject(subjectId, allocRound)
-		SELECT id, 10004 FROM Subject;
-	END IF;
-	/* DEMO PART ENDS */
-
-	UPDATE AllocRound SET requireReset = TRUE WHERE id = allocRouId;
-
-	CALL prioritizeSubjects(allocRouId, 1, logId); -- sub_eq.prior >= X ORDER BY sub_eq.prior DESC, groupSize ASC
-	CALL prioritizeSubjects(allocRouId, 2, logId); -- sub_eq.prior < X ORDER BY sub_eq.prior DESC, groupSize ASC
-	CALL prioritizeSubjects(allocRouId, 3, logId); -- without equipments ORDER BY groupSize ASC
-
-	OPEN subjects;
-
-	subjectLoop : LOOP
-		FETCH subjects INTO subId;
-		IF finished = 1 THEN LEAVE subjectLoop;
-		END IF;
-
-		-- IF user tells abort the process.
-		SET abort_round := (SELECT abortProcess FROM AllocRound WHERE id = allocRouId);
-		IF abort_round = 1 THEN
-			SET @message_text = CONCAT("The allocation been terminated by user. AllocRoundId: ", allocRouId, ".");
-			SIGNAL abortAllocation SET MESSAGE_TEXT = @message_text, MYSQL_ERRNO = 1192;
-		END IF;
-
-		-- SET Suitable rooms for the subject
-		CALL LogAllocation(logId, "Allocation", "Info", CONCAT("SubjectId: ", subId, " - Search for suitable spaces"));
-	    CALL setSuitableRooms(allocRouId, subId);
-		-- SET cantAllocate or Insert subject to spaces
-        CALL allocateSpace(allocRouId, subId, logId);
-
-	END LOOP subjectLoop;
-
-	CLOSE subjects;
-
-	UPDATE AllocRound SET isAllocated = 1 WHERE id = allocRouId;
-	CALL LogAllocation(logId, "Allocation", "End", CONCAT("Errors: ", (SELECT errors)));
-
-	UPDATE AllocRound SET processOn = 0 WHERE id = allocRouId;
-
-END; //
-DELIMITER ;
-
-/* --- PROCEDURE: Abort Allocation --- */
-DELIMITER $$
-CREATE PROCEDURE IF NOT EXISTS abortAllocation(allocR INT)
-BEGIN
-	DECLARE inProgress BOOLEAN DEFAULT FALSE;
-
-	-- CHECK IF Allocation is active
-	SET inProgress := (SELECT processOn FROM AllocRound WHERE id = allocR);
-	-- IF in process tell to stop
-	IF inProgress = TRUE THEN
-		UPDATE AllocRound SET abortProcess = 1 WHERE id = allocR;
-	END IF;
-
-END; $$
-
-DELIMITER ;
-
-/* ------------------------------------------------------ */
-/* FUNCTIONS */
-
-/* Function: get missing item amount in space */
-DELIMITER //
-CREATE FUNCTION IF NOT EXISTS getMissingItemAmount(subId INT, spaId INT) RETURNS INT
-NOT DETERMINISTIC
-BEGIN
-RETURN (SELECT COUNT(*)
-        FROM
-    (SELECT equipmentId  FROM SubjectEquipment
-    WHERE subjectId = subId
-    EXCEPT
-    SELECT equipmentId FROM SpaceEquipment
-    WHERE spaceId = spaId) a
-);
-END; //
-DELIMITER ;

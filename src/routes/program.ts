@@ -12,8 +12,11 @@ import {
   successHandler,
 } from '../responseHandler/index.js';
 import logger from '../utils/logger.js';
-import { validate } from '../validationHandler/index.js';
-import { validateProgramPost } from '../validationHandler/program.js';
+import { validate, validateIdObl } from '../validationHandler/index.js';
+import {
+  validateProgramPost,
+  validateProgramPut,
+} from '../validationHandler/program.js';
 
 const program = express.Router();
 
@@ -36,6 +39,7 @@ program.get(
 // get program by id
 program.get(
   '/:id',
+  validateIdObl,
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Program')
@@ -55,7 +59,7 @@ program.get(
   },
 );
 
-// get program by user ID
+// get program by programName and email
 program.get(
   '/programName/:email',
   [authenticator, admin, planner, statist, roleChecker, validate],
@@ -114,6 +118,51 @@ program.post(
       .catch((error) => {
         dbErrorHandler(req, res, error, 'Oops! Create failed - Program');
       });
+  },
+);
+
+// edit program by id
+program.put(
+  '/',
+  validateProgramPut,
+  [authenticator, admin, roleChecker, validate],
+  (req: Request, res: Response) => {
+    const id = req.body.id;
+    const name = req.body.name;
+    const departmentId = req.body.departmentId;
+
+    const sqlUpdate =
+      'UPDATE Program SET name = ?, departmentId = ? WHERE id = ?';
+
+    db.query(sqlUpdate, [name, departmentId, id], (err, result) => {
+      if (!result) {
+        requestErrorHandler(req, res, `${err}: Nothing to update`);
+      } else if (err) {
+        dbErrorHandler(req, res, err, 'Oops! Update failed - Program');
+      } else {
+        successHandler(req, res, result, 'Update successful - Program');
+        logger.info(`Program ${req.body.name} updated`);
+      }
+    });
+  },
+);
+
+// delete a program with id
+program.delete(
+  '/:id',
+  validateIdObl,
+  [authenticator, admin, roleChecker, validate],
+  (req: Request, res: Response) => {
+    const id = req.params.id;
+    const sqlDelete = 'DELETE FROM Program WHERE id = ?;';
+    db.query(sqlDelete, id, (err, result) => {
+      if (err) {
+        dbErrorHandler(req, res, err, 'Oops! Delete failed - Program');
+      } else {
+        successHandler(req, res, result, 'Delete successful - Program');
+        logger.info('Program deleted');
+      }
+    });
   },
 );
 

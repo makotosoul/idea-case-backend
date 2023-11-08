@@ -13,6 +13,7 @@ import {
 } from '../responseHandler/index.js';
 import logger from '../utils/logger.js';
 import { validate, validateIdObl } from '../validationHandler/index.js';
+import { validateSpacePut } from '../validationHandler/space.js';
 
 const space = express.Router();
 
@@ -161,7 +162,7 @@ space.delete(
 );
 
 // Update space by ID
-space.put(
+/*space.put(
   '/:id',
   [authenticator, admin, planner, roleChecker, validate],
   (req: Request, res: Response) => {
@@ -198,6 +199,58 @@ space.put(
       .catch((error) => {
         requestErrorHandler(req, res, `Error updating space: ${error.message}`);
       });
+  },
+);*/
+
+// Edit a space by ID
+space.put(
+  '/',
+  validateSpacePut, // Validation middleware for editing space
+  [authenticator, admin, planner, roleChecker, validate],
+  (req: Request, res: Response) => {
+    const id = req.body.id;
+    const name = req.body.name;
+    const area = req.body.area;
+    const info = req.body.info;
+    const personLimit = req.body.personLimit;
+    const buildingId = req.body.buildingId;
+    const availableFrom = req.body.availableFrom;
+    const availableTo = req.body.availableTo;
+    const classesFrom = req.body.classesFrom;
+    const classesTo = req.body.classesTo;
+    const inUse = req.body.inUse || true; // Default to true if not provided
+    const spaceTypeId = req.body.spaceTypeId;
+
+    const sqlUpdate =
+      'UPDATE Space SET name = ?, area = ?, info = ?, personLimit = ?, buildingId = ?, availableFrom = ?, availableTo = ?, classesFrom = ?, classesTo = ?, inUse = ?, spaceTypeId = ? WHERE id = ?';
+
+    db.query(
+      sqlUpdate,
+      [
+        name,
+        area,
+        info,
+        personLimit,
+        buildingId,
+        availableFrom,
+        availableTo,
+        classesFrom,
+        classesTo,
+        inUse,
+        spaceTypeId,
+        id,
+      ],
+      (err, result) => {
+        if (!result) {
+          requestErrorHandler(req, res, `${err}: Nothing to update`);
+        } else if (err) {
+          dbErrorHandler(req, res, err, 'Oops! Update failed - Space');
+        } else {
+          successHandler(req, res, result, 'Update successful - Space');
+          logger.info(`Space ${req.body.name} updated`);
+        }
+      },
+    );
   },
 );
 

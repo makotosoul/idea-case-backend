@@ -1,15 +1,43 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
+import { admin } from '../authorization/admin.js';
+import { planner } from '../authorization/planner.js';
+import { roleChecker } from '../authorization/roleChecker.js';
+import { statist } from '../authorization/statist.js';
+import { authenticator } from '../authorization/userValidation.js';
+import { validate } from '../validationHandler/index.js';
 
 const template = express.Router();
 
-template.get('/', (req, res) => {
-  res
-    .setHeader(
-      'Content-Type',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    )
-    .setHeader('Content-Disposition', 'attachment; filename=templaatti.xlsx')
-    .download('./tempates/building_template.xlsx', 'building_templaatti.xlsx');
-});
+template.get(
+  '/building',
+  [authenticator, admin, planner, roleChecker, validate],
+  (req: Request, res: Response) => {
+    res
+      .status(200)
+      .header({
+        'Content-Type':
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'Content-Disposition': 'attachment; filename=templaatti.xlsx',
+      })
+      .download(
+        './tempates/building_template.xlsx',
+        'building_templaatti.xlsx',
+      );
+  },
+);
+
+template.get(
+  '/subject',
+  [authenticator, admin, planner, roleChecker, validate],
+  (req: Request, res: Response) => {
+    res
+      .header({
+        'Content-Type':
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'Content-Disposition': 'attachment; filename=templaatti.xlsx',
+      })
+      .download('./tempates/subject_template.xlsx', 'subject_templaatti.xlsx');
+  },
+);
 
 export default template;

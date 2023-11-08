@@ -1,21 +1,13 @@
 import { check } from 'express-validator';
 
 import {
+  createIdValidatorChain,
   validateDescriptionObl,
-  validateIdObl,
   validateNameObl,
 } from './index.js';
 import { validateSubjectId } from './subject.js';
 
-export const validateAllocRoundId = [
-  check('allocRoundId')
-    .matches(/^[0-9]+$/)
-    .withMessage('allocRoundId must be a number')
-    .bail()
-    .notEmpty()
-    .withMessage('allocRoundId cannot be empty')
-    .bail(),
-];
+export const validateAllocRoundId = [...createIdValidatorChain('allocRoundId')];
 
 export const validateAllocRoundIdAndSubjectId = [
   ...validateAllocRoundId,
@@ -28,6 +20,6 @@ export const validateAllocRoundPost = [
 ];
 
 export const validateAllocRoundPut = [
-  ...validateIdObl,
+  ...createIdValidatorChain('id'),
   ...validateAllocRoundPost,
 ];

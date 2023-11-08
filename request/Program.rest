@@ -23,14 +23,14 @@ Content-Type: application/json
 
 {
     "name": "Test 1",
-    "departmentId" : 101
+    "departmentId" : "101"
 }
 
 ###
 GET {{host}}/program/{{nextId}}
 Authorization: Basic {{token}}
 
-### 5. Update an existing program (doesn't exist in program.ts yet!)
+### 5. Update an existing program
 PUT {{host}}/program/
 Authorization: Basic {{token}}
 Content-Type: application/json
@@ -45,7 +45,7 @@ Content-Type: application/json
 GET {{host}}/program/{{nextId}}
 Authorization: Basic {{token}}
 
-### 7. Delete a program (doesn't exist in program.ts yet!)
+### 7. Delete a program
 DELETE {{host}}/program/{{nextId}}
 Authorization: Basic {{token}}
 

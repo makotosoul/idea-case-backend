@@ -1,5 +1,6 @@
 import { body, check } from 'express-validator';
-import { validateIdObl, validateNameObl } from './index.js';
+import { createIdValidatorChain, validateNameObl } from './index.js';
+import { validateProgramId } from './program.js';
 
 export const validateSubjectPost = [
   ...validateNameObl,
@@ -32,22 +33,17 @@ export const validateSubjectPost = [
     .notEmpty()
     .withMessage('Cannot be empty')
     .bail(),
-  check('programId').notEmpty().withMessage('Cannot be empty').bail(),
+  ...validateProgramId,
 ];
 
 // See how the PUT is usually just POST + id that exists for PUT already
-export const validateSubjectPut = [...validateIdObl, ...validateSubjectPost];
+export const validateSubjectPut = [
+  ...createIdValidatorChain('id'),
+  ...validateSubjectPost,
+];
 
 // This is a validator used by other routes who need subjectId as foreign key
-export const validateSubjectId = [
-  check('subjectId')
-    .matches(/^[0-9]+$/)
-    .withMessage('subjectId must be a number')
-    .bail()
-    .notEmpty()
-    .withMessage('subjectId cannot be empty')
-    .bail(),
-];
+export const validateSubjectId = [...createIdValidatorChain('subjectId')];
 
 // This is an example of rare need: When posting several Subject objects in request
 // body as JSON array
