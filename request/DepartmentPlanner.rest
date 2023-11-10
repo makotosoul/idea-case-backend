@@ -1,0 +1,59 @@
+### Remember to select the proper rest client environment
+
+
+### Reset database before performing other tests
+GET {{host}}/resetDatabase
+Authorization: Basic {{token}}
+
+
+### Get all departmentplanners
+GET {{host}}/departmentplanner
+Authorization: Basic {{token}}
+
+
+### Get a single user's departmentplanner data
+GET {{host}}/departmentplanner/202
+Authorization: Basic {{token}}
+
+
+### Adding a new departmentplanner
+POST {{host}}/departmentplanner
+Authorization: Basic {{token}}
+Content-Type: application/json
+
+{
+    "userId": "201",
+    "departmentId": "105"
+}
+
+
+### Checking if adding a new departmentplanner was successfull
+GET {{host}}/departmentplanner/201
+Authorization: Basic {{token}}
+
+
+### Update departmentplanner
+PUT {{host}}/departmentplanner
+Authorization: Basic {{token}}
+Content-Type: application/json
+
+{
+    "userId": "201",
+    "departmentId": "105",
+    "newDepartmentId": "106"
+}
+
+
+### Checking if updating departmentplanner was successfull
+GET {{host}}/departmentplanner/201
+Authorization: Basic {{token}}
+
+
+### Deleting a departmentplanner
+DELETE {{host}}/departmentplanner/201/106
+Authorization: Basic {{token}}
+
+
+### Checking if deleting departmentplanner was successfull
+GET {{host}}/departmentplanner/201
+Authorization: Basic {{token}}
