@@ -49,7 +49,7 @@ GET {{host}}/departmentplanner/201
 Authorization: Basic {{token}}
 
 
-### Delete one
+### Deleting a departmentplanner
 DELETE {{host}}/departmentplanner/201/106
 Authorization: Basic {{token}}
 
