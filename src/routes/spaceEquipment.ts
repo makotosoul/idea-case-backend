@@ -8,8 +8,10 @@ import db from '../db/index.js';
 // knex available for new database operations
 import db_knex from '../db/index_knex.js';
 import { dbErrorHandler, successHandler } from '../responseHandler/index.js';
+import logger from '../utils/logger.js';
 import { validate } from '../validationHandler/index.js';
 import { validateSpaceId } from '../validationHandler/space.js';
+import { validateSpaceEquipmentPost } from '../validationHandler/spaceEquipment.js';
 
 const spaceequipment = express.Router();
 
@@ -40,6 +42,37 @@ spaceequipment.get(
           error,
           'Oops! Nothing came through - SpaceEquipment',
         );
+      });
+  },
+);
+
+// Adding a space equipment requirement using knex
+spaceequipment.post(
+  '/post',
+  validateSpaceEquipmentPost, // You need to create this validation middleware
+  (req: Request, res: Response) => {
+    const spaceId = req.body.spaceId;
+    const equipmentId = req.body.equipmentId;
+
+    const spaceEquipmentData = {
+      spaceId,
+      equipmentId,
+    };
+
+    db_knex('SpaceEquipment')
+      .insert(spaceEquipmentData)
+      .returning('id') // Return the inserted ID
+      .then((result) => {
+        const insertId = result[0];
+        successHandler(
+          req,
+          res,
+          { insertId },
+          `Create successful - SpaceEquipment created spaceId ${spaceId} & ${equipmentId}`,
+        );
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Oops! Create failed - SpaceEquipment');
       });
   },
 );
