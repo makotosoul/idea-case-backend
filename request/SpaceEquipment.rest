@@ -8,5 +8,5 @@ Content-Type: application/json
 
 {
   "spaceId": 1020,
-  "equipmentId": 2029
+  "equipmentId": 2028
 }

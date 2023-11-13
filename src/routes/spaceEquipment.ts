@@ -68,10 +68,7 @@ spaceequipment.post(
           req,
           res,
           { insertId },
-          'Create successful - SpaceEquipment',
-        );
-        logger.info(
-          `SpaceEquipment created spaceId ${spaceId} & ${equipmentId}`,
+          `Create successful - SpaceEquipment created spaceId ${spaceId} & ${equipmentId}`,
         );
       })
       .catch((error) => {
