@@ -22,6 +22,20 @@ export interface Subject {
   spaceTypeId: number;
 }
 
+export interface Space {
+  name: string;
+  area: number;
+  info: string;
+  personLimit: number;
+  buildingId: number;
+  availableFrom: string;
+  availableTo: string;
+  classesFrom: string;
+  classesTo: string;
+  inUse: boolean;
+  spaceTypeId: number;
+}
+
 export interface Program {
   id: number;
   name: string;

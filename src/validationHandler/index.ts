@@ -101,9 +101,18 @@ export const createMultiDescriptionValidatorChain = (
     .bail()
     .matches(/^[A-Za-zäöåÄÖÅ0-9\s-]*$/)
     .withMessage(`${fieldName} must contain only letters, numbers and -`)
+    .bail(),
+];
+
+export const createMultiTimeValidatorChain = (
+  fieldName: string,
+): ValidationChain[] => [
+  body(`*.${fieldName}`)
+    .matches(/^([0-1][0-9]):([0-5][0-9])(:[0-5][0-9])?$/)
+    .withMessage('Accepted format: 00:00 or 00:00:00')
     .bail()
     .notEmpty()
-    .withMessage(`${fieldName} cannot be empty`)
+    .withMessage('Cannot be empty')
     .bail(),
 ];
 
@@ -113,6 +122,6 @@ export const validateDescriptionObl = [
   ...createDescriptionValidatorChain('description'),
 ];
 export const validateMultiNameObl = [...createMultiNameValidatorChain('name')];
-export const validateMultiDescriptionObl = [
+export const validateMultiDescription = [
   ...createMultiDescriptionValidatorChain('description'),
 ];
