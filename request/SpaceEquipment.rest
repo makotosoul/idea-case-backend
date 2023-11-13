@@ -1,2 +1,12 @@
 GET {{host}}/spaceequipment/getEquipment/1020
 Authorization: Basic {{token}}
+
+###
+POST {{host}}/spaceequipment/post
+Authorization: Basic {{token}}
+Content-Type: application/json
+
+{
+  "spaceId": 1020,
+  "equipmentId": 2029
+}
