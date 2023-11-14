@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express, { Request, Response } from 'express';
 import { admin } from '../authorization/admin.js';
 import { planner } from '../authorization/planner.js';
 import { roleChecker } from '../authorization/roleChecker.js';
@@ -66,10 +66,6 @@ equipment.get(
 // adding an equipment
 equipment.post(
   '/',
-(req: Request, res: Response, next: NextFunction) => {
-  console.log(req.body);
-  next();
-},
   validateEquipmentPost,
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
@@ -98,10 +94,6 @@ equipment.post(
 // add multiple equipments
 equipment.post(
   '/multi',
-  (req: Request, res: Response, next: NextFunction) => {
-    console.log(req.body);
-    next();
-  },
   validateEquipmentMultiPost,
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
