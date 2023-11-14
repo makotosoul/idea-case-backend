@@ -53,4 +53,18 @@ template.get(
   },
 );
 
+template.get(
+  '/equipment',
+  [authenticator, admin, planner, roleChecker, validate],
+  (req: Request, res: Response) => {
+    res
+      .header({
+        'Content-Type':
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'Content-Disposition': 'attachment; filename=templaatti.xlsx',
+      })
+      .download('./tempates/equipment_template.xlsx', 'equipment_templaatti.xlsx');
+  },
+);
+
 export default template;

@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import { admin } from '../authorization/admin.js';
 import { planner } from '../authorization/planner.js';
 import { roleChecker } from '../authorization/roleChecker.js';
@@ -13,6 +13,7 @@ import {
 import {
   validateEquipmentPost,
   validateEquipmentPut,
+  validateEquipmentMultiPost
 } from '../validationHandler/equipment.js';
 import { validate, validateIdObl } from '../validationHandler/index.js';
 
@@ -65,6 +66,10 @@ equipment.get(
 // adding an equipment
 equipment.post(
   '/',
+(req: Request, res: Response, next: NextFunction) => {
+  console.log(req.body);
+  next();
+},
   validateEquipmentPost,
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
@@ -80,6 +85,38 @@ equipment.post(
             req,
             res,
             `Equipment with the ${req.body.id} already exists!`,
+          );
+        } else if (error.errno === 1052) {
+          dbErrorHandler(req, res, error, 'Error in database column name');
+        } else {
+          dbErrorHandler(req, res, error, 'Error at adding equipment');
+        }
+      });
+  },
+);
+
+// add multiple equipments
+equipment.post(
+  '/multi',
+  (req: Request, res: Response, next: NextFunction) => {
+    console.log(req.body);
+    next();
+  },
+  validateEquipmentMultiPost,
+  [authenticator, admin, roleChecker, validate],
+  (req: Request, res: Response) => {
+    db_knex
+      .insert(req.body)
+      .into('Equipment')
+      .then((idArray) => {
+        successHandler(req, res, idArray, 'Adding multiple equipments was succesful.');
+      })
+      .catch((error) => {
+        if (error.errno === 1062) {
+          requestErrorHandler(
+            req,
+            res,
+            `Equipment already exists!`,
           );
         } else if (error.errno === 1052) {
           dbErrorHandler(req, res, error, 'Error in database column name');
