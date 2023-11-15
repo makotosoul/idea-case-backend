@@ -77,6 +77,13 @@ export const validatePriorityMustBeNumber = [
     .bail(),
 ];
 
+export const validateMultiPriorityMustBeNumber = [
+  body('*.priority')
+    .matches(/^[0-9]+$/)
+    .withMessage('Priority must be a number')
+    .bail(),
+]
+
 export const createMultiNameValidatorChain = (
   fieldName: string,
 ): ValidationChain[] => [
