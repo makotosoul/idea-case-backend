@@ -10,3 +10,7 @@ Content-Type: application/json
   "spaceId": 1020,
   "equipmentId": 2028
 }
+
+###
+DELETE {{host}}/spaceequipment/delete/1020/2028
+Authorization: Basic {{token}}
