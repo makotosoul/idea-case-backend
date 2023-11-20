@@ -8,7 +8,6 @@ import db from '../db/index.js';
 // knex available for new database operations
 import db_knex from '../db/index_knex.js';
 import { dbErrorHandler, successHandler } from '../responseHandler/index.js';
-import logger from '../utils/logger.js';
 import { validate } from '../validationHandler/index.js';
 import { validateSpaceId } from '../validationHandler/space.js';
 import { validateSpaceEquipmentPost } from '../validationHandler/spaceEquipment.js';
