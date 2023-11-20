@@ -249,7 +249,7 @@ CREATE TABLE IF NOT EXISTS AllocRound (
 )ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS AllocSubject (
-    allocRoundId    INTEGER     NOT NULL,    
+    allocRoundId    INTEGER     NOT NULL,
     subjectId       INTEGER     NOT NULL,
     isAllocated     BOOLEAN     NOT NULL DEFAULT 0,
     cantAllocate    BOOLEAN     NOT NULL DEFAULT 0,
@@ -384,12 +384,12 @@ BEGIN
 	IF debug = 1 AND logId IS NOT NULL AND logId != 0 THEN
 		INSERT INTO log_event(log_id, stage, status, information) VALUES(logId, stage, status, msg);
 	END IF;
-END; 
+END;
 __
 DELIMITER ;
 
-/* allocRid is now used for the frontend sent allocRoundId, to make it stand out e.g. in: 
-  AllocSpace.allocRoundId = allocRid;  
+/* allocRid is now used for the frontend sent allocRoundId, to make it stand out e.g. in:
+  AllocSpace.allocRoundId = allocRid;
   Easier to follow, Right? */
 
 
@@ -436,7 +436,7 @@ BEGIN
 
 	CALL LogAllocation(logId, "Prioritization", "OK", CONCAT("Priority option: ", priority_option, " completed."));
 
-END; 
+END;
 __
 DELIMITER ;
 
@@ -453,7 +453,7 @@ BEGIN
 		AND sp.spaceTypeId = (SELECT s.spaceTypeId FROM Subject s WHERE id=subId)
 		AND sp.inUse=1
 		;
-END; 
+END;
 __
 DELIMITER ;
 
@@ -552,7 +552,7 @@ BEGIN
 		-- LOG HERE
 		CALL LogAllocation(logId, "Space-allocation", "Warning", CONCAT("Subject : ", subId, " - Add ", sessions - allocated, " to space: ", spaceTo, " - All suitable spaces are full"));
    	END IF;
-END; 
+END;
 __
 DELIMITER ;
 
@@ -687,7 +687,7 @@ BEGIN
 
 	UPDATE AllocRound SET processOn = 0 WHERE id = allocRid;
 
-END; 
+END;
 __
 DELIMITER ;
 
@@ -706,7 +706,7 @@ BEGIN
 		UPDATE AllocRound SET abortProcess = 1 WHERE id = allocRid;
 	END IF;
 
-END; 
+END;
 __
 DELIMITER ;
 
@@ -741,7 +741,7 @@ BEGIN
 	    UPDATE AllocSubject SET isAllocated = 0, priority = null, cantAllocate = 0 WHERE allocRoundId = allocRid;
     END IF;
     UPDATE AllocRound SET isAllocated = 0, requireReset = FALSE WHERE id = allocRid;
-END; 
+END;
 __
 DELIMITER ;
 
@@ -765,7 +765,7 @@ RETURN (
     				WHERE SpaceEquipment.spaceId = spaId
 		) a
 );
-END; 
+END;
 __
 DELIMITER ;
 
@@ -1205,5 +1205,3 @@ INSERT INTO AllocCurrentRoundUser(allocRoundId, userId) VALUES
 
 /* --- INSERT: LOG TYPE --- */
 INSERT INTO log_type(name) VALUES ("allocation");
-
-

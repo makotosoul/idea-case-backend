@@ -10,7 +10,7 @@ Content-Type: application/json
 {
     "name": "12345 a space",
     "area": 77,
-    "personLimit": 150, 
+    "personLimit": 150,
     "buildingId": 402,
     "availableFrom": "08:00:00",
     "availableTo": "10:00:00",
@@ -31,7 +31,7 @@ Content-Type: application/json
     "id": 1037,
     "name": "1234asdf",
     "area": 2.0,
-    "personLimit": 150, 
+    "personLimit": 150,
     "buildingId": 402,
     "availableFrom": "08:00:00",
     "availableTo": "10:00:00",

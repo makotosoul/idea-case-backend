@@ -234,7 +234,7 @@ CREATE TABLE IF NOT EXISTS AllocRound (
 )ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS AllocSubject (
-    allocRoundId    INTEGER     NOT NULL,    
+    allocRoundId    INTEGER     NOT NULL,
     subjectId       INTEGER     NOT NULL,
     isAllocated     BOOLEAN     NOT NULL DEFAULT 0,
     cantAllocate    BOOLEAN     NOT NULL DEFAULT 0,

@@ -11,9 +11,9 @@ import {
   successHandler,
 } from '../responseHandler/index.js';
 import {
+  validateEquipmentMultiPost,
   validateEquipmentPost,
   validateEquipmentPut,
-  validateEquipmentMultiPost
 } from '../validationHandler/equipment.js';
 import { validate, validateIdObl } from '../validationHandler/index.js';
 
@@ -101,15 +101,16 @@ equipment.post(
       .insert(req.body)
       .into('Equipment')
       .then((idArray) => {
-        successHandler(req, res, idArray, 'Adding multiple equipments was succesful.');
+        successHandler(
+          req,
+          res,
+          idArray,
+          'Adding multiple equipments was succesful.',
+        );
       })
       .catch((error) => {
         if (error.errno === 1062) {
-          requestErrorHandler(
-            req,
-            res,
-            `Equipment already exists!`,
-          );
+          requestErrorHandler(req, res, 'Equipment already exists!');
         } else if (error.errno === 1052) {
           dbErrorHandler(req, res, error, 'Error in database column name');
         } else {

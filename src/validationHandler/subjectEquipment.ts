@@ -22,5 +22,8 @@ export const validateSubjectEquipmentPost = [
     .notEmpty()
     .withMessage('Cannot be empty')
     .bail(),
-  check('obligatory').matches(/^[01]$/).withMessage('Must be 0 or 1').bail(),
+  check('obligatory')
+    .matches(/^[01]$/)
+    .withMessage('Must be 0 or 1')
+    .bail(),
 ];
