@@ -107,7 +107,7 @@ allocation.get(
           req,
           res,
           err,
-          'Oops! Allocation reset failed - Allocation',
+          'Oops! Allocation report get failed - Allocation',
         );
       });
 
@@ -206,12 +206,7 @@ allocation.get(
         );
       })
       .catch((err) => {
-        dbErrorHandler(
-          req,
-          res,
-          err,
-          'Oops! Allocation reset failed - Allocation',
-        );
+        dbErrorHandler(req, res, err, 'Oops! Allocation report get failed');
       });
     return subjects;
   },
