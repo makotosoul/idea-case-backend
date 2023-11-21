@@ -613,6 +613,14 @@ INSERT INTO Program (name , departmentId) VALUES
     ('Vanha musiikki', 106),
     ('Avoin Kampus', 110);
 
+
+/* --- Insert: AllocRound * --- */
+INSERT INTO AllocRound(name, isSeasonAlloc, userId, description) VALUES
+    ('Testipriorisointi', 0, 201, 'Testidata lisätään AllocSubject tauluun, mutta laskentaa ei vielä suoritettu eli opetuksille ei ole vielä merkitty tiloja'),
+    ('Testilaskenta', 1, 201, 'Testidata lisätty ja huoneet merkitty'),
+    ('Kevät 2023', 0, 201, ''),
+    ('Demo', 0, 201, 'Allokointi demoamista varten');
+
 /* --- Insert: Subject * --- */
 INSERT INTO Subject(name, groupSize, groupCount, sessionLength, sessionCount, area, programId, spaceTypeId, allocRoundId) VALUES
     ('Saksan kielen perusteet', 20, 2, '01:30:00', 2, 35, 3030, 5002, 10004),
@@ -687,12 +695,6 @@ INSERT INTO SubjectEquipment(subjectId, equipmentId, priority) VALUES
     (4024, 2004, 600),
     (4033, 2004, 600);
 
-/* --- Insert: AllocRound * --- */
-INSERT INTO AllocRound(name, isSeasonAlloc, userId, description) VALUES
-    ('Testipriorisointi', 0, 201, 'Testidata lisätään AllocSubject tauluun, mutta laskentaa ei vielä suoritettu eli opetuksille ei ole vielä merkitty tiloja'),
-    ('Testilaskenta', 1, 201, 'Testidata lisätty ja huoneet merkitty'),
-    ('Kevät 2023', 0, 201, ''),
-    ('Demo', 0, 201, 'Allokointi demoamista varten');
 
 /* --- Insert: AllocSubject * --- */
 INSERT INTO AllocSubject(subjectId, allocRoundId, isAllocated, allocatedDate, priority) VALUES
