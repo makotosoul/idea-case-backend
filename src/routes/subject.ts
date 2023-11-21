@@ -62,7 +62,7 @@ subject.get('/', [validate], (req: Request, res: Response) => {
 // Fetching all subjects BUT only in same allocation,
 // Currently no login required for seeing the subjects
 subject.get(
-  '/all/:allocRoundId',
+  '/byAllocationId/:allocRoundId',
   validateAllocRoundId,
   [validate],
   (req: Request, res: Response) => {
