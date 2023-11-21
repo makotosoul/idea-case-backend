@@ -48,7 +48,7 @@ const subjectequipment = express.Router();
   '/post',
   validateSubjectEquipmentPostAndPut,
   (req: Request, res: Response) => {
- 
+
     const subjectId = req.body.subjectId;
     const equipmentId = req.body.equipmentId;
     const priority = req.body.priority;

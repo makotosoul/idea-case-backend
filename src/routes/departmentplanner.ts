@@ -1,4 +1,9 @@
 import express, { Request, Response } from 'express';
+import { admin } from '../authorization/admin.js';
+import { planner } from '../authorization/planner.js';
+import { roleChecker } from '../authorization/roleChecker.js';
+import { statist } from '../authorization/statist.js';
+import { authenticator } from '../authorization/userValidation.js';
 import db_knex from '../db/index_knex.js';
 import {
   dbErrorHandler,
@@ -10,6 +15,31 @@ import { validate } from '../validationHandler/index.js';
 import { validateUserId } from '../validationHandler/user.js';
 
 const departmentplanner = express.Router();
+
+// get all departmentplanners
+departmentplanner.get(
+  '/',
+  [authenticator, admin, planner, statist, roleChecker],
+  (req: Request, res: Response) => {
+    db_knex('DepartmentPlanner')
+      .select('departmentId', 'userId')
+      .then((data) => {
+        successHandler(
+          req,
+          res,
+          data,
+          'getDepartmentplanners successful - Departmentplanner',
+        );
+      })
+      .catch((err) => {
+        requestErrorHandler(
+          req,
+          res,
+          `${err} Oops! Nothing came through - Departmentplanner`,
+        );
+      });
+  },
+);
 
 //get all departmentplanner for a single user based on id
 departmentplanner.get(
@@ -72,6 +102,33 @@ departmentplanner.post(
           res,
           `Oops! Create failed - DepartmentPlanner: ${error.message}`,
         );
+      });
+  },
+);
+
+// updating a departmentplanner
+departmentplanner.put(
+  '/',
+  validateUserIdAndDepartmentId,
+  [authenticator, admin, roleChecker, validate],
+  (req: Request, res: Response) => {
+    const plannerData = {
+      userId: req.body.userId,
+      departmentId: req.body.newDepartmentId,
+    };
+    db_knex('DepartmentPlanner')
+      .update(plannerData)
+      .where('userId', req.body.userId)
+      .andWhere('departmentId', req.body.departmentId)
+      .then((rowsAffected) => {
+        if (rowsAffected === 1) {
+          successHandler(req, res, rowsAffected, 'Updated succesfully');
+        } else {
+          requestErrorHandler(req, res, 'Error');
+        }
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Error at updating departmentplanner');
       });
   },
 );

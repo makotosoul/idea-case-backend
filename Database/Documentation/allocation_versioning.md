@@ -17,8 +17,8 @@ Second phase:
 <details><summary>Result tables wanted with versioning, if we want to keep the results</summary>
 
 * all tables name starting with Alloc.
-* all of them already have allocRoundId, even if it's called id (in AllocRound proper, like also should), allocId, allocRound x 3. 
-* They could be unified to id x 1, allocRoundId x 4 
+* all of them already have allocRoundId, even if it's called id (in AllocRound proper, like also should), allocId, allocRound x 3.
+* They could be unified to id x 1, allocRoundId x 4
 
 </details>
 
@@ -35,7 +35,7 @@ Later also the name, or start of the name?
 
 * The so far selected datatables' (see above) rows with old allocRoundId to the new allocRoundId.
 * Phase by Phase. Only those copied that have been versioned.
-* Making a POST AllocRound first (maybe a new end point), and if getting back the new allocRoundId successfully, copying then the corresponding old datarows in the selected datatables to the new allocRoundId too. Can be done in a database/SQL TRANSACTION and either COMMITted or ROLLBACKed. 
+* Making a POST AllocRound first (maybe a new end point), and if getting back the new allocRoundId successfully, copying then the corresponding old datarows in the selected datatables to the new allocRoundId too. Can be done in a database/SQL TRANSACTION and either COMMITted or ROLLBACKed.
 * Not touching the old rows at all. They will stay for the original AllocRound. No affect to original AllocRound
 * At least so far AllocRound table is WITHOUT any reference to the original AllocRound that it was created based on. And maybe good solution, as the original allocRound can be changed again with all of its details. Even possibly deleted?
 
@@ -48,7 +48,7 @@ First phase (Subject and SubjectEquipment)
 
 * SubjectList and possibly some of its sub views. At least while fetching data (subject lists) from database.
 * Any uniqueness checks for the Subjects should now be compared to that allocRound only. E.g. uniqueness of the name will be true only for name && allocRoundId combo
-* Possibly some Subject-related views might remain unaffected! As they are about one selected Subject and we don't want to change the allocRoundId 
+* Possibly some Subject-related views might remain unaffected! As they are about one selected Subject and we don't want to change the allocRoundId
 * Writing down all the changes (for doing the Second phase later easier=with the same knowledge).
 
 Second phase (SpaceEquipement and Space)
@@ -62,7 +62,7 @@ Second phase (SpaceEquipement and Space)
 * any uniqueness checks again needs to be fixed
 * new endpoint for copying AllocRound to be a new AllocRound
 * all endpoints for the changed datatables must be gone through
-* foreign key changes? Subject.id is referred without allocRoundId now in SubjectEquipment only. Thus updating those in first phase (Subject, SubjectEquipment)  
+* foreign key changes? Subject.id is referred without allocRoundId now in SubjectEquipment only. Thus updating those in first phase (Subject, SubjectEquipment)
 
 </details>
 

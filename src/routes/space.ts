@@ -11,9 +11,13 @@ import {
   requestErrorHandler,
   successHandler,
 } from '../responseHandler/index.js';
+import { Space } from '../types/custom.js';
 import logger from '../utils/logger.js';
 import { validate, validateIdObl } from '../validationHandler/index.js';
-import { validateSpacePut } from '../validationHandler/space.js';
+import {
+  validateMultiSpacePost,
+  validateSpacePut,
+} from '../validationHandler/space.js';
 
 const space = express.Router();
 
@@ -73,6 +77,23 @@ space.get(
   },
 );
 
+// SPECIAL list all space name with building name
+space.get(
+  '/NameInBuilding',
+  [authenticator, admin, roleChecker],
+  (req: Request, res: Response) => {
+    db_knex('Space')
+      .select(db_knex.raw('CONCAT(Space.name, "-", Building.name) as name'))
+      .join('Building', 'Space.buildingId', '=', 'Building.id')
+      .then((spaceNames) => {
+        successHandler(req, res, spaceNames, 'getNames successful - Space');
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Oops! Nothing came through - Space');
+      });
+  },
+);
+
 // Adding a space
 space.post(
   '/',
@@ -112,6 +133,75 @@ space.post(
           res,
           `Oops! Create failed - Space: ${error.message}`,
         );
+      });
+  },
+);
+
+// Adding multiple subjects/teachings using knex
+space.post(
+  '/multi',
+  validateMultiSpacePost,
+  [authenticator, admin, planner, roleChecker, validate],
+  async (req: Request, res: Response) => {
+    console.log(req.body);
+    const spaceData: Space[] = [];
+
+    for (const space of req.body) {
+      const [building] = await db_knex('Building')
+        .select('id')
+        .where('name', space.buildingName);
+      const [spaceType] = await db_knex('SpaceType')
+        .select('id')
+        .where('name', space.spaceType);
+
+      if (!building || !space) {
+        return !building
+          ? requestErrorHandler(
+              req,
+              res,
+              `'Program ${building.buildingName} not found`,
+            )
+          : requestErrorHandler(
+              req,
+              res,
+              `Space ${building.spaceType} not found`,
+            );
+      }
+
+      spaceData.push({
+        name: space.name,
+        area: space.area,
+        info: space.info,
+        personLimit: space.personLimit,
+        buildingId: building.id,
+        availableFrom: space.availableFrom,
+        availableTo: space.availableTo,
+        classesFrom: space.classesFrom,
+        classesTo: space.classesTo,
+        inUse: space.inUse,
+        spaceTypeId: spaceType.id,
+      });
+    }
+
+    console.log(spaceData);
+
+    db_knex('Space')
+      .insert(spaceData)
+      .then((result) => {
+        if (result.length === 0) {
+          requestErrorHandler(req, res, 'Nothing to insert');
+        } else {
+          successHandler(
+            req,
+            res,
+            { insertId: result }, // Assuming auto-incremented ID
+            'Create successful - Spaces',
+          );
+          logger.info('Spaces created');
+        }
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Oops! Create failed - Spaces');
       });
   },
 );

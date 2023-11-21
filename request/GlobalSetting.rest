@@ -1,5 +1,5 @@
 ### token to
-### root root root folder's .vscode folder's settings.json file 
+### root root root folder's .vscode folder's settings.json file
 
 ### Reset database before performing other tests
 GET {{host}}/resetDatabase
@@ -32,7 +32,7 @@ Content-Type: application/json
 
 ### 5. Update existing one  -   U
 ### // id now removed from PUT URL! It's in JSON data
-PUT {{host}}/setting/         
+PUT {{host}}/setting/
 Authorization: Basic {{token}}
 Content-Type: application/json
 

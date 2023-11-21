@@ -1,7 +1,10 @@
-import { check } from 'express-validator';
+import { body, check } from 'express-validator';
 import {
   validateDescriptionObl,
   validateIdObl,
+  validateMultiDescription,
+  validateMultiNameObl,
+  validateMultiPriorityMustBeNumber,
   validateNameObl,
   validatePriorityMustBeNumber,
 } from './index.js';
@@ -19,4 +22,14 @@ export const validateEquipmentPost = [
 export const validateEquipmentPut = [
   ...validateEquipmentPost,
   ...validateIdObl,
+];
+
+export const validateEquipmentMultiPost = [
+  ...validateMultiNameObl,
+  body('*.isMovable')
+    .matches(/^[01]$/)
+    .withMessage('isMovable needs to be 1 = can be moved, 0 = cannot be moved.')
+    .bail(),
+  ...validateMultiPriorityMustBeNumber,
+  ...validateMultiDescription,
 ];

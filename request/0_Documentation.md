@@ -7,7 +7,7 @@
 1. Creates Write to that settings.json:
   ```
   {
-    "rest-client.environmentVariables": {       
+    "rest-client.environmentVariables": {
       "$shared": {
       }
     }
@@ -19,7 +19,7 @@
 1. Then make it look like this:
   ```
   {
-    "rest-client.environmentVariables": {         
+    "rest-client.environmentVariables": {
       "$shared": {
         "host":"http://localhost:1234/api"
       },
@@ -149,5 +149,3 @@ Authorization: Basic <put your token here>
 For detail info, please visit **[here](https://github.com/Huachao/vscode-restclient)** and **[here](https://marketplace.visualstudio.com/items?itemName=humao.rest-client)**
 
 Enjoy!!
-
-

@@ -10,6 +10,7 @@ import db_knex from '../db/index_knex.js';
 import { dbErrorHandler, successHandler } from '../responseHandler/index.js';
 import { validate } from '../validationHandler/index.js';
 import { validateSpaceId } from '../validationHandler/space.js';
+import { validateSpaceEquipmentPost } from '../validationHandler/spaceEquipment.js';
 
 const spaceequipment = express.Router();
 
@@ -43,5 +44,51 @@ spaceequipment.get(
       });
   },
 );
+
+// Adding a space equipment requirement using knex
+spaceequipment.post(
+  '/post',
+  validateSpaceEquipmentPost, // You need to create this validation middleware
+  (req: Request, res: Response) => {
+    const spaceId = req.body.spaceId;
+    const equipmentId = req.body.equipmentId;
+
+    const spaceEquipmentData = {
+      spaceId,
+      equipmentId,
+    };
+
+    db_knex('SpaceEquipment')
+      .insert(spaceEquipmentData)
+      .returning('id') // Return the inserted ID
+      .then((result) => {
+        const insertId = result[0];
+        successHandler(
+          req,
+          res,
+          { insertId },
+          `Create successful - SpaceEquipment created spaceId ${spaceId} & ${equipmentId}`,
+        );
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Oops! Create failed - SpaceEquipment');
+      });
+  },
+);
+
+// Removing an equipment from a space
+spaceequipment.delete('/delete/:spaceId/:equipmentId', (req, res) => {
+  const spaceId = req.params.spaceId;
+  const equipmentId = req.params.equipmentId;
+  const sqlDelete =
+    'DELETE FROM SpaceEquipment WHERE spaceId = ? AND equipmentId = ?;';
+  db.query(sqlDelete, [spaceId, equipmentId], (err, result) => {
+    if (err) {
+      dbErrorHandler(req, res, err, 'Oops! Delete failed - SpaceEquipment');
+    } else {
+      successHandler(req, res, result, 'Delete successful - SpaceEquipment');
+    }
+  });
+});
 
 export default spaceequipment;

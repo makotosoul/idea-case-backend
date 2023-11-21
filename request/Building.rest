@@ -5,7 +5,7 @@
 GET {{host}}/building
 Authorization: Basic {{token}}
 
-### Get one by id 
+### Get one by id
 GET {{host}}/building/401
 Authorization: Basic {{token}}
 
@@ -32,7 +32,7 @@ Content-Type: application/json
     {
     "name": "XYgdfG",
     "description": "Sibeliusakatemian päärakennus"
-    }, 
+    },
 
     {
     "name": "MNfdO",
@@ -55,7 +55,7 @@ Content-Type: application/json
     "description": "Sibeliusakatemian päärakennus"
 }
 
-### Get one by id 
+### Get one by id
 GET {{host}}/building/{{nextId}}
 Authorization: Basic {{token}}
 
@@ -63,14 +63,6 @@ Authorization: Basic {{token}}
 DELETE {{host}}/building/{{nextId}}
 Authorization: Basic {{token}}
 
-### Get one by id 
+### Get one by id
 GET {{host}}/building/{{nextId}}
 Authorization: Basic {{token}}
-
-
-
-
-
-
-
-

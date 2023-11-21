@@ -1,12 +1,10 @@
-import { body } from 'express-validator';
-
 export const validateBuildingId = [...createIdValidatorChain('buildingId')];
 
 import {
   createIdValidatorChain,
   validateDescriptionObl,
   validateIdObl,
-  validateMultiDescriptionObl,
+  validateMultiDescription,
   validateMultiNameObl,
   validateNameObl,
 } from './index.js';
@@ -23,5 +21,5 @@ export const validateBuildingPut = [...validateBuildingPost, ...validateIdObl];
 // => MultiPost!!!
 export const validateBuildingMultiPost = [
   ...validateMultiNameObl,
-  ...validateMultiDescriptionObl,
+  ...validateMultiDescription,
 ];

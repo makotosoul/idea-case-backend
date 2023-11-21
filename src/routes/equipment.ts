@@ -11,6 +11,7 @@ import {
   successHandler,
 } from '../responseHandler/index.js';
 import {
+  validateEquipmentMultiPost,
   validateEquipmentPost,
   validateEquipmentPut,
 } from '../validationHandler/equipment.js';
@@ -81,6 +82,35 @@ equipment.post(
             res,
             `Equipment with the ${req.body.id} already exists!`,
           );
+        } else if (error.errno === 1052) {
+          dbErrorHandler(req, res, error, 'Error in database column name');
+        } else {
+          dbErrorHandler(req, res, error, 'Error at adding equipment');
+        }
+      });
+  },
+);
+
+// add multiple equipments
+equipment.post(
+  '/multi',
+  validateEquipmentMultiPost,
+  [authenticator, admin, roleChecker, validate],
+  (req: Request, res: Response) => {
+    db_knex
+      .insert(req.body)
+      .into('Equipment')
+      .then((idArray) => {
+        successHandler(
+          req,
+          res,
+          idArray,
+          'Adding multiple equipments was succesful.',
+        );
+      })
+      .catch((error) => {
+        if (error.errno === 1062) {
+          requestErrorHandler(req, res, 'Equipment already exists!');
         } else if (error.errno === 1052) {
           dbErrorHandler(req, res, error, 'Error in database column name');
         } else {
