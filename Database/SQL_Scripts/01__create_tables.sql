@@ -134,6 +134,28 @@ CREATE TABLE IF NOT EXISTS Program (
 ) ENGINE=InnoDB AUTO_INCREMENT=3001 DEFAULT CHARSET=latin1;
 
 
+CREATE TABLE IF NOT EXISTS AllocRound (
+    id              INTEGER         NOT NULL AUTO_INCREMENT,
+    date            TIMESTAMP       NOT NULL DEFAULT current_timestamp(),
+    name            VARCHAR(255)    NOT NULL UNIQUE,
+    isSeasonAlloc   BOOLEAN         NOT NULL DEFAULT 0,
+    userId          INTEGER         NOT NULL,
+    description     VARCHAR(16000),
+    lastModified    TIMESTAMP       NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+    isAllocated     BOOLEAN     DEFAULT 0,
+    processOn       BOOLEAN     DEFAULT 0,
+    abortProcess    BOOLEAN     DEFAULT 0,
+    requireReset    BOOLEAN     DEFAULT 0,
+
+    PRIMARY KEY(id),
+
+    CONSTRAINT `FK_AllocRound_User` FOREIGN KEY (userId)
+        REFERENCES User(id)
+        ON DELETE NO ACTION
+        ON UPDATE CASCADE
+
+)ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=latin1;
+
 CREATE TABLE IF NOT EXISTS Subject (
     id              INTEGER         NOT NULL AUTO_INCREMENT,
     name            VARCHAR(255)    NOT NULL         UNIQUE,
@@ -144,8 +166,9 @@ CREATE TABLE IF NOT EXISTS Subject (
     area            DECIMAL(5,1)                DEFAULT NULL,
     programId       INTEGER         NOT NULL,
     spaceTypeId     INTEGER,
+    allocRoundId    INTEGER         NOT NULL,
 
-    CONSTRAINT AK_Subject_unique_name_in_program UNIQUE (programId, name),
+    CONSTRAINT AK_Subject_unique_name_in_program UNIQUE (programId, allocRoundId, name),
 
     PRIMARY KEY (id),
 
@@ -158,6 +181,12 @@ CREATE TABLE IF NOT EXISTS Subject (
         REFERENCES SpaceType(id)
         ON DELETE SET NULL
         ON UPDATE CASCADE
+    
+    CONSTRAINT `FK_Subject_AllocRound` FOREIGN KEY (allocRoundId)
+        REFERENCES AllocRound(id)
+        ON DELETE NO ACTION
+        ON UPDATE NO ACTION
+
 ) ENGINE=InnoDB AUTO_INCREMENT=4001 DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS SubjectEquipment (
@@ -181,28 +210,6 @@ CREATE TABLE IF NOT EXISTS SubjectEquipment (
 
 
 /* CREATE ALLOC TABLES */
-
-CREATE TABLE IF NOT EXISTS AllocRound (
-    id              INTEGER         NOT NULL AUTO_INCREMENT,
-    date            TIMESTAMP       NOT NULL DEFAULT current_timestamp(),
-    name            VARCHAR(255)    NOT NULL UNIQUE,
-    isSeasonAlloc   BOOLEAN         NOT NULL DEFAULT 0,
-    userId          INTEGER         NOT NULL,
-    description     VARCHAR(16000),
-    lastModified    TIMESTAMP       NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-    isAllocated     BOOLEAN     DEFAULT 0,
-    processOn       BOOLEAN     DEFAULT 0,
-    abortProcess    BOOLEAN     DEFAULT 0,
-    requireReset    BOOLEAN     DEFAULT 0,
-
-    PRIMARY KEY(id),
-
-    CONSTRAINT `FK_AllocRound_User` FOREIGN KEY (userId)
-        REFERENCES User(id)
-        ON DELETE NO ACTION
-        ON UPDATE CASCADE
-
-)ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS AllocSubject (
     allocRoundId    INTEGER     NOT NULL,
