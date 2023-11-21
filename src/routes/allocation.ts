@@ -7,11 +7,9 @@ import { authenticator } from '../authorization/userValidation.js';
 import { dbErrorHandler, successHandler } from '../responseHandler/index.js';
 import allocationService from '../services/allocation.js';
 import programService from '../services/program.js';
-import {
-  validateAllocRoundId,
-  validateAllocRoundIdAndSubjectId,
-} from '../validationHandler/allocRound.js';
+import { validateAllocRoundId } from '../validationHandler/allocRound.js';
 import { validate, validateIdObl } from '../validationHandler/index.js';
+import { validateAllocRoundIdAndSubjectId } from '../validationHandler/subject.js';
 
 const allocation = express.Router();
 
