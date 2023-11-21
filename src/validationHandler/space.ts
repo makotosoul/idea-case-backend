@@ -1,12 +1,13 @@
 import { body, check } from 'express-validator';
 import { validateBuildingId } from './building.js';
-import { validateIdObl, validateNameObl } from './index.js';
 import {
   createIdValidatorChain,
   createMultiDescriptionValidatorChain,
   createMultiNameValidatorChain,
   createMultiTimeValidatorChain,
+  validateIdObl,
   validateMultiNameObl,
+  validateNameObl,
 } from './index.js';
 import { validateSpaceTypeId } from './spaceType.js';
 

@@ -27,10 +27,10 @@ Content-Type: application/json
   "info": "Updated space info",
   "personLimit": 50,
   "buildingId": 401,
-  "availableFrom": "10:00:00",   
-  "availableTo": "18:00:00",     
-  "classesFrom": "10:00:00",     
-  "classesTo": "15:00:00",      
+  "availableFrom": "10:00:00",
+  "availableTo": "18:00:00",
+  "classesFrom": "10:00:00",
+  "classesTo": "15:00:00",
   "inUse": true,
   "spaceTypeId": 5001
 }

@@ -1,12 +1,12 @@
-import { check, body } from 'express-validator';
+import { body, check } from 'express-validator';
 import {
   validateDescriptionObl,
   validateIdObl,
-  validateNameObl,
-  validatePriorityMustBeNumber,
+  validateMultiDescription,
   validateMultiNameObl,
   validateMultiPriorityMustBeNumber,
-  validateMultiDescription
+  validateNameObl,
+  validatePriorityMustBeNumber,
 } from './index.js';
 
 export const validateEquipmentPost = [
@@ -31,5 +31,5 @@ export const validateEquipmentMultiPost = [
     .withMessage('isMovable needs to be 1 = can be moved, 0 = cannot be moved.')
     .bail(),
   ...validateMultiPriorityMustBeNumber,
-  ...validateMultiDescription
+  ...validateMultiDescription,
 ];

@@ -1,7 +1,7 @@
 ### Used to test the Subject table's REST functions, following LCRUD
 # Test structure: 1L-2C-3R-4U-5D
-# Ensure fresh environment tokens are in use (Siba_be\request\1_Logins.rest & .vscode\settings.json) 
-# The user can follow the tests using either hardcoded ID's or the testID  
+# Ensure fresh environment tokens are in use (Siba_be\request\1_Logins.rest & .vscode\settings.json)
+# The user can follow the tests using either hardcoded ID's or the testID
 
 ### 1. List all subjects
 GET {{host}}/subject

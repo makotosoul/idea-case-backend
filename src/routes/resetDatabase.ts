@@ -1,11 +1,10 @@
-import fs from 'fs';
+import fs from 'node:fs';
 import dotenv from 'dotenv';
 import express, { Request, Response } from 'express';
 import mysql from 'mysql';
 import { admin } from '../authorization/admin.js';
 import { roleChecker } from '../authorization/roleChecker.js';
 import { authenticator } from '../authorization/userValidation.js';
-import knex from '../db/index_knex.js';
 import {
   dbErrorHandler,
   requestErrorHandler,

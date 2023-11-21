@@ -15,12 +15,12 @@ BEGIN
 	IF debug = 1 AND logId IS NOT NULL AND logId != 0 THEN
 		INSERT INTO log_event(log_id, stage, status, information) VALUES(logId, stage, status, msg);
 	END IF;
-END; 
+END;
 //
 DELIMITER ;
 
-/* allocRid is now used for the frontend sent allocRoundId, to make it stand out e.g. in: 
-  AllocSpace.allocRoundId = allocRid;  
+/* allocRid is now used for the frontend sent allocRoundId, to make it stand out e.g. in:
+  AllocSpace.allocRoundId = allocRid;
   Easier to follow, Right? */
 
 
@@ -67,7 +67,7 @@ BEGIN
 
 	CALL LogAllocation(logId, "Prioritization", "OK", CONCAT("Priority option: ", priority_option, " completed."));
 
-END; 
+END;
 //
 DELIMITER ;
 
@@ -84,7 +84,7 @@ BEGIN
 		AND sp.spaceTypeId = (SELECT s.spaceTypeId FROM Subject s WHERE id=subId)
 		AND sp.inUse=1
 		;
-END; 
+END;
 //
 DELIMITER ;
 
@@ -183,7 +183,7 @@ BEGIN
 		-- LOG HERE
 		CALL LogAllocation(logId, "Space-allocation", "Warning", CONCAT("Subject : ", subId, " - Add ", sessions - allocated, " to space: ", spaceTo, " - All suitable spaces are full"));
    	END IF;
-END; 
+END;
 //
 DELIMITER ;
 
@@ -318,7 +318,7 @@ BEGIN
 
 	UPDATE AllocRound SET processOn = 0 WHERE id = allocRid;
 
-END; 
+END;
 //
 DELIMITER ;
 
@@ -337,7 +337,7 @@ BEGIN
 		UPDATE AllocRound SET abortProcess = 1 WHERE id = allocRid;
 	END IF;
 
-END; 
+END;
 //
 DELIMITER ;
 
@@ -372,7 +372,7 @@ BEGIN
 	    UPDATE AllocSubject SET isAllocated = 0, priority = null, cantAllocate = 0 WHERE allocRoundId = allocRid;
     END IF;
     UPDATE AllocRound SET isAllocated = 0, requireReset = FALSE WHERE id = allocRid;
-END; 
+END;
 //
 DELIMITER ;
 
@@ -396,6 +396,6 @@ RETURN (
     				WHERE SpaceEquipment.spaceId = spaId
 		) a
 );
-END; 
+END;
 //
 DELIMITER ;

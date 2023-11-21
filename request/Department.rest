@@ -11,7 +11,7 @@ Authorization: Basic {{token}}
 ###
 @nextid = 117
 
-### Get one by id 
+### Get one by id
 GET {{host}}/department/102
 Authorization: Basic {{token}}
 
@@ -54,10 +54,3 @@ Authorization: Basic {{token}}
 ### Get one by id using nextId
 GET {{host}}/department/{{nextid}}
 Authorization: Basic {{token}}
-
-
-
-
-
-
-

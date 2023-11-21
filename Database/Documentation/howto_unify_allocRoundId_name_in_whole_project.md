@@ -1,4 +1,4 @@
-1. Search for word 'alloc'  CI=case-insensitive, partial matches included, 
+1. Search for word 'alloc'  CI=case-insensitive, partial matches included,
 ... (will match e.g. isAllocated or allocation or non-allocated, simply anything)
 
 ... listing all the different ways AllocRound.id (AllocRound table) = allocRoundId (other tables) is written
@@ -33,4 +33,3 @@ allocR 3
 2. Check that nowhere doubles like:
 
 allocRoundIdId     (Id twice)
-

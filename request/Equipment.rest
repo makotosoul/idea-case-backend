@@ -54,8 +54,3 @@ Authorization: Basic {{token}}
 ### 8. Confirm deletion (Trying to retrieve it should result in an error or "not found" message)
 GET {{host}}/equipment/{{nextId}}
 Authorization: Basic {{token}}
-
-
-
-
-

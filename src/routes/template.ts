@@ -63,7 +63,10 @@ template.get(
           'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         'Content-Disposition': 'attachment; filename=templaatti.xlsx',
       })
-      .download('./tempates/equipment_template.xlsx', 'equipment_templaatti.xlsx');
+      .download(
+        './tempates/equipment_template.xlsx',
+        'equipment_templaatti.xlsx',
+      );
   },
 );
 

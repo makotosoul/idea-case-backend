@@ -3,9 +3,9 @@ import { authorizationErrorHandler } from '../responseHandler/index.js';
 
 export const roleListPrinter = (req: Request): string => {
   let rolesListText = 'Roles accepted: ';
-  req.requiredRolesList.forEach((element: string) => {
+  for (const element of req.requiredRolesList) {
     rolesListText += `${element} `;
-  });
+  }
 
   return rolesListText;
 };
