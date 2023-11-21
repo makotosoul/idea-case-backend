@@ -1,4 +1,4 @@
-USE casedb; /* UPDATED 2023-11-08 */
+USE casedb; /* UPDATED 2023-11-21 */
 
 DROP TABLE IF EXISTS AllocCurrentRoundUser;
 DROP TABLE IF EXISTS AllocSpace;
@@ -224,7 +224,7 @@ CREATE TABLE IF NOT EXISTS Subject (
     CONSTRAINT `FK_Subject_SpaceType` FOREIGN KEY (SpaceTypeId)
         REFERENCES SpaceType(id)
         ON DELETE SET NULL
-        ON UPDATE CASCADE
+        ON UPDATE CASCADE,
     
     CONSTRAINT `FK_Subject_AllocRound` FOREIGN KEY (allocRoundId)
         REFERENCES AllocRound(id)
