@@ -22,7 +22,8 @@ Content-Type: application/json
     "programId": 3030,
     "programName": "Test program name",
     "spaceTypeId": 5004,
-    "spaceTypeName": "Musiikkiluokka"
+    "spaceTypeName": "Musiikkiluokka",
+    "allocRoundId": 10004
 }
 
 ### Add the insertID from the POST
@@ -52,7 +53,8 @@ Content-Type: application/json
     "programId": 3030,
     "programName": "Test program name",
     "spaceTypeId": 5004,
-    "spaceTypeName": "Musiikkiluokka"
+    "spaceTypeName": "Musiikkiluokka",
+    "allocRoundId": 10001
 }
 
 ### Update subject by testID
@@ -71,7 +73,8 @@ Content-Type: application/json
     "programId": 3030,
     "programName": "Test program name",
     "spaceTypeId": 5004,
-    "spaceTypeName": "Musiikkiluokka"
+    "spaceTypeName": "Musiikkiluokka",
+    "allocRoundId": 10002
 }
 
 ### 5. Delete subject
