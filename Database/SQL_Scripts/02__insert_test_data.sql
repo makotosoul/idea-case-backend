@@ -301,9 +301,9 @@ INSERT INTO Subject(name, groupSize, groupCount, sessionLength, sessionCount, ar
     ('Äänenkäyttö ja huolto / korrepetitiokoulutus', 4, 3, '01:00:00', 1, 10, 3015, 5004, 10004),
     ('Prima vista / korrepetitiokoulutus', 2, 6, '01:00:00', 1, 15, 3015, 5004, 10004),
     ('Musiikinhistorian lukupiiri', 10, 1, '01:00:00', 1 , 15, 3019, 5002, 10004),
-    ('Tohtoriseminaari (sävellys)', 17, 1, '02:00:00', 1, 30, 3019, 5002, 10004),
-    ('Musiikkiteknologian perusteet', 15, 1, '01:00:00', 1, 30, 3020, 5004, 10004),
-    ('Johtamisen pedagogiikka -luentosarja', 10, 1, '02:00:00', 1, 20, 3018, 5002, 10004);
+    ('Tohtoriseminaari (sävellys)', 17, 1, '02:00:00', 1, 30, 3019, 5002, 10003),
+    ('Musiikkiteknologian perusteet', 15, 1, '01:00:00', 1, 30, 3020, 5004, 10002),
+    ('Johtamisen pedagogiikka -luentosarja', 10, 1, '02:00:00', 1, 20, 3018, 5002, 10001);
 
 
 /* --- Insert: SubjectEquipment * --- */

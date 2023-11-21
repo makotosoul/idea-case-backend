@@ -7,6 +7,10 @@
 GET {{host}}/subject
 Authorization: Basic {{token}}
 
+### 1. List all subjects in an allocation
+GET {{host}}/subject/all/10004
+Authorization: Basic {{token}}
+
 ### 2. Create new subject
 POST {{host}}/subject
 Authorization: Basic {{token}}

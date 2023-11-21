@@ -62,7 +62,7 @@ subject.get('/', [validate], (req: Request, res: Response) => {
 // Fetching all subjects BUT only in same allocation,
 // Currently no login required for seeing the subjects
 subject.get(
-  '/:allocRoundId',
+  '/all/:allocRoundId',
   validateAllocRoundId,
   [validate],
   (req: Request, res: Response) => {
@@ -163,7 +163,7 @@ subject.post(
       area: req.body.area,
       programId: req.body.programId,
       spaceTypeId: req.body.spaceTypeId,
-      allocRoundId: req.body.spaceTypeId || 10004, // TODO!!!
+      allocRoundId: req.body.allocRoundId || 10004, // TODO!!!
     };
 
     db_knex('Subject')
