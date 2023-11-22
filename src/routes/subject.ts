@@ -14,6 +14,7 @@ import {
 } from '../responseHandler/index.js';
 import { Subject } from '../types/custom.js';
 import logger from '../utils/logger.js';
+import { validateAllocRoundId } from '../validationHandler/allocRound.js';
 import {
   // This is the new validation result handler
   validate,
@@ -45,6 +46,7 @@ subject.get('/', [validate], (req: Request, res: Response) => {
       'p.name AS programName',
       's.spaceTypeId',
       'st.name AS spaceTypeName',
+      's.allocRoundId',
     )
     .from('Subject as s')
     .innerJoin('Program as p', 's.programId', 'p.id')
@@ -57,16 +59,53 @@ subject.get('/', [validate], (req: Request, res: Response) => {
     });
 });
 
+// Fetching all subjects BUT only in same allocation,
+// Currently no login required for seeing the subjects
+subject.get(
+  '/byAllocationId/:allocRoundId',
+  validateAllocRoundId,
+  [validate],
+  (req: Request, res: Response) => {
+    db_knex
+      .select(
+        's.id',
+        's.name AS subjectName',
+        's.groupSize',
+        's.groupCount',
+        's.sessionLength',
+        's.sessionCount',
+        's.area',
+        's.programId',
+        'p.name AS programName',
+        's.spaceTypeId',
+        'st.name AS spaceTypeName',
+        's.allocRoundId',
+      )
+      .from('Subject as s')
+      .where('allocRoundId', req.params.allocRoundId)
+      .innerJoin('Program as p', 's.programId', 'p.id')
+      .leftJoin('SpaceType as st', 's.spaceTypeId', 'st.id')
+      .then((subjects) => {
+        successHandler(req, res, subjects, 'getAll successful - Subject');
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Oops! Nothing came through - Subject');
+      });
+  },
+);
+
 // SPECIAL Listing all the subjects for selection dropdown etc.
 // (Just name and id) using knex
 // Currently login and one of the three roles required to execute this one
 subject.get(
-  '/getNames',
+  '/getNames/:allocRoundId',
+  validateAllocRoundId,
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex
       .select('id', 'name')
       .from('Subject')
+      .where('allocRoundId', req.params.allocRoundId)
       .then((subjectNames) => {
         successHandler(req, res, subjectNames, 'getNames successful - Subject');
       })
@@ -124,6 +163,7 @@ subject.post(
       area: req.body.area,
       programId: req.body.programId,
       spaceTypeId: req.body.spaceTypeId,
+      allocRoundId: req.body.allocRoundId || 10004, // TODO!!!
     };
 
     db_knex('Subject')
@@ -160,11 +200,11 @@ subject.post(
       const [program] = await db_knex('Program')
         .select('id')
         .where('name', subject.major);
-      const [space] = await db_knex('SpaceType')
+      const [spaceType] = await db_knex('SpaceType')
         .select('id')
         .where('name', subject.roomType);
 
-      if (!program || !space) {
+      if (!program || !spaceType) {
         return !program
           ? requestErrorHandler(req, res, `'Program ${subject.major} not found`)
           : requestErrorHandler(
@@ -182,7 +222,8 @@ subject.post(
         sessionCount: subject.sessionCount,
         area: subject.area,
         programId: program.id,
-        spaceTypeId: space.id,
+        spaceTypeId: spaceType.id,
+        allocRoundId: subject.allocRoundId || 10004, // TODO, first FE!!!
       });
     }
 
@@ -224,8 +265,10 @@ subject.put(
     const area = req.body.area;
     const programId = req.body.programId;
     const spaceTypeId = req.body.spaceTypeId;
+    const allocRoundId = req.body.allocRoundId || 10004; // TODO FE!!!
+
     const sqlUpdate =
-      'UPDATE Subject SET name = ?, groupSize = ?, groupCount = ?, sessionLength = ?, sessionCount = ?, area = ?,  programId = ?, spaceTypeId = ? WHERE id = ?';
+      'UPDATE Subject SET name = ?, groupSize = ?, groupCount = ?, sessionLength = ?, sessionCount = ?, area = ?,  programId = ?, spaceTypeId = ?, allocRoundId = ? WHERE id = ?';
     db.query(
       sqlUpdate,
       [
@@ -237,6 +280,7 @@ subject.put(
         area,
         programId,
         spaceTypeId,
+        allocRoundId,
         id,
       ],
       (err, result) => {

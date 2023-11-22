@@ -1,4 +1,10 @@
-import { createIdValidatorChain, validateNameObl } from './index.js';
+import {
+  createIdValidatorChain,
+  validateIdObl,
+  validateNameObl,
+} from './index.js';
+
+export const validateProgramId = [...createIdValidatorChain('programId')];
 
 // this needs to continue
 export const validateProgramPost = [
@@ -6,9 +12,4 @@ export const validateProgramPost = [
   ...createIdValidatorChain('departmentId'),
 ];
 
-export const validateProgramPut = [
-  ...validateProgramPost,
-  ...createIdValidatorChain('id'),
-];
-
-export const validateProgramId = [...createIdValidatorChain('programId')];
+export const validateProgramPut = [...validateProgramPost, ...validateIdObl];

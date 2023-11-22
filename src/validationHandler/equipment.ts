@@ -1,5 +1,6 @@
 import { body, check } from 'express-validator';
 import {
+  createIdValidatorChain,
   validateDescriptionObl,
   validateIdObl,
   validateMultiDescription,
@@ -8,6 +9,8 @@ import {
   validateNameObl,
   validatePriorityMustBeNumber,
 } from './index.js';
+
+export const validateEquipmentId = [...createIdValidatorChain('equipmentId')];
 
 export const validateEquipmentPost = [
   ...validateNameObl,
