@@ -1,0 +1,53 @@
+### Remember to select the proper rest client environment
+@nextId = 10006
+
+### Get all
+GET {{host}}/allocRound
+Authorization: Basic {{token}}
+
+### Get one by id
+GET {{host}}/allocRound/10004
+Authorization: Basic {{token}}
+
+### Create one
+POST {{host}}/allocRound
+Authorization: Basic {{token}}
+Content-Type: application/json
+
+{
+    "name": "New test allocround from REST client",
+    "description": "Sibeliusakatemian testiallokointi",
+    "userId": 202
+}
+
+### Create one, copying subject etc. from existing one
+POST {{host}}/allocRound/copyAllocRound
+Authorization: Basic {{token}}
+Content-Type: application/json
+
+{
+    "name": "New test allocround from REST client",
+    "description": "Sibeliusakatemian testiallokointi",
+    "userId": 202,
+    "copiedAllocRoundId": 10001
+}
+
+### Get one by id
+GET {{host}}/allocRound/{{nextId}}
+Authorization: Basic {{token}}
+
+### Get all
+GET {{host}}/allocRound
+Authorization: Basic {{token}}
+
+### Get all
+GET {{host}}/allocRound
+Authorization: Basic {{token}}
+
+### Delete one
+DELETE {{host}}/allocRound/{{nextId}}
+Authorization: Basic {{token}}
+
+### Get one by id
+GET {{host}}/allocRound/{{nextId}}
+Authorization: Basic {{token}}
