@@ -24,7 +24,7 @@ allocround.get(
   [authenticator, admin, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('AllocRound')
-      .select('id', 'name', 'isSeasonAlloc', 'description', 'lastModified')
+      .select()
       .then((data) => {
         successHandler(req, res, data, 'getAll succesful - Allocation');
       })

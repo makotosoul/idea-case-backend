@@ -1,18 +1,12 @@
 import { check } from 'express-validator';
-import { createIdValidatorChain } from './index.js';
+import { validateEquipmentId } from './equipment.js';
+import { validateSubjectId } from './subject.js';
 
 /* ---- SUBJECTEQUIPMENT ---- */
-export const validateSubjectId = [...createIdValidatorChain('subjectId')];
 
 export const validateSubjectEquipmentPost = [
   ...validateSubjectId,
-  check('equipmentId')
-    .matches(/^[0-9]+$/)
-    .withMessage('Must be a number')
-    .bail()
-    .notEmpty()
-    .withMessage('Cannot be empty')
-    .bail(),
+  ...validateEquipmentId,
   check('priority')
     .matches(/^[0-9]+$/)
     .withMessage('Must be a number')
