@@ -10,7 +10,7 @@ GET {{host}}/program/3030
 Authorization: Basic {{token}}
 
 ### 3. Get program name(s) by user id
-GET {{host}}/program/progName/202
+GET {{host}}/program/programName/
 Authorization: Basic {{token}}
 
 ### next id after TestData reset
