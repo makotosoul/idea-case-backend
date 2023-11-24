@@ -5,6 +5,8 @@ GET {{host}}/resetDatabase
 Authorization: Basic {{token}}
 
 ### Get all
+
+
 GET {{host}}/department
 Authorization: Basic {{token}}
 
