@@ -21,7 +21,7 @@ import {
 const program = express.Router();
 
 // Program id:s and name:s, to be used in a select list
-program.get(
+/*program.get(
   '/',
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
@@ -30,6 +30,27 @@ program.get(
       .from('Program')
       .then((programs) => {
         successHandler(req, res, programs, 'getNames successful - Program');
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Oops! Nothing came through - Program');
+      });
+  },
+);*/
+program.get(
+  '/',
+  [authenticator, admin, planner, statist, roleChecker, validate],
+  (req: Request, res: Response) => {
+    db_knex
+      .select(
+        'p.id',
+        'p.name AS programName',
+        'p.departmentId',
+        'd.name AS departmentName', // Include department name
+      )
+      .from('Program as p')
+      .innerJoin('Department as d', 'p.departmentId', 'd.id') // Join with Department table
+      .then((programs) => {
+        successHandler(req, res, programs, 'getAll successful - Program');
       })
       .catch((error) => {
         dbErrorHandler(req, res, error, 'Oops! Nothing came through - Program');
