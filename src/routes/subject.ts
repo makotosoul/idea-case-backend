@@ -189,7 +189,8 @@ subject.post(
 
 // Adding multiple subjects/teachings using knex
 subject.post(
-  '/multi',
+  '/multi/:allocRoundId',
+  validateAllocRoundId,
   validateSubjectMultiPost,
   [authenticator, admin, planner, roleChecker, validate],
   async (req: Request, res: Response) => {
@@ -223,7 +224,7 @@ subject.post(
         area: subject.area,
         programId: program.id,
         spaceTypeId: spaceType.id,
-        allocRoundId: subject.allocRoundId || 10004, // TODO, first FE!!!
+        allocRoundId: Number(req.params.allocRoundId), //|| 10004, // TODO, first FE!!!
       });
     }
 
