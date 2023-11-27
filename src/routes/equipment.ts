@@ -26,7 +26,7 @@ equipment.get(
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Equipment')
-      .select('id', 'name', 'priority as equipmentPriority', 'description')
+      .select('id', 'name', 'priority', 'description', 'isMovable')
       .then((data) => {
         successHandler(req, res, data, 'getNames successful - Equipment');
       })
