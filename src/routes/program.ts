@@ -111,6 +111,35 @@ program.get(
   },
 );
 
+//get for a single user's associated programs
+program.get(
+  '/userprograms/:userid',
+  [authenticator, admin, planner, statist, roleChecker, validate],
+  (req: Request, res: Response) => {
+    db_knex('Program')
+      .select('Program.name')
+      .join('Department', 'Department.id', 'Program.departmentid')
+      .join(
+        'Departmentplanner',
+        'Departmentplanner.departmentid',
+        'Department.id',
+      )
+      .join('User', 'User.id', 'Departmentplanner.userid')
+      .where('User.id', req.params.userid)
+      .then((data) => {
+        successHandler(
+          req,
+          res,
+          data,
+          `Succesfully fetched programs from DB with user: ${req.params.userId} `,
+        );
+      })
+      .catch((err) => {
+        dbErrorHandler(req, res, err, 'Oops! Nothing came through - Program');
+      });
+  },
+);
+
 // create program
 // TODO: add validationHandler for validating program name and departmentId
 program.post(
