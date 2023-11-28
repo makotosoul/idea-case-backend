@@ -11,6 +11,7 @@ import {
   successHandler,
 } from '../responseHandler/index.js';
 import {
+  validateAllocRoundCopyPost,
   validateAllocRoundPost,
   validateAllocRoundPut,
 } from '../validationHandler/allocRound.js';
@@ -24,7 +25,7 @@ allocround.get(
   [authenticator, admin, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('AllocRound')
-      .select('id', 'name', 'isSeasonAlloc', 'description', 'lastModified')
+      .select()
       .then((data) => {
         successHandler(req, res, data, 'getAll succesful - Allocation');
       })
@@ -85,6 +86,52 @@ allocround.post(
           idArray,
           'Adding the new alloc round was succesful.',
         );
+      })
+      .catch((error) => {
+        if (error.errno === 1062) {
+          requestErrorHandler(
+            req,
+            res,
+            `Conflict: AllocRound with the name ${req.body.name} already exists!`,
+          );
+        } else if (error.errno === 1052) {
+          dbErrorHandler(req, res, error, 'Error in database column name');
+        } else {
+          dbErrorHandler(req, res, error, 'Error at adding alloc round');
+        }
+      });
+  },
+);
+
+allocround.post(
+  '/copyAllocRound',
+  validateAllocRoundCopyPost,
+  [authenticator, admin, roleChecker, validate],
+  (req: Request, res: Response) => {
+    const copiedAllocRoundId = req.body.copiedAllocRoundId;
+    const allocRound = {
+      name: req.body.name,
+      description: req.body.description,
+      userId: req.body.userId,
+    };
+    db_knex('AllocRound')
+      .select()
+      .where('id', copiedAllocRoundId)
+      .then((data) => {
+        if (data.length === 1) {
+          successHandler(
+            req,
+            res,
+            [10999],
+            'Adding the new alloc round based on existing was succesful.',
+          );
+        } else {
+          requestErrorHandler(
+            req,
+            res,
+            `Existing AllocRound id was wrong: ${copiedAllocRoundId}`,
+          );
+        }
       })
       .catch((error) => {
         if (error.errno === 1062) {

@@ -12,6 +12,7 @@ import {
 import { validateSpaceTypeId } from './spaceType.js';
 
 export const validateSpaceId = [...createIdValidatorChain('spaceId')];
+
 export const validateMultiSpaceInfo = [
   ...createMultiDescriptionValidatorChain('info'),
 ];

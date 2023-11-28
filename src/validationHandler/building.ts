@@ -1,5 +1,3 @@
-export const validateBuildingId = [...createIdValidatorChain('buildingId')];
-
 import {
   createIdValidatorChain,
   validateDescriptionObl,
@@ -9,7 +7,8 @@ import {
   validateNameObl,
 } from './index.js';
 
-/* ---- BUILDING ---- */
+export const validateBuildingId = [...createIdValidatorChain('buildingId')];
+
 export const validateBuildingPost = [
   ...validateNameObl,
   ...validateDescriptionObl,

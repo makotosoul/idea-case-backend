@@ -21,18 +21,40 @@ import {
 const program = express.Router();
 
 // Program id:s and name:s, to be used in a select list
+/*program.get(
+  '/',
+  [authenticator, admin, planner, statist, roleChecker, validate],
+  (req: Request, res: Response) => {
+    db_knex
+      .select('id', 'name')
+      .from('Program')
+      .then((programs) => {
+        successHandler(req, res, programs, 'getNames successful - Program');
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Oops! Nothing came through - Program');
+      });
+  },
+);*/
 program.get(
   '/',
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
-    const sqlSelectName = 'SELECT id, name FROM Program';
-    db.query(sqlSelectName, (err, result) => {
-      if (err) {
-        dbErrorHandler(req, res, err, 'Oops! Nothing came through - Program');
-      } else {
-        successHandler(req, res, result, 'getNames successful - Program');
-      }
-    });
+    db_knex
+      .select(
+        'p.id',
+        'p.name AS programName',
+        'p.departmentId',
+        'd.name AS departmentName', // Include department name
+      )
+      .from('Program as p')
+      .innerJoin('Department as d', 'p.departmentId', 'd.id') // Join with Department table
+      .then((programs) => {
+        successHandler(req, res, programs, 'getAll successful - Program');
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Oops! Nothing came through - Program');
+      });
   },
 );
 
@@ -42,15 +64,16 @@ program.get(
   validateIdObl,
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
-    db_knex('Program')
+    db_knex
       .select()
+      .from('Program')
       .where('id', req.params.id)
       .then((data) => {
         successHandler(
           req,
           res,
           data,
-          `Succesfully read the program from DB with id: ${req.params.id} `,
+          `Successfully read the program from DB with id: ${req.params.id}`,
         );
       })
       .catch((err) => {
@@ -88,6 +111,35 @@ program.get(
   },
 );
 
+//get for a single user's associated programs
+program.get(
+  '/userprograms/:userid',
+  [authenticator, admin, planner, statist, roleChecker, validate],
+  (req: Request, res: Response) => {
+    db_knex('Program')
+      .select('Program.name')
+      .join('Department', 'Department.id', 'Program.departmentid')
+      .join(
+        'Departmentplanner',
+        'Departmentplanner.departmentid',
+        'Department.id',
+      )
+      .join('User', 'User.id', 'Departmentplanner.userid')
+      .where('User.id', req.params.userid)
+      .then((data) => {
+        successHandler(
+          req,
+          res,
+          data,
+          `Succesfully fetched programs from DB with user: ${req.params.userId} `,
+        );
+      })
+      .catch((err) => {
+        dbErrorHandler(req, res, err, 'Oops! Nothing came through - Program');
+      });
+  },
+);
+
 // create program
 // TODO: add validationHandler for validating program name and departmentId
 program.post(
@@ -102,18 +154,17 @@ program.post(
 
     db_knex('Program')
       .insert(newProgram)
+      .returning('id') //  auto-incremented ID
       .then((result) => {
-        if (result.length === 0) {
-          requestErrorHandler(req, res, 'Nothing to insert');
-        } else {
-          successHandler(
-            req,
-            res,
-            { id: result[0] }, // Assuming auto-incremented ID
-            'Create successful - Program',
-          );
-          logger.info(`Program ${newProgram.name} created`);
-        }
+        const insertedId = result[0];
+
+        successHandler(
+          req,
+          res,
+          { id: insertedId },
+          'Create successful - Program',
+        );
+        logger.info(`Program ${newProgram.name} created with ID ${insertedId}`);
       })
       .catch((error) => {
         dbErrorHandler(req, res, error, 'Oops! Create failed - Program');
@@ -131,19 +182,24 @@ program.put(
     const name = req.body.name;
     const departmentId = req.body.departmentId;
 
-    const sqlUpdate =
-      'UPDATE Program SET name = ?, departmentId = ? WHERE id = ?';
-
-    db.query(sqlUpdate, [name, departmentId, id], (err, result) => {
-      if (!result) {
-        requestErrorHandler(req, res, `${err}: Nothing to update`);
-      } else if (err) {
-        dbErrorHandler(req, res, err, 'Oops! Update failed - Program');
-      } else {
-        successHandler(req, res, result, 'Update successful - Program');
-        logger.info(`Program ${req.body.name} updated`);
-      }
-    });
+    db_knex('Program')
+      .where('id', id)
+      .update({ name, departmentId })
+      .then((result) => {
+        if (result === 0) {
+          requestErrorHandler(
+            req,
+            res,
+            `Nothing to update for Program with ID ${id}`,
+          );
+        } else {
+          successHandler(req, res, result, 'Update successful - Program');
+          logger.info(`Program ${name} updated`);
+        }
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Oops! Update failed - Program');
+      });
   },
 );
 
@@ -154,15 +210,25 @@ program.delete(
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     const id = req.params.id;
-    const sqlDelete = 'DELETE FROM Program WHERE id = ?;';
-    db.query(sqlDelete, id, (err, result) => {
-      if (err) {
-        dbErrorHandler(req, res, err, 'Oops! Delete failed - Program');
-      } else {
-        successHandler(req, res, result, 'Delete successful - Program');
-        logger.info('Program deleted');
-      }
-    });
+
+    db_knex('Program')
+      .where('id', id)
+      .del()
+      .then((result) => {
+        if (result === 0) {
+          requestErrorHandler(
+            req,
+            res,
+            `Nothing to delete for Program with ID ${id}`,
+          );
+        } else {
+          successHandler(req, res, result, 'Delete successful - Program');
+          logger.info('Program deleted');
+        }
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Oops! Delete failed - Program');
+      });
   },
 );
 

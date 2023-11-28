@@ -1,23 +1,29 @@
 import {
   createIdValidatorChain,
   validateDescriptionObl,
+  validateIdObl,
   validateNameObl,
 } from './index.js';
-import { validateSubjectId } from './subject.js';
+import { validateUserId } from './user.js';
 
 export const validateAllocRoundId = [...createIdValidatorChain('allocRoundId')];
-
-export const validateAllocRoundIdAndSubjectId = [
-  ...validateAllocRoundId,
-  ...validateSubjectId,
+export const validateCopiedAllocRoundId = [
+  ...createIdValidatorChain('copiedAllocRoundId'),
 ];
 
 export const validateAllocRoundPost = [
   ...validateNameObl,
+  //...validateUserId,
   ...validateDescriptionObl,
 ];
 
+export const validateAllocRoundCopyPost = [
+  ...validateAllocRoundPost,
+  ...validateUserId,
+  ...validateCopiedAllocRoundId,
+];
+
 export const validateAllocRoundPut = [
-  ...createIdValidatorChain('id'),
+  ...validateIdObl,
   ...validateAllocRoundPost,
 ];

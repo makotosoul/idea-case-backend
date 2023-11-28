@@ -1,4 +1,4 @@
-USE casedb; /* UPDATED 2023-11-05 */
+USE casedb; /* UPDATED 2023-11-21 */
 
 /* INSERTS */
 /* --- Insert: GlobalSettings --- */
@@ -256,47 +256,54 @@ INSERT INTO Program (name , departmentId) VALUES
     ('Vanha musiikki', 106),
     ('Avoin Kampus', 110);
 
+/* --- Insert: AllocRound * --- */
+INSERT INTO AllocRound(name, isSeasonAlloc, userId, description) VALUES
+    ('Testipriorisointi', 0, 201, 'Testidata lisätään AllocSubject tauluun, mutta laskentaa ei vielä suoritettu eli opetuksille ei ole vielä merkitty tiloja'),
+    ('Testilaskenta', 1, 201, 'Testidata lisätty ja huoneet merkitty'),
+    ('Kevät 2023', 0, 201, ''),
+    ('Demo', 0, 201, 'Allokointi demoamista varten');
+
 /* --- Insert: Subject * --- */
-INSERT INTO Subject(name, groupSize, groupCount, sessionLength, sessionCount, area, programId, spaceTypeId) VALUES
-    ('Saksan kielen perusteet', 20, 2, '01:30:00', 2, 35, 3030, 5002),
-    ('Jazzimprovisoinnin ja -teorian perusteet', 17, 1, '02:30:00', 2, 35, 3005, 5004),
-    ('Piano yksilöopetus', 1, 1, '02:30:00', 2, 10, 3001, 5004),
-    ('Trumpetin ryhmäsoitto', 10, 1,'01:30:00', 3, 40, 3025, 5004),
-    ('Kirkkomusiikin ryhmäsoittoa', 5, 2, '02:30:00', 2, 30, 3014, 5004),
-    ('Ruotsin kielen oppitunti', 18, 2, '01:45:00', 1, 25, 3030, 5002),
-    ('Kitaran soiton perusteet', 11, 1, '01:30:00', 2, 25, 3003, 5004),
-    ('Kontrabassonsoitto, taso A', 1, 3, '01:00:00', 2, 10, 3012, 5004),
-    ('Kanteleensoitto (musiikin kandidaatti)', 1, 4, '01:00:00', 1, 10, 3004, 5004),
-    ('Yhteissoitto / kantele', 6, 1, '01:30:00', 1, 20, 3004, 5004),
-    ('Urkujensoitto (musiikin kandidaatti)', 1, 3, '01:30:00', 1, 20, 3028, 5004),
-    ('Yhteissoitto / kitara', 5, 1, '01:30:00', 1, 25, 3003, 5004),
-    ('Huilunsoitto, taso A', 1, 5, '01:00:00', 1, 10, 3025, 5004),
-    ('Fortepianonsoitto 1', 1, 7, '01:10:00', 2, 20, 3008, 5004),
-    ('Nokkahuilunsoitto, taso B', 1, 3, '01:00:00', 1, 10, 3025, 5004),
-    ('Viulunsoitto, taso D', 1, 12, '01:00:00', 1, 10, 3012, 5004),
-    ('Tuubansoitto, taso C', 1, 5, '01:00:00', 1, 15, 3025, 5004),
-    ('Harmonikansoitto (musiikin kandidaatti)', 1, 2, '01:00:00', 1, 15, 3010, 5004),
-    ('Jazz, rumpujensoitto, taso B', 1, 4, '01:00:00', 1, 15, 3016, 5004),
-    ('Kansanmusiikkiteoria 1', 20, 1, '01:00:00', 2, 30, 3013, 5002),
-    ('Kirkkomusiikin käytännöt 1', 20, 1, '03:00:00', 1, 30, 3014, 5002),
-    ('Nuottikirjoitus', 15, 1, '02:00:00', 1, 25, 3030, 5002),
-    ('Harpun orkesterikirjallisuus', 15, 1, '03:00:00', 1, 25, 3011, 5002),
-    ('Global Orchestra', 12, 2, '02:30:00', 2, 35, 3009, 5004),
-    ('Populaarimusiikin historia', 20, 1, '03:00:00', 1, 30, 3019, 5002),
-    ('Oppimaan oppiminen', 15, 2, '02:30:00', 1, 25, 3030, 5002),
-    ('Body Mapping', 25, 2, '02:30:00', 2, 35, 3030, 5002),
-    ('Muusikon Terveys', 20, 1, '02:30:00', 1, 30, 3030, 5002),
-    ('Pianomusiikin historia', 18, 1, '01:00:00', 1, 30, 3001, 5002),
-    ('Syventävä ensemblelaulu', 4, 3, '00:45:00', 1, 10, 3002, 5004),
-    ('Laulu, pääinstrumentti', 1, 10, '01:00:00', 1, 5, 3002, 5004),
-    ('The jazz line - melodisen jazzimprovisoinnin syventävät opinnot', 14, 1, '02:00:00', 1, 20, 3005, 5002),
-    ('Jazzensemble', 5, 1, '02:00:00', 1, 20, 3007, 5004),
-    ('Äänenkäyttö ja huolto / korrepetitiokoulutus', 4, 3, '01:00:00', 1, 10, 3015, 5004),
-    ('Prima vista / korrepetitiokoulutus', 2, 6, '01:00:00', 1, 15, 3015, 5004),
-    ('Musiikinhistorian lukupiiri', 10, 1, '01:00:00', 1 , 15, 3019, 5002),
-    ('Tohtoriseminaari (sävellys)', 17, 1, '02:00:00', 1, 30, 3019, 5002),
-    ('Musiikkiteknologian perusteet', 15, 1, '01:00:00', 1, 30, 3020, 5004),
-    ('Johtamisen pedagogiikka -luentosarja', 10, 1, '02:00:00', 1, 20, 3018, 5002);
+INSERT INTO Subject(name, groupSize, groupCount, sessionLength, sessionCount, area, programId, spaceTypeId, allocRoundId) VALUES
+    ('Saksan kielen perusteet', 20, 2, '01:30:00', 2, 35, 3030, 5002, 10004),
+    ('Jazzimprovisoinnin ja -teorian perusteet', 17, 1, '02:30:00', 2, 35, 3005, 5004, 10004),
+    ('Piano yksilöopetus', 1, 1, '02:30:00', 2, 10, 3001, 5004, 10004),
+    ('Trumpetin ryhmäsoitto', 10, 1,'01:30:00', 3, 40, 3025, 5004, 10004),
+    ('Kirkkomusiikin ryhmäsoittoa', 5, 2, '02:30:00', 2, 30, 3014, 5004, 10004),
+    ('Ruotsin kielen oppitunti', 18, 2, '01:45:00', 1, 25, 3030, 5002, 10004),
+    ('Kitaran soiton perusteet', 11, 1, '01:30:00', 2, 25, 3003, 5004, 10004),
+    ('Kontrabassonsoitto, taso A', 1, 3, '01:00:00', 2, 10, 3012, 5004, 10004),
+    ('Kanteleensoitto (musiikin kandidaatti)', 1, 4, '01:00:00', 1, 10, 3004, 5004, 10004),
+    ('Yhteissoitto / kantele', 6, 1, '01:30:00', 1, 20, 3004, 5004, 10004),
+    ('Urkujensoitto (musiikin kandidaatti)', 1, 3, '01:30:00', 1, 20, 3028, 5004, 10004),
+    ('Yhteissoitto / kitara', 5, 1, '01:30:00', 1, 25, 3003, 5004, 10004),
+    ('Huilunsoitto, taso A', 1, 5, '01:00:00', 1, 10, 3025, 5004, 10004),
+    ('Fortepianonsoitto 1', 1, 7, '01:10:00', 2, 20, 3008, 5004, 10004),
+    ('Nokkahuilunsoitto, taso B', 1, 3, '01:00:00', 1, 10, 3025, 5004, 10004),
+    ('Viulunsoitto, taso D', 1, 12, '01:00:00', 1, 10, 3012, 5004, 10004),
+    ('Tuubansoitto, taso C', 1, 5, '01:00:00', 1, 15, 3025, 5004, 10004),
+    ('Harmonikansoitto (musiikin kandidaatti)', 1, 2, '01:00:00', 1, 15, 3010, 5004, 10004),
+    ('Jazz, rumpujensoitto, taso B', 1, 4, '01:00:00', 1, 15, 3016, 5004, 10004),
+    ('Kansanmusiikkiteoria 1', 20, 1, '01:00:00', 2, 30, 3013, 5002, 10004),
+    ('Kirkkomusiikin käytännöt 1', 20, 1, '03:00:00', 1, 30, 3014, 5002, 10004),
+    ('Nuottikirjoitus', 15, 1, '02:00:00', 1, 25, 3030, 5002, 10004),
+    ('Harpun orkesterikirjallisuus', 15, 1, '03:00:00', 1, 25, 3011, 5002, 10004),
+    ('Global Orchestra', 12, 2, '02:30:00', 2, 35, 3009, 5004, 10004),
+    ('Populaarimusiikin historia', 20, 1, '03:00:00', 1, 30, 3019, 5002, 10004),
+    ('Oppimaan oppiminen', 15, 2, '02:30:00', 1, 25, 3030, 5002, 10004),
+    ('Body Mapping', 25, 2, '02:30:00', 2, 35, 3030, 5002, 10004),
+    ('Muusikon Terveys', 20, 1, '02:30:00', 1, 30, 3030, 5002, 10004),
+    ('Pianomusiikin historia', 18, 1, '01:00:00', 1, 30, 3001, 5002, 10004),
+    ('Syventävä ensemblelaulu', 4, 3, '00:45:00', 1, 10, 3002, 5004, 10004),
+    ('Laulu, pääinstrumentti', 1, 10, '01:00:00', 1, 5, 3002, 5004, 10004),
+    ('The jazz line - melodisen jazzimprovisoinnin syventävät opinnot', 14, 1, '02:00:00', 1, 20, 3005, 5002, 10004),
+    ('Jazzensemble', 5, 1, '02:00:00', 1, 20, 3007, 5004, 10004),
+    ('Äänenkäyttö ja huolto / korrepetitiokoulutus', 4, 3, '01:00:00', 1, 10, 3015, 5004, 10004),
+    ('Prima vista / korrepetitiokoulutus', 2, 6, '01:00:00', 1, 15, 3015, 5004, 10004),
+    ('Musiikinhistorian lukupiiri', 10, 1, '01:00:00', 1 , 15, 3019, 5002, 10004),
+    ('Tohtoriseminaari (sävellys)', 17, 1, '02:00:00', 1, 30, 3019, 5002, 10003),
+    ('Musiikkiteknologian perusteet', 15, 1, '01:00:00', 1, 30, 3020, 5004, 10002),
+    ('Johtamisen pedagogiikka -luentosarja', 10, 1, '02:00:00', 1, 20, 3018, 5002, 10001);
 
 
 /* --- Insert: SubjectEquipment * --- */
@@ -329,13 +336,6 @@ INSERT INTO SubjectEquipment(subjectId, equipmentId, priority) VALUES
     (4005, 2004, 600),
     (4024, 2004, 600),
     (4033, 2004, 600);
-
-/* --- Insert: AllocRound * --- */
-INSERT INTO AllocRound(name, isSeasonAlloc, userId, description) VALUES
-    ('Testipriorisointi', 0, 201, 'Testidata lisätään AllocSubject tauluun, mutta laskentaa ei vielä suoritettu eli opetuksille ei ole vielä merkitty tiloja'),
-    ('Testilaskenta', 1, 201, 'Testidata lisätty ja huoneet merkitty'),
-    ('Kevät 2023', 0, 201, ''),
-    ('Demo', 0, 201, 'Allokointi demoamista varten');
 
 /* --- Insert: AllocSubject * --- */
 INSERT INTO AllocSubject(subjectId, allocRoundId, isAllocated, allocatedDate, priority) VALUES

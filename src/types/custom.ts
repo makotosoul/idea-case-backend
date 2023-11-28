@@ -20,6 +20,7 @@ export interface Subject {
   area: number;
   programId: number;
   spaceTypeId: number;
+  allocRoundId: number;
 }
 
 export interface Space {

@@ -90,7 +90,7 @@ user.get(
 user.post('/login', (req, res) => {
   console.log(`Login, password: ${req.body.password}`);
   db_knex('User')
-    .select('email', 'password', 'isAdmin', 'isPlanner', 'isStatist')
+    .select('id', 'email', 'password', 'isAdmin', 'isPlanner', 'isStatist')
     .where('email', req.body.email)
     .then((data) => {
       if (data.length === 1) {
@@ -107,6 +107,7 @@ user.post('/login', (req, res) => {
             } else {
               const token = jsonwebtoken.sign(
                 {
+                  id: data[0].id,
                   email: data[0].email,
                   isAdmin: data[0].isAdmin,
                   isPlanner: data[0].isPlanner,
