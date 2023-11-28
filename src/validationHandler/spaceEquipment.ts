@@ -1,16 +1,7 @@
-import { check } from 'express-validator';
-import { createIdValidatorChain } from './index.js';
-
-/* ---- SPACEEQUIPMENT ---- */
-export const validateSpaceId = [...createIdValidatorChain('spaceId')];
+import { validateEquipmentId } from './equipment.js';
+import { validateSpaceId } from './space.js';
 
 export const validateSpaceEquipmentPost = [
   ...validateSpaceId,
-  check('equipmentId')
-    .matches(/^[0-9]+$/)
-    .withMessage('Must be a number')
-    .bail()
-    .notEmpty()
-    .withMessage('Cannot be empty')
-    .bail(),
+  ...validateEquipmentId,
 ];
