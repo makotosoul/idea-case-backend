@@ -123,6 +123,18 @@ export const createMultiTimeValidatorChain = (
     .bail(),
 ];
 
+export const createRoleValidatorChain = (
+  fieldName: string,
+): ValidationChain[] => [
+  check(`${fieldName}`)
+    .matches(/[0-1]/)
+    .withMessage('Must be a number between 0 and 1')
+    .bail()
+    .notEmpty()
+    .withMessage('Cannot be empty')
+    .bail(),
+];
+
 export const validateIdObl = [...createIdValidatorChain('id')];
 export const validateNameObl = [...createNameValidatorChain('name')];
 export const validateDescriptionObl = [

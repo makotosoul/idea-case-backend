@@ -2,8 +2,6 @@ import { check } from 'express-validator';
 import { validateEquipmentId } from './equipment.js';
 import { validateSubjectId } from './subject.js';
 
-/* ---- SUBJECTEQUIPMENT ---- */
-
 export const validateSubjectEquipmentPost = [
   ...validateSubjectId,
   ...validateEquipmentId,
