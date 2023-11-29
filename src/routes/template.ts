@@ -19,7 +19,7 @@ template.get(
         'Content-Disposition': 'attachment; filename=templaatti.xlsx',
       })
       .download(
-        './tempates/building_template.xlsx',
+        './templates/building_template.xlsx',
         'building_templaatti.xlsx',
       );
   },
@@ -30,12 +30,13 @@ template.get(
   [authenticator, admin, planner, roleChecker, validate],
   (req: Request, res: Response) => {
     res
+      .status(200)
       .header({
         'Content-Type':
           'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         'Content-Disposition': 'attachment; filename=templaatti.xlsx',
       })
-      .download('./tempates/subject_template.xlsx', 'subject_templaatti.xlsx');
+      .download('./templates/subject_template.xlsx', 'subject_templaatti.xlsx');
   },
 );
 
@@ -44,12 +45,13 @@ template.get(
   [authenticator, admin, planner, roleChecker, validate],
   (req: Request, res: Response) => {
     res
+      .status(200)
       .header({
         'Content-Type':
           'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         'Content-Disposition': 'attachment; filename=templaatti.xlsx',
       })
-      .download('./tempates/space_template.xlsx', 'space_templaatti.xlsx');
+      .download('./templates/space_template.xlsx', 'space_templaatti.xlsx');
   },
 );
 
@@ -58,13 +60,14 @@ template.get(
   [authenticator, admin, planner, roleChecker, validate],
   (req: Request, res: Response) => {
     res
+      .status(200)
       .header({
         'Content-Type':
           'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         'Content-Disposition': 'attachment; filename=templaatti.xlsx',
       })
       .download(
-        './tempates/equipment_template.xlsx',
+        './templates/equipment_template.xlsx',
         'equipment_templaatti.xlsx',
       );
   },
