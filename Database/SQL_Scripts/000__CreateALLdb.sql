@@ -203,7 +203,7 @@ CREATE TABLE IF NOT EXISTS AllocRound (
 
 CREATE TABLE IF NOT EXISTS Subject (
     id              INTEGER         NOT NULL AUTO_INCREMENT,
-    name            VARCHAR(255)    NOT NULL         UNIQUE,
+    name            VARCHAR(255)    NOT NULL,
     groupSize       INTEGER         NOT NULL,
     groupCount      INTEGER         NOT NULL,
     sessionLength   TIME            NOT NULL,
