@@ -256,7 +256,7 @@ const getUnAllocableSubjects = (allocRoundId = 10004): Promise<string> => {
     JOIN Subject s ON all_sub.subjectId = s.id
     JOIN SpaceType st ON s.spaceTypeId = st.id
     WHERE cantAllocate = 1
-    AND allocRoundId = ?;`;
+    AND all_sub.allocRoundId = ?;`;
   return new Promise((resolve, reject) => {
     db.query(sqlQuery, allocRoundId, (err, result) => {
       if (err) return reject(err);
