@@ -303,11 +303,11 @@ const getMissingEquipmentForRoom = (
   subjectId: number,
   spaceId: number,
 ): Promise<string> => {
-  const sqlQuery = `SELECT equipmentId, e.name FROM SubjectEquipment sub_eq
+  const sqlQuery = `SELECT e.id, e.name FROM SubjectEquipment sub_eq
     JOIN Equipment e ON sub_eq.equipmentId = e.id
     WHERE subjectId = ?
         EXCEPT
-    SELECT equipmentId, e2.name FROM SpaceEquipment sp_eq
+    SELECT e2.id, e2.name FROM SpaceEquipment sp_eq
     JOIN Equipment e2 ON sp_eq.equipmentId = e2.id
         WHERE spaceId = ?;`;
   return new Promise((resolve, reject) => {
