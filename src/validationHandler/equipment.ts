@@ -1,13 +1,14 @@
-import { body, check } from 'express-validator';
 import {
+  createBoolValidatorChain,
   createIdValidatorChain,
+  createMultiBoolValidatorChain,
+  createMultiNumberValidatorChain,
+  createNumberValidatorChain,
   validateDescriptionObl,
   validateIdObl,
   validateMultiDescription,
   validateMultiNameObl,
-  validateMultiPriorityMustBeNumber,
   validateNameObl,
-  validatePriorityMustBeNumber,
 } from './index.js';
 
 export const validateEquipmentId = [...createIdValidatorChain('equipmentId')];
@@ -15,11 +16,8 @@ export const validateEquipmentId = [...createIdValidatorChain('equipmentId')];
 export const validateEquipmentPost = [
   ...validateNameObl,
   ...validateDescriptionObl,
-  ...validatePriorityMustBeNumber,
-  check('isMovable')
-    .matches(/^[01]$/)
-    .withMessage('isMovable needs to be 1 = can be moved, 0 = cannot be moved.')
-    .bail(),
+  ...createNumberValidatorChain('Priority'),
+  ...createBoolValidatorChain('isMovable'),
 ];
 
 export const validateEquipmentPut = [
@@ -29,10 +27,7 @@ export const validateEquipmentPut = [
 
 export const validateEquipmentMultiPost = [
   ...validateMultiNameObl,
-  body('*.isMovable')
-    .matches(/^[01]$/)
-    .withMessage('isMovable needs to be 1 = can be moved, 0 = cannot be moved.')
-    .bail(),
-  ...validateMultiPriorityMustBeNumber,
+  ...createMultiBoolValidatorChain('*.isMovable'),
+  ...createMultiNumberValidatorChain('*.Priority'),
   ...validateMultiDescription,
 ];
