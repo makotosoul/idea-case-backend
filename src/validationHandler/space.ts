@@ -1,4 +1,3 @@
-import { body, check } from 'express-validator';
 import { validateBuildingId } from './building.js';
 import {
   createBoolValidatorChain,

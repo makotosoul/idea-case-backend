@@ -1,4 +1,3 @@
-import { check } from 'express-validator';
 import { validateEquipmentId } from './equipment.js';
 import {
   createBoolValidatorChain,
