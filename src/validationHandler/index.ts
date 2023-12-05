@@ -70,17 +70,27 @@ export const createDescriptionValidatorChain = (
     .bail(),
 ];
 
-export const validatePriorityMustBeNumber = [
-  check('priority')
+export const createNumberValidatorChain = (
+  fieldName: string,
+): ValidationChain[] => [
+  check(`${fieldName}`)
     .matches(/^[0-9]+$/)
-    .withMessage('Priority must be a number')
+    .withMessage(`${fieldName} must be a number`)
+    .bail()
+    .notEmpty()
+    .withMessage('Cannot be Empty')
     .bail(),
 ];
 
-export const validateMultiPriorityMustBeNumber = [
-  body('*.priority')
+export const createMultiNumberValidatorChain = (
+  fieldName: string,
+): ValidationChain[] => [
+  body(`*.${fieldName}`)
     .matches(/^[0-9]+$/)
-    .withMessage('Priority must be a number')
+    .withMessage(`${fieldName} must be a number`)
+    .bail()
+    .notEmpty()
+    .withMessage('Cannot be Empty')
     .bail(),
 ];
 
@@ -111,6 +121,18 @@ export const createMultiDescriptionValidatorChain = (
     .bail(),
 ];
 
+export const createTimeValidatorChain = (
+  fieldName: string,
+): ValidationChain[] => [
+  check(`${fieldName}`)
+    .matches(/^([0-1][0-9]):([0-5][0-9])(:[0-5][0-9])?$/)
+    .withMessage('Accepted format: 00:00 or 00:00:00')
+    .bail()
+    .notEmpty()
+    .withMessage('Cannot be empty')
+    .bail(),
+];
+
 export const createMultiTimeValidatorChain = (
   fieldName: string,
 ): ValidationChain[] => [
@@ -123,13 +145,51 @@ export const createMultiTimeValidatorChain = (
     .bail(),
 ];
 
-export const createRoleValidatorChain = (
+export const createBoolValidatorChain = (
   fieldName: string,
 ): ValidationChain[] => [
   check(`${fieldName}`)
     .matches(/[0-1]/)
     .withMessage('Must be a number between 0 and 1')
     .bail()
+    .notEmpty()
+    .withMessage('Cannot be empty')
+    .bail(),
+];
+
+export const createMultiBoolValidatorChain = (
+  fieldName: string,
+): ValidationChain[] => [
+  body(`*.${fieldName}`)
+    .matches(/[0-1]/)
+    .withMessage('Must be a number between 0 and 1')
+    .bail()
+    .notEmpty()
+    .withMessage('Cannot be empty')
+    .bail(),
+];
+
+export const createFloatValidatorChain = (
+  fieldName: string,
+): ValidationChain[] => [
+  body(`${fieldName}`)
+    .matches(/^[0-9]*(.[0-9]{1,2})?$/)
+    .withMessage('Must be a number')
+    .bail()
+    .isFloat()
+    .notEmpty()
+    .withMessage('Cannot be empty')
+    .bail(),
+];
+
+export const createMultiFloatValidatorChain = (
+  fieldName: string,
+): ValidationChain[] => [
+  body(`*.${fieldName}`)
+    .matches(/^[0-9]*(.[0-9]{1,2})?$/)
+    .withMessage('Must be a number')
+    .bail()
+    .isFloat()
     .notEmpty()
     .withMessage('Cannot be empty')
     .bail(),

@@ -1,9 +1,12 @@
-import { body, check } from 'express-validator';
 import { validateBuildingId } from './building.js';
 import {
+  createBoolValidatorChain,
+  createFloatValidatorChain,
   createIdValidatorChain,
   createMultiDescriptionValidatorChain,
+  createMultiFloatValidatorChain,
   createMultiNameValidatorChain,
+  createMultiNumberValidatorChain,
   createMultiTimeValidatorChain,
   validateIdObl,
   validateMultiNameObl,
@@ -19,12 +22,7 @@ export const validateMultiSpaceInfo = [
 
 export const validateSpacePost = [
   ...validateNameObl,
-  check('area')
-    .isFloat()
-    .withMessage('Must be a floating-point number')
-    .notEmpty()
-    .withMessage('Cannot be empty')
-    .bail(),
+  ...createFloatValidatorChain('area'),
   ...validateBuildingId,
   ...validateSpaceTypeId,
   // Add more validation rules for other space properties
@@ -33,33 +31,14 @@ export const validateSpacePost = [
 export const validateSpacePut = [...validateIdObl, ...validateSpacePost];
 export const validateMultiSpacePost = [
   ...validateMultiNameObl,
-  body('*.area')
-    .matches(/^[0-9]*(.[0-9]{1,2})?$/)
-    .withMessage('Must be a number')
-    .bail()
-    .isFloat()
-    .notEmpty()
-    .withMessage('Cannot be empty')
-    .bail(),
+  ...createMultiFloatValidatorChain('*.area'),
   ...validateMultiSpaceInfo,
-  body('*.personLimit')
-    .matches(/^[0-9]+$/)
-    .withMessage('Must be a number')
-    .bail()
-    .notEmpty()
-    .withMessage('Cannot be empty')
-    .bail(),
+  ...createMultiNumberValidatorChain('*.personLimit'),
   ...createMultiNameValidatorChain('buildingName'),
   ...createMultiTimeValidatorChain('availableFrom'),
   ...createMultiTimeValidatorChain('availableTo'),
   ...createMultiTimeValidatorChain('classesFrom'),
   ...createMultiTimeValidatorChain('classesTo'),
-  body('*.inUse')
-    .matches(/^(0|1|true|false)$/)
-    .withMessage('Must be a boolean value')
-    .bail()
-    .notEmpty()
-    .withMessage('Cannot be empty')
-    .bail(),
+  ...createBoolValidatorChain('inUse'),
   ...createMultiNameValidatorChain('spaceType'),
 ];
