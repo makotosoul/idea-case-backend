@@ -123,9 +123,24 @@ subject.get(
   [validate],
   (req: Request, res: Response) => {
     db_knex
-      .select()
-      .from('Subject')
-      .where('id', req.params.id)
+      .select(
+        's.id',
+        's.name',
+        's.groupSize',
+        's.groupCount',
+        's.sessionLength',
+        's.sessionCount',
+        's.area',
+        's.programId',
+        'p.name AS programName',
+        's.spaceTypeId',
+        'st.name AS spaceTypeName',
+        's.allocRoundId',
+      )
+      .from('Subject as s')
+      .innerJoin('Program as p', 's.programId', 'p.id')
+      .innerJoin('SpaceType as st', 's.spaceTypeId', 'st.id')
+      .where('s.id', req.params.id)
       .then((data) => {
         if (data.length === 1) {
           successHandler(
