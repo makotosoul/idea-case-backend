@@ -36,7 +36,7 @@ subject.get('/', [validate], (req: Request, res: Response) => {
   db_knex
     .select(
       's.id',
-      's.name AS subjectName',
+      's.name',
       's.groupSize',
       's.groupCount',
       's.sessionLength',
@@ -69,7 +69,7 @@ subject.get(
     db_knex
       .select(
         's.id',
-        's.name AS subjectName',
+        's.name',
         's.groupSize',
         's.groupCount',
         's.sessionLength',
