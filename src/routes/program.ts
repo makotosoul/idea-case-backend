@@ -43,7 +43,7 @@ program.get(
     db_knex
       .select(
         'p.id',
-        'p.name AS programName',
+        'p.name',
         'p.departmentId',
         'd.name AS departmentName', // Include department name
       )
