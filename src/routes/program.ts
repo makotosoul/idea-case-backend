@@ -17,6 +17,7 @@ import {
   validateProgramPost,
   validateProgramPut,
 } from '../validationHandler/program.js';
+import { validateUserId } from '../validationHandler/user.js';
 
 const program = express.Router();
 
@@ -111,21 +112,22 @@ program.get(
   },
 );
 
-//get for a single user's associated programs
+//get for a single user's associated programs ids
 program.get(
-  '/userprograms/:userid',
+  '/userprograms/:userId',
+  validateUserId,
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Program')
-      .select('Program.name')
-      .join('Department', 'Department.id', 'Program.departmentid')
+      .select('Program.id')
+      .join('Department', 'Department.id', 'Program.departmentId')
       .join(
         'Departmentplanner',
-        'Departmentplanner.departmentid',
+        'Departmentplanner.departmentId',
         'Department.id',
       )
-      .join('User', 'User.id', 'Departmentplanner.userid')
-      .where('User.id', req.params.userid)
+      .join('User', 'User.id', 'Departmentplanner.userId')
+      .where('User.id', req.params.userId)
       .then((data) => {
         successHandler(
           req,
