@@ -94,6 +94,51 @@ space.get(
   },
 );
 
+space.get(
+  '/:id',
+  validateIdObl,
+  [authenticator, admin, planner, roleChecker, validate],
+  (req: Request, res: Response) => {
+    const id = req.params.id;
+    db_knex('Space')
+      .select(
+        's.id',
+        's.name',
+        's.area',
+        's.info',
+        's.personLimit',
+        's.buildingId',
+        's.availableFrom',
+        's.availableTo',
+        's.classesFrom',
+        's.classesTo',
+        's.inUse',
+        's.spaceTypeId',
+        'b.name AS buildingName',
+        'st.name AS spaceTypeName',
+      )
+      .from('Space as s')
+      .innerJoin('Building as b', 's.buildingId', 'b.id')
+      .leftJoin('SpaceType as st', 's.spaceTypeId', 'st.id')
+      .where('s.id', id)
+      .then((spaces) => {
+        if (spaces.length === 1) {
+          successHandler(
+            req,
+            res,
+            spaces,
+            'get space by id successful - Space',
+          );
+        } else {
+          requestErrorHandler(req, res, `No space found with id ${id}`);
+        }
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'DB prob while trying get space by id');
+      });
+  },
+);
+
 // Adding a space
 space.post(
   '/',
