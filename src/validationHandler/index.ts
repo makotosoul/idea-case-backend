@@ -27,6 +27,10 @@ export const validate = (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+export const timeFormatString: string = '%H:%i","fi_FI'; // 23:59
+export const timestampFormatString: string = '%a %x-%m-%d %H:%i","fi_FI';
+// "Wed 2023-12-27 23:59"
+
 // Common validator chain objects for: id, name, description, priority
 export const createIdValidatorChain = (
   fieldName: string,

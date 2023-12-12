@@ -16,6 +16,7 @@ import { Subject } from '../types/custom.js';
 import logger from '../utils/logger.js';
 import { validateAllocRoundId } from '../validationHandler/allocRound.js';
 import {
+  timeFormatString,
   // This is the new validation result handler
   validate,
   validateIdObl,
@@ -39,7 +40,9 @@ subject.get('/', [validate], (req: Request, res: Response) => {
       's.name',
       's.groupSize',
       's.groupCount',
-      db_knex.raw('TIME_FORMAT(s.sessionLength,"%H:%i") as "sessionLength"'),
+      db_knex.raw(
+        `TIME_FORMAT(s.sessionLength,"${timeFormatString}") as "sessionLength"`,
+      ),
       's.sessionCount',
       's.area',
       's.programId',
@@ -72,7 +75,9 @@ subject.get(
         's.name',
         's.groupSize',
         's.groupCount',
-        db_knex.raw('TIME_FORMAT(s.sessionLength,"%H:%i") as "sessionLength"'),
+        db_knex.raw(
+          `TIME_FORMAT(s.sessionLength,"${timeFormatString}") as "sessionLength"`,
+        ),
         's.sessionCount',
         's.area',
         's.programId',
@@ -128,7 +133,9 @@ subject.get(
         's.name',
         's.groupSize',
         's.groupCount',
-        db_knex.raw('TIME_FORMAT(s.sessionLength,"%H:%i") as "sessionLength"'),
+        db_knex.raw(
+          `TIME_FORMAT(s.sessionLength,"${timeFormatString}") as "sessionLength"`,
+        ),
         's.sessionCount',
         's.area',
         's.programId',

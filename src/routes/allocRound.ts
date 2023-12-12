@@ -15,7 +15,12 @@ import {
   validateAllocRoundPost,
   validateAllocRoundPut,
 } from '../validationHandler/allocRound.js';
-import { validate, validateIdObl } from '../validationHandler/index.js';
+import {
+  timeFormatString,
+  timestampFormatString,
+  validate,
+  validateIdObl,
+} from '../validationHandler/index.js';
 
 const allocround = express.Router();
 
@@ -25,7 +30,21 @@ allocround.get(
   [authenticator, admin, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('AllocRound')
-      .select()
+      .select(
+        'id',
+        db_knex.raw(`DATE_FORMAT(date,"${timestampFormatString}") as "date"`),
+        'name',
+        'isSeasonAlloc',
+        'userId',
+        'description',
+        db_knex.raw(
+          `DATE_FORMAT(lastModified,"${timestampFormatString}") as "lastModified"`,
+        ),
+        'isAllocated',
+        'processOn',
+        'abortProcess',
+        'requireReset',
+      )
       .then((data) => {
         successHandler(req, res, data, 'getAll succesful - Allocation');
       })
@@ -47,7 +66,21 @@ allocround.get(
   [authenticator, admin, planner, statist, roleChecker, validate],
   async (req: Request, res: Response) => {
     db_knex('AllocRound')
-      .select()
+      .select(
+        'id',
+        db_knex.raw(`DATE_FORMAT(date,"${timestampFormatString}") as "date"`),
+        'name',
+        'isSeasonAlloc',
+        'userId',
+        'description',
+        db_knex.raw(
+          `DATE_FORMAT(lastModified,"${timestampFormatString}") as "lastModified"`,
+        ),
+        'isAllocated',
+        'processOn',
+        'abortProcess',
+        'requireReset',
+      )
       .where('id', req.params.id)
       .then((data) => {
         successHandler(
