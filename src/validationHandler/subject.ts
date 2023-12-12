@@ -5,7 +5,9 @@ import {
   createMultiFloatValidatorChain,
   createMultiNumberValidatorChain,
   createMultiTimeValidatorChain,
+  createNumberCountNonZeroIntegerValidatorChain,
   createNumberValidatorChain,
+  createTimeLengthValidatorChainHoursAndMinutes,
   createTimeValidatorChain,
   validateIdObl,
   validateMultiNameObl,
@@ -23,9 +25,10 @@ export const validateAllocRoundIdAndSubjectId = [
 
 export const validateSubjectPost = [
   ...validateNameObl,
-  ...createNumberValidatorChain('groupSize'),
-  ...createNumberValidatorChain('groupCount'),
-  ...createTimeValidatorChain('sessionLength'),
+  ...createNumberCountNonZeroIntegerValidatorChain('groupSize'),
+  ...createNumberCountNonZeroIntegerValidatorChain('groupCount'),
+  ...createTimeLengthValidatorChainHoursAndMinutes('sessionLength'),
+  ...createNumberCountNonZeroIntegerValidatorChain('sessionCount'),
   ...createFloatValidatorChain('area'),
   ...validateProgramId,
 ];

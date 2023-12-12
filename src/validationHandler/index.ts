@@ -82,6 +82,18 @@ export const createNumberValidatorChain = (
     .bail(),
 ];
 
+export const createNumberCountNonZeroIntegerValidatorChain = (
+  fieldName: string,
+): ValidationChain[] => [
+  check(`${fieldName}`)
+    .matches(/^[1-9][0-9]*$/)
+    .withMessage(`${fieldName} must be positive integer 1-999999 or so`)
+    .bail()
+    .notEmpty()
+    .withMessage('Cannot be Empty')
+    .bail(),
+];
+
 export const createMultiNumberValidatorChain = (
   fieldName: string,
 ): ValidationChain[] => [
@@ -125,8 +137,8 @@ export const createTimeValidatorChain = (
   fieldName: string,
 ): ValidationChain[] => [
   check(`${fieldName}`)
-    .matches(/^([0-1][0-9]):([0-5][0-9])(:[0-5][0-9])?$/)
-    .withMessage('Accepted format: 00:00 or 00:00:00')
+    .matches(/^(0*[2][0-3]|0*[1][0-9]|0*[0-9]):([0-5][0-9])$/)
+    .withMessage('Accepted format: 00:00, from 00:00 to 29:59')
     .bail()
     .notEmpty()
     .withMessage('Cannot be empty')
@@ -137,7 +149,7 @@ export const createTimeLengthValidatorChainHoursAndMinutes = (
   fieldName: string,
 ): ValidationChain[] => [
   check(`${fieldName}`)
-    .matches(/^([0-2][0-9]):([0-5][0-9])$/)
+    .matches(/^(0*[2][0-3]|0*[1][0-9]|0*[0-9]):([0-5][0-9])$/)
     .withMessage('Accepted format: 00:00, from 00:00 to 29:59')
     .bail()
     .notEmpty()

@@ -1,6 +1,7 @@
 import { validateBuildingId } from './building.js';
 import {
   createBoolValidatorChain,
+  createDescriptionValidatorChain,
   createFloatValidatorChain,
   createIdValidatorChain,
   createMultiDescriptionValidatorChain,
@@ -8,6 +9,9 @@ import {
   createMultiNameValidatorChain,
   createMultiNumberValidatorChain,
   createMultiTimeValidatorChain,
+  createNumberCountNonZeroIntegerValidatorChain,
+  //createTimeLengthValidatorChainHoursAndMinutes,
+  createTimeValidatorChain,
   validateIdObl,
   validateMultiNameObl,
   validateNameObl,
@@ -23,12 +27,19 @@ export const validateMultiSpaceInfo = [
 export const validateSpacePost = [
   ...validateNameObl,
   ...createFloatValidatorChain('area'),
+  ...createDescriptionValidatorChain('info'),
+  ...createNumberCountNonZeroIntegerValidatorChain('personLimit'),
+  ...createTimeValidatorChain('availableFrom'),
+  ...createTimeValidatorChain('availableTo'),
+  ...createTimeValidatorChain('classesFrom'),
+  ...createTimeValidatorChain('classesTo'),
   ...validateBuildingId,
   ...validateSpaceTypeId,
-  // Add more validation rules for other space properties
+  ...createBoolValidatorChain('inUse'),
 ];
 
 export const validateSpacePut = [...validateIdObl, ...validateSpacePost];
+
 export const validateMultiSpacePost = [
   ...validateMultiNameObl,
   ...createMultiFloatValidatorChain('*.area'),
