@@ -114,7 +114,7 @@ description		| VARCHAR(16000)|				|
 
 </details>
 
-<details><summary>GlobalSettings</summary>
+<details><summary>GlobalSetting</summary>
 <small> (Global Settings in the system. Growin and growing. Maybe adding a AllocSettings-taulu for allocation separately? Or in same) </small>
 
 Column			|	Datatype	|	Keys		|	Description
@@ -197,6 +197,7 @@ sessionCount	| INTEGER		|					| How many sessions per week
 area			| DECIMAL(5,1)	|					| Needed room size (m²)
 programId		| INTEGER		|FK(program.id)		| The program under which this teaching/Subject is organized
 spaceTypeId		| INTEGER		|FK(spaceType.id)	| What type of space this teaching needs
+AllocRoundId	| INTEGER		|FK(AllocRound.id)	| Whether allocation completed
 
 </details>
 
@@ -219,6 +220,9 @@ Column			| Datatype		| Keys		    | Description
 <u>id</u>		| INTEGER		| PK			|
 email			| VARCHAR(255)	|				|
 isAdmin			| BOOLEAN		|				| Whether user has admin rights
+password		| VARCHAR(255)	|				| user password
+isPlanner		| BOOLEAN   	|				| Whether user has planner rights
+isStatist		| BOOLEAN   	|				| Whether user has statist rights
 
 </details>
 
