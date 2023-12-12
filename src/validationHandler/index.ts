@@ -133,6 +133,18 @@ export const createTimeValidatorChain = (
     .bail(),
 ];
 
+export const createTimeLengthValidatorChainHoursAndMinutes = (
+  fieldName: string,
+): ValidationChain[] => [
+  check(`${fieldName}`)
+    .matches(/^([0-2][0-9]):([0-5][0-9])$/)
+    .withMessage('Accepted format: 00:00, from 00:00 to 29:59')
+    .bail()
+    .notEmpty()
+    .withMessage('Cannot be empty')
+    .bail(),
+];
+
 export const createMultiTimeValidatorChain = (
   fieldName: string,
 ): ValidationChain[] => [
