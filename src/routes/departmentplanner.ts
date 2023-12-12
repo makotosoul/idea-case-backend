@@ -28,14 +28,14 @@ departmentplanner.get(
           req,
           res,
           data,
-          'getDepartmentplanners successful - Departmentplanner',
+          'getDepartmentPlanners successful - DepartmentPlanner',
         );
       })
       .catch((err) => {
         requestErrorHandler(
           req,
           res,
-          `${err} Oops! Nothing came through - Departmentplanner`,
+          `${err} Oops! Nothing came through - DepartmentPlanner`,
         );
       });
   },
@@ -58,7 +58,7 @@ departmentplanner.get(
           req,
           res,
           result,
-          'getDepartmentplanners successful - Departmentplanner',
+          'getDepartmentPlanners successful - DepartmentPlanner',
         );
       })
       .catch((error) => {
@@ -66,7 +66,7 @@ departmentplanner.get(
           req,
           res,
           error,
-          'Oops! Nothing came through - Departmentplanner',
+          'Oops! Nothing came through - DepartmentPlanner',
         );
       });
   },
@@ -92,7 +92,7 @@ departmentplanner.post(
             req,
             res,
             { insertId: result[0] }, // Assuming auto-incremented ID
-            'Departmentplanner created successfully.',
+            'DepartmentPlanner created successfully.',
           );
         }
       })

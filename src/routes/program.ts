@@ -122,11 +122,11 @@ program.get(
       .select('Program.id')
       .join('Department', 'Department.id', 'Program.departmentId')
       .join(
-        'Departmentplanner',
-        'Departmentplanner.departmentId',
+        'DepartmentPlanner',
+        'DepartmentPlanner.departmentId',
         'Department.id',
       )
-      .join('User', 'User.id', 'Departmentplanner.userId')
+      .join('User', 'User.id', 'DepartmentPlanner.userId')
       .where('User.id', req.params.userId)
       .then((data) => {
         successHandler(
