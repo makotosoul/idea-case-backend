@@ -5,7 +5,6 @@ USE casedb; /* UPDATED 2023-11-05 */
 
 -- -----------------------------------------------------------
 
-
 -- Copy Alloc Round. Copies the allocRound subjects, but not yet the SubjectEquipment
 
 DELIMITER //
@@ -26,21 +25,28 @@ BEGIN
 
     SET allocRid2 = last_insert_id();
 
+    INSERT INTO casedb.log_event
+        (log_id, stage, status, information, created_at)
+    VALUES(7, 1, 1, CONCAT('allocRid2:' ,allocRid2, ' ',allocRid1, ' ', creatorUserId2 ), current_timestamp());
+
     INSERT INTO Subject 
                     (name,     groupSize,     groupCount,    sessionLength, 
                        sessionCount,    area,    programId,    spaceTypeId, allocRoundId)
-    (
+    
             SELECT s1.name, s1.groupSize, s1.groupCount, s1.sessionLength, 
-                    s1.sessionCount, s1.area, s1.programId, s1.spaceTypeId, @allocRid2
+                    s1.sessionCount, s1.area, s1.programId, s1.spaceTypeId, allocRid2
             FROM Subject s1
-                WHERE s1.allocRoundId = @allocRid1
-    );
-
+                WHERE (s1.allocRoundId = 10004);
+    
+    SHOW ERRORS;
+    
+    INSERT INTO casedb.log_event
+        (log_id, stage, status, information, created_at)
+    VALUES(7, 1, 1, "Hello Jello!" , current_timestamp());
 END;
 //
 DELIMITER ;
-
-
+-- ------------------------------------------------------------------------------------------------------
 DELIMITER //
 CREATE OR REPLACE PROCEDURE test_copyAllocRound()
 BEGIN
@@ -61,6 +67,8 @@ BEGIN
 END;
 //
 DELIMITER ;
+
+-- -----------------------------------------------------------
 
 /* --- Procedure 1: Conditional database logger, used by other prodedures below --- */
 DELIMITER //

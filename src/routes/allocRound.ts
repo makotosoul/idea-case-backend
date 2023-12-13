@@ -141,12 +141,12 @@ allocround.post(
   '/copyAllocRound',
   validateAllocRoundCopyPost,
   [authenticator, admin, roleChecker, validate],
-  (req: Request, res: Response) => {
-    const copiedAllocRoundId = req.body.copiedAllocRoundId;
+  (req: Request, resp: Response) => {
+    const copiedAllocRoundId = Number(req.body.copiedAllocRoundId);
     const allocRound = {
       name: req.body.name,
       description: req.body.description,
-      userId: req.body.userId,
+      userId: Number(req.body.userId),
     };
 
     /*
@@ -159,49 +159,54 @@ allocround.post(
     db_knex
       .transaction((trx) => {
         return db_knex
-          .raw('Call copyAllocRound(?,?,?,?)', [
+          .raw('Call copyAllocRound(?,?,?,?,@outmsg)', [
             copiedAllocRoundId,
             allocRound.name,
             allocRound.description,
             allocRound.userId,
           ])
-          .then((dbResp) => {
-            logger.debug(`dbResp: ${dbResp}`);
-            successHandler(
-              req,
-              res,
-              dbResp[0][0][0]['@allocRid2 := last_insert_id()'],
-              'Adding the new alloc round based on existing was succesful 1.',
-            );
-          })
-          .catch((error) => {
-            if (error.errno === 1062) {
-              requestErrorHandler(
-                req,
-                res,
-                `Conflict: AllocRound with the name ${req.body.name} already exists 1!`,
-              );
-            } else if (error.errno === 1052) {
-              dbErrorHandler(req, res, error, 'Error in database column name');
-            } else {
-              dbErrorHandler(req, res, error, 'Error at adding alloc round');
-            }
+          .then((res) => {
+            logger.debug(`dbResp 1: ${res}`);
+            return db_knex.select(db_knex.raw('@outmsg'));
           });
       })
-      .then((dbResp) => {
-        logger.debug(`Got output dbResp 2: ${dbResp}`);
+      .then((res: object[] | undefined) => {
+        logger.debug(`Got output dbResp 2: ${res} `);
+        logger.debug(`res[0]['@outmsg']: ${res[0]['@outmsg']} `);
+        if (res !== undefined && res !== null) {
+          if (typeof res === 'object' && res?.length === 1) {
+            successHandler(
+              req,
+              resp,
+              res[0]['@outmsg'], // was before [0][0][0]['@allocRid2 := last_insert_id()']
+              'Adding the new alloc round based on existing was succesful 1.',
+            );
+          } else {
+            requestErrorHandler(
+              req,
+              resp,
+              `Something (1) went wrong when trying to create alloc round ${req.body.name} as copy of alloc round ${req.body.allocRid1}`,
+            );
+          }
+        } else {
+          requestErrorHandler(
+            req,
+            resp,
+            `Something (2) went wrong when trying to create alloc round ${req.body.name} as copy of alloc round ${req.body.allocRid1}`,
+          );
+        }
       })
       .catch((error) => {
         if (error.errno === 1062) {
           requestErrorHandler(
             req,
-            res,
-            `Conflict: AllocRound with the name ${req.body.name} already exists 2!`,
+            resp,
+            `Conflict: (3) AllocRound with the name ${req.body.name} already exists 2!`,
           );
         } else if (error.errno === 1052) {
-          dbErrorHandler(req, res, error, 'Error in database column name');
+          dbErrorHandler(req, resp, error, 'Error (4) in database column name');
         } else {
-          dbErrorHandler(req, res, error, 'Error at adding alloc round');
+          dbErrorHandler(req, resp, error, 'Error (5) at adding alloc round');
         }
       });
   },
