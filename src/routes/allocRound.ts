@@ -10,13 +10,14 @@ import {
   requestErrorHandler,
   successHandler,
 } from '../responseHandler/index.js';
+import logger from '../utils/logger.js';
 import {
   validateAllocRoundCopyPost,
   validateAllocRoundPost,
   validateAllocRoundPut,
 } from '../validationHandler/allocRound.js';
 import {
-  timeFormatString,
+  //timeFormatString,
   timestampFormatString,
   validate,
   validateIdObl,
@@ -68,13 +69,15 @@ allocround.get(
     db_knex('AllocRound')
       .select(
         'id',
-        db_knex.raw(`DATE_FORMAT(date,"${timestampFormatString}") as "date"`),
+        db_knex.raw(
+          `DATE_FORMAT(FROM_UNIXTIME(date),"${timestampFormatString}") as "date"`,
+        ),
         'name',
         'isSeasonAlloc',
         'userId',
         'description',
         db_knex.raw(
-          `DATE_FORMAT(lastModified,"${timestampFormatString}") as "lastModified"`,
+          `DATE_FORMAT(FROM_UNIXTIME(lastModified),"${timestampFormatString}") as "lastModified"`,
         ),
         'isAllocated',
         'processOn',
@@ -147,15 +150,43 @@ allocround.post(
       description: req.body.description,
       userId: req.body.userId,
     };
-    db_knex('AllocRound')
-      .select()
-      .where('id', copiedAllocRoundId)
-      .then((data) => {
-        if (data.length === 1) {
+
+    /*
+      CREATE OR REPLACE PROCEDURE copyAllocRound(allocRid1 INT, 
+                                        allocRoundName2 VARCHAR(255), 
+                                        allocRoundDescription2 VARCHAR(10000),
+                                        creatorUserId2 INT)
+    */
+
+    db_knex
+      .transaction((trx) => {
+        return db_knex
+          .raw('Call copyAllocRound(?,?,?,?)', [
+            copiedAllocRoundId,
+            allocRound.name,
+            allocRound.description,
+            allocRound.userId,
+          ])
+          .then((dbResp) => {
+            logger.debug(`dbResp: ${dbResp}`);
+            return dbResp;
+          })
+          .catch((error) => {
+            dbErrorHandler(
+              req,
+              res,
+              error,
+              'Error at trx - adding alloc round',
+            );
+          });
+      })
+      .then((dbResp) => {
+        console.log('Got output:', dbResp);
+        if (dbResp.length === 1) {
           successHandler(
             req,
             res,
-            [10999],
+            dbResp,
             'Adding the new alloc round based on existing was succesful.',
           );
         } else {
