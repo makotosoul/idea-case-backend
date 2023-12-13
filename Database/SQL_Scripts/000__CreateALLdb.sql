@@ -385,11 +385,11 @@ CREATE TABLE IF NOT EXISTS log_event (
 -- Copy Alloc Round. Copies the allocRound subjects, but not yet the SubjectEquipment
 
 DELIMITER //
-
-CREATE OR REPLACE PROCEDURE copyAllocRound(allocRid1 INT, 
-                                        allocRoundName2 VARCHAR(255), 
-                                        allocRoundDescription2 VARCHAR(10000),
-                                        creatorUserId2 INT)
+CREATE OR REPLACE PROCEDURE copyAllocRound(IN allocRid1 INT, 
+                                        IN allocRoundName2 VARCHAR(255), 
+                                        IN allocRoundDescription2 VARCHAR(10000),
+                                        IN creatorUserId2 INT,
+                                        OUT allocRid2 INT)
 BEGIN
     INSERT INTO AllocRound
         (`date`, name, isSeasonAlloc, userId, 
@@ -400,7 +400,7 @@ BEGIN
         allocRoundDescription2, current_timestamp(), 0,
             0, 0, 0);
 
-    SELECT @allocRid2 := last_insert_id();
+    SET allocRid2 = last_insert_id();
 
     INSERT INTO Subject 
                     (name,     groupSize,     groupCount,    sessionLength, 
@@ -413,7 +413,28 @@ BEGIN
     );
 
 END;
+//
+DELIMITER ;
 
+
+DELIMITER //
+CREATE OR REPLACE PROCEDURE test_copyAllocRound()
+BEGIN
+    DECLARE allocRid               INTEGER        DEFAULT  10004;
+    DECLARE random                 DOUBLE         DEFAULT RAND(); 
+    DECLARE allocRoundName         VARCHAR(255)   DEFAULT   CONCAT('Copied test alloc round',random);
+    DECLARE allocRoundDescription  VARCHAR(10000) DEFAULT   'Alloc round based on 10004';
+    DECLARE creatorUserId          INTEGER        DEFAULT   201;
+    DECLARE allocRid2              INTEGER        DEFAULT -1;
+
+    CALL copyAllocRound(allocRid, 
+                        allocRoundName, 
+                        allocRoundDescription,
+                        creatorUserId,
+                        allocRid2);
+    SELECT allocRid2;
+                
+END;
 //
 DELIMITER ;
 
