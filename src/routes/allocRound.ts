@@ -10,13 +10,14 @@ import {
   requestErrorHandler,
   successHandler,
 } from '../responseHandler/index.js';
+import logger from '../utils/logger.js';
 import {
   validateAllocRoundCopyPost,
   validateAllocRoundPost,
   validateAllocRoundPut,
 } from '../validationHandler/allocRound.js';
 import {
-  timeFormatString,
+  //timeFormatString,
   timestampFormatString,
   validate,
   validateIdObl,
@@ -147,31 +148,55 @@ allocround.post(
       description: req.body.description,
       userId: req.body.userId,
     };
-    db_knex('AllocRound')
-      .select()
-      .where('id', copiedAllocRoundId)
-      .then((data) => {
-        if (data.length === 1) {
-          successHandler(
-            req,
-            res,
-            [10999],
-            'Adding the new alloc round based on existing was succesful.',
-          );
-        } else {
-          requestErrorHandler(
-            req,
-            res,
-            `Existing AllocRound id was wrong: ${copiedAllocRoundId}`,
-          );
-        }
+
+    /*
+      CREATE OR REPLACE PROCEDURE copyAllocRound(allocRid1 INT, 
+                                        allocRoundName2 VARCHAR(255), 
+                                        allocRoundDescription2 VARCHAR(10000),
+                                        creatorUserId2 INT)
+    */
+
+    db_knex
+      .transaction((trx) => {
+        return db_knex
+          .raw('Call copyAllocRound(?,?,?,?)', [
+            copiedAllocRoundId,
+            allocRound.name,
+            allocRound.description,
+            allocRound.userId,
+          ])
+          .then((dbResp) => {
+            logger.debug(`dbResp: ${dbResp}`);
+            successHandler(
+              req,
+              res,
+              dbResp[0][0][0]['@allocRid2 := last_insert_id()'],
+              'Adding the new alloc round based on existing was succesful 1.',
+            );
+          })
+          .catch((error) => {
+            if (error.errno === 1062) {
+              requestErrorHandler(
+                req,
+                res,
+                `Conflict: AllocRound with the name ${req.body.name} already exists 1!`,
+              );
+            } else if (error.errno === 1052) {
+              dbErrorHandler(req, res, error, 'Error in database column name');
+            } else {
+              dbErrorHandler(req, res, error, 'Error at adding alloc round');
+            }
+          });
+      })
+      .then((dbResp) => {
+        logger.debug(`Got output dbResp 2: ${dbResp}`);
       })
       .catch((error) => {
         if (error.errno === 1062) {
           requestErrorHandler(
             req,
             res,
-            `Conflict: AllocRound with the name ${req.body.name} already exists!`,
+            `Conflict: AllocRound with the name ${req.body.name} already exists 2!`,
           );
         } else if (error.errno === 1052) {
           dbErrorHandler(req, res, error, 'Error in database column name');

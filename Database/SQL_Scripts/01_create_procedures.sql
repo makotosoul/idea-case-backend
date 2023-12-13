@@ -3,6 +3,43 @@ USE casedb; /* UPDATED 2023-11-05 */
 /* PROCEDURES */
 /* DELIMITER is explained here, just look at first two examples: https://mariadb.com/kb/en/delimiters/ */
 
+-- -----------------------------------------------------------
+
+-- Copy Alloc Round. Copies the allocRound subjects, but not yet the SubjectEquipment
+
+DELIMITER //
+
+CREATE OR REPLACE PROCEDURE copyAllocRound(allocRid1 INT, 
+                                        allocRoundName2 VARCHAR(255), 
+                                        allocRoundDescription2 VARCHAR(10000),
+                                        creatorUserId2 INT)
+BEGIN
+    INSERT INTO AllocRound
+        (`date`, name, isSeasonAlloc, userId, 
+        description, lastModified, isAllocated, 
+            processOn, abortProcess, requireReset)
+    VALUES(
+        NULL, allocRoundName2, 0, creatorUserId2, 
+        allocRoundDescription2, current_timestamp(), 0,
+            0, 0, 0);
+
+    SELECT @allocRid2 := last_insert_id();
+
+    INSERT INTO Subject 
+                    (name,     groupSize,     groupCount,    sessionLength, 
+                       sessionCount,    area,    programId,    spaceTypeId, allocRoundId)
+    (
+            SELECT s1.name, s1.groupSize, s1.groupCount, s1.sessionLength, 
+                    s1.sessionCount, s1.area, s1.programId, s1.spaceTypeId, @allocRid2
+            FROM Subject s1
+                WHERE s1.allocRoundId = @allocRid1
+    );
+
+END;
+
+//
+DELIMITER ;
+
 /* --- Procedure 1: Conditional database logger, used by other prodedures below --- */
 DELIMITER //
 
