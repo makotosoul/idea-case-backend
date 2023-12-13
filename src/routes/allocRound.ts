@@ -169,40 +169,36 @@ allocround.post(
           ])
           .then((dbResp) => {
             logger.debug(`dbResp: ${dbResp}`);
-            return dbResp;
-          })
-          .catch((error) => {
-            dbErrorHandler(
+            successHandler(
               req,
               res,
-              error,
-              'Error at trx - adding alloc round',
+              dbResp[0][0][0]['@allocRid2 := last_insert_id()'],
+              'Adding the new alloc round based on existing was succesful 1.',
             );
+          })
+          .catch((error) => {
+            if (error.errno === 1062) {
+              requestErrorHandler(
+                req,
+                res,
+                `Conflict: AllocRound with the name ${req.body.name} already exists 1!`,
+              );
+            } else if (error.errno === 1052) {
+              dbErrorHandler(req, res, error, 'Error in database column name');
+            } else {
+              dbErrorHandler(req, res, error, 'Error at adding alloc round');
+            }
           });
       })
       .then((dbResp) => {
-        console.log('Got output:', dbResp);
-        if (dbResp.length === 1) {
-          successHandler(
-            req,
-            res,
-            dbResp,
-            'Adding the new alloc round based on existing was succesful.',
-          );
-        } else {
-          requestErrorHandler(
-            req,
-            res,
-            `Existing AllocRound id was wrong: ${copiedAllocRoundId}`,
-          );
-        }
+        logger.debug(`Got output dbResp 2: ${dbResp}`);
       })
       .catch((error) => {
         if (error.errno === 1062) {
           requestErrorHandler(
             req,
             res,
-            `Conflict: AllocRound with the name ${req.body.name} already exists!`,
+            `Conflict: AllocRound with the name ${req.body.name} already exists 2!`,
           );
         } else if (error.errno === 1052) {
           dbErrorHandler(req, res, error, 'Error in database column name');
