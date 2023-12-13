@@ -158,30 +158,31 @@ allocround.post(
 
     db_knex
       .transaction((trx) => {
-        return db_knex
-          .raw('Call copyAllocRound(?,?,?,?,@outmsg)', [
-            copiedAllocRoundId,
+           return db_knex
+          .raw('Call copyAllocRound(?,?,?,?,@outmsg)', 
+            [copiedAllocRoundId,
             allocRound.name,
             allocRound.description,
-            allocRound.userId,
-          ])
-          .then((res) => {
+            allocRound.userId]
+          )
+          .then(res => {
             logger.debug(`dbResp 1: ${res}`);
             return db_knex.select(db_knex.raw('@outmsg'));
-          });
+          })
       })
-      .then((res: object[] | undefined) => {
+      .then((res: any|undefined) => {
         logger.debug(`Got output dbResp 2: ${res} `);
         logger.debug(`res[0]['@outmsg']: ${res[0]['@outmsg']} `);
-        if (res !== undefined && res !== null) {
-          if (typeof res === 'object' && res?.length === 1) {
-            successHandler(
-              req,
-              resp,
-              res[0]['@outmsg'], // was before [0][0][0]['@allocRid2 := last_insert_id()']
-              'Adding the new alloc round based on existing was succesful 1.',
-            );
-          } else {
+        if(res !== undefined && res !== null) {
+          if(typeof(res)==="object" && res?.length===1) {
+          successHandler(
+            req,
+            resp,
+            res[0]['@outmsg'],     // was before [0][0][0]['@allocRid2 := last_insert_id()']
+            'Adding the new alloc round based on existing was succesful 1.',
+          );
+          }
+          else {
             requestErrorHandler(
               req,
               resp,
