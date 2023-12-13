@@ -69,15 +69,13 @@ allocround.get(
     db_knex('AllocRound')
       .select(
         'id',
-        db_knex.raw(
-          `DATE_FORMAT(FROM_UNIXTIME(date),"${timestampFormatString}") as "date"`,
-        ),
+        db_knex.raw(`DATE_FORMAT(date,"${timestampFormatString}") as "date"`),
         'name',
         'isSeasonAlloc',
         'userId',
         'description',
         db_knex.raw(
-          `DATE_FORMAT(FROM_UNIXTIME(lastModified),"${timestampFormatString}") as "lastModified"`,
+          `DATE_FORMAT(lastModified,"${timestampFormatString}") as "lastModified"`,
         ),
         'isAllocated',
         'processOn',
