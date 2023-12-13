@@ -3,6 +3,8 @@ import {
   createIdValidatorChain,
   createMultiBoolValidatorChain,
   createMultiNumberValidatorChain,
+  createNameValidatorChain,
+  createNumberCountNonZeroIntegerValidatorChain,
   createNumberValidatorChain,
   validateDescriptionObl,
   validateIdObl,
@@ -16,7 +18,7 @@ export const validateEquipmentId = [...createIdValidatorChain('equipmentId')];
 export const validateEquipmentPost = [
   ...validateNameObl,
   ...validateDescriptionObl,
-  ...createNumberValidatorChain('Priority'),
+  ...createNumberValidatorChain('priority'),
   ...createBoolValidatorChain('isMovable'),
 ];
 
