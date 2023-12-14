@@ -37,6 +37,8 @@ DROP PROCEDURE IF EXISTS allocateSpace;
 DROP PROCEDURE IF EXISTS prioritizeSubjects;
 DROP PROCEDURE IF EXISTS setSuitableRooms;
 DROP PROCEDURE IF EXISTS LogAllocation;
+DROP PROCEDURE IF EXISTS copyAllocRound;
+DROP PROCEDURE IF EXISTS test_copyAllocRound:
 
 /* FUNCTIONS */
 DROP FUNCTION IF EXISTS getMissingItemAmount;
@@ -408,9 +410,17 @@ BEGIN
                     s1.sessionCount, s1.area, s1.programId, s1.spaceTypeId, allocRid2
             FROM Subject s1
                 WHERE (s1.allocRoundId = 10004);
+            
+    INSERT INTO SubjectEquipment  
+                    (subjectId, equipmentId, priority, obligatory)
+            SELECT s2.id, se1.equipmentId, se1.priority, se1.obligatory
+            
+            FROM Subject s2 JOIN Subject s1 ON s2.name = s1.name 
+                 JOIN SubjectEquipment se1 ON s1.id = se1.subjectId 
+                 WHERE s2.allocRoundId = allocRid2 AND s1.allocRoundId = allocRid1;
     
     SHOW ERRORS;
-
+    
 END;
 //
 DELIMITER ;
