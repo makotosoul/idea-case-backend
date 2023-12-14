@@ -249,8 +249,8 @@ const abortAllocation = (allocRoundId: number) => {
   });
 };
 
-// for test round 10004
-const getUnAllocableSubjects = (allocRoundId = 10004): Promise<string> => {
+// No more just for test round 10004
+const getUnAllocableSubjects = (allocRoundId: number): Promise<string> => {
   const sqlQuery = `SELECT all_sub.subjectId, s.name, s.groupSize, s.area, st.name AS "spaceType"
     FROM AllocSubject all_sub
     JOIN Subject s ON all_sub.subjectId = s.id

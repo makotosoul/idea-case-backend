@@ -185,7 +185,7 @@ subject.post(
       area: req.body.area,
       programId: req.body.programId,
       spaceTypeId: req.body.spaceTypeId,
-      allocRoundId: req.body.allocRoundId || 10004, // TODO!!!
+      allocRoundId: req.body.allocRoundId,          // || 10004, // TODO!!!
     };
 
     db_knex('Subject')
@@ -246,7 +246,7 @@ subject.post(
         area: subject.area,
         programId: program.id,
         spaceTypeId: spaceType.id,
-        allocRoundId: Number(req.params.allocRoundId), //|| 10004, // TODO, first FE!!!
+        allocRoundId: Number(req.params.allocRoundId),     //|| 10004, // TODO, first FE!!!
       });
     }
 
@@ -288,7 +288,7 @@ subject.put(
     const area = req.body.area;
     const programId = req.body.programId;
     const spaceTypeId = req.body.spaceTypeId;
-    const allocRoundId = req.body.allocRoundId || 10004; // TODO FE!!!
+    const allocRoundId = req.body.allocRoundId;     //    || 10004; // TODO FE!!!
 
     const sqlUpdate =
       'UPDATE Subject SET name = ?, groupSize = ?, groupCount = ?, sessionLength = ?, sessionCount = ?, area = ?,  programId = ?, spaceTypeId = ?, allocRoundId = ? WHERE id = ?';

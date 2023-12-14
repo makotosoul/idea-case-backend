@@ -381,9 +381,7 @@ CREATE TABLE IF NOT EXISTS log_event (
 /* DELIMITER is explained here, just look at first two examples: https:__mariadb.com/kb/en/delimiters/ */
 
 -- -----------------------------------------------------------
-
 -- Copy Alloc Round. Copies the allocRound subjects, but not yet the SubjectEquipment
-
 DELIMITER //
 CREATE OR REPLACE PROCEDURE copyAllocRound(IN allocRid1 INT, 
                                         IN allocRoundName2 VARCHAR(255), 
@@ -402,10 +400,6 @@ BEGIN
 
     SET allocRid2 = last_insert_id();
 
-    INSERT INTO casedb.log_event
-        (log_id, stage, status, information, created_at)
-    VALUES(7, 1, 1, CONCAT('allocRid2:' ,allocRid2, ' ',allocRid1, ' ', creatorUserId2 ), current_timestamp());
-
     INSERT INTO Subject 
                     (name,     groupSize,     groupCount,    sessionLength, 
                        sessionCount,    area,    programId,    spaceTypeId, allocRoundId)
@@ -416,10 +410,7 @@ BEGIN
                 WHERE (s1.allocRoundId = 10004);
     
     SHOW ERRORS;
-    
-    INSERT INTO casedb.log_event
-        (log_id, stage, status, information, created_at)
-    VALUES(7, 1, 1, "Hello Jello!" , current_timestamp());
+
 END;
 //
 DELIMITER ;
