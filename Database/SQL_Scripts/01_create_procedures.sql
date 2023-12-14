@@ -30,7 +30,7 @@ BEGIN
             SELECT s1.name, s1.groupSize, s1.groupCount, s1.sessionLength, 
                     s1.sessionCount, s1.area, s1.programId, s1.spaceTypeId, allocRid2
             FROM Subject s1
-                WHERE (s1.allocRoundId = 10004);
+                WHERE (s1.allocRoundId = allocRid1);
             
     INSERT INTO SubjectEquipment  
                     (subjectId, equipmentId, priority, obligatory)
