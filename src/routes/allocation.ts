@@ -7,6 +7,7 @@ import { authenticator } from '../authorization/userValidation.js';
 import { dbErrorHandler, successHandler } from '../responseHandler/index.js';
 import allocationService from '../services/allocation.js';
 import programService from '../services/program.js';
+import logger from '../utils/logger.js';
 import { validateAllocRoundId } from '../validationHandler/allocRound.js';
 import { validate, validateIdObl } from '../validationHandler/index.js';
 import { validateAllocRoundIdAndSubjectId } from '../validationHandler/subject.js';
@@ -120,6 +121,7 @@ allocation.get(
   [authenticator, admin, planner, statist, roleChecker, validate],
   async (req: Request, res: Response) => {
     const allocRoundId = req.params.id;
+    logger.debug(`Alloc round id for unallocated: ${allocRoundId}`);
     await allocationService
       .getUnAllocableSubjects(Number(allocRoundId))
       .then((data) => {

@@ -17,7 +17,7 @@ const getAll = (): Promise<Program[]> => {
 const getById = (id: number) => {
   const sqlQuery = 'SELECT p.id, p.name FROM Program p WHERE p.id=?;';
   return new Promise((resolve, reject) => {
-    db.query(sqlQuery, id, (err, result) => {
+    db.query(sqlQuery, [id], (err, result) => {
       if (err) {
         reject(err);
       } else {

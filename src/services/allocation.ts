@@ -91,11 +91,11 @@ const getRoomsByAllocId = (allocRoundId: number): Promise<RoomsByAllocId[]> => {
     .select({
       allocatedHours: db_knex.raw(
         `(SELECT IFNULL(CAST(SUM(TIME_TO_SEC(AllocSpace.totalTime))/3600 AS DECIMAL(10,1)), 0)
-    FROM AllocSpace
-    WHERE spaceId = id
-    AND allocRoundId = ?
-)`,
-        allocRoundId,
+            FROM AllocSpace
+            WHERE spaceId = id
+            AND allocRoundId = ?
+        )`,
+        [allocRoundId],
       ),
     })
     .select({
@@ -209,7 +209,7 @@ const getAllocatedSubjectsByRoom = (
 const startAllocation = (allocRoundId: number) => {
   const sqlQuery = 'CALL startAllocation(?)';
   return new Promise((resolve, reject) => {
-    db.query(sqlQuery, allocRoundId, (err, result) => {
+    db.query(sqlQuery, [allocRoundId], (err, result) => {
       if (err) {
         return reject(err);
       } else {
@@ -224,7 +224,7 @@ const resetAllocation = (allocRoundId: number) => {
   const sqlQuery = 'CALL resetAllocation(?)';
 
   return new Promise((resolve, reject) => {
-    db.query(sqlQuery, allocRoundId, (err, result) => {
+    db.query(sqlQuery, [allocRoundId], (err, result) => {
       if (err) {
         return reject(err);
       } else {
@@ -239,7 +239,7 @@ const abortAllocation = (allocRoundId: number) => {
   const sqlQuery = 'CALL abortAllocation(?)';
 
   return new Promise((resolve, reject) => {
-    db.query(sqlQuery, allocRoundId, (err, result) => {
+    db.query(sqlQuery, [allocRoundId], (err, result) => {
       if (err) {
         return reject(err);
       } else {
@@ -251,14 +251,14 @@ const abortAllocation = (allocRoundId: number) => {
 
 // No more just for test round 10004
 const getUnAllocableSubjects = (allocRoundId: number): Promise<string> => {
-  const sqlQuery = `SELECT all_sub.subjectId, s.name, s.groupSize, s.area, st.name AS "spaceType"
+  const sqlQuery = `SELECT all_sub.subjectId, s.name, s.groupSize, s.area, st.name AS "spaceType", s.allocRoundId
     FROM AllocSubject all_sub
     JOIN Subject s ON all_sub.subjectId = s.id
     JOIN SpaceType st ON s.spaceTypeId = st.id
     WHERE cantAllocate = 1
-    AND all_sub.allocRoundId = ?;`;
+    AND s.allocRoundId = ?;`;
   return new Promise((resolve, reject) => {
-    db.query(sqlQuery, allocRoundId, (err, result) => {
+    db.query(sqlQuery, [allocRoundId], (err, result) => {
       if (err) return reject(err);
       resolve(result);
     });
