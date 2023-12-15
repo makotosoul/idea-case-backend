@@ -9,7 +9,7 @@ DROP PROCEDURE IF EXISTS prioritizeSubjects;
 DROP PROCEDURE IF EXISTS setSuitableRooms;
 DROP PROCEDURE IF EXISTS LogAllocation;
 DROP PROCEDURE IF EXISTS copyAllocRound;
-DROP PROCEDURE IF EXISTS test_copyAllocRound:
+DROP PROCEDURE IF EXISTS test_copyAllocRound;
 
 /* FUNCTIONS */
 DROP FUNCTION IF EXISTS getMissingItemAmount;
