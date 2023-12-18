@@ -42,9 +42,9 @@ export const validateSpacePut = [...validateIdObl, ...validateSpacePost];
 
 export const validateMultiSpacePost = [
   ...validateMultiNameObl,
-  ...createMultiFloatValidatorChain('*.area'),
+  ...createMultiFloatValidatorChain('area'),
   ...validateMultiSpaceInfo,
-  ...createMultiNumberValidatorChain('*.personLimit'),
+  ...createMultiNumberValidatorChain('personLimit'),
   ...createMultiNameValidatorChain('buildingName'),
   ...createMultiTimeValidatorChain('availableFrom'),
   ...createMultiTimeValidatorChain('availableTo'),
