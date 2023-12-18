@@ -4,6 +4,7 @@ import {
   createDescriptionValidatorChain,
   createFloatValidatorChain,
   createIdValidatorChain,
+  createMultiBoolValidatorChain,
   createMultiDescriptionValidatorChain,
   createMultiFloatValidatorChain,
   createMultiNameValidatorChain,
@@ -50,6 +51,6 @@ export const validateMultiSpacePost = [
   ...createMultiTimeValidatorChain('availableTo'),
   ...createMultiTimeValidatorChain('classesFrom'),
   ...createMultiTimeValidatorChain('classesTo'),
-  ...createBoolValidatorChain('inUse'),
+  ...createMultiBoolValidatorChain('inUse'),
   ...createMultiNameValidatorChain('spaceType'),
 ];

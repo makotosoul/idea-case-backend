@@ -154,7 +154,7 @@ space.post(
       availableTo: req.body.availableTo,
       classesFrom: req.body.classesFrom,
       classesTo: req.body.classesTo,
-      inUse: req.body.inUse || true, // Default to true if not provided
+      inUse: req.body.inUse, //  || true, // Default to true if not provided
       spaceTypeId: req.body.spaceTypeId,
     };
 
@@ -353,7 +353,7 @@ space.put(
     const availableTo = req.body.availableTo;
     const classesFrom = req.body.classesFrom;
     const classesTo = req.body.classesTo;
-    const inUse = req.body.inUse || true; // Default to true if not provided
+    const inUse = req.body.inUse; /// || true; // Default to true if not provided
     const spaceTypeId = req.body.spaceTypeId;
 
     const sqlUpdate =

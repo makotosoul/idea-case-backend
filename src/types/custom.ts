@@ -33,7 +33,7 @@ export interface Space {
   availableTo: string;
   classesFrom: string;
   classesTo: string;
-  inUse: boolean;
+  inUse: number;
   spaceTypeId: number;
 }
 
