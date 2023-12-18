@@ -224,11 +224,15 @@ export const createMultiFloatValidatorChain = (
 ];
 
 export const validateIdObl = [...createIdValidatorChain('id')];
+
 export const validateNameObl = [...createNameValidatorChain('name')];
+
 export const validateDescriptionObl = [
   ...createDescriptionValidatorChain('description'),
 ];
+
 export const validateMultiNameObl = [...createMultiNameValidatorChain('name')];
+
 export const validateMultiDescription = [
   ...createMultiDescriptionValidatorChain('description'),
 ];

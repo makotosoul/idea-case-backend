@@ -8,7 +8,7 @@ USE casedb; /* UPDATED 2023-11-05 */
 DELIMITER //
 CREATE OR REPLACE PROCEDURE copyAllocRound(IN allocRid1 INT, 
                                         IN allocRoundName2 VARCHAR(255), 
-                                        IN allocRoundDescription2 VARCHAR(10000),
+                                        IN allocRoundDescription2 VARCHAR(16000),
                                         IN creatorUserId2 INT,
                                         OUT allocRid2 INT)
 BEGIN
@@ -52,7 +52,7 @@ BEGIN
     DECLARE allocRid               INTEGER        DEFAULT  10004;
     DECLARE random                 DOUBLE         DEFAULT RAND(); 
     DECLARE allocRoundName         VARCHAR(255)   DEFAULT   CONCAT('Copied test alloc round',random);
-    DECLARE allocRoundDescription  VARCHAR(10000) DEFAULT   'Alloc round based on 10004';
+    DECLARE allocRoundDescription  VARCHAR(16000) DEFAULT   'Alloc round based on 10004';
     DECLARE creatorUserId          INTEGER        DEFAULT   201;
     DECLARE allocRid2              INTEGER        DEFAULT -1;
 

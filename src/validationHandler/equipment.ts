@@ -29,7 +29,7 @@ export const validateEquipmentPut = [
 
 export const validateEquipmentMultiPost = [
   ...validateMultiNameObl,
-  ...createMultiBoolValidatorChain('*.isMovable'),
-  ...createMultiNumberValidatorChain('*.Priority'),
+  ...createMultiBoolValidatorChain('isMovable'),
+  ...createMultiNumberValidatorChain('priority'),
   ...validateMultiDescription,
 ];

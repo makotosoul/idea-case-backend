@@ -40,8 +40,8 @@ export const validateSubjectPut = [...validateIdObl, ...validateSubjectPost];
 // body as JSON array
 export const validateSubjectMultiPost = [
   ...validateMultiNameObl,
-  ...createMultiNumberValidatorChain('*.groupCount'),
-  ...createMultiNumberValidatorChain('*.groupSize'),
-  ...createMultiTimeValidatorChain('*.sessionLength'),
-  ...createMultiFloatValidatorChain('*.area'),
+  ...createMultiNumberValidatorChain('groupCount'),
+  ...createMultiNumberValidatorChain('groupSize'),
+  ...createMultiTimeValidatorChain('sessionLength'),
+  ...createMultiFloatValidatorChain('area'),
 ];
