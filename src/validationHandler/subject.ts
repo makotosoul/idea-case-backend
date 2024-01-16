@@ -15,7 +15,7 @@ import {
 } from './index.js';
 import { validateProgramId } from './program.js';
 
-// This is a validator used by other routes who need subjectId as foreign key
+// This is a validator used by other routes which need subjectId as a foreign key
 export const validateSubjectId = [...createIdValidatorChain('subjectId')];
 
 export const validateAllocRoundIdAndSubjectId = [
