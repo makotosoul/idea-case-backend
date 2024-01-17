@@ -168,7 +168,7 @@ Configuration of the local DB is described in the guide located in Database/Docu
 
 2. Edit the docker-compose-dbbe.yaml file to have the right configuration according to your environment (database, username, password, root password)
 
-3. Run this command to launch database and backend
+3. Run this command to launch database and the backend
 
    ```sh
    docker-compose -f docker-compose-dbbe.yaml up -d
