@@ -5,7 +5,7 @@ import {
   AllocatedSubjectsByProgramType,
 } from '../types/custom.js';
 
-/* Get all allocations */
+/* Get all the allocations */
 
 const getAll = (): Promise<string> => {
   const sqlQuery =
