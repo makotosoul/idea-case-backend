@@ -29,7 +29,7 @@ echo "creating tables..."
 sudo mysql -u root casedb < Database/SQL_Scripts/000__CreateALLdb.sql
 
 
-# ask for username and password and create mariadb user
+# ask for the username and password and create mariadb user
 # with the same name and password and grant it all permissions
 echo "creating mariadb user..."
 read -p "username for mariadb user: " username
