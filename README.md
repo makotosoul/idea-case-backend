@@ -50,9 +50,9 @@ Backend side installation instructions
 
 1. Install [Mariadb](https://www.mariadbtutorial.com/getting-started/install-mariadb/) version 10.x or newer
 
-2. Install Graphical SQL-editor: [DBeaver](https://dbeaver.io/) or [MySQL Workbench](https://www.mysql.com/products/workbench/)
+2. Install a Graphical SQL-editor: [DBeaver](https://dbeaver.io/) or [MySQL Workbench](https://www.mysql.com/products/workbench/)
 
-3. Create to your chosen SQL editor database scheme called casedb. Run [000\_\_CreateALLdb.sql](https://github.com/haagahelia/Siba_be/blob/main/Database/SQL_Scripts/000__CreateALLdb.sql) script to create files to the database
+3. Create in your chosen SQL editor a database scheme called casedb. Run [000\_\_CreateALLdb.sql](https://github.com/haagahelia/Siba_be/blob/main/Database/SQL_Scripts/000__CreateALLdb.sql) script to create files to the database
 
 4. Clone the repository
 
