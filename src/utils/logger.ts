@@ -36,7 +36,7 @@ const logger = createLogger({
   format: customFormat,
   transports: [
     new transports.Console({ level: 'silly' }),
-    // Where are which logs saved
+    // Chooses where to save each log.
     new transports.File({
       filename: './logs/app.log',
       level: 'verbose',
