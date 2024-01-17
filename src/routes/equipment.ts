@@ -85,7 +85,7 @@ equipment.post(
         } else if (error.errno === 1052) {
           dbErrorHandler(req, res, error, 'Error in database column name');
         } else {
-          dbErrorHandler(req, res, error, 'Error at adding equipment');
+          dbErrorHandler(req, res, error, 'Error adding equipment');
         }
       });
   },
@@ -114,7 +114,7 @@ equipment.post(
         } else if (error.errno === 1052) {
           dbErrorHandler(req, res, error, 'Error in database column name');
         } else {
-          dbErrorHandler(req, res, error, 'Error at adding equipment');
+          dbErrorHandler(req, res, error, 'Error adding equipment.');
         }
       });
   },
@@ -137,7 +137,7 @@ equipment.put(
         }
       })
       .catch((error) => {
-        dbErrorHandler(req, res, error, 'Error at updating equipment');
+        dbErrorHandler(req, res, error, 'Error updating equipment');
       });
   },
 );
@@ -164,7 +164,7 @@ equipment.delete(
         }
       })
       .catch((error) => {
-        dbErrorHandler(req, res, error, 'Error at equipment delete');
+        dbErrorHandler(req, res, error, 'Error deleting equipment');
       });
   },
 );
