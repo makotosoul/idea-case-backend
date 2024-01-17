@@ -171,7 +171,7 @@ building.put(
           }
         })
         .catch((error) => {
-          handleErrorBasedOnErrno(req, res, error, 'error adding building');
+          handleErrorBasedOnErrno(req, res, error, 'error updating building');
         });
     }
   },
@@ -200,7 +200,7 @@ building.delete(
         }
       })
       .catch((error) => {
-        dbErrorHandler(req, res, error, 'Error delete failed');
+        dbErrorHandler(req, res, error, 'Error deleting building');
       });
   },
 );
