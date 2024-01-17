@@ -91,7 +91,7 @@ Backend side installation instructions
    ```
 readme-changed
    The secret_token has to be something of the length and format of: A3fs9t395dsgSDf3fRsTse349. But not that one! Hardening process should change it for the real deployment of the backend.
-   This particular one A3fs... should not be used even for testing!This is visible in the internet . 
+   This particular one A3fs... should not be used even for testing!This is visible in the internet .
    It's just a dummy value to help randomizing the real one!
 =======
 
@@ -194,4 +194,4 @@ Configuration of the local DB is described in the guide located in Database/Docu
    exit
    ```
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+<p align="right">(<a href="#top">back to the top</a>)</p>
