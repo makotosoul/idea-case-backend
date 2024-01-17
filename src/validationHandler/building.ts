@@ -16,7 +16,7 @@ export const validateBuildingPost = [
 
 export const validateBuildingPut = [...validateBuildingPost, ...validateIdObl];
 
-// This a bit different as body can have multiple objects,
+// This is a bit different as body can have multiple objects,
 // => MultiPost!!!
 export const validateBuildingMultiPost = [
   ...validateMultiNameObl,
