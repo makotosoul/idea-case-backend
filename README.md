@@ -16,6 +16,7 @@
 <p>SIBA22S Softala team</p>
 <p>SIBA23K Softala team</p>
 <p>SWP23K team</p>
+<p>SWP24K team </p>
 <!-- ABOUT THE PROJECT -->
 
 ## About the project
@@ -54,6 +55,7 @@ Backend side installation instructions
 3. Create to your chosen SQL editor database scheme called casedb. Run [000\_\_CreateALLdb.sql](https://github.com/haagahelia/Siba_be/blob/main/Database/SQL_Scripts/000__CreateALLdb.sql) script to create files to the database
 
 4. Clone the repository
+
    ```sh
    git clone https://github.com/haagahelia/Siba_be.git
    ```
@@ -108,7 +110,6 @@ Backend side installation instructions
 
 9. Attention! Follow the [Frontend repo](https://github.com/haagahelia/siba-fe) installation guide as well
 
-
 ### How to run nodejs backend using docker-compose
 
 1. Follow installation steps from 1 to 5
@@ -128,24 +129,26 @@ Backend side installation instructions
    ```sh
    docker-compose -f docker-compose-db.yaml up -d
    ```
+
 3. Alternatively run from command prompt:
 
-	```sh
+   ```sh
    docker run --detach --name mariadock --env MARIADB_USER=alternate_user --env MARIADB_PASSWORD=alternate_user_psw --env MARIADB_ROOT_PASSWORD=root_psw  mariadb:latest
    ```
+
 4. Access the container terminal:
 
-	```sh
+   ```sh
    docker exec -it mariadock bash
    ```
 
-5.	Access the DB directly using mysql terminal command:
+5. Access the DB directly using mysql terminal command:
 
-   ```sh
-   mysql -u root -p
-   ```
+```sh
+mysql -u root -p
+```
 
-6.	Continue the configuration of the local DB as described in the step by step guide located in Database/Documentation/local_mariadb_windows_installation.md
+6. Continue the configuration of the local DB as described in the step by step guide located in Database/Documentation/local_mariadb_windows_installation.md
 
 ### How to run mariadb database and nodejs backend using docker-compose
 
