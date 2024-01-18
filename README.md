@@ -40,7 +40,7 @@ Copyrights reserved. This Project is a collaborative work, which aims at buildin
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-<!-- GETTING STARTED -->
+<!-- GETTING STARTED1 -->
 
 ## Beginning
 
