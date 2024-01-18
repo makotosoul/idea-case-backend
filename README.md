@@ -164,8 +164,8 @@ Configuration of the local DB is described in the guide located in Database/Docu
    ```sh
    docker-compose -f docker-compose-dbbe.yaml up -d
    ```
-
-24. Some useful commands:
+  
+4. Some useful commands:
 
    Access mariadb container terminal:
 
