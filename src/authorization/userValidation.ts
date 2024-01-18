@@ -33,6 +33,7 @@ export const authenticator = (
       const iat = typeof verified === 'object' ? verified.iat ?? 0 : 0;
 
       // Checking if token is older than 1 hour (3600 seconds)
+
       if (currentTime - iat > 3600) {
         authenticationErrorHandler(req, res, 'Token Expired');
         return;
