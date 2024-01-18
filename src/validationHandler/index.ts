@@ -27,7 +27,7 @@ export const validate = (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export const timeFormatString: string = '%H:%i'; // 23:59
+export const timeFormatString: string = '%H:%i'; // 23:25
 export const timestampFormatString: string = '%a %x-%m-%d %H:%i","fi_FI';
 // "Wed 2023-12-27 23:59"
 
