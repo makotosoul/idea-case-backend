@@ -89,20 +89,9 @@ Backend side installation instructions
    DB_CONNECTION_POOL_MAX=7
    SECRET_TOKEN=<<Secret token here for the JWT>>
    ```
-readme-changed
+
    The secret_token has to be something of the length and format of: A3fs9t395dsgSDf3fRsTse349. But not that one! Hardening process should change it for the real deployment of the backend.
-   This particular one A3fs... should not be used even for testing!This is visible in the internet . 
-   It's just a dummy value to help randomizing the real one!
-=======
-
-   The secret_token has to be something of the length and format of: A3fs9t395dsgSDf3fRsTse349. But not that one! Hardening process should
-   change it for the real deployment of the backend. This particular one A3fs... should not be used even for testing!
-readme-changed
-   This is visible in the internet. It's just a dummy value to help to randomize the real one.
-main
-
-   This is visible in the internet. It's just a dummy value used to assist in randomizing the real one.
-main
+   This particular one A3fs... should not be used even for testing! This is visible in the internet. It's just a dummy value to help randomizing the real one!
 
    Be context aware! E.g. in the list above the ports are usually changed. And if you use a tunnel, then you target the tunnel port, not the real ports. Ask help! Usually one excel has all the dev time secrets for you.
 
@@ -194,4 +183,4 @@ Configuration of the local DB is described in the guide located in Database/Docu
    exit
    ```
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+<p align="right">(<a href="#top">back to the top</a>)</p>
