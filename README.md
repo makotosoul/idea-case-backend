@@ -40,7 +40,9 @@ Copyrights reserved. This Project is a collaborative work, which aims at buildin
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-<!-- GETTING STARTED -->
+
+<!-- GETTING STARTED1 -->
+
 
 ## Beginning
 
@@ -162,8 +164,8 @@ Configuration of the local DB is described in the guide located in Database/Docu
    ```sh
    docker-compose -f docker-compose-dbbe.yaml up -d
    ```
-
-14. Some useful commands:
+  
+4. Some useful commands:
 
    Access mariadb container terminal:
 
