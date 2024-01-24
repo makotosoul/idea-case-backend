@@ -54,6 +54,7 @@ export const createNameValidatorChain = (
     .matches(/^[A-Za-zäöåÄÖÅ0-9\(\)\s\/,-]*$/)
     .withMessage(`${fieldName} must contain only letters, numbers and -`)
     .bail()
+    .trim()
     .notEmpty()
     .withMessage(`${fieldName} cannot be empty`)
     .bail(),
@@ -69,6 +70,7 @@ export const createDescriptionValidatorChain = (
     .matches(/^[A-Za-zäöåÄÖÅ0-9\(\)\s\/,.:-]*$/)
     .withMessage(`${fieldName} must contain only letters, numbers and -`)
     .bail()
+    .trim()
     .notEmpty()
     .withMessage(`${fieldName} cannot be empty`)
     .bail(),
