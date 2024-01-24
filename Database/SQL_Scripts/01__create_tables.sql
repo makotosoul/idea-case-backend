@@ -1,4 +1,4 @@
-USE casedb; /* UPDATED 2023-11-08 */
+USE casedb; /* UPDATED 2024-01-24 */
 
 /* --- 01 CREATE TABLES --- */
 
@@ -140,7 +140,7 @@ CREATE TABLE IF NOT EXISTS AllocRound (
     name            VARCHAR(255)    NOT NULL UNIQUE,
     isSeasonAlloc   BOOLEAN         NOT NULL DEFAULT 0,
     userId          INTEGER         NOT NULL,
-    description     VARCHAR(16000),
+    description     VARCHAR(16000)  NOT NULL,
     lastModified    TIMESTAMP       NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
     isAllocated     BOOLEAN     DEFAULT 0,
     processOn       BOOLEAN     DEFAULT 0,
@@ -328,3 +328,6 @@ CREATE TABLE IF NOT EXISTS log_event (
         ON DELETE CASCADE
         ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+/* ------------------------------------------------------ */
