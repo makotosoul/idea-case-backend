@@ -899,11 +899,11 @@ INSERT INTO `Building` (`name`, `description`) VALUES
 	('R-talo', 'Sibeliusakatemian konserttitalo');
 
 /* --- Insert: SpaceType --- */
-INSERT INTO SpaceType (name) VALUES
-    ('Studio'),
+INSERT INTO SpaceType (`name`, `description`) VALUES
+    ('Studio', NULL),
     ('Luentoluokka','Room for theory classes'),
-    ('Esitystila'),
-    ('Musiikkiluokka');
+    ('Esitystila', NULL),
+    ('Musiikkiluokka', NULL);
 
 /* --- Insert: `Space` * --- */
 INSERT INTO `Space` (`name`, `area`, `personLimit`, `buildingId`, `availableFrom`, `availableTo`, `classesFrom`, `classesTo`, `info`, `spaceTypeId`) VALUES
