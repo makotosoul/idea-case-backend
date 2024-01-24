@@ -69,6 +69,18 @@ export const createDescriptionValidatorChain = (
     .bail()
     .matches(/^[A-Za-zäöåÄÖÅ0-9\(\)\s\/,.:-]*$/)
     .withMessage(`${fieldName} must contain only letters, numbers and -`)
+    .bail(),
+];
+
+export const createDescriptionValidatorChainObl = (
+  fieldName: string,
+): ValidationChain[] => [
+  check(`${fieldName}`)
+    .isLength({ min: 2, max: 16000 })
+    .withMessage(`${fieldName} can be at maximum 16000 characters long`)
+    .bail()
+    .matches(/^[A-Za-zäöåÄÖÅ0-9\(\)\s\/,.:-]*$/)
+    .withMessage(`${fieldName} must contain only letters, numbers and -`)
     .bail()
     .trim()
     .notEmpty()
@@ -229,8 +241,12 @@ export const validateIdObl = [...createIdValidatorChain('id')];
 
 export const validateNameObl = [...createNameValidatorChain('name')];
 
-export const validateDescriptionObl = [
+export const validateDescription = [
   ...createDescriptionValidatorChain('description'),
+];
+
+export const validateDescriptionObl = [
+  ...createDescriptionValidatorChainObl('description'),
 ];
 
 export const validateMultiNameObl = [...createMultiNameValidatorChain('name')];
