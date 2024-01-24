@@ -1,12 +1,16 @@
 import {
   createIdValidatorChain,
-  validateDescriptionObl,
+  validateDescription,
   validateIdObl,
   validateNameObl,
 } from './index.js';
 
 export const validateDepartmentId = [...createIdValidatorChain('departmentId')];
-export const validateDepartmentPost = [...validateNameObl];
+
+export const validateDepartmentPost = [
+  ...validateNameObl,
+  ...validateDescription,
+];
 
 export const validateDepartmentPut = [
   ...validateDepartmentPost,
