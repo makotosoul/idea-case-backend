@@ -133,7 +133,11 @@ departmentplanner.put(
           req,
           res,
           error,
-          'Error caat updating departmentplanner',
+
+          'Error while updating departmentplanner',
+        );
+
+          'Error updating departmentplanner',
         );
 
         dbErrorHandler(req, res, error, 'Error updating departmentplanner');
