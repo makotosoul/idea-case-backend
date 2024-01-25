@@ -1,4 +1,4 @@
-USE casedb; /* UPDATED 2023-11-21 */
+USE casedb; /* UPDATED 2024-01-24 */
 
 /* INSERTS */
 /* --- Insert: GlobalSettings --- */
@@ -8,7 +8,7 @@ INSERT INTO GlobalSetting(name, description, numberValue, textValue) VALUES
 
 /* --- Insert: Department --- */
 INSERT INTO Department(name, description) VALUES
-	('Jazz', 'Aineryhmän kuvaus'),
+	('Jazz', NULL),
     ('Laulumusiikki', 'Aineryhmän kuvaus'),
     ('Piano, harmonikka, kitara ja kantele', 'Aineryhmän kuvaus'),
     ('Musiikkikasvatus', 'Aineryhmän kuvaus'),
@@ -44,16 +44,16 @@ INSERT INTO DepartmentPlanner(userId, departmentId) VALUES
 
 /* --- Insert: Building * --- */
 INSERT INTO `Building` (`name`, `description`) VALUES
-	('Musiikkitalo', 'Sibeliusakatemian päärakennus'),
+	('Musiikkitalo', NULL),
 	('N-talo', 'Sibeliusakatemian opetus ja harjoittelu talo '),
 	('R-talo', 'Sibeliusakatemian konserttitalo');
 
 /* --- Insert: SpaceType --- */
-INSERT INTO SpaceType (name) VALUES
-    ('Studio'),
-    ('Luentoluokka'),
-    ('Esitystila'),
-    ('Musiikkiluokka');
+INSERT INTO SpaceType (`name`, `description`) VALUES
+    ('Studio', NULL),
+    ('Luentoluokka','Room for theory classes'),
+    ('Esitystila', NULL),
+    ('Musiikkiluokka', NULL);
 
 /* --- Insert: `Space` * --- */
 INSERT INTO `Space` (`name`, `area`, `personLimit`, `buildingId`, `availableFrom`, `availableTo`, `classesFrom`, `classesTo`, `info`, `spaceTypeId`) VALUES
@@ -64,7 +64,7 @@ INSERT INTO `Space` (`name`, `area`, `personLimit`, `buildingId`, `availableFrom
     ('S1111 Studio Erkki', 36.0, 15, 401, '08:00:00', '22:00:00', '11:00:00', '15:00:00', 'Tilatyyppi: Studio', 5001), -- 1005
     ('S5109 Jazz/Bändiluokka', 17.5, 2, 401, '08:00:00', '20:00:00', '08:00:00', '16:00:00', 'ONLY FOR JAZZ DEPARTMENT', 5004), -- 1006
     ('S6112 Harppuluokka', 28.8, 4, 401, '08:00:00', '17:00:00', '11:00:00', '16:00:00', 'Vain harpistit', 5004), -- 1007
-    ('S6113 Puhaltimet/Klarinetti/Harppu', 18.1, 4, 401, '08:00:00', '19:00:00', '08:00:00', '19:00:00', 'Tilatyyppi: Musiikkiluokka', 5004), -- 1008
+    ('S6113 Puhaltimet/Klarinetti/Harppu', 18.1, 4, 401, '08:00:00', '19:00:00', '08:00:00', '19:00:00', NULL, 5004), -- 1008
 
     ('R312 Opetusluokka', 16.6, 6, 403, '08:00:00', '21:00:00', '08:00:00', '18:00:00', 'Tilatyyppi: Musiikkiluokka', 5004), -- 1009
     ('R530 Opetusluokka', 50.0, 18, 403, '08:00:00', '21:00:00', '08:00:00', '19:00:00', 'Luentoluokka', 5002), -- 1010
@@ -111,7 +111,7 @@ INSERT INTO `Equipment` (`name`, `isMovable`, `priority`, `description`) VALUES
     ('Kontrabasso', 1, 100, 'Suurin jousisoitin'), -- 2009
     ('Piano', 0, 900, 'Piano-opetus vaatii kaksi flyygeliä'), -- 2010
     ('Kitara', 1, 100, '6-kielinen soitin'), -- 2011
-    ('Harmonikka', 1, 200, 'Hanuri'), -- 2012
+    ('Harmonikka', 1, 200, NULL), -- 2012
     ('Fortepiano', 0, 500, 'Pianon varhaismuoto'), -- 2013
     ('Huilu', 1, 50, 'puhallinsoitin'), -- 2014
     ('Oboe', 1, 100, 'puupuhallinsoitin'), -- 2015
@@ -260,7 +260,7 @@ INSERT INTO Program (name , departmentId) VALUES
 INSERT INTO AllocRound(name, isSeasonAlloc, userId, description) VALUES
     ('Testipriorisointi', 0, 201, 'Testidata lisätään AllocSubject tauluun, mutta laskentaa ei vielä suoritettu eli opetuksille ei ole vielä merkitty tiloja'),
     ('Testilaskenta', 1, 201, 'Testidata lisätty ja huoneet merkitty'),
-    ('Kevät 2023', 0, 201, ''),
+    ('Kevät 2024', 0, 201, 'Official simulation/calculation for Spring 2024'),
     ('Demo', 0, 201, 'Allokointi demoamista varten');
 
 /* --- Insert: Subject * --- */

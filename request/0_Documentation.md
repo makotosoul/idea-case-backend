@@ -3,7 +3,7 @@
 1. Ctrl+Shift+P, settings => select Preferences: Open Settings (UI)
 1. select Workspace          (creates a .vscode folder to root root folder "Siba")
 1. look for: rest client
-1. select rest client environment settings
+1. select rest client environment variables
 1. Creates Write to that settings.json:
   ```
   {

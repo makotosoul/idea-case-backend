@@ -1,6 +1,6 @@
 import {
   createIdValidatorChain,
-  validateDescriptionObl,
+  validateDescription,
   validateIdObl,
   validateMultiDescription,
   validateMultiNameObl,
@@ -11,7 +11,7 @@ export const validateBuildingId = [...createIdValidatorChain('buildingId')];
 
 export const validateBuildingPost = [
   ...validateNameObl,
-  ...validateDescriptionObl,
+  ...validateDescription,
 ];
 
 export const validateBuildingPut = [...validateBuildingPost, ...validateIdObl];
