@@ -1,5 +1,5 @@
 ### Remember to select the proper rest client environment
-@nextId = 410
+@nextId = 404
 
 ### Get all
 GET {{host}}/building
@@ -15,8 +15,27 @@ Authorization: Basic {{token}}
 Content-Type: application/json
 
 {
-    "name": "MYoN",
-    "description": "Sibeliusakatemian päärakennus"
+    "name": "XYZ-building",
+    "description": "Sibeliusakatemian muu rakennus"
+}
+
+### Create one without description
+POST {{host}}/building
+Authorization: Basic {{token}}
+Content-Type: application/json
+
+{
+    "name": "No desc building"
+}
+
+### Create one without description
+POST {{host}}/building
+Authorization: Basic {{token}}
+Content-Type: application/json
+
+{
+    "name": "No desc building",
+    "description": ""
 }
 
 ### Get all
