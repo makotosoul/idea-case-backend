@@ -128,7 +128,16 @@ departmentplanner.put(
         }
       })
       .catch((error) => {
+
+        dbErrorHandler(
+          req,
+          res,
+          error,
+          'Error caat updating departmentplanner',
+        );
+
         dbErrorHandler(req, res, error, 'Error updating departmentplanner');
+
       });
   },
 );
