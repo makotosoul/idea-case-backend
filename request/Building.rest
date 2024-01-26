@@ -1,4 +1,9 @@
 ### Remember to select the proper rest client environment
+
+### Reset database before performing other tests
+GET {{host}}/resetDatabase
+Authorization: Basic {{token}}
+
 @nextId = 404
 
 ### Get all
@@ -34,8 +39,8 @@ Authorization: Basic {{token}}
 Content-Type: application/json
 
 {
-    "name": "No desc building",
-    "description": ""
+    "name": "No desc building 3",
+    "description": "  "
 }
 
 ### Get all
@@ -50,12 +55,11 @@ Content-Type: application/json
 [
     {
     "name": "XYgdfG",
-    "description": "Sibeliusakatemian päärakennus"
+    "description": "Sibeliusakatemian toinen rakennus"
     },
 
     {
-    "name": "MNfdO",
-    "description": "Sibeliusakatemian päärakennus"
+    "name": "MNfdO"
     }
 ]
 
@@ -71,7 +75,7 @@ Content-Type: application/json
 {
     "id": {{nextId}},
     "name": "YYY",
-    "description": "Sibeliusakatemian päärakennus"
+    "description": "Sibeliusakatemian sivurakennus"
 }
 
 ### Get one by id

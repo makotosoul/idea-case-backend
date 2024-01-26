@@ -83,12 +83,20 @@ building.get(
       .select()
       .where('id', req.params.id)
       .then((data) => {
-        successHandler(
-          req,
-          res,
-          data,
-          'Successfully read the building from DB',
-        );
+        if (data.length === 1) {
+          successHandler(
+            req,
+            res,
+            data,
+            'Successfully read the building from DB',
+          );
+        } else {
+          requestErrorHandler(
+            req,
+            res,
+            `Failed to fetch building from DB with id: ${req.params.id}`,
+          );
+        }
       })
       .catch((err) => {
         dbErrorHandler(req, res, err, 'Oops! Nothing came through - Building');
@@ -177,7 +185,7 @@ building.put(
   },
 );
 
-// delete building by id
+// delete building by id => DELETE  /api/building/301
 building.delete(
   '/:id',
   validateIdObl,
