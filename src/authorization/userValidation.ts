@@ -34,7 +34,7 @@ export const authenticator = (
 
       // Checking if token is older than 1 hour (3600 seconds)
 
-      if (currentTime - iat > 3600) {
+      if (currentTime - iat > Number(process.env.TOKEN_EXPIRATION_SECONDS)) {
         authenticationErrorHandler(req, res, 'Token Expired');
         return;
       }

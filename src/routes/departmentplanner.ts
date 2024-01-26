@@ -134,8 +134,6 @@ departmentplanner.put(
           error,
           'Error while updating departmentplanner',
         );
-
-        dbErrorHandler(req, res, error, 'Error updating departmentplanner');
       });
   },
 );
