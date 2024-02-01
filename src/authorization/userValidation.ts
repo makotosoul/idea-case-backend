@@ -27,7 +27,7 @@ export const authenticator = (
     try {
       const verified = jsonwebtoken.verify(
         token,
-        process.env.SECRET_TOKEN as string,
+        process.env.SECRET_TOKEN as string, // TODO!!!
       );
       const currentTime = Math.floor(Date.now() / 1000); // Time in seconds
       const iat = typeof verified === 'object' ? verified.iat ?? 0 : 0;
@@ -39,7 +39,7 @@ export const authenticator = (
         return;
       }
 
-      req.user = verified as User;
+      req.user = verified as User; // CHECK !!!
       req.areRolesRequired = 0;
       req.requiredRolesList = [];
       next();
