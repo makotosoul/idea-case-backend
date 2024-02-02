@@ -1,2 +1,45 @@
 GET {{host}}/subjectequipment/getEquipment/fasfd
 Authorization: Basic {{token}}
+### 1. List all subjects in an allocation
+GET {{host}}/subject/byAllocationId/10004
+Authorization: Basic {{token}}
+
+### 1. Get equipment in subject with subjectId 4002
+GET {{host}}/subjectequipment/getequipment/4002
+Authorization: Basic {{token}}
+
+### Initial setup: Set the nextId after Testdata Reset
+@subjectId=4002
+@equipmentId=2011
+
+### 1. Update the equipment in a subject with id 4002
+PUT {{host}}/subjectequipment/update
+Authorization: Basic {{token}}
+Content-Type: application/json
+
+{
+    
+    "equipmentId": {{equipmentId}},
+    "obligatory": "1",
+    "priority": 500,
+    "subjectId": {{subjectId}}
+    
+}
+
+### 1. Delete equipment with id 2011 from subject with id 4002
+DELETE {{host}}/subjectequipment/delete/{{subjectId}}/{{equipmentId}}
+Authorization: Basic {{token}}
+
+### 1. Add the equipment with id 2013 in a subject with id 4003
+POST {{host}}/subjectequipment/post
+Authorization: Basic {{token}}
+Content-Type: application/json
+
+{
+    
+    "equipmentId": 2013,
+    "obligatory": "0",
+    "priority": 500,
+    "subjectId": 4003
+    
+}
