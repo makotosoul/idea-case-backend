@@ -11,3 +11,8 @@ export const validateSubjectEquipmentPost = [
   ...createNumberValidatorChain('priority'),
   ...createBoolValidatorChain('obligatory'),
 ];
+
+export const validateSubjectAndEquipmentId = [
+  ...validateSubjectId,
+  ...validateEquipmentId,
+];
