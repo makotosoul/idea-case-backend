@@ -1,5 +1,3 @@
-GET {{host}}/subjectequipment/getEquipment/fasfd
-Authorization: Basic {{token}}
 ### 1. List all subjects in an allocation
 GET {{host}}/subject/byAllocationId/10004
 Authorization: Basic {{token}}
