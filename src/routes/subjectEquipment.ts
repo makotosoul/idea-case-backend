@@ -4,7 +4,6 @@ import { planner } from '../authorization/planner.js';
 import { roleChecker } from '../authorization/roleChecker.js';
 import { statist } from '../authorization/statist.js';
 import { authenticator } from '../authorization/userValidation.js';
-import db from '../db/index.js';
 // knex available for new database operations
 import db_knex from '../db/index_knex.js';
 import {
@@ -13,7 +12,7 @@ import {
   successHandler,
 } from '../responseHandler/index.js';
 import logger from '../utils/logger.js';
-import { validate, validateIdObl } from '../validationHandler/index.js';
+import { validate } from '../validationHandler/index.js';
 import { validateSubjectId } from '../validationHandler/subject.js';
 import {
   validateSubjectAndEquipmentId,
