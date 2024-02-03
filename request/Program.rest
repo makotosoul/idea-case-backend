@@ -52,3 +52,7 @@ Authorization: Basic {{token}}
 ###
 GET {{host}}/program/{{nextId}}
 Authorization: Basic {{token}}
+
+###
+GET {{host}}/program/{{nextId}}/numberOfLessons
+Authorization: Basic {{token}}
