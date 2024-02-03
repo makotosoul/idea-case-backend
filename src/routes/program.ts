@@ -233,5 +233,34 @@ program.delete(
       });
   },
 );
+//fetch number of lessons from the selected program
+program.get(
+  '/:programId/numberOfLessons',
+  [authenticator, admin, planner, statist, roleChecker, validate],
+  (req: Request, res: Response) => {
+    const programId = req.params.programId;
+
+    db_knex('Subject')
+      .count('*')
+      .where('Subject.programId', programId)
+      .first()
+      .then((numberOfLessons) => {
+        successHandler(
+          req,
+          res,
+          numberOfLessons,
+          'Successfully retrieved the number of lessons for the program',
+        );
+      })
+      .catch((error) => {
+        dbErrorHandler(
+          req,
+          res,
+          error,
+          'Failed to retrieve the number of lessons for the program',
+        );
+      });
+  },
+);
 
 export default program;

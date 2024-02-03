@@ -14,7 +14,7 @@ GET {{host}}/program/userprograms/203
 Authorization: Basic {{token}}
 
 ### next id after TestData reset
-@nextId=3031
+@nextId=3030
 
 ### 4. Create new program
 POST {{host}}/program
