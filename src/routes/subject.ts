@@ -295,22 +295,25 @@ subject.put(
   },
 );
 
-// Removing a subject/teaching
+// Removing a subject/teaching using knex
 subject.delete(
   '/:id',
   validateIdObl,
   [authenticator, admin, planner, roleChecker, validate],
   (req: Request, res: Response) => {
-    const id = req.params.id;
-    const sqlDelete = 'DELETE FROM Subject WHERE id = ?;';
-    db.query(sqlDelete, id, (err, result) => {
-      if (err) {
-        dbErrorHandler(req, res, err, 'Oops! Delete failed - Subject');
-      } else {
-        successHandler(req, res, result, 'Delete successful - Subject');
-        logger.info('Subject deleted');
-      }
-    });
+    db_knex('Subject')
+      .del()
+      .where('id', req.params.id)
+      .then((rowsAffected) => {
+        if (rowsAffected !== 1) {
+          requestErrorHandler(req, res, `Invalid id: ${req.params.id}`);
+        } else {
+          successHandler(req, res, rowsAffected, 'Delete successful - Subject');
+        }
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Oops! Delete failed - Subject');
+      });
   },
 );
 
