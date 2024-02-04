@@ -185,7 +185,7 @@ subject.post(
       area: req.body.area,
       programId: req.body.programId,
       spaceTypeId: req.body.spaceTypeId,
-      allocRoundId: req.body.allocRoundId,          // || 10004, // TODO!!!
+      allocRoundId: req.body.allocRoundId, // || 10004, // TODO!!!
     };
 
     db_knex('Subject')
@@ -246,7 +246,7 @@ subject.post(
         area: subject.area,
         programId: program.id,
         spaceTypeId: spaceType.id,
-        allocRoundId: Number(req.params.allocRoundId),     //|| 10004, // TODO, first FE!!!
+        allocRoundId: Number(req.params.allocRoundId), //|| 10004, // TODO, first FE!!!
       });
     }
 
@@ -279,44 +279,19 @@ subject.put(
   validateSubjectPut,
   [authenticator, admin, planner, roleChecker, validate],
   (req: Request, res: Response) => {
-    const id = req.body.id;
-    const name = req.body.name;
-    const groupSize = req.body.groupSize;
-    const groupCount = req.body.groupCount;
-    const sessionLength = req.body.sessionLength;
-    const sessionCount = req.body.sessionCount;
-    const area = req.body.area;
-    const programId = req.body.programId;
-    const spaceTypeId = req.body.spaceTypeId;
-    const allocRoundId = req.body.allocRoundId;     //    || 10004; // TODO FE!!!
-
-    const sqlUpdate =
-      'UPDATE Subject SET name = ?, groupSize = ?, groupCount = ?, sessionLength = ?, sessionCount = ?, area = ?,  programId = ?, spaceTypeId = ?, allocRoundId = ? WHERE id = ?';
-    db.query(
-      sqlUpdate,
-      [
-        name,
-        groupSize,
-        groupCount,
-        sessionLength,
-        sessionCount,
-        area,
-        programId,
-        spaceTypeId,
-        allocRoundId,
-        id,
-      ],
-      (err, result) => {
-        if (!result) {
-          requestErrorHandler(req, res, `${err}: Nothing to update`);
-        } else if (err) {
-          dbErrorHandler(req, res, err, 'Oops! Update failed - Subject');
+    db_knex('Subject')
+      .update(req.body)
+      .where('id', req.body.id)
+      .then((rowsAffected) => {
+        if (rowsAffected === 1) {
+          successHandler(req, res, rowsAffected, 'Update successful - Subject');
         } else {
-          successHandler(req, res, result, 'Update successful - Subject');
-          logger.info(`Subject ${req.body.name} updated`);
+          requestErrorHandler(req, res, 'Error');
         }
-      },
-    );
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Error while updating Subject');
+      });
   },
 );
 
