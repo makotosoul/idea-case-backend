@@ -17,6 +17,7 @@ import {
   validateProgramPost,
   validateProgramPut,
 } from '../validationHandler/program.js';
+import { validateProgramId } from '../validationHandler/program.js';
 import { validateUserId } from '../validationHandler/user.js';
 
 const program = express.Router();
@@ -236,6 +237,7 @@ program.delete(
 //fetch number of lessons from the selected program
 program.get(
   '/:programId/numberOfLessons',
+  validateProgramId,
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     const programId = req.params.programId;
