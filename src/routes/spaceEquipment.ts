@@ -77,18 +77,22 @@ spaceequipment.post(
 );
 
 // Removing an equipment from a space
-spaceequipment.delete('/delete/:spaceId/:equipmentId', (req, res) => {
-  const spaceId = req.params.spaceId;
-  const equipmentId = req.params.equipmentId;
-  const sqlDelete =
-    'DELETE FROM SpaceEquipment WHERE spaceId = ? AND equipmentId = ?;';
-  db.query(sqlDelete, [spaceId, equipmentId], (err, result) => {
-    if (err) {
-      dbErrorHandler(req, res, err, 'Oops! Delete failed - SpaceEquipment');
-    } else {
-      successHandler(req, res, result, 'Delete successful - SpaceEquipment');
-    }
-  });
-});
+spaceequipment.delete(
+  '/delete/:spaceId/:equipmentId',
+  [authenticator, admin, planner, roleChecker, validate],
+  (req: Request, res: Response) => {
+    const spaceId = req.params.spaceId;
+    const equipmentId = req.params.equipmentId;
+    const sqlDelete =
+      'DELETE FROM SpaceEquipment WHERE spaceId = ? AND equipmentId = ?;';
+    db.query(sqlDelete, [spaceId, equipmentId], (err, result) => {
+      if (err) {
+        dbErrorHandler(req, res, err, 'Oops! Delete failed - SpaceEquipment');
+      } else {
+        successHandler(req, res, result, 'Delete successful - SpaceEquipment');
+      }
+    });
+  },
+);
 
 export default spaceequipment;
