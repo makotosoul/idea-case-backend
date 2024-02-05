@@ -97,7 +97,7 @@ space.get(
 space.get(
   '/:id',
   validateIdObl,
-  [authenticator, admin, planner, roleChecker, validate],
+  [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     const id = req.params.id;
     db_knex('Space')

@@ -219,7 +219,7 @@ allocation.get(
 allocation.post(
   '/reset',
   validateAllocRoundId,
-  [authenticator, admin, roleChecker, validate],
+  [authenticator, admin, planner, roleChecker, validate],
   async (req: Request, res: Response) => {
     const allocRoundId = req.body.allocRoundId;
     allocationService
@@ -247,7 +247,7 @@ allocation.post(
 allocation.post(
   '/abort',
   validateAllocRoundId,
-  [authenticator, admin, roleChecker, validate],
+  [authenticator, admin, planner, roleChecker, validate],
   async (req: Request, res: Response) => {
     const allocRoundId = req.body.allocRoundId;
     allocationService
@@ -275,7 +275,7 @@ allocation.post(
 allocation.post(
   '/start',
   validateAllocRoundId,
-  [authenticator, admin, roleChecker, validate],
+  [authenticator, admin, planner, roleChecker, validate],
   async (req: Request, res: Response) => {
     const allocRoundId = req.body.allocRoundId;
     allocationService
