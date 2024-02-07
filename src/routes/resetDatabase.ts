@@ -5,6 +5,7 @@ import mysql from 'mysql';
 import { admin } from '../authorization/admin.js';
 import { roleChecker } from '../authorization/roleChecker.js';
 import { authenticator } from '../authorization/userValidation.js';
+import db_knex from '../db/index_knex.js';
 import {
   dbErrorHandler,
   requestErrorHandler,
@@ -35,6 +36,7 @@ const sqlStatements = fs
   .toString();
 
 // //executing the statements through the resetDatabase route with get method using mysql
+/*
 resetDatabase.get(
   '/',
   [authenticator, admin, roleChecker, validate],
@@ -46,6 +48,24 @@ resetDatabase.get(
             : dbErrorHandler(req, res, err, 'Database reset failed!');
         })
       : requestErrorHandler(req, res, 'Not more in development mode!');
+  },
+);
+*/
+
+resetDatabase.get(
+  '/',
+  [authenticator, admin, roleChecker, validate],
+  (req: Request, res: Response) => {
+    process.env.BE_DEVELOPMENT_PHASE === 'true'
+      ? db_knex
+          .raw(sqlStatements)
+          .then((data) =>
+            successHandler(req, res, data, 'Database reset success!'),
+          )
+          .catch((err) =>
+            dbErrorHandler(req, res, err, 'Database reset failed!'),
+          )
+      : requestErrorHandler(req, res, 'Not in development mode!');
   },
 );
 
