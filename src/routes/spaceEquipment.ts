@@ -1,3 +1,4 @@
+import { error } from 'node:console';
 import express, { Request, Response } from 'express';
 import { admin } from '../authorization/admin.js';
 import { planner } from '../authorization/planner.js';
@@ -7,7 +8,11 @@ import { authenticator } from '../authorization/userValidation.js';
 import db from '../db/index.js';
 // knex available for new database operations
 import db_knex from '../db/index_knex.js';
-import { dbErrorHandler, successHandler } from '../responseHandler/index.js';
+import {
+  dbErrorHandler,
+  requestErrorHandler,
+  successHandler,
+} from '../responseHandler/index.js';
 import { validate } from '../validationHandler/index.js';
 import { validateSpaceId } from '../validationHandler/space.js';
 import { validateSpaceEquipmentPost } from '../validationHandler/spaceEquipment.js';
@@ -76,22 +81,32 @@ spaceequipment.post(
   },
 );
 
-// Removing an equipment from a space
+// Removing an equipment from a space using knex:
 spaceequipment.delete(
   '/delete/:spaceId/:equipmentId',
   [authenticator, admin, planner, roleChecker, validate],
   (req: Request, res: Response) => {
     const spaceId = req.params.spaceId;
     const equipmentId = req.params.equipmentId;
-    const sqlDelete =
-      'DELETE FROM SpaceEquipment WHERE spaceId = ? AND equipmentId = ?;';
-    db.query(sqlDelete, [spaceId, equipmentId], (err, result) => {
-      if (err) {
-        dbErrorHandler(req, res, err, 'Oops! Delete failed - SpaceEquipment');
-      } else {
-        successHandler(req, res, result, 'Delete successful - SpaceEquipment');
-      }
-    });
+    db_knex('SpaceEquipment')
+      .del()
+      .where('spaceId', spaceId)
+      .andWhere('equipmentId', equipmentId)
+      .then((result) => {
+        if (result === 1) {
+          successHandler(
+            req,
+            res,
+            result,
+            'Delete successful - SpaceEquipment',
+          );
+        } else {
+          requestErrorHandler(req, res, 'Nothing to delete');
+        }
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Oops! Delete failed - SpaceEquipment');
+      });
   },
 );
 
