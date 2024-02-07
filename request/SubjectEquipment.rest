@@ -28,7 +28,7 @@ Content-Type: application/json
 DELETE {{host}}/subjectequipment/delete/{{subjectId}}/{{equipmentId}}
 Authorization: Basic {{token}}
 
-### 1. Add the equipment with id 2013 in a subject with id 4003
+### 1. Add the equipment with id 2013 in a subject with id 4002
 POST {{host}}/subjectequipment/post
 Authorization: Basic {{token}}
 Content-Type: application/json
