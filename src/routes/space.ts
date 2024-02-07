@@ -252,7 +252,6 @@ space.post(
 );
 
 // Delete space by id
-/*
 space.delete(
   '/:id',
   [authenticator, admin, roleChecker, validate],
@@ -273,35 +272,18 @@ space.delete(
         }
       })
       .catch((error) => {
-        requestErrorHandler(req, res, `Error deleting space: ${error.message}`);
+        dbErrorHandler(req, res, error, 'Oops! Delete failed - Space');
       });
-  },
-);*/
-
-space.delete(
-  '/:id',
-  validateIdObl,
-  [authenticator, admin, planner, roleChecker, validate],
-  (req: Request, res: Response) => {
-    const id = req.params.id;
-    const sqlDelete = 'DELETE FROM Space WHERE id = ?;';
-    db.query(sqlDelete, id, (err, result) => {
-      if (err) {
-        dbErrorHandler(req, res, err, 'Oops! Delete failed - Space');
-      } else {
-        successHandler(req, res, result, 'Delete successful - Space');
-        logger.info('Space deleted');
-      }
-    });
   },
 );
 
-// Update space by ID
-/*space.put(
-  '/:id',
+// Update space
+space.put(
+  '/',
+  validateSpacePut,
   [authenticator, admin, planner, roleChecker, validate],
   (req: Request, res: Response) => {
-    const spaceId = req.params.id;
+    const spaceId = req.body.id;
     const updatedSpaceData = {
       name: req.body.name,
       area: req.body.area,
@@ -312,7 +294,7 @@ space.delete(
       availableTo: req.body.availableTo,
       classesFrom: req.body.classesFrom,
       classesTo: req.body.classesTo,
-      inUse: req.body.inUse || true, // Default to true if not provided
+      inUse: req.body.inUse, // || true, // Default to true if not provided
       spaceTypeId: req.body.spaceTypeId,
     };
 
@@ -332,60 +314,8 @@ space.delete(
         }
       })
       .catch((error) => {
-        requestErrorHandler(req, res, `Error updating space: ${error.message}`);
+        dbErrorHandler(req, res, error, 'Oops! Update failed - Space');
       });
-  },
-);*/
-
-// Edit a space by ID
-space.put(
-  '/',
-  validateSpacePut, // Validation middleware for editing space
-  [authenticator, admin, planner, roleChecker, validate],
-  (req: Request, res: Response) => {
-    const id = req.body.id;
-    const name = req.body.name;
-    const area = req.body.area;
-    const info = req.body.info;
-    const personLimit = req.body.personLimit;
-    const buildingId = req.body.buildingId;
-    const availableFrom = req.body.availableFrom;
-    const availableTo = req.body.availableTo;
-    const classesFrom = req.body.classesFrom;
-    const classesTo = req.body.classesTo;
-    const inUse = req.body.inUse; /// || true; // Default to true if not provided
-    const spaceTypeId = req.body.spaceTypeId;
-
-    const sqlUpdate =
-      'UPDATE Space SET name = ?, area = ?, info = ?, personLimit = ?, buildingId = ?, availableFrom = ?, availableTo = ?, classesFrom = ?, classesTo = ?, inUse = ?, spaceTypeId = ? WHERE id = ?';
-
-    db.query(
-      sqlUpdate,
-      [
-        name,
-        area,
-        info,
-        personLimit,
-        buildingId,
-        availableFrom,
-        availableTo,
-        classesFrom,
-        classesTo,
-        inUse,
-        spaceTypeId,
-        id,
-      ],
-      (err, result) => {
-        if (!result) {
-          requestErrorHandler(req, res, `${err}: Nothing to update`);
-        } else if (err) {
-          dbErrorHandler(req, res, err, 'Oops! Update failed - Space');
-        } else {
-          successHandler(req, res, result, 'Update successful - Space');
-          logger.info(`Space ${req.body.name} updated`);
-        }
-      },
-    );
   },
 );
 
