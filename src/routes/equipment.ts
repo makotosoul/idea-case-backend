@@ -67,7 +67,7 @@ equipment.get(
 equipment.post(
   '/',
   validateEquipmentPost,
-  [authenticator, admin, roleChecker, validate],
+  [authenticator, admin, planner, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex
       .insert(req.body)
@@ -95,7 +95,7 @@ equipment.post(
 equipment.post(
   '/multi',
   validateEquipmentMultiPost,
-  [authenticator, admin, roleChecker, validate],
+  [authenticator, planner, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex
       .insert(req.body)
@@ -124,7 +124,7 @@ equipment.post(
 equipment.put(
   '/:id',
   validateEquipmentPut,
-  [authenticator, admin, roleChecker, validate],
+  [authenticator, admin, planner, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Equipment')
       .where('id', req.body.id)
@@ -146,7 +146,7 @@ equipment.put(
 equipment.delete(
   '/:id',
   validateIdObl,
-  [authenticator, admin, roleChecker, validate],
+  [authenticator, admin, planner, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Equipment')
       .where('id', req.params.id)

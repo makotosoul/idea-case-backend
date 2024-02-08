@@ -63,6 +63,7 @@ subjectequipment.get(
 subjectequipment.post(
   '/post',
   validateSubjectEquipmentPost,
+  [authenticator, admin, planner, roleChecker, validate], // Only admin and planner can add subjectEquipment to a subject
   (req: Request, res: Response) => {
     const subjectId = req.body.subjectId;
     const equipmentId = req.body.equipmentId;
@@ -106,7 +107,7 @@ subjectequipment.post(
 subjectequipment.put(
   '/update',
   validateSubjectEquipmentPost,
-  [authenticator, admin, roleChecker, validate],
+  [authenticator, admin, planner, roleChecker, validate], // Only admin and planner can update subjectEquipment to a subject
   (req: Request, res: Response) => {
     db_knex('SubjectEquipment')
       .update(req.body)
@@ -134,7 +135,7 @@ subjectequipment.put(
 subjectequipment.delete(
   '/delete/:subjectId/:equipmentId',
   validateSubjectAndEquipmentId,
-  [authenticator, admin, planner, roleChecker, validate],
+  [authenticator, admin, planner, roleChecker, validate], // Only admin and planner can delete subjectEquipment
   (req: Request, res: Response) => {
     const subjectId = req.params.subjectId;
     const equipmentId = req.params.equipmentId;
