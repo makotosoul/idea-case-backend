@@ -8,7 +8,13 @@ export type RoleRequired =
   | 1; // role needs to be satisfied
 
 export type User = {
-  [key in RolePropertyName]: RoleRequired;
+  id: number;
+  email: string;
+  isAdmin: number;
+  isPlanner: number;
+  isStatist: number;
+  // was like this:
+  //[key in RolePropertyName]: RoleRequired;
 };
 
 export interface Subject {

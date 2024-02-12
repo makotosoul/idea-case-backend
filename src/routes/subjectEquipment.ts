@@ -77,6 +77,36 @@ subjectequipment.post(
       obligatory,
     };
 
+    if (!req.user.isAdmin) {
+      db_knex
+        .select('u.id as userId')
+        .from('User as u')
+        .innerJoin('DepartmentPlanner as dp', 'u.id', 'dp.userId')
+        .innerJoin('Department as d', 'dp.departmentId', 'd.id')
+        .innerJoin('Program as p', 'd.id', 'p.departmentId')
+        .innerJoin('Subject as s', 'p.id', 's.programId')
+        .where('s.id', req.body.subjectId)
+        .where('u.id', req.user.id)
+        .then((data) => {
+          if (data.length > 0) {
+            logger.verbose(
+              `User ${req.user.id} is planner for ${req.body.subjectId}`,
+            );
+          } else {
+            logger.error(
+              `User ${req.user.id} is NOT planner for ${req.body.subjectId}`,
+            );
+            requestErrorHandler(req, res, 'Oh nouuuu');
+            return;
+          }
+        })
+        .catch((error) => {
+          logger.error('Some DB error while checking user dep planner rights');
+          dbErrorHandler(req, res, error, 'Oh nouuu DB!');
+          return;
+        });
+    }
+
     db_knex('SubjectEquipment')
       .insert(subjectEquipmentData)
       .returning('id') // Return the inserted ID
