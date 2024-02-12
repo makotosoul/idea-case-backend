@@ -9,5 +9,13 @@
     "formatter": {
       "quoteStyle": "single"
     }
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "style": {
+        "noUselessElse": "off"
+      }
+    }
   }
 }
