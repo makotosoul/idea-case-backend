@@ -1,0 +1,11 @@
+### Reset database before performing other tests
+GET {{host}}/resetDatabase
+Authorization: Basic {{token}}
+
+### Get all
+GET {{host}}/spacetype
+Authorization: Basic {{token}}
+
+### Get one by id
+GET {{host}}/spacetype/5001
+Authorization: Basic {{token}}
