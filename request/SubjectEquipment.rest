@@ -7,8 +7,20 @@ GET {{host}}/subjectequipment/getequipment/4002
 Authorization: Basic {{token}}
 
 ### Initial setup: Set the nextId after Testdata Reset
-@subjectId=4002
-@equipmentId=2013
+@subjectId="4002"
+@equipmentId="2023"
+
+### 1. Update the equipment in a subject with id 4002
+POST {{host}}/subjectequipment/post
+Authorization: Basic {{token}}
+Content-Type: application/json
+
+{
+    "subjectId": {{subjectId}},
+    "equipmentId": {{equipmentId}},
+    "obligatory": 1,
+    "priority": 500
+}
 
 ### 1. Update the equipment in a subject with id 4002
 PUT {{host}}/subjectequipment/update
@@ -16,12 +28,10 @@ Authorization: Basic {{token}}
 Content-Type: application/json
 
 {
-
     "equipmentId": {{equipmentId}},
     "obligatory": "1",
     "priority": 500,
     "subjectId": {{subjectId}}
-
 }
 
 ### 1. Delete equipment with id 2011 from subject with id 4002
