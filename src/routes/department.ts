@@ -108,7 +108,7 @@ department.post(
 department.put(
   '/',
   validateDepartmentPut,
-  [authenticator, admin, roleChecker],
+  [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Department')
       .where('id', req.body.id)
