@@ -319,4 +319,40 @@ space.put(
   },
 );
 
+//Allow fetching spaces by a specific building ID.
+space.get(
+  '/byBuilding/:buildingId',
+  [authenticator, admin, planner, roleChecker, validate],
+  (req: Request, res: Response) => {
+    const { buildingId } = req.params;
+    db_knex('Space')
+      .where({ buildingId })
+      .then((spaces) => {
+        if (spaces.length > 0) {
+          successHandler(
+            req,
+            res,
+            spaces,
+            `Spaces found for building ID: ${buildingId}`,
+          );
+        } else {
+          successHandler(
+            req,
+            res,
+            [],
+            `No spaces found for building ID: ${buildingId}`,
+          );
+        }
+      })
+      .catch((error) => {
+        dbErrorHandler(
+          req,
+          res,
+          error,
+          'Failed to fetch spaces by building ID',
+        );
+      });
+  },
+);
+
 export default space;
