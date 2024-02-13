@@ -1,6 +1,5 @@
 ### Remember to select the proper rest client environment
 
-
 ### Reset database before performing other tests
 GET {{host}}/resetDatabase
 Authorization: Basic {{token}}
