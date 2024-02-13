@@ -38,9 +38,9 @@ Authorization: Basic {{token}}
 Content-Type: application/json
 
 {
-    "userId": "201",
+    "userId": "200",
     "departmentId": "105",
-    "newDepartmentId": "106"
+    "newDepartmentId": "109"
 }
 
 
