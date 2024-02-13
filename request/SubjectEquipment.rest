@@ -7,10 +7,10 @@ GET {{host}}/subjectequipment/getequipment/4002
 Authorization: Basic {{token}}
 
 ### Initial setup: Set the nextId after Testdata Reset
-@subjectId="4002"
-@equipmentId="2023"
+@subjectId=4002
+@equipmentId=2013
 
-### 1. Update the equipment in a subject with id 4002
+### 1. add the equipment in a subject with id 4002
 POST {{host}}/subjectequipment/post
 Authorization: Basic {{token}}
 Content-Type: application/json
@@ -44,10 +44,8 @@ Authorization: Basic {{token}}
 Content-Type: application/json
 
 {
-
+    "subjectId": 4002,
     "equipmentId": 2013,
-    "obligatory": "0",
     "priority": 500,
-    "subjectId": 4002
-
+    "obligatory": "0"
 }
