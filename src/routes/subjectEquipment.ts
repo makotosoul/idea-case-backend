@@ -96,13 +96,22 @@ subjectequipment.post(
             logger.error(
               `User ${req.user.id} is NOT planner for ${req.body.subjectId}`,
             );
-            requestErrorHandler(req, res, 'Oh nouuuu');
+            requestErrorHandler(
+              req,
+              res,
+              'Request failed! User is not planner for the subject',
+            );
             return;
           }
         })
         .catch((error) => {
-          logger.error('Some DB error while checking user dep planner rights');
-          dbErrorHandler(req, res, error, 'Oh nouuu DB!');
+          logger.error('Oops! Create failed - SubjectEquipment');
+          dbErrorHandler(
+            req,
+            res,
+            error,
+            '/post - SubjectEquipment - DB error!',
+          );
           return;
         });
     }
@@ -158,13 +167,22 @@ subjectequipment.put(
             logger.error(
               `User ${req.user.id} is NOT planner for ${req.body.subjectId}`,
             );
-            requestErrorHandler(req, res, 'Oh nouuuu');
+            requestErrorHandler(
+              req,
+              res,
+              'Request failed! User is not planner for the subject',
+            );
             return;
           }
         })
         .catch((error) => {
-          logger.error('Some DB error while checking user dep planner rights');
-          dbErrorHandler(req, res, error, 'Oh nouuu DB!');
+          logger.error('Oops! Update failed - SubjectEquipment');
+          dbErrorHandler(
+            req,
+            res,
+            error,
+            '/update - SubjectEquipment - DB error!',
+          );
           return;
         });
     }
@@ -217,13 +235,22 @@ subjectequipment.delete(
             logger.error(
               `User ${req.user.id} is NOT planner for ${req.params.subjectId}`,
             );
-            requestErrorHandler(req, res, 'Oh nouuuu');
+            requestErrorHandler(
+              req,
+              res,
+              'Request failed! User is not planner for the subject',
+            );
             return;
           }
         })
         .catch((error) => {
-          logger.error('Some DB error while checking user dep planner rights');
-          dbErrorHandler(req, res, error, 'Oh nouuu DB!');
+          logger.error('Oops! Delete failed - SubjectEquipment');
+          dbErrorHandler(
+            req,
+            res,
+            error,
+            '/delete - SubjectEquipment - DB error!',
+          );
           return;
         });
     }
