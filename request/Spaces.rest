@@ -44,3 +44,7 @@ Content-Type: application/json
 ### 5. Delete space
 DELETE {{host}}/space/1038
 Authorization: Basic {{token}}
+
+### 6. List spaces by Building ID
+GET {{host}}/space/byBuilding/{buildingId}
+Authorization: Basic {{token}}
