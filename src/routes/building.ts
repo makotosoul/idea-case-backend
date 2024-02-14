@@ -16,6 +16,7 @@ import {
   validateBuildingPost,
   validateBuildingPut,
 } from '../validationHandler/building.js';
+import { validateBuildingId } from '../validationHandler/building.js';
 import { validate, validateIdObl } from '../validationHandler/index.js';
 
 const building = express.Router();
@@ -209,6 +210,37 @@ building.delete(
       })
       .catch((error) => {
         dbErrorHandler(req, res, error, 'Error deleting building');
+      });
+  },
+);
+
+//fetch number of spaces from the selected buildings
+building.get(
+  '/:buildingId/numberOfSpaces',
+  validateBuildingId,
+  [authenticator, admin, planner, statist, roleChecker, validate],
+  (req: Request, res: Response) => {
+    const buildingId = req.params.buildingId;
+
+    db_knex('Space')
+      .count('*')
+      .where('Space.buildingId', buildingId)
+      .first()
+      .then((numberOfSpaces) => {
+        successHandler(
+          req,
+          res,
+          numberOfSpaces,
+          'Successfully retrieved the number of spaces for the building',
+        );
+      })
+      .catch((error) => {
+        dbErrorHandler(
+          req,
+          res,
+          error,
+          'Failed to retrieve the number of spaces for the building',
+        );
       });
   },
 );
