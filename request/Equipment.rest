@@ -15,7 +15,7 @@ Authorization: Basic {{token}}
 GET {{host}}/equipment/2001
 Authorization: Basic {{token}}
 
-### 3. Create new equipment (Assume that the created equipment gets`nextId` or should be replaced with a returned ID to continue with the test)
+### 3. Create new equipment (Assume that the created equipment gets `nextId` or should be replaced with a returned ID to continue with the test)
 POST {{host}}/equipment
 Authorization: Basic {{token}}
 Content-Type: application/json
@@ -27,11 +27,11 @@ Content-Type: application/json
     "isMovable": 1
 }
 
-### Confirm the newly created equipment using the `nextId` (This will verify creation was successful and the correct ID was assigned)
+### 4. Confirm the newly created equipment using the `nextId` (This will verify creation was successful and the correct ID was assigned)
 GET {{host}}/equipment/{{nextId}}
 Authorization: Basic {{token}}
 
-### 4. Update the equipment using `nextId` (Test the update operation)
+### 5. Update the equipment using `nextId` (Test the update operation)
 PUT {{host}}/equipment/{{nextId}}
 Authorization: Basic {{token}}
 Content-Type: application/json
@@ -44,14 +44,14 @@ Content-Type: application/json
     "isMovable": 1
 }
 
-### Confirm the update (Ensure the update took effect)
+### 6. Confirm the update (Ensure the update took effect)
 GET {{host}}/equipment/{{nextId}}
 Authorization: Basic {{token}}
 
-### 5. Delete the equipment (Test the delete operation)
+### 7. Delete the equipment (Test the delete operation)
 DELETE {{host}}/equipment/{{nextId}}
 Authorization: Basic {{token}}
 
-### Confirm deletion (Trying to retrieve it should result in an empty array)
+### 8. Confirm deletion (Trying to retrieve it should result in an empty array)
 GET {{host}}/equipment/{{nextId}}
 Authorization: Basic {{token}}

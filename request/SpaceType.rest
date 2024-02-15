@@ -1,11 +1,15 @@
-### Reset database before performing other tests
+### Remember to select the proper rest client environment
+### Note: spaceType doesn't have put and delete methods
+
+### Reset database in admin env before performing other tests
 GET {{host}}/resetDatabase
 Authorization: Basic {{token}}
 
-### Get all
+### 1. Get all spaceTypes to have a general overview
 GET {{host}}/spacetype
 Authorization: Basic {{token}}
 
-### Get one by id
+
+### 2. Get one by id (use existing id)
 GET {{host}}/spacetype/5001
 Authorization: Basic {{token}}
