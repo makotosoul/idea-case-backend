@@ -1,24 +1,26 @@
-### token to
-### root root root folder's .vscode folder's settings.json file
+### Remember to select the proper rest client environment
 
-### Reset database before performing other tests
+### Reset database in admin env before performing other tests
 GET {{host}}/resetDatabase
 Authorization: Basic {{token}}
 
-### 1. Get all   - L
+
+### 1. Get all GlobalSettings to have a general overview:
 GET {{host}}/setting
 Authorization: Basic {{token}}
 
-### next id after Testdata Reset:
-@nextId=16
 
-### 2. Get one by id   -  R
+### Initial setup: Set the nextId after Testdata Reset
+### It should come after the last id in test data
+@nextId=3
+
+
+### 2. Get one by known id (use GlobalSetting id that is known to exist)
 GET {{host}}/setting/1
 Authorization: Basic {{token}}
 
-### 3. Possibly other gets    -  L?R?
 
-### 4. Post a new one    -   C
+### 3. Create new globalSetting (Assume that the created globalSetting gets `nextId` or should be replaced with a returned ID to continue with the test)
 POST {{host}}/setting/
 Authorization: Basic {{token}}
 Content-Type: application/json
@@ -30,28 +32,31 @@ Content-Type: application/json
   "textValue": "Hello"
 }
 
-### 5. Update existing one  -   U
-### // id now removed from PUT URL! It's in JSON data
-PUT {{host}}/setting/
+### 4. Confirm newly created setting using the `nextId` (This will verify creation was successful and the correct ID was assigned)
+GET {{host}}/setting/{{nextId}}
+Authorization: Basic {{token}}
+
+### 5. Update the globalSetting using `nextId` (in request body):
+PUT {{host}}/setting
 Authorization: Basic {{token}}
 Content-Type: application/json
 
 {
   "id": {{nextId}},
-  "name": "Changed name here",
-  "description": "fasdfasdfasdf sdfsadf",
-  "numberValue": 456,
-  "textValue": null
+  "name": "Updated name here",
+  "description": "Updated description",
+  "numberValue": 444,
+  "textValue": "Updated Text Value"
 }
 
-###
+### 6. Confirm the update (Ensure the update took effect)
 GET {{host}}/setting/{{nextId}}
 Authorization: Basic {{token}}
 
-### 6. Delete one by id    -  D
+### 7. Delete the globalSetting (Test the delete operation)
 DELETE {{host}}/setting/{{nextId}}
 Authorization: Basic {{token}}
 
-###
+### 8. Confirm deletion (Trying to retrieve it should result in an empty array)
 GET {{host}}/setting/{{nextId}}
 Authorization: Basic {{token}}
