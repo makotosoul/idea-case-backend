@@ -4,6 +4,7 @@ import { planner } from '../authorization/planner.js';
 import { roleChecker } from '../authorization/roleChecker.js';
 import { statist } from '../authorization/statist.js';
 import { authenticator } from '../authorization/userValidation.js';
+import db_knex from '../db/index_knex.js';
 import { dbErrorHandler, successHandler } from '../responseHandler/index.js';
 import allocationService from '../services/allocation.js';
 import programService from '../services/program.js';
@@ -295,6 +296,35 @@ allocation.post(
           err,
           'Oops! Allocation failed - Allocation start',
         );
+      });
+  },
+);
+
+//Get data for report csv
+allocation.get(
+  '/report',
+  [authenticator, admin, planner, statist, roleChecker, validate],
+  (req: Request, res: Response) => {
+    db_knex
+      .select(
+        'd.name as department',
+        'p.name as program',
+        's.name as lesson',
+        'sp.name as room',
+      )
+      .from('AllocSpace as a')
+      .innerJoin('Space as sp', 'a.spaceId', 'sp.id')
+      .innerJoin('Subject as s', 'a.subjectId', 's.id')
+      .innerJoin('Program as p', 's.programId', 'p.id')
+      .innerJoin('Department as d', 'p.departmentId', 'd.id')
+      .innerJoin('AllocSubject as als', 'a.subjectId', 'als.subjectId')
+      .where('als.isAllocated', 1)
+      //.andWhere('als.allocRoundId', req.body.allocRoundId)
+      .then((data) => {
+        successHandler(req, res, data, 'getAll succesful - Report');
+      })
+      .catch((err) => {
+        dbErrorHandler(req, res, err, 'Oops! Nothing came through - Report');
       });
   },
 );
