@@ -300,7 +300,7 @@ allocation.post(
   },
 );
 
-//Get data for report csv
+//Get data for full report csv
 allocation.get(
   '/report',
   [authenticator, admin, planner, statist, roleChecker, validate],
@@ -324,6 +324,37 @@ allocation.get(
         successHandler(req, res, data, 'getAll succesful - Report');
       })
       .catch((err) => {
+        dbErrorHandler(req, res, err, 'Oops! Nothing came through - Report');
+      });
+  },
+);
+
+// get data for plannerReport
+allocation.get(
+  '/plannerreport',
+  [authenticator, admin, planner, statist, roleChecker, validate],
+  (req: Request, res: Response) => {
+    db_knex
+      .select(
+        'd.name as department',
+        'p.name as program',
+        's.name as lesson',
+        'sp.name as room',
+      )
+      .from('DepartmentPlanner as dp')
+      .innerJoin('Department as d', 'dp.departmentId', 'd.id')
+      .innerJoin('Program as p', 'd.id', 'p.departmentId')
+      .innerJoin('Subject as s', 'p.id', 's.programId')
+      .innerJoin('AllocSpace as a', 's.id', 'a.subjectId')
+      .innerJoin('Space as sp', 'a.spaceId', 'sp.id')
+      .innerJoin('AllocSubject as als', 'a.subjectId', 'als.subjectId')
+      .where('dp.userId', req.user.id)
+      //.andWhere('als.allocRoundId', req.body.allocRoundId)
+      .then((data) => {
+        successHandler(req, res, data, 'getAll succesful - Report');
+      })
+      .catch((err) => {
+        logger.error('Some DB error while checking user dep planner rights');
         dbErrorHandler(req, res, err, 'Oops! Nothing came through - Report');
       });
   },
