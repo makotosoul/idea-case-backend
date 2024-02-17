@@ -11,6 +11,7 @@ import {
   successHandler,
 } from '../responseHandler/index.js';
 import {
+  validateDepartmentId,
   validateDepartmentPost,
   validateDepartmentPut,
 } from '../validationHandler/department.js';
@@ -149,6 +150,36 @@ department.delete(
       })
       .catch((error) => {
         dbErrorHandler(req, res, error, 'Error');
+      });
+  },
+);
+
+// fetch all programs of a selected department by id
+department.get(
+  '/:departmentId/numberOfPrograms',
+  validateDepartmentId,
+  [authenticator, admin, planner, statist, roleChecker, validate],
+  (req: Request, res: Response) => {
+    const id = req.params.departmentId;
+    db_knex('Program')
+      .count('*')
+      .where('departmentId', id)
+      .first()
+      .then((numberOfPrograms) => {
+        successHandler(
+          req,
+          res,
+          numberOfPrograms,
+          'Successfully recived the programs of the department by id from database',
+        );
+      })
+      .catch((error) => {
+        dbErrorHandler(
+          req,
+          res,
+          error,
+          'Failed to get the programs of the department from database',
+        );
       });
   },
 );
