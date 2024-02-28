@@ -355,4 +355,40 @@ space.get(
   },
 );
 
+//Allow fetching spaces by a specific SpaceType ID.
+space.get(
+  '/bySpaceType/:spaceTypeId',
+  [authenticator, admin, planner, roleChecker, validate],
+  (req: Request, res: Response) => {
+    const { spaceTypeId } = req.params;
+    db_knex('Space')
+      .where({ spaceTypeId })
+      .then((spaces) => {
+        if (spaces.length > 0) {
+          successHandler(
+            req,
+            res,
+            spaces,
+            `Spaces found for space type ID: ${spaceTypeId}`,
+          );
+        } else {
+          successHandler(
+            req,
+            res,
+            [],
+            `No spaces found for space type ID: ${spaceTypeId}`,
+          );
+        }
+      })
+      .catch((error) => {
+        dbErrorHandler(
+          req,
+          res,
+          error,
+          'Failed to fetch spaces by space type ID',
+        );
+      });
+  },
+);
+
 export default space;
