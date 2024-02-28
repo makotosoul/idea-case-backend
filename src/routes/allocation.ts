@@ -311,7 +311,6 @@ allocation.get(
         'p.name as program',
         's.name as lesson',
         'sp.name as room',
-        's.id as subjectId',
       )
       .from('AllocSpace as a')
       .innerJoin('Space as sp', 'a.spaceId', 'sp.id')
