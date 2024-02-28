@@ -302,24 +302,25 @@ allocation.post(
 
 //Get data for full report csv
 allocation.get(
-  '/report',
+  '/report/:allocRoundId',
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex
-      .select(
+      .distinct(
         'd.name as department',
         'p.name as program',
         's.name as lesson',
         'sp.name as room',
+        's.id as subjectId',
       )
       .from('AllocSpace as a')
       .innerJoin('Space as sp', 'a.spaceId', 'sp.id')
       .innerJoin('Subject as s', 'a.subjectId', 's.id')
       .innerJoin('Program as p', 's.programId', 'p.id')
       .innerJoin('Department as d', 'p.departmentId', 'd.id')
-      .innerJoin('AllocSubject as als', 'a.subjectId', 'als.subjectId')
-      .where('als.isAllocated', 1)
-      //.andWhere('als.allocRoundId', req.body.allocRoundId)
+      //.innerJoin('AllocSubject as als', 'a.subjectId', 'als.subjectId')
+      .where('a.allocRoundId', req.params.allocRoundId)
+      //.andWhere('als.isAllocated', 1)
       .then((data) => {
         successHandler(req, res, data, 'getAll succesful - Report');
       })
@@ -331,11 +332,11 @@ allocation.get(
 
 // get data for plannerReport
 allocation.get(
-  '/plannerreport',
+  '/plannerreport/:allocRoundId',
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex
-      .select(
+      .distinct(
         'd.name as department',
         'p.name as program',
         's.name as lesson',
@@ -347,9 +348,8 @@ allocation.get(
       .innerJoin('Subject as s', 'p.id', 's.programId')
       .innerJoin('AllocSpace as a', 's.id', 'a.subjectId')
       .innerJoin('Space as sp', 'a.spaceId', 'sp.id')
-      .innerJoin('AllocSubject as als', 'a.subjectId', 'als.subjectId')
       .where('dp.userId', req.user.id)
-      //.andWhere('als.allocRoundId', req.body.allocRoundId)
+      .andWhere('a.allocRoundId', req.params.allocRoundId)
       .then((data) => {
         successHandler(req, res, data, 'getAll succesful - Report');
       })
