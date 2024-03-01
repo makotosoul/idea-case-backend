@@ -300,7 +300,7 @@ allocation.post(
   },
 );
 
-//Get data for full report csv
+//Get data for full report to excel
 allocation.get(
   '/report/:allocRoundId',
   [authenticator, admin, planner, statist, roleChecker, validate],
@@ -311,15 +311,21 @@ allocation.get(
         'p.name as program',
         's.name as lesson',
         'sp.name as room',
+        db_knex.raw(
+          'TRUNCATE((EXTRACT(hour from a.totalTime) + (extract(minute from a.totalTime)/60)), 2) as hours',
+        ),
       )
       .from('AllocSpace as a')
       .innerJoin('Space as sp', 'a.spaceId', 'sp.id')
       .innerJoin('Subject as s', 'a.subjectId', 's.id')
       .innerJoin('Program as p', 's.programId', 'p.id')
       .innerJoin('Department as d', 'p.departmentId', 'd.id')
-      //.innerJoin('AllocSubject as als', 'a.subjectId', 'als.subjectId')
       .where('a.allocRoundId', req.params.allocRoundId)
-      //.andWhere('als.isAllocated', 1)
+      .orderBy([
+        { column: 'department' },
+        { column: 'program' },
+        { column: 'lesson' },
+      ])
       .then((data) => {
         successHandler(req, res, data, 'getAll succesful - Report');
       })
@@ -329,7 +335,7 @@ allocation.get(
   },
 );
 
-// get data for plannerReport
+// get data for plannerReport to excel
 allocation.get(
   '/plannerreport/:allocRoundId',
   [authenticator, admin, planner, statist, roleChecker, validate],
@@ -340,6 +346,9 @@ allocation.get(
         'p.name as program',
         's.name as lesson',
         'sp.name as room',
+        db_knex.raw(
+          'TRUNCATE((EXTRACT(hour from a.totalTime) + (extract(minute from a.totalTime)/60)), 2) as hours',
+        ),
       )
       .from('DepartmentPlanner as dp')
       .innerJoin('Department as d', 'dp.departmentId', 'd.id')
