@@ -6,7 +6,7 @@ import {
 } from '../types/custom.js';
 
 /* Get all the allocations */
-
+/*
 const getAll = (): Promise<string> => {
   const sqlQuery =
     'SELECT id, name, isSeasonAlloc, description, lastModified FROM AllocRound ar;';
@@ -17,9 +17,16 @@ const getAll = (): Promise<string> => {
     });
   });
 };
+*/
+
+const getAll = (): Promise<string> => {
+  return db_knex
+    .select('id', 'name', 'isSeasonAlloc', 'description', 'lastModified')
+    .from('AllocRound as ar');
+};
 
 /* Get allocation by id */
-const getById = (allocRoundId: number): Promise<string> => {
+/*const getById = (allocRoundId: number): Promise<string> => {
   const sqlQuery = `SELECT ar.id,
 	            ar.name,
 	            ar.isSeasonAlloc,
@@ -44,9 +51,32 @@ const getById = (allocRoundId: number): Promise<string> => {
       resolve(result);
     });
   });
+}; */
+
+const getById = (allocRoundId: number): Promise<string> => {
+  return new Promise(() => {
+    db_knex
+      .select(
+        'ar.name',
+        'ar.IsSeasonAlloc',
+        'ar.description',
+        'ar.lastModified',
+        'ar.isAllocated',
+        'ar.processOn',
+        db_knex.raw(
+          `COUNT(*) FROM AllocSubject WHERE AllocRound = ${allocRoundId} AS 'Subjects'`,
+        ),
+        db_knex.raw(
+          `OUNT(*) FROM AllocSubject WHERE isAllocated = 1 AND AllocRound = ${allocRoundId} AS 'allocated'`,
+        ),
+      )
+      .from('AllocRound')
+      .where('ar.id', `${allocRoundId}`);
+  });
 };
 
 // Get all subjects in allocation by id
+/*
 const getAllSubjectsById = (allocRoundId: number) => {
   const sqlQuery = `SELECT
         s.id,
@@ -74,8 +104,37 @@ const getAllSubjectsById = (allocRoundId: number) => {
       }
     });
   });
-};
+}; */
 
+const getAllSubjectsById = (allocRoundId: number) => {
+  db_knex
+    .select(
+      's.id',
+      's.name',
+      'as2.isAllocated',
+      'as2.cantAllocate',
+      'as2.priority',
+      db_knex.raw(
+        `IFNULL((SELECT CAST(SUM(TIME_TO_SEC(al_sp.totalTime)/3600) AS DECIMAL(10,1))
+        FROM AllocSpace al_sp
+        WHERE al_sp.allocRoundId = ${allocRoundId} AND al_sp.subjectId = s.id
+        GROUP BY al_sp.subjectId), 0) AS "AllocatedHours",
+        CAST((TIME_TO_SEC(s.sessionLength) * s.groupCount * s.sessionCount / 3600) AS DECIMAL(10,1)) AS "requiredHours"`,
+      ),
+    )
+    .from('Subject as s')
+    .innerJoin('AllocSubject as as2', 's.id', 'as2.subjectId')
+    .innerJoin('AllocSpace as al_sp', 's.id', 'al_sp.subjectId')
+    .where('as2.allocRoundId', allocRoundId)
+    .groupBy('s.id')
+    .orderBy('as2.priority', 'asc')
+    .then((data) => {
+      return data;
+    })
+    .catch((err) => {
+      return err;
+    });
+};
 interface RoomsByAllocId {
   id: string;
   name: string;
