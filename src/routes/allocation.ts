@@ -4,6 +4,7 @@ import { planner } from '../authorization/planner.js';
 import { roleChecker } from '../authorization/roleChecker.js';
 import { statist } from '../authorization/statist.js';
 import { authenticator } from '../authorization/userValidation.js';
+import db_knex from '../db/index_knex.js';
 import { dbErrorHandler, successHandler } from '../responseHandler/index.js';
 import allocationService from '../services/allocation.js';
 import programService from '../services/program.js';
@@ -295,6 +296,65 @@ allocation.post(
           err,
           'Oops! Allocation failed - Allocation start',
         );
+      });
+  },
+);
+
+//Get data for full report csv
+allocation.get(
+  '/report/:allocRoundId',
+  [authenticator, admin, planner, statist, roleChecker, validate],
+  (req: Request, res: Response) => {
+    db_knex
+      .distinct(
+        'd.name as department',
+        'p.name as program',
+        's.name as lesson',
+        'sp.name as room',
+      )
+      .from('AllocSpace as a')
+      .innerJoin('Space as sp', 'a.spaceId', 'sp.id')
+      .innerJoin('Subject as s', 'a.subjectId', 's.id')
+      .innerJoin('Program as p', 's.programId', 'p.id')
+      .innerJoin('Department as d', 'p.departmentId', 'd.id')
+      //.innerJoin('AllocSubject as als', 'a.subjectId', 'als.subjectId')
+      .where('a.allocRoundId', req.params.allocRoundId)
+      //.andWhere('als.isAllocated', 1)
+      .then((data) => {
+        successHandler(req, res, data, 'getAll succesful - Report');
+      })
+      .catch((err) => {
+        dbErrorHandler(req, res, err, 'Oops! Nothing came through - Report');
+      });
+  },
+);
+
+// get data for plannerReport
+allocation.get(
+  '/plannerreport/:allocRoundId',
+  [authenticator, admin, planner, statist, roleChecker, validate],
+  (req: Request, res: Response) => {
+    db_knex
+      .distinct(
+        'd.name as department',
+        'p.name as program',
+        's.name as lesson',
+        'sp.name as room',
+      )
+      .from('DepartmentPlanner as dp')
+      .innerJoin('Department as d', 'dp.departmentId', 'd.id')
+      .innerJoin('Program as p', 'd.id', 'p.departmentId')
+      .innerJoin('Subject as s', 'p.id', 's.programId')
+      .innerJoin('AllocSpace as a', 's.id', 'a.subjectId')
+      .innerJoin('Space as sp', 'a.spaceId', 'sp.id')
+      .where('dp.userId', req.user.id)
+      .andWhere('a.allocRoundId', req.params.allocRoundId)
+      .then((data) => {
+        successHandler(req, res, data, 'getAll succesful - Report');
+      })
+      .catch((err) => {
+        logger.error('Some DB error while checking user dep planner rights');
+        dbErrorHandler(req, res, err, 'Oops! Nothing came through - Report');
       });
   },
 );
