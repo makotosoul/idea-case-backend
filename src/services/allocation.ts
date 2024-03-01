@@ -192,6 +192,7 @@ const getAllocatedRoomsByProgram = async (
 };
 
 /* Get allocated rooms by Subject.id and AllocRound.id */
+/*
 const getAllocatedRoomsBySubject = async (
   subjectId: number,
   allocRoundId: number,
@@ -213,8 +214,30 @@ const getAllocatedRoomsBySubject = async (
     });
   });
 };
-/* Get subjects by Program.id and AllocRound.id */
+*/
 
+const getAllocatedRoomsBySubject = async (
+  subjectId: number,
+  allocRoundId: number,
+): Promise<string> => {
+  return db_knex
+    .distinct(
+      's.id',
+      's.name',
+      db_knex.raw(
+        'CAST(SUM(TIME_TO_SEC(aspace.totalTime)/3600) AS DECIMAL(10,1)) AS allocatedHours',
+      ),
+    )
+    .from('AllocSpace as aspace')
+    .leftJoin('Space as s', 'aspace.spaceId', 's.id')
+    .leftJoin('Subject sub', 'aspace.subjectId', 'sub.id')
+    .where('sub.id', subjectId)
+    .andWhere('aspace.allocRoundId', allocRoundId)
+    .groupBy('s.id');
+};
+
+/* Get subjects by Program.id and AllocRound.id */
+/*
 const getSubjectsByProgram = (
   allocRoundId: number,
   programId: number,
@@ -239,10 +262,39 @@ const getSubjectsByProgram = (
       }
     });
   });
+}; */
+
+const getSubjectsByProgram = (
+  allocRoundId: number,
+  programId: number,
+): Promise<AllocatedSubjectsByProgramType> => {
+  return db_knex
+    .select(
+      'alsub.subjectId as id',
+      'sub.name',
+      db_knex.raw(
+        'IFNULL(CAST(SUM(TIME_TO_SEC(alspace.totalTime) / 3600) AS DECIMAL(10,1)), 0) AS allocatedHours',
+      ),
+      db_knex.raw(
+        'CAST((sub.groupCount * TIME_TO_SEC(sub.sessionLength) * sub.sessionCount / 3600) AS DECIMAL(10,1)) as requiredHours',
+      ),
+    )
+    .from('AllocSubject as alsub')
+    .join('Subject as sub', 'alsub.subjectId', 'sub.id')
+    .join('Program as p', 'sub.programId', 'p.id')
+    .leftJoin('AllocSpace as alspace', function () {
+      this.on('alsub.subjectId', 'alspace.subjectId').andOn(
+        'alsub.allocRoundId',
+        'alspace.allocRoundId',
+      );
+    })
+    .where('p.id', programId)
+    .andWhere('alsub.allocRoundId', allocRoundId)
+    .groupBy('alsub.subjectId');
 };
 
 /* Get subjects by Room.id and AllocRound.id */
-
+/*
 const getAllocatedSubjectsByRoom = (
   roomId: number,
   allocRoundId: number,
@@ -262,9 +314,24 @@ const getAllocatedSubjectsByRoom = (
       }
     });
   });
+}; */
+
+const getAllocatedSubjectsByRoom = (
+  roomId: number,
+  allocRoundId: number,
+): Promise<string> => {
+  return new Promise(() => {
+    db_knex
+      .select('su.id', 'su.name', 'allocSp.totalTime')
+      .from('AllocSpace as allocSp')
+      .innerJoin('Subject su', 'allocSp.subjectId', 'su.id')
+      .where('allocSp.spaceId', roomId)
+      .andWhere('allocSp.allocRoundId', allocRoundId);
+  });
 };
 
 /* START ALLOCATION - Procedure in database */
+/*
 const startAllocation = (allocRoundId: number) => {
   const sqlQuery = 'CALL startAllocation(?)';
   return new Promise((resolve, reject) => {
@@ -276,9 +343,17 @@ const startAllocation = (allocRoundId: number) => {
       }
     });
   });
+}; */
+
+const startAllocation = (allocRoundId: number) => {
+  return db_knex.raw(`call startAllocation(${allocRoundId})`);
 };
 
 /* RESET ALLOCATION - Procedure in database */
+const resetAllocation = (allocRoundId: number) => {
+  return db_knex.raw(`call resetAllocation(${allocRoundId})`);
+};
+/*
 const resetAllocation = (allocRoundId: number) => {
   const sqlQuery = 'CALL resetAllocation(?)';
 
@@ -291,9 +366,13 @@ const resetAllocation = (allocRoundId: number) => {
       }
     });
   });
-};
+}; */
 
 /* ABORT ALLOCATION - Procedure in database */
+const abortAllocation = (allocRoundId: number) => {
+  return db_knex.raw(`call abortAllocation(${allocRoundId})`);
+};
+/*
 const abortAllocation = (allocRoundId: number) => {
   const sqlQuery = 'CALL abortAllocation(?)';
 
@@ -306,9 +385,10 @@ const abortAllocation = (allocRoundId: number) => {
       }
     });
   });
-};
+}; */
 
 // No more just for test round 10004
+/*
 const getUnAllocableSubjects = (allocRoundId: number): Promise<string> => {
   const sqlQuery = `SELECT all_sub.subjectId, s.name, s.groupSize, s.area, st.name AS "spaceType", s.allocRoundId
     FROM AllocSubject all_sub
@@ -322,6 +402,31 @@ const getUnAllocableSubjects = (allocRoundId: number): Promise<string> => {
       resolve(result);
     });
   });
+}; */
+
+const getUnAllocableSubjects = async (
+  allocRoundId: number,
+): Promise<string> => {
+  return db_knex
+    .select(
+      'all_sub.subjectId',
+      's.name',
+      's.groupSize',
+      's.area',
+      'st.name as spaceType',
+      's.allocRoundId',
+    )
+    .from('AllocSubject as all_sub')
+    .join('Subject as s', 'all_sub.subjectId', 's.id')
+    .join('Spacetype as st', 's.spaceTypeId', 'st.id')
+    .where('cantAllocate', '1')
+    .andWhere('s.allocRoundId', allocRoundId)
+    .then((data) => {
+      return data;
+    })
+    .catch((err) => {
+      return err;
+    });
 };
 
 // work in progress
