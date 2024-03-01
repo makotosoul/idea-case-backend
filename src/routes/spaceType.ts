@@ -12,6 +12,11 @@ import {
   successHandler,
 } from '../responseHandler/index.js';
 import { validate, validateIdObl } from '../validationHandler/index.js';
+import {
+  validateSpaceTypeMultiPost,
+  validateSpaceTypePost,
+  validateSpaceTypePut,
+} from '../validationHandler/spaceType.js';
 
 const spaceType = express.Router();
 
@@ -104,6 +109,118 @@ spaceType.get(
             `Failed to fetch SpaceType from DB with id: ${req.params.id}`,
           );
         }
+      });
+  },
+);
+
+// adding single building
+spaceType.post(
+  '/',
+  validateSpaceTypePost,
+  [authenticator, admin, roleChecker, validate],
+  (req: Request, res: Response) => {
+    db_knex('Spacetype')
+      .insert(req.body)
+      .into('Spacetype')
+      .then((idArray) => {
+        successHandler(
+          req,
+          res,
+          idArray,
+          'Adding a spacetype, or multiple spacetypes was succesful',
+        );
+      })
+      .catch((error) => {
+        handleErrorBasedOnErrno(req, res, error, 'error adding space type');
+      });
+  },
+);
+
+// adding single or multiple spacetype
+spaceType.post(
+  '/multi',
+  validateSpaceTypeMultiPost,
+  [authenticator, admin, roleChecker, validate],
+  (req: Request, res: Response) => {
+    db_knex('SpaceType')
+      .insert(req.body)
+      .into('SpaceType')
+      .then((idArray) => {
+        successHandler(
+          req,
+          res,
+          idArray,
+          'Adding a space type, or multiple space types was succesful',
+        );
+      })
+      .catch((error) => {
+        handleErrorBasedOnErrno(req, res, error, 'error adding space type');
+      });
+  },
+);
+
+// updating building information
+spaceType.put(
+  '/',
+  validateSpaceTypePut,
+  [authenticator, admin, roleChecker, validate],
+  (req: Request, res: Response) => {
+    if (!req.body.name) {
+      requestErrorHandler(req, res, 'Space type name is missing.');
+    } else {
+      db_knex('SpaceType')
+        .where('id', req.body.id)
+        .update(req.body)
+        .then((rowsAffected) => {
+          if (rowsAffected === 1) {
+            successHandler(
+              req,
+              res,
+              rowsAffected,
+              `Update space type successful! Count of modified rows: ${rowsAffected}`,
+            );
+          } else {
+            requestErrorHandler(
+              req,
+              res,
+              `Update space type not successful, ${rowsAffected} row modified`,
+            );
+          }
+        })
+        .catch((error) => {
+          handleErrorBasedOnErrno(req, res, error, 'error updating space type');
+        });
+    }
+  },
+);
+
+spaceType.delete(
+  '/:id',
+  validateIdObl,
+  [authenticator, admin, roleChecker, validate],
+  (req: Request, res: Response) => {
+    db_knex('SpaceType')
+      .select()
+      .where('id', req.params.id)
+      .del()
+      .then((rowsAffected) => {
+        if (rowsAffected === 1) {
+          successHandler(
+            req,
+            res,
+            rowsAffected,
+            `Delete succesfull! Count of deleted rows: ${rowsAffected}`,
+          );
+        } else {
+          requestErrorHandler(
+            req,
+            res,
+            `Invalid space type id:${req.params.id}`,
+          );
+        }
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Error deleting space type');
       });
   },
 );
