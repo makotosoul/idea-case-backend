@@ -312,7 +312,7 @@ allocation.get(
         's.name as lesson',
         'sp.name as room',
         db_knex.raw(
-          'TRUNCATE((EXTRACT(hour from a.totalTime) + (extract(minute from a.totalTime)/60)), 1) as hours',
+          'TRUNCATE((EXTRACT(hour from a.totalTime) + (extract(minute from a.totalTime)/60)), 2) as hours',
         ),
       )
       .from('AllocSpace as a')
@@ -347,7 +347,7 @@ allocation.get(
         's.name as lesson',
         'sp.name as room',
         db_knex.raw(
-          'TRUNCATE((EXTRACT(hour from a.totalTime) + (extract(minute from a.totalTime)/60)), 1) as hours',
+          'TRUNCATE((EXTRACT(hour from a.totalTime) + (extract(minute from a.totalTime)/60)), 2) as hours',
         ),
       )
       .from('DepartmentPlanner as dp')
