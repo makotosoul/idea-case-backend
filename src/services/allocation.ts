@@ -1,3 +1,4 @@
+import db from '../db/index.js';
 import db_knex from '../db/index_knex.js';
 import {
   AllocatedRoomsByProgramType,
@@ -114,7 +115,7 @@ const getAllocatedRoomsByProgram = async (
 };
 
 /* Get allocated rooms by Subject.id and AllocRound.id */
-const getAllocatedRoomsBySubject = async (
+const getAllocatedRoomsBySubject = (
   subjectId: number,
   allocRoundId: number,
 ): Promise<string> => {
@@ -129,7 +130,7 @@ const getAllocatedRoomsBySubject = async (
     .from('AllocSpace as aspace')
     .leftJoin('Space as s', 'aspace.spaceId', 's.id')
     .leftJoin('Subject sub', 'aspace.subjectId', 'sub.id')
-    .where('sub.id', subjectId)
+    .where('aspace.subjectId', subjectId)
     .andWhere('aspace.allocRoundId', allocRoundId)
     .groupBy('s.id');
 };
@@ -221,6 +222,39 @@ const getUnAllocableSubjects = async (
 };
 
 // work in progress
+const getSpacesForSubject = (subjectId: number): Promise<string> => {
+  const sqlQuery = `SELECT
+    s.id,
+    s.name,
+    s.area,
+    getMissingItemAmount(?, s.id) AS "missingItems",
+    IF(s.area >= (SELECT area FROM Subject WHERE id = ?), TRUE, FALSE) AS areaOk,
+    s.personLimit,
+    IF(s.personLimit >= (SELECT groupSize FROM Subject WHERE id = ?), TRUE, FALSE) AS personLimitOk,
+    s.inUse,
+    st.name as "spaceType",
+    IF(st.id = (SELECT spaceTypeId FROM Subject WHERE id = ?), TRUE, FALSE) AS spaceTypeOk
+    FROM Space s
+    LEFT JOIN SpaceEquipment se ON s.id = se.spaceId
+    LEFT JOIN SpaceType st ON s.spaceTypeId = st.id
+    GROUP BY s.id
+    ORDER BY FIELD(st.id, (SELECT spaceTypeId FROM Subject WHERE id = ?)) DESC,
+    missingItems,
+    personLimitOk DESC,
+    areaOk DESC
+    ;`;
+  return new Promise((resolve, reject) => {
+    db.query(
+      sqlQuery,
+      [subjectId, subjectId, subjectId, subjectId, subjectId],
+      (err, result) => {
+        if (err) return reject(err);
+        resolve(result);
+      },
+    );
+  });
+};
+/*
 const getSpacesForSubject = async (subjectId: number): Promise<string> => {
   return db_knex
     .select(
@@ -259,7 +293,7 @@ const getSpacesForSubject = async (subjectId: number): Promise<string> => {
     .catch((err) => {
       return err;
     });
-};
+}; */
 
 const getMissingEquipmentForRoom = async (
   subjectId: number,
