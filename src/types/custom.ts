@@ -61,3 +61,11 @@ export interface AllocatedSubjectsByProgramType extends Program {
 export interface AllocatedRoomsByProgramType extends Program {
   allocatedhours: number;
 }
+
+export interface RoomsByAllocId {
+  id: string;
+  name: string;
+  allocRoundId: string;
+  requiredHours: string;
+  spaceTypeId: string;
+}

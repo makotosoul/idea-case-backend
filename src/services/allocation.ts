@@ -3,6 +3,7 @@ import db_knex from '../db/index_knex.js';
 import {
   AllocatedRoomsByProgramType,
   AllocatedSubjectsByProgramType,
+  RoomsByAllocId,
 } from '../types/custom.js';
 
 /* Get all the allocations */
@@ -135,13 +136,6 @@ const getAllSubjectsById = (allocRoundId: number) => {
       return err;
     });
 };
-interface RoomsByAllocId {
-  id: string;
-  name: string;
-  allocRoundId: string;
-  requiredHours: string;
-  spaceTypeId: string;
-}
 
 /* Get allocated rooms with allocatedHours */
 const getRoomsByAllocId = (allocRoundId: number): Promise<RoomsByAllocId[]> => {
