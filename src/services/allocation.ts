@@ -88,7 +88,9 @@ const getRoomsByAllocId = (allocRoundId: number): Promise<RoomsByAllocId[]> => {
     .select('spaceTypeId')
     .orderBy('allocatedHours', 'desc');
 };
-
+/*db_knex.raw(
+  'TRUNCATE((EXTRACT(hour from as2.totalTime) + (extract(minute from as2.totalTime)/60)), 2) as hours',
+  ), */
 /* Get allocated rooms by Program.id and AllocRound.id */
 const getAllocatedRoomsByProgram = async (
   programId: number,
@@ -99,7 +101,7 @@ const getAllocatedRoomsByProgram = async (
       's.id',
       's.name',
       db_knex.raw(
-        'CAST(SUM(TIME_TO_SEC(as2.totalTime)/3600) AS DECIMAL(10,1)) AS allocatedHours',
+        'CAST(SUM(EXTRACT(hour from as2.totalTime) + extract(minute from as2.totalTime)/60) AS DECIMAL(10,2)) AS allocatedHours',
       ),
     )
     .from('Allocspace as as2')
@@ -121,7 +123,7 @@ const getAllocatedRoomsBySubject = async (
       's.id',
       's.name',
       db_knex.raw(
-        'CAST(SUM(TIME_TO_SEC(aspace.totalTime)/3600) AS DECIMAL(10,1)) AS allocatedHours',
+        'CAST(SUM(EXTRACT(hour from aspace.totalTime) + extract(minute from aspace.totalTime)/60) AS DECIMAL(10,2)) AS allocatedHours',
       ),
     )
     .from('AllocSpace as aspace')
