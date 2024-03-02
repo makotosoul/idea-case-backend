@@ -430,6 +430,46 @@ const getUnAllocableSubjects = async (
 };
 
 // work in progress
+const getSpacesForSubject = async (subjectId: number): Promise<string> => {
+  return db_knex
+    .select(
+      's.id',
+      's.name',
+      's.area',
+      db_knex.raw(`getMissingItemAmount(${subjectId}, s.id) as missingItems`),
+      db_knex.raw(
+        `IF(s.area >= (SELECT area FROM Subject WHERE id = ${subjectId}), TRUE, FALSE) AS areaOk,`,
+      ),
+      's.personLimit',
+      db_knex.raw(
+        `IF(s.personLimit >= (SELECT groupSize FROM Subject WHERE id = ${subjectId}), TRUE, FALSE) AS personLimitOk`,
+      ),
+      's.inUse',
+      'st.name as spaceType',
+      db_knex.raw(
+        `IF(st.id = (SELECT spaceTypeId FROM Subject WHERE id = ${subjectId}), TRUE, FALSE) AS spaceTypeOk`,
+      ),
+    )
+    .from('Space as s')
+    .leftJoin('SpaceEquipment as se', 's.id', 'se.spaceId')
+    .leftJoin('SpaceType as st', 's.spaceTypeId', 'st.id')
+    .groupBy('s.id')
+    .orderByRaw(
+      `FIELD(st.id, (SELECT spaceTypeId FROM Subject WHERE id = ${subjectId})) DESC`,
+    )
+    .orderBy([
+      { column: 'missingItems' },
+      { column: 'personLimitOk', order: 'desc' },
+      { column: 'areaOk', order: 'desc' },
+    ])
+    .then((data) => {
+      return data;
+    })
+    .catch((err) => {
+      return err;
+    });
+};
+/*
 const getSpacesForSubject = (subjectId: number): Promise<string> => {
   const sqlQuery = `SELECT
     s.id,
@@ -461,8 +501,8 @@ const getSpacesForSubject = (subjectId: number): Promise<string> => {
       },
     );
   });
-};
-
+}; */
+/*
 const getMissingEquipmentForRoom = (
   subjectId: number,
   spaceId: number,
@@ -480,6 +520,30 @@ const getMissingEquipmentForRoom = (
       resolve(result);
     });
   });
+}; */
+
+const getMissingEquipmentForRoom = async (
+  subjectId: number,
+  spaceId: number,
+): Promise<string> => {
+  return db_knex
+    .select('e.id', 'e.name')
+    .from('SubjectEquipment sub_eq')
+    .join('Equipment as e', 'sub_eq.equipmentId', 'e.id')
+    .where('subjectId', subjectId)
+    .except(
+      db_knex
+        .select('e2.id', 'e2.name')
+        .from('SpaceEquipment as sp_eq')
+        .join('Equipment as e2', 'sp_eq.equipmentId', 'e2.id')
+        .where('spaceId', spaceId),
+    )
+    .then((data) => {
+      return data;
+    })
+    .catch((err) => {
+      return err;
+    });
 };
 
 export default {
