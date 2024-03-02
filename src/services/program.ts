@@ -1,30 +1,15 @@
-import db from '../db/index.js';
+import db_knex from '../db/index_knex.js';
 import { Program } from '../types/custom.js';
 
 const getAll = (): Promise<Program[]> => {
-  const sqlQuery = 'SELECT p.id, p.name FROM Program p;';
-  return new Promise((resolve, reject) => {
-    db.query(sqlQuery, (err, result) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(result);
-      }
-    });
-  });
+  return db_knex.select('p.id', 'p.name').from('Program as p');
 };
 
 const getById = (id: number) => {
-  const sqlQuery = 'SELECT p.id, p.name FROM Program p WHERE p.id=?;';
-  return new Promise((resolve, reject) => {
-    db.query(sqlQuery, [id], (err, result) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(result);
-      }
-    });
-  });
+  return db_knex
+    .select('p.id', 'p.name')
+    .from('Program as p')
+    .where('p.id', id);
 };
 
 export default {
