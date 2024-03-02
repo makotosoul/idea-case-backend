@@ -167,7 +167,27 @@ const getRoomsByAllocId = (allocRoundId: number): Promise<RoomsByAllocId[]> => {
 };
 
 /* Get allocated rooms by Program.id and AllocRound.id */
-
+const getAllocatedRoomsByProgram = async (
+  programId: number,
+  allocRoundId: number,
+): Promise<AllocatedRoomsByProgramType> => {
+  return db_knex
+    .distinct(
+      's.id',
+      's.name',
+      db_knex.raw(
+        'CAST(SUM(TIME_TO_SEC(as2.totalTime)/3600) AS DECIMAL(10,1)) AS allocatedHours',
+      ),
+    )
+    .from('Allocspace as as2')
+    .leftJoin('Space as s', 'as2.spaceId', 's.id')
+    .leftJoin('Subject as s2', 'as2.subjectId', 's2.id')
+    .leftJoin('Program as p', 's2.programId', 'p.id')
+    .where('p.id', programId)
+    .andWhere('as2.allocRoundId', allocRoundId)
+    .groupBy('s.id');
+};
+/*
 const getAllocatedRoomsByProgram = async (
   programId: number,
   allocRoundId: number,
@@ -189,7 +209,7 @@ const getAllocatedRoomsByProgram = async (
       }
     });
   });
-};
+}; */
 
 /* Get allocated rooms by Subject.id and AllocRound.id */
 /*
