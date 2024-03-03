@@ -124,7 +124,7 @@ const getAllocatedRoomsBySubject = (
       's.id',
       's.name',
       db_knex.raw(
-        'CAST(SUM(EXTRACT(hour from aspace.totalTime) + extract(minute from aspace.totalTime)/60) AS DECIMAL(10,2)) AS allocatedHours',
+        'cast(sum(extract(hour from aspace.totalTime) + extract(minute from aspace.totalTime)/60) as decimal(10,2)) as allocatedHours',
       ),
     )
     .from('AllocSpace as aspace')
@@ -166,18 +166,22 @@ const getSubjectsByProgram = (
 };
 
 /* Get subjects by Room.id and AllocRound.id */
-const getAllocatedSubjectsByRoom = (
+const getAllocatedSubjectsByRoom = async (
   roomId: number,
   allocRoundId: number,
 ): Promise<string> => {
-  return new Promise(() => {
-    db_knex
-      .select('su.id', 'su.name', 'allocSp.totalTime')
-      .from('AllocSpace as allocSp')
-      .innerJoin('Subject su', 'allocSp.subjectId', 'su.id')
-      .where('allocSp.spaceId', roomId)
-      .andWhere('allocSp.allocRoundId', allocRoundId);
-  });
+  return db_knex
+    .select('su.id', 'su.name', 'allocSp.totalTime')
+    .from('AllocSpace as allocSp')
+    .innerJoin('Subject as su', 'su.id', 'allocSp.subjectId')
+    .where('allocSp.spaceId', roomId)
+    .andWhere('allocSp.allocRoundId', allocRoundId)
+    .then((data) => {
+      return data;
+    })
+    .catch((err) => {
+      return err;
+    });
 };
 
 /* START ALLOCATION - Procedure in database */
