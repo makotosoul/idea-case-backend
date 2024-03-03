@@ -243,7 +243,7 @@ const getSpacesForSubject = async (subjectId: number): Promise<string> => {
       's.area',
       db_knex.raw(`getMissingItemAmount(${subjectId}, s.id) as missingItems`),
       db_knex.raw(
-        `IF(s.area >= (SELECT area FROM Subject WHERE id = ${subjectId}), TRUE, FALSE) AS areaOk,`,
+        `IF(s.area >= (SELECT area FROM Subject WHERE id = ${subjectId}), TRUE, FALSE) AS areaOk`,
       ),
       's.personLimit',
       db_knex.raw(
