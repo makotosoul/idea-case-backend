@@ -171,7 +171,14 @@ const getAllocatedSubjectsByRoom = async (
   allocRoundId: number,
 ): Promise<string> => {
   return db_knex
-    .select('su.id', 'su.name', 'allocSp.totalTime')
+    .select(
+      'su.id',
+      'su.name',
+      //'allocSp.totalTime'
+      db_knex.raw(
+        'TRUNCATE((EXTRACT(hour from allocSp.totalTime) + (extract(minute from allocSp.totalTime)/60)), 2) as totalTime',
+      ),
+    )
     .from('AllocSpace as allocSp')
     .innerJoin('Subject as su', 'su.id', 'allocSp.subjectId')
     .where('allocSp.spaceId', roomId)
@@ -225,40 +232,6 @@ const getUnAllocableSubjects = async (
     });
 };
 
-// work in progress
-const getSpacesForSubject = (subjectId: number): Promise<string> => {
-  const sqlQuery = `SELECT
-    s.id,
-    s.name,
-    s.area,
-    getMissingItemAmount(?, s.id) AS "missingItems",
-    IF(s.area >= (SELECT area FROM Subject WHERE id = ?), TRUE, FALSE) AS areaOk,
-    s.personLimit,
-    IF(s.personLimit >= (SELECT groupSize FROM Subject WHERE id = ?), TRUE, FALSE) AS personLimitOk,
-    s.inUse,
-    st.name as "spaceType",
-    IF(st.id = (SELECT spaceTypeId FROM Subject WHERE id = ?), TRUE, FALSE) AS spaceTypeOk
-    FROM Space s
-    LEFT JOIN SpaceEquipment se ON s.id = se.spaceId
-    LEFT JOIN SpaceType st ON s.spaceTypeId = st.id
-    GROUP BY s.id
-    ORDER BY FIELD(st.id, (SELECT spaceTypeId FROM Subject WHERE id = ?)) DESC,
-    missingItems,
-    personLimitOk DESC,
-    areaOk DESC
-    ;`;
-  return new Promise((resolve, reject) => {
-    db.query(
-      sqlQuery,
-      [subjectId, subjectId, subjectId, subjectId, subjectId],
-      (err, result) => {
-        if (err) return reject(err);
-        resolve(result);
-      },
-    );
-  });
-};
-/*
 const getSpacesForSubject = async (subjectId: number): Promise<string> => {
   return db_knex
     .select(
@@ -297,7 +270,7 @@ const getSpacesForSubject = async (subjectId: number): Promise<string> => {
     .catch((err) => {
       return err;
     });
-}; */
+};
 
 const getMissingEquipmentForRoom = async (
   subjectId: number,
