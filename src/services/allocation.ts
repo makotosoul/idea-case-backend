@@ -28,7 +28,7 @@ const getById = (allocRoundId: number): Promise<string> => {
           `COUNT(*) FROM AllocSubject WHERE AllocRound = ${allocRoundId} AS 'Subjects'`,
         ),
         db_knex.raw(
-          `OUNT(*) FROM AllocSubject WHERE isAllocated = 1 AND AllocRound = ${allocRoundId} AS 'allocated'`,
+          `COUNT(*) FROM AllocSubject WHERE isAllocated = 1 AND AllocRound = ${allocRoundId} AS 'allocated'`,
         ),
       )
       .from('AllocRound')
@@ -46,11 +46,11 @@ const getAllSubjectsById = (allocRoundId: number) => {
       'as2.cantAllocate',
       'as2.priority',
       db_knex.raw(
-        `IFNULL((SELECT CAST(SUM(TIME_TO_SEC(al_sp.totalTime)/3600) AS DECIMAL(10,1))
+        `IFNULL((SELECT CAST(EXTRACT(hour from al_sp.totalTime) + extract(minute from al_sp.totalTime)/60) AS DECIMAL(10,2))
         FROM AllocSpace al_sp
         WHERE al_sp.allocRoundId = ${allocRoundId} AND al_sp.subjectId = s.id
         GROUP BY al_sp.subjectId), 0) AS "AllocatedHours",
-        CAST((TIME_TO_SEC(s.sessionLength) * s.groupCount * s.sessionCount / 3600) AS DECIMAL(10,1)) AS "requiredHours"`,
+        CAST(((extract(hour from s.sessionLength) + extract(minute from s.sessionLength)/60) * s.groupCount * s.sessionCount) AS DECIMAL(10,2)) AS "requiredHours"`,
       ),
     )
     .from('Subject as s')
@@ -73,8 +73,8 @@ const getRoomsByAllocId = (allocRoundId: number): Promise<RoomsByAllocId[]> => {
     .select('id', 'name')
     .select({
       allocatedHours: db_knex.raw(
-        `(SELECT IFNULL(CAST(SUM(TIME_TO_SEC(AllocSpace.totalTime))/3600 AS DECIMAL(10,1)), 0)
-            FROM AllocSpace
+        `(SELECT IFNULL(CAST(SUM(EXTRACT(hour from as2.totalTime) + extract(minute from as2.totalTime)/60) AS DECIMAL(10,2)), 0)
+            FROM AllocSpace as as2
             WHERE spaceId = id
             AND allocRoundId = ?
         )`,
@@ -145,10 +145,10 @@ const getSubjectsByProgram = (
       'alsub.subjectId as id',
       'sub.name',
       db_knex.raw(
-        'IFNULL(CAST(SUM(TIME_TO_SEC(alspace.totalTime) / 3600) AS DECIMAL(10,1)), 0) AS allocatedHours',
+        'IFNULL(CAST(SUM(extract(hour from alspace.totalTime) + extract(minute from alspace.totalTime)/60) as decimal(10,2)), 0) AS allocatedHours',
       ),
       db_knex.raw(
-        'CAST((sub.groupCount * TIME_TO_SEC(sub.sessionLength) * sub.sessionCount / 3600) AS DECIMAL(10,1)) as requiredHours',
+        'CAST((sub.groupCount * (extract(hour from sub.sessionLength) + extract(minute from sub.sessionLength)/60) * sub.sessionCount) AS DECIMAL(10,2)) as requiredHours',
       ),
     )
     .from('AllocSubject as alsub')
