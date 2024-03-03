@@ -1,4 +1,3 @@
-import db from '../db/index.js';
 import db_knex from '../db/index_knex.js';
 import {
   AllocatedRoomsByProgramType,
@@ -14,31 +13,35 @@ const getAll = (): Promise<string> => {
 };
 
 /* Get allocation by id */
-const getById = (allocRoundId: number): Promise<string> => {
-  return new Promise(() => {
-    db_knex
-      .select(
-        'ar.name',
-        'ar.IsSeasonAlloc',
-        'ar.description',
-        'ar.lastModified',
-        'ar.isAllocated',
-        'ar.processOn',
-        db_knex.raw(
-          `COUNT(*) FROM AllocSubject WHERE AllocRound = ${allocRoundId} AS 'Subjects'`,
-        ),
-        db_knex.raw(
-          `COUNT(*) FROM AllocSubject WHERE isAllocated = 1 AND AllocRound = ${allocRoundId} AS 'allocated'`,
-        ),
-      )
-      .from('AllocRound')
-      .where('ar.id', `${allocRoundId}`);
-  });
+const getById = async (allocRoundId: number): Promise<string> => {
+  return db_knex
+    .select(
+      'ar.name',
+      'ar.IsSeasonAlloc',
+      'ar.description',
+      'ar.lastModified',
+      'ar.isAllocated',
+      'ar.processOn',
+      db_knex.raw(
+        `COUNT(*) FROM AllocSubject WHERE AllocRound = ${allocRoundId} AS 'Subjects'`,
+      ),
+      db_knex.raw(
+        `COUNT(*) FROM AllocSubject WHERE isAllocated = 1 AND AllocRound = ${allocRoundId} AS 'allocated'`,
+      ),
+    )
+    .from('AllocRound')
+    .where('ar.id', `${allocRoundId}`)
+    .then((data) => {
+      return data;
+    })
+    .catch((err) => {
+      return err;
+    });
 };
 
 // Get all subjects in allocation by id
-const getAllSubjectsById = (allocRoundId: number) => {
-  db_knex
+const getAllSubjectsById = async (allocRoundId: number) => {
+  return db_knex
     .select(
       's.id',
       's.name',
