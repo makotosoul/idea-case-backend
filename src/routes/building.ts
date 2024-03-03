@@ -245,4 +245,32 @@ building.get(
   },
 );
 
+// Count the number of spaces associated with a specific building ID
+building.get(
+  '/spaceCount/:id',
+  [authenticator, admin, planner, statist, roleChecker, validate],
+  (req: Request, res: Response) => {
+    const { id } = req.params;
+    db_knex('Space')
+      .count('* as count')
+      .where('buildingId', id)
+      .then(([result]) => {
+        successHandler(
+          req,
+          res,
+          result,
+          'Successfully counted spaces for the building',
+        );
+      })
+      .catch((error) => {
+        dbErrorHandler(
+          req,
+          res,
+          error,
+          'Failed to count spaces for the building',
+        );
+      });
+  },
+);
+
 export default building;
