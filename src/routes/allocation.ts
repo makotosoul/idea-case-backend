@@ -358,6 +358,11 @@ allocation.get(
       .innerJoin('Space as sp', 'a.spaceId', 'sp.id')
       .where('dp.userId', req.user.id)
       .andWhere('a.allocRoundId', req.params.allocRoundId)
+      .orderBy([
+        { column: 'department' },
+        { column: 'program' },
+        { column: 'lesson' },
+      ])
       .then((data) => {
         successHandler(req, res, data, 'getAll succesful - Report');
       })
