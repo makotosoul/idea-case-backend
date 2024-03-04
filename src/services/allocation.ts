@@ -281,7 +281,7 @@ const getMissingEquipmentForRoom = async (
 ): Promise<string> => {
   return db_knex
     .select('e.id', 'e.name')
-    .from('SubjectEquipment sub_eq')
+    .from('SubjectEquipment as sub_eq')
     .join('Equipment as e', 'sub_eq.equipmentId', 'e.id')
     .where('subjectId', subjectId)
     .except(
