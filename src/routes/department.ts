@@ -154,22 +154,21 @@ department.delete(
   },
 );
 
-// fetch all programs of a selected department by id
+// fetch list of all programs of a selected department by id
 department.get(
-  '/:departmentId/numberOfPrograms',
+  '/:departmentId/programsList',
   validateDepartmentId,
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     const id = req.params.departmentId;
     db_knex('Program')
-      .count('*')
+      .select('name')
       .where('departmentId', id)
-      .first()
-      .then((numberOfPrograms) => {
+      .then((programsList) => {
         successHandler(
           req,
           res,
-          numberOfPrograms,
+          programsList,
           'Successfully recived the programs of the department by id from database',
         );
       })
@@ -183,5 +182,4 @@ department.get(
       });
   },
 );
-
 export default department;
