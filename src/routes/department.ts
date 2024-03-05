@@ -154,9 +154,9 @@ department.delete(
   },
 );
 
-// fetch list of all programs of a selected department by id
+// fetch list of all programs names of a selected department by id
 department.get(
-  '/:departmentId/programsList',
+  '/:departmentId/programsNamesList',
   validateDepartmentId,
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
@@ -164,11 +164,70 @@ department.get(
     db_knex('Program')
       .select('name')
       .where('departmentId', id)
-      .then((programsList) => {
+      .then((programsNamesList) => {
         successHandler(
           req,
           res,
-          programsList,
+          programsNamesList,
+          'Successfully recived the programs of the department by id from database',
+        );
+      })
+      .catch((error) => {
+        dbErrorHandler(
+          req,
+          res,
+          error,
+          'Failed to get the programs of the department from database',
+        );
+      });
+  },
+);
+
+//fetch first five names of programs of a selected department by id
+department.get(
+  '/:departmentId/programsFirstFiveNames',
+  validateDepartmentId,
+  [authenticator, admin, planner, statist, roleChecker, validate],
+  (req: Request, res: Response) => {
+    const id = req.params.departmentId;
+    db_knex('Program')
+      .select('name')
+      .where('departmentId', id)
+      .limit(5)
+      .then((programsFirstFiveNames) => {
+        successHandler(
+          req,
+          res,
+          programsFirstFiveNames,
+          'Successfully recived the programs of the department by id from database',
+        );
+      })
+      .catch((error) => {
+        dbErrorHandler(
+          req,
+          res,
+          error,
+          'Failed to get the programs of the department from database',
+        );
+      });
+  },
+);
+// fetch total number of programs of a selected department by id
+department.get(
+  '/:departmentId/numberOfPrograms',
+  validateDepartmentId,
+  [authenticator, admin, planner, statist, roleChecker, validate],
+  (req: Request, res: Response) => {
+    const id = req.params.departmentId;
+    db_knex('Program')
+      .count('*')
+      .where('departmentId', id)
+      .first()
+      .then((numberOfPrograms) => {
+        successHandler(
+          req,
+          res,
+          numberOfPrograms,
           'Successfully recived the programs of the department by id from database',
         );
       })
