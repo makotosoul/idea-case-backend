@@ -12,6 +12,7 @@ import {
 } from '../responseHandler/index.js';
 import {
   validateDepartmentId,
+  validateDepartmentMultiPost,
   validateDepartmentPost,
   validateDepartmentPut,
 } from '../validationHandler/department.js';
@@ -72,6 +73,43 @@ department.get(
 department.post(
   '/',
   validateDepartmentPost,
+  [authenticator, admin, roleChecker, validate],
+  (req: Request, res: Response) => {
+    db_knex('Department')
+      .insert(req.body)
+      .into('Department')
+      .then((idArray) => {
+        successHandler(
+          req,
+          res,
+          idArray,
+          'Adding a department, or multiple departments was succesful',
+        );
+      })
+      .catch((error) => {
+        if (error.errno === 1062) {
+          requestErrorHandler(
+            req,
+            res,
+            `Conflict: Department with the name ${req.body.name} already exists!`,
+          );
+        } else if (error.errno === 1054) {
+          requestErrorHandler(
+            req,
+            res,
+            "error in spelling [either in 'name' and/or in 'description'].",
+          );
+        } else {
+          dbErrorHandler(req, res, error, 'error adding department');
+        }
+      });
+  },
+);
+
+// add multiple departments
+department.post(
+  '/multi',
+  validateDepartmentMultiPost,
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Department')
