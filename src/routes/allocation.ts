@@ -330,6 +330,7 @@ allocation.get(
       .innerJoin('Subject as s', 'a.subjectId', 's.id')
       .innerJoin('Program as p', 's.programId', 'p.id')
       .innerJoin('Department as d', 'p.departmentId', 'd.id')
+      .where('a.allocRoundId', req.params.allocRoundId)
       .orderBy([
         { column: 'allocId', order: 'desc' },
         { column: 'department' },
@@ -373,6 +374,7 @@ allocation.get(
       .innerJoin('AllocRound as ar', 'a.allocRoundId', 'ar.id')
       .innerJoin('Space as sp', 'a.spaceId', 'sp.id')
       .where('dp.userId', req.user.id)
+      .andWhere('a.allocRoundId', req.params.allocRoundId)
       .orderBy([
         { column: 'allocId', order: 'desc' },
         { column: 'department' },
