@@ -304,7 +304,7 @@ allocation.post(
   },
 );
 
-//Get data for full report to excel
+//Get data for allocation report to excel
 allocation.get(
   '/report/:allocRoundId',
   [authenticator, admin, planner, statist, roleChecker, validate],
@@ -386,6 +386,47 @@ allocation.get(
       })
       .catch((err) => {
         logger.error('Some DB error while checking user dep planner rights');
+        dbErrorHandler(req, res, err, 'Oops! Nothing came through - Report');
+      });
+  },
+);
+
+//Get Full Report for all allocations
+allocation.get(
+  '/report',
+  [authenticator, admin, planner, statist, roleChecker, validate],
+  (req: Request, res: Response) => {
+    db_knex
+      .distinct(
+        'ar.id as allocId',
+        'ar.name as allocation',
+        db_knex.raw(
+          `DATE_FORMAT(lastModified,"${timestampFormatString}") as "lastModified"`,
+        ),
+        'd.name as department',
+        'p.name as program',
+        's.name as lesson',
+        'sp.name as room',
+        db_knex.raw(
+          'TRUNCATE((EXTRACT(hour from a.totalTime) + (extract(minute from a.totalTime)/60)), 2) as hours',
+        ),
+      )
+      .from('AllocSpace as a')
+      .innerJoin('AllocRound as ar', 'a.allocRoundId', 'ar.id')
+      .innerJoin('Space as sp', 'a.spaceId', 'sp.id')
+      .innerJoin('Subject as s', 'a.subjectId', 's.id')
+      .innerJoin('Program as p', 's.programId', 'p.id')
+      .innerJoin('Department as d', 'p.departmentId', 'd.id')
+      .orderBy([
+        { column: 'allocId' },
+        { column: 'department' },
+        { column: 'program' },
+        { column: 'lesson' },
+      ])
+      .then((data) => {
+        successHandler(req, res, data, 'getAll succesful - Report');
+      })
+      .catch((err) => {
         dbErrorHandler(req, res, err, 'Oops! Nothing came through - Report');
       });
   },
