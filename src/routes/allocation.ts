@@ -332,7 +332,6 @@ allocation.get(
       .innerJoin('Department as d', 'p.departmentId', 'd.id')
       .where('a.allocRoundId', req.params.allocRoundId)
       .orderBy([
-        { column: 'allocId', order: 'desc' },
         { column: 'department' },
         { column: 'program' },
         { column: 'lesson' },
@@ -376,7 +375,6 @@ allocation.get(
       .where('dp.userId', req.user.id)
       .andWhere('a.allocRoundId', req.params.allocRoundId)
       .orderBy([
-        { column: 'allocId', order: 'desc' },
         { column: 'department' },
         { column: 'program' },
         { column: 'lesson' },
