@@ -108,7 +108,7 @@ const getAllocatedRoomsByProgram = async (
         'CAST(SUM(EXTRACT(hour from as2.totalTime) + extract(minute from as2.totalTime)/60) AS DECIMAL(10,2)) AS allocatedHours',
       ),
     )
-    .from('Allocspace as as2')
+    .from('AllocSpace as as2')
     .leftJoin('Space as s', 'as2.spaceId', 's.id')
     .leftJoin('Subject as s2', 'as2.subjectId', 's2.id')
     .leftJoin('Program as p', 's2.programId', 'p.id')

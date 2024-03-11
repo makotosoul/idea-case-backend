@@ -119,9 +119,9 @@ spaceType.post(
   validateSpaceTypePost,
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
-    db_knex('Spacetype')
+    db_knex('SpaceType')
       .insert(req.body)
-      .into('Spacetype')
+      .into('SpaceType')
       .then((idArray) => {
         successHandler(
           req,
