@@ -307,6 +307,8 @@ allocation.get(
   (req: Request, res: Response) => {
     db_knex
       .distinct(
+        'ar.id as allocation id',
+        'ar.name as allocation',
         'd.name as department',
         'p.name as program',
         's.name as lesson',
@@ -316,6 +318,7 @@ allocation.get(
         ),
       )
       .from('AllocSpace as a')
+      .innerJoin('AllocRound as ar', 'a.allocRoundId', 'ar.id')
       .innerJoin('Space as sp', 'a.spaceId', 'sp.id')
       .innerJoin('Subject as s', 'a.subjectId', 's.id')
       .innerJoin('Program as p', 's.programId', 'p.id')
@@ -342,6 +345,8 @@ allocation.get(
   (req: Request, res: Response) => {
     db_knex
       .distinct(
+        'ar.id as allocation id',
+        'ar.name as allocation',
         'd.name as department',
         'p.name as program',
         's.name as lesson',
@@ -355,6 +360,7 @@ allocation.get(
       .innerJoin('Program as p', 'd.id', 'p.departmentId')
       .innerJoin('Subject as s', 'p.id', 's.programId')
       .innerJoin('AllocSpace as a', 's.id', 'a.subjectId')
+      .innerJoin('AllocRound as ar', 'a.allocRoundId', 'ar.id')
       .innerJoin('Space as sp', 'a.spaceId', 'sp.id')
       .where('dp.userId', req.user.id)
       .andWhere('a.allocRoundId', req.params.allocRoundId)
