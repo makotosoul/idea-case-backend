@@ -132,7 +132,7 @@ const getAllocatedRoomsBySubject = (
     )
     .from('AllocSpace as aspace')
     .leftJoin('Space as s', 'aspace.spaceId', 's.id')
-    .leftJoin('Subject sub', 'aspace.subjectId', 'sub.id')
+    .leftJoin('Subject as sub', 'aspace.subjectId', 'sub.id')
     .where('aspace.subjectId', subjectId)
     .andWhere('aspace.allocRoundId', allocRoundId)
     .groupBy('s.id');
@@ -224,7 +224,7 @@ const getUnAllocableSubjects = async (
     )
     .from('AllocSubject as all_sub')
     .join('Subject as s', 'all_sub.subjectId', 's.id')
-    .join('Spacetype as st', 's.spaceTypeId', 'st.id')
+    .join('SpaceType as st', 's.spaceTypeId', 'st.id')
     .where('cantAllocate', '1')
     .andWhere('s.allocRoundId', allocRoundId)
     .then((data) => {

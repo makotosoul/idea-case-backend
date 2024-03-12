@@ -113,7 +113,7 @@ spaceType.get(
   },
 );
 
-// adding single building
+// adding single spacetype
 spaceType.post(
   '/',
   validateSpaceTypePost,
