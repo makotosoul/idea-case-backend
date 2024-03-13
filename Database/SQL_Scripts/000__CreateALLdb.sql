@@ -480,17 +480,17 @@ BEGIN
 
 	SET priorityNow = (SELECT IFNULL(MAX(priority),0) FROM AllocSubject allSub WHERE allSub.allocRoundId = allocRid);
 
-	IF priority_option = 1 THEN -- subject_equipment.priority >= X
+	IF priority_option = 1 THEN -- subject_equipment.priority >= highPriority
 		INSERT INTO AllocSubject (subjectId, allocRoundId, priority)
 			SELECT allSub.subjectId, allSub.allocRoundId, ROW_NUMBER() OVER (ORDER BY MAX(sub_eqp.priority) DESC, Subject.groupSize ASC) + priorityNow as "row"
     		FROM AllocSubject allSub
     		LEFT JOIN SubjectEquipment sub_eqp ON allSub.subjectId = sub_eqp.subjectId
     		JOIN Subject ON allSub.subjectId = Subject.id
     		WHERE allSub.allocRoundId = allocRid AND allSub.priority IS NULL
-    		AND (sub_eqp.priority) >= (SELECT numberValue FROM GlobalSetting gs WHERE variable="x")
+    		AND (sub_eqp.priority) >= (SELECT numberValue FROM GlobalSetting gs WHERE variable="highPriority")
     		GROUP BY allSub.subjectId
 		ON DUPLICATE KEY UPDATE priority = VALUES(priority);
-	ELSEIF priority_option = 2 THEN -- subject_equipment.priority < X
+	ELSEIF priority_option = 2 THEN -- subject_equipment.priority < highPriority
 		INSERT INTO AllocSubject (subjectId, allocRoundId, priority)
 			SELECT allSub.subjectId, allSub.allocRoundId, ROW_NUMBER() OVER (ORDER BY MAX(sub_eqp.priority) DESC, Subject.groupSize ASC) + priorityNow as "row"
        		FROM AllocSubject allSub
@@ -498,7 +498,7 @@ BEGIN
         	JOIN Subject ON allSub.subjectId = Subject.id
         	WHERE allSub.allocRoundId = allocRid
         	AND allSub.priority IS NULL
-        	AND (sub_eqp.priority) < (SELECT numberValue FROM GlobalSetting gs WHERE variable="x")
+        	AND (sub_eqp.priority) < (SELECT numberValue FROM GlobalSetting gs WHERE variable="highPriority")
         	GROUP BY allSub.subjectId
         	ORDER BY sub_eqp.priority DESC
         ON DUPLICATE KEY UPDATE priority = VALUES(priority);
@@ -732,8 +732,8 @@ BEGIN
 
 	UPDATE AllocRound SET requireReset = TRUE WHERE id = allocRid;
 
-	CALL prioritizeSubjects(allocRid, 1, logId); -- sub_eq.prior >= X ORDER BY sub_eq.prior DESC, groupSize ASC
-	CALL prioritizeSubjects(allocRid, 2, logId); -- sub_eq.prior < X ORDER BY sub_eq.prior DESC, groupSize ASC
+	CALL prioritizeSubjects(allocRid, 1, logId); -- sub_eq.prior >= highPriority ORDER BY sub_eq.prior DESC, groupSize ASC
+	CALL prioritizeSubjects(allocRid, 2, logId); -- sub_eq.prior < highPriority ORDER BY sub_eq.prior DESC, groupSize ASC
 	CALL prioritizeSubjects(allocRid, 3, logId); -- without equipments ORDER BY groupSize ASC
 
 	OPEN subjects;
@@ -853,8 +853,8 @@ DELIMITER ;
 /* INSERTS */
 /* --- Insert: GlobalSettings --- */
 INSERT INTO GlobalSetting(variable, description, numberValue, textValue) VALUES
-    ('X', 'Korkea prioriteettiarvo', 800, NULL),
-    ("allocation-debug", "Onko allokoinnin logitus päällä. numberValue : 0 = OFF, 1 = ON", 1, NULL),
+    ('highPriority', 'High priority value', 800, NULL),
+    ("allocation-debug", "Is the allocation logging on? numberValue : 0 = OFF, 1 = ON", 1, NULL),
     ("items-per-page", "The number of items to display per page in lists. Default is 15.", 15, NULL);
 
 /* --- Insert: Department --- */

@@ -56,7 +56,7 @@ Adds priority numbers for lessons/teachings to the allocSubject table. In the ne
 - SubjectEquipment.priority (recommended)
      - The number value of the equipment priority needed by the lesson
      - *The most important criterion in allocation*
-     - the allocation criteria can be, for example, that all lessons with equipment with a value greater than x are to be processed first.
+     - the allocation criteria can be, for example, that all lessons with equipment with a value greater than highPriority are to be processed first.
 - SubjectEquipment.obligatory
      - Is the equipment mandatory for teaching?
      - Not used in the current version, because all equipment is mandatory for teaching.
