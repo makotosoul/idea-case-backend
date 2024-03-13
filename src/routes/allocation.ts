@@ -193,7 +193,7 @@ allocation.get(
   },
 );
 
-/* Get all allocated rooms by RoomId, allocRound */
+/* Get all allocated subjects by RoomId, allocRound */
 allocation.get(
   '/:id/subjects/:roomId',
   [authenticator, admin, planner, statist, roleChecker, validate],

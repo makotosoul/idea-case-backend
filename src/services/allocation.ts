@@ -177,9 +177,10 @@ const getAllocatedSubjectsByRoom = async (
     .select(
       'su.id',
       'su.name',
-      //'allocSp.totalTime'
+      // EXTRACT(HOUR from ...) returns value from 0 to 23 in certain MariaDB versions.
+      // Use HOUR instead to get more than 24 hours. https://mariadb.com/kb/en/extract/
       db_knex.raw(
-        'TRUNCATE((EXTRACT(hour from allocSp.totalTime) + (extract(minute from allocSp.totalTime)/60)), 2) as totalTime',
+        'TRUNCATE((HOUR(allocSp.totalTime) + (EXTRACT(MINUTE FROM allocSp.totalTime) / 60)), 2) as totalTime',
       ),
     )
     .from('AllocSpace as allocSp')
