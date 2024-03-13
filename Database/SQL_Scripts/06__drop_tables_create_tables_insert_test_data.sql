@@ -33,7 +33,7 @@ DROP TABLE IF EXISTS GlobalSetting;
 
 CREATE TABLE IF NOT EXISTS GlobalSetting (
     id              INTEGER                     NOT NULL AUTO_INCREMENT,
-    name            VARCHAR(255)   UNIQUE       NOT NULL,
+    variable            VARCHAR(255)   UNIQUE       NOT NULL,
     description     VARCHAR(16000)              NOT NULL,
     numberValue     INTEGER,
     textValue       VARCHAR(255),
@@ -363,7 +363,7 @@ CREATE TABLE IF NOT EXISTS log_event (
 
 /* INSERTS */
 /* --- Insert: GlobalSettings --- */
-INSERT INTO GlobalSetting(name, description, numberValue, textValue) VALUES
+INSERT INTO GlobalSetting(variable, description, numberValue, textValue) VALUES
     ('X', 'Korkea prioriteettiarvo', 800, NULL),
     ("allocation-debug", "Onko allokoinnin logitus päällä. numberValue : 0 = OFF, 1 = ON", 1, NULL),
     ("items-per-page", "The number of items to display per page in lists. Default is 15.", 15, NULL);

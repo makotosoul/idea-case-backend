@@ -51,7 +51,7 @@ DROP FUNCTION IF EXISTS getMissingItemAmount;
 
 CREATE TABLE IF NOT EXISTS GlobalSetting (
     id              INTEGER                     NOT NULL AUTO_INCREMENT,
-    name            VARCHAR(255)   UNIQUE       NOT NULL,
+    variable            VARCHAR(255)   UNIQUE       NOT NULL,
     description     VARCHAR(16000)              NOT NULL,
     numberValue     INTEGER,
     textValue       VARCHAR(255),
@@ -457,7 +457,7 @@ CREATE PROCEDURE IF NOT EXISTS LogAllocation(logId INT, stage VARCHAR(255), stat
 BEGIN
 	DECLARE debug INTEGER;
 
-	SET debug := (SELECT numberValue FROM GlobalSetting WHERE name='allocation-debug');
+	SET debug := (SELECT numberValue FROM GlobalSetting WHERE variable='allocation-debug');
 
 	IF debug = 1 AND logId IS NOT NULL AND logId != 0 THEN
 		INSERT INTO log_event(log_id, stage, status, information) VALUES(logId, stage, status, msg);
@@ -487,7 +487,7 @@ BEGIN
     		LEFT JOIN SubjectEquipment sub_eqp ON allSub.subjectId = sub_eqp.subjectId
     		JOIN Subject ON allSub.subjectId = Subject.id
     		WHERE allSub.allocRoundId = allocRid AND allSub.priority IS NULL
-    		AND (sub_eqp.priority) >= (SELECT numberValue FROM GlobalSetting gs WHERE name="x")
+    		AND (sub_eqp.priority) >= (SELECT numberValue FROM GlobalSetting gs WHERE variable="x")
     		GROUP BY allSub.subjectId
 		ON DUPLICATE KEY UPDATE priority = VALUES(priority);
 	ELSEIF priority_option = 2 THEN -- subject_equipment.priority < X
@@ -498,7 +498,7 @@ BEGIN
         	JOIN Subject ON allSub.subjectId = Subject.id
         	WHERE allSub.allocRoundId = allocRid
         	AND allSub.priority IS NULL
-        	AND (sub_eqp.priority) < (SELECT numberValue FROM GlobalSetting gs WHERE name="x")
+        	AND (sub_eqp.priority) < (SELECT numberValue FROM GlobalSetting gs WHERE variable="x")
         	GROUP BY allSub.subjectId
         	ORDER BY sub_eqp.priority DESC
         ON DUPLICATE KEY UPDATE priority = VALUES(priority);
@@ -694,7 +694,7 @@ BEGIN
 		END;
 
 	-- IF debug mode on, start logging.
-	SET debug := (SELECT numberValue FROM GlobalSetting WHERE name='allocation-debug');
+	SET debug := (SELECT numberValue FROM GlobalSetting WHERE variable='allocation-debug');
 	IF debug = 1 THEN
 		INSERT INTO log_list(log_type) VALUES (1); -- START LOG
 		SET logId := (SELECT LAST_INSERT_ID()); -- SET log id number for the list
@@ -852,7 +852,7 @@ DELIMITER ;
 
 /* INSERTS */
 /* --- Insert: GlobalSettings --- */
-INSERT INTO GlobalSetting(name, description, numberValue, textValue) VALUES
+INSERT INTO GlobalSetting(variable, description, numberValue, textValue) VALUES
     ('X', 'Korkea prioriteettiarvo', 800, NULL),
     ("allocation-debug", "Onko allokoinnin logitus päällä. numberValue : 0 = OFF, 1 = ON", 1, NULL),
     ("items-per-page", "The number of items to display per page in lists. Default is 15.", 15, NULL);

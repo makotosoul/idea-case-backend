@@ -76,7 +76,7 @@ CREATE PROCEDURE IF NOT EXISTS LogAllocation(logId INT, stage VARCHAR(255), stat
 BEGIN
 	DECLARE debug INTEGER;
 
-	SET debug := (SELECT numberValue FROM GlobalSetting WHERE name='allocation-debug');
+	SET debug := (SELECT numberValue FROM GlobalSetting WHERE variable='allocation-debug');
 
 	IF debug = 1 AND logId IS NOT NULL AND logId != 0 THEN
 		INSERT INTO log_event(log_id, stage, status, information) VALUES(logId, stage, status, msg);
@@ -106,7 +106,7 @@ BEGIN
     		LEFT JOIN SubjectEquipment sub_eqp ON allSub.subjectId = sub_eqp.subjectId
     		JOIN Subject ON allSub.subjectId = Subject.id
     		WHERE allSub.allocRoundId = allocRid AND allSub.priority IS NULL
-    		AND (sub_eqp.priority) >= (SELECT numberValue FROM GlobalSetting gs WHERE name="x")
+    		AND (sub_eqp.priority) >= (SELECT numberValue FROM GlobalSetting gs WHERE variable="x")
     		GROUP BY allSub.subjectId
 		ON DUPLICATE KEY UPDATE priority = VALUES(priority);
 	ELSEIF priority_option = 2 THEN -- subject_equipment.priority < X
@@ -117,7 +117,7 @@ BEGIN
         	JOIN Subject ON allSub.subjectId = Subject.id
         	WHERE allSub.allocRoundId = allocRid
         	AND allSub.priority IS NULL
-        	AND (sub_eqp.priority) < (SELECT numberValue FROM GlobalSetting gs WHERE name="x")
+        	AND (sub_eqp.priority) < (SELECT numberValue FROM GlobalSetting gs WHERE variable="x")
         	GROUP BY allSub.subjectId
         	ORDER BY sub_eqp.priority DESC
         ON DUPLICATE KEY UPDATE priority = VALUES(priority);
@@ -313,7 +313,7 @@ BEGIN
 		END;
 
 	-- IF debug mode on, start logging.
-	SET debug := (SELECT numberValue FROM GlobalSetting WHERE name='allocation-debug');
+	SET debug := (SELECT numberValue FROM GlobalSetting WHERE variable='allocation-debug');
 	IF debug = 1 THEN
 		INSERT INTO log_list(log_type) VALUES (1); -- START LOG
 		SET logId := (SELECT LAST_INSERT_ID()); -- SET log id number for the list

@@ -1,9 +1,12 @@
 import {
   validateDescription,
   validateIdObl,
-  validateNameObl,
+  validateVariableObl,
 } from './index.js';
 
-export const validateSettingPost = [...validateNameObl, ...validateDescription];
+export const validateSettingPost = [
+  ...validateVariableObl,
+  ...validateDescription,
+];
 
 export const validateSettingPut = [...validateSettingPost, ...validateIdObl];

@@ -26,7 +26,7 @@ Authorization: Basic {{token}}
 Content-Type: application/json
 
 {
-  "name": "test setting xyz1234567",
+  "variable": "test setting xyz1234567",
   "description": "Setting for just Rest api test case",
   "numberValue": 555,
   "textValue": "Hello"
@@ -43,7 +43,7 @@ Content-Type: application/json
 
 {
   "id": {{nextId}},
-  "name": "Updated name here",
+  "variable": "Updated name here",
   "description": "Updated description",
   "numberValue": 444,
   "textValue": "Updated Text Value"
