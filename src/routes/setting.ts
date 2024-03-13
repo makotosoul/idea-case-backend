@@ -94,13 +94,13 @@ setting.post(
           requestErrorHandler(
             req,
             res,
-            `Conflict: Setting with the name ${req.body.name} already exists!`,
+            `Conflict: Setting with the variable ${req.body.variable} already exists!`,
           );
         } else if (error.errno === 1054) {
           requestErrorHandler(
             req,
             res,
-            "error in spelling [either in 'name' and/or in 'description'].",
+            "error in spelling [either in 'variable' and/or in 'description'].",
           );
         } else {
           dbErrorHandler(req, res, error, 'error adding setting');
@@ -116,7 +116,7 @@ setting.put(
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     if (!req.body.name) {
-      requestErrorHandler(req, res, 'Setting name is missing.');
+      requestErrorHandler(req, res, 'Setting variable is missing.');
     } else {
       db('GlobalSetting')
         .where('id', req.body.id)
@@ -142,13 +142,13 @@ setting.put(
             requestErrorHandler(
               req,
               res,
-              `DB 1062: Setting with the name ${req.body.name} already exists!`,
+              `DB 1062: Setting with the variable ${req.body.variable} already exists!`,
             );
           } else if (error.errno === 1054) {
             requestErrorHandler(
               req,
               res,
-              "error in spelling [either in 'name' and/or in 'description'].",
+              "error in spelling [either in 'variable' and/or in 'description'].",
             );
           } else {
             dbErrorHandler(req, res, error, 'error updating setting');

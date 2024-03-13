@@ -4,7 +4,7 @@ USE casedb; /* UPDATED 2024-01-24 */
 
 CREATE TABLE IF NOT EXISTS GlobalSetting (
     id              INTEGER                     NOT NULL AUTO_INCREMENT,
-    name            VARCHAR(255)   UNIQUE       NOT NULL,
+    variable            VARCHAR(255)   UNIQUE       NOT NULL,
     description     VARCHAR(16000)              NOT NULL,
     numberValue     INTEGER,
     textValue       VARCHAR(255),

@@ -52,6 +52,33 @@ export const createNameValidatorChain = (
     .withMessage(`${fieldName} must be between 2-255 characters long`)
     .bail()
     .matches(/^[A-Za-zäöåÄÖÅ0-9\(\)\s\/,-]*$/)
+    .withMessage(`${fieldName} must contain only letters, numbers, and -`)
+    .bail()
+    .customSanitizer((value, { req }) => {
+      const capitalizedValue = value.charAt(0).toUpperCase() + value.slice(1);
+      req.body[`${fieldName}`] = capitalizedValue;
+      return capitalizedValue;
+    })
+    .custom((value) => {
+      if (value.charAt(0) !== value.charAt(0).toUpperCase()) {
+        throw new Error(`${fieldName} must start with a capital letter`);
+      }
+      return true;
+    })
+    .trim()
+    .notEmpty()
+    .withMessage(`${fieldName} cannot be empty`)
+    .bail(),
+];
+
+export const createVariableValidatorChain = (
+  fieldName: string,
+): ValidationChain[] => [
+  check(`${fieldName}`)
+    .isLength({ min: 2, max: 255 })
+    .withMessage(`${fieldName} must be between 2-255 characters long`)
+    .bail()
+    .matches(/^[A-Za-zäöåÄÖÅ0-9\(\)\s\/,-]*$/)
     .withMessage(`${fieldName} must contain only letters, numbers and -`)
     .bail()
     .trim()
@@ -125,6 +152,21 @@ export const createMultiNumberValidatorChain = (
 ];
 
 export const createMultiNameValidatorChain = (
+  fieldName: string,
+): ValidationChain[] => [
+  body(`*.${fieldName}`)
+    .isLength({ min: 2, max: 255 })
+    .withMessage(`${fieldName} must be between 2-255 characters long`)
+    .bail()
+    .matches(/^[A-Za-zäöåÄÖÅ0-9\s/,-]*$/)
+    .withMessage(`${fieldName} must contain only letters, numbers and -`)
+    .bail()
+    .notEmpty()
+    .withMessage(`${fieldName} cannot be empty`)
+    .bail(),
+];
+
+export const createMultiVariableValidatorChain = (
   fieldName: string,
 ): ValidationChain[] => [
   body(`*.${fieldName}`)
@@ -241,6 +283,10 @@ export const validateIdObl = [...createIdValidatorChain('id')];
 
 export const validateNameObl = [...createNameValidatorChain('name')];
 
+export const validateVariableObl = [
+  ...createVariableValidatorChain('variable'),
+];
+
 export const validateDescription = [
   ...createDescriptionValidatorChain('description'),
 ];
@@ -250,6 +296,10 @@ export const validateDescriptionObl = [
 ];
 
 export const validateMultiNameObl = [...createMultiNameValidatorChain('name')];
+
+export const validateMultiVariableObl = [
+  ...createMultiVariableValidatorChain('variable'),
+];
 
 export const validateMultiDescription = [
   ...createMultiDescriptionValidatorChain('description'),
