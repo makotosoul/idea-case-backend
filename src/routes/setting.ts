@@ -115,7 +115,7 @@ setting.put(
   validateSettingPut,
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
-    if (!req.body.name) {
+    if (!req.body.variable) {
       requestErrorHandler(req, res, 'Setting variable is missing.');
     } else {
       db('GlobalSetting')
