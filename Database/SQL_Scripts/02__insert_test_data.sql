@@ -3,7 +3,7 @@ USE casedb; /* UPDATED 2024-02-26 */
 /* INSERTS */
 /* --- Insert: GlobalSettings --- */
 INSERT INTO GlobalSetting(variable, description, numberValue, textValue) VALUES
-    ('X', 'Korkea prioriteettiarvo', 800, NULL),
+    ('highPriority', 'Korkea prioriteettiarvo', 800, NULL),
     ("allocation-debug", "Onko allokoinnin logitus päällä. numberValue : 0 = OFF, 1 = ON", 1, NULL),
     ("items-per-page", "The number of items to display per page in lists. Default is 15.", 15, NULL);
 
