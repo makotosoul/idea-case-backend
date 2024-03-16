@@ -49,11 +49,11 @@ const getAllSubjectsById = async (allocRoundId: number) => {
       'as2.cantAllocate',
       'as2.priority',
       db_knex.raw(
-        `IFNULL((SELECT CAST(EXTRACT(hour from al_sp.totalTime) + extract(minute from al_sp.totalTime)/60) AS DECIMAL(10,2))
+        `IFNULL((SELECT CAST(HOUR(al_sp.totalTime) + EXTRACT(MINUTE FROM al_sp.totalTime)/60) AS DECIMAL(10,2))
         FROM AllocSpace al_sp
         WHERE al_sp.allocRoundId = ${allocRoundId} AND al_sp.subjectId = s.id
         GROUP BY al_sp.subjectId), 0) AS "AllocatedHours",
-        CAST(((extract(hour from s.sessionLength) + extract(minute from s.sessionLength)/60) * s.groupCount * s.sessionCount) AS DECIMAL(10,2)) AS "requiredHours"`,
+        CAST(((HOUR(s.sessionLength) + EXTRACT(MINUTE FROM s.sessionLength)/60) * s.groupCount * s.sessionCount) AS DECIMAL(10,2)) AS "requiredHours"`,
       ),
     )
     .from('Subject as s')
@@ -76,7 +76,7 @@ const getRoomsByAllocId = (allocRoundId: number): Promise<RoomsByAllocId[]> => {
     .select('id', 'name')
     .select({
       allocatedHours: db_knex.raw(
-        `(SELECT IFNULL(CAST(SUM(EXTRACT(hour from as2.totalTime) + extract(minute from as2.totalTime)/60) AS DECIMAL(10,2)), 0)
+        `(SELECT IFNULL(CAST(SUM(HOUR(as2.totalTime) + EXTRACT(MINUTE FROM as2.totalTime)/60) AS DECIMAL(10,2)), 0)
             FROM AllocSpace as as2
             WHERE spaceId = id
             AND allocRoundId = ?
@@ -105,7 +105,7 @@ const getAllocatedRoomsByProgram = async (
       's.id',
       's.name',
       db_knex.raw(
-        'CAST(SUM(EXTRACT(hour from as2.totalTime) + extract(minute from as2.totalTime)/60) AS DECIMAL(10,2)) AS allocatedHours',
+        'CAST(SUM(HOUR(as2.totalTime) + EXTRACT(MINUTE FROM as2.totalTime)/60) AS DECIMAL(10,2)) AS allocatedHours',
       ),
     )
     .from('AllocSpace as as2')
@@ -127,7 +127,7 @@ const getAllocatedRoomsBySubject = (
       's.id',
       's.name',
       db_knex.raw(
-        'cast(sum(extract(hour from aspace.totalTime) + extract(minute from aspace.totalTime)/60) as decimal(10,2)) as allocatedHours',
+        'cast(sum(HOUR(aspace.totalTime) + EXTRACT(MINUTE FROM aspace.totalTime)/60) as decimal(10,2)) as allocatedHours',
       ),
     )
     .from('AllocSpace as aspace')
@@ -148,10 +148,10 @@ const getSubjectsByProgram = (
       'alsub.subjectId as id',
       'sub.name',
       db_knex.raw(
-        'IFNULL(CAST(SUM(extract(hour from alspace.totalTime) + extract(minute from alspace.totalTime)/60) as decimal(10,2)), 0) AS allocatedHours',
+        'IFNULL(CAST(SUM(HOUR(alspace.totalTime) + EXTRACT(MINUTE FROM alspace.totalTime)/60) as decimal(10,2)), 0) AS allocatedHours',
       ),
       db_knex.raw(
-        'CAST((sub.groupCount * (extract(hour from sub.sessionLength) + extract(minute from sub.sessionLength)/60) * sub.sessionCount) AS DECIMAL(10,2)) as requiredHours',
+        'CAST((sub.groupCount * (HOUR(sub.sessionLength) + EXTRACT(MINUTE FROM sub.sessionLength)/60) * sub.sessionCount) AS DECIMAL(10,2)) as requiredHours',
       ),
     )
     .from('AllocSubject as alsub')
