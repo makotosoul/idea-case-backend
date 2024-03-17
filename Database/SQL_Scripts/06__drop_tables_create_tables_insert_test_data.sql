@@ -210,7 +210,7 @@ CREATE TABLE IF NOT EXISTS Subject (
         REFERENCES SpaceType(id)
         ON DELETE SET NULL
         ON UPDATE CASCADE,
-    
+
     CONSTRAINT `FK_Subject_AllocRound` FOREIGN KEY (allocRoundId)
         REFERENCES AllocRound(id)
         ON DELETE CASCADE
@@ -276,7 +276,7 @@ CREATE TABLE IF NOT EXISTS AllocSpace (
 
     CONSTRAINT `FK_AllocSpace_Space` FOREIGN KEY (spaceId)
         REFERENCES Space(id)
-        ON DELETE CASCADE
+        ON DELETE NO ACTION
         ON UPDATE CASCADE
 
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -298,7 +298,7 @@ CREATE TABLE IF NOT EXISTS AllocSubjectSuitableSpace (
     CONSTRAINT `FK_AllocSubjectSpace_Space`
         FOREIGN KEY (spaceId)
         REFERENCES Space(id)
-        ON DELETE CASCADE
+        ON DELETE NO ACTION
         ON UPDATE CASCADE
 
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

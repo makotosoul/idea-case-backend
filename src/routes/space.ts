@@ -394,19 +394,18 @@ space.get(
 
 // fetching total no. of allocations associated with space by space id
 space.get(
-  '/space/:id',
+  '/:id/numberOfAllocSpaces',
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     const spaceId = req.params.id;
     db_knex('Allocspace')
-      .count('*')
+      .count('allocRoundId')
       .where('spaceId', spaceId)
-      .first()
-      .then((allocSpacesCount) => {
+      .then((allocRoundId) => {
         successHandler(
           req,
           res,
-          allocSpacesCount,
+          allocRoundId,
           'Successfully recived the total number of allocspace by space id from database',
         );
       })
