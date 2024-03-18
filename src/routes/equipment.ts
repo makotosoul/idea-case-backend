@@ -11,6 +11,7 @@ import {
   successHandler,
 } from '../responseHandler/index.js';
 import {
+  validateEquipmentId,
   validateEquipmentMultiPost,
   validateEquipmentPost,
   validateEquipmentPut,
@@ -165,6 +166,33 @@ equipment.delete(
       })
       .catch((error) => {
         dbErrorHandler(req, res, error, 'Error deleting equipment');
+      });
+  },
+);
+// fetching total numbers of subject id associtaed to an equipment by id
+equipment.get(
+  '/:id/subjectCount',
+  [authenticator, admin, planner, statist, roleChecker, validate],
+  (req: Request, res: Response) => {
+    const equipmentId = req.params.id;
+    db_knex('SubjectEquipment')
+      .count('subjectId')
+      .where('equipmentId', equipmentId)
+      .then((subjectId) => {
+        successHandler(
+          req,
+          res,
+          subjectId,
+          'getSubjectCount successful - SubjectEquipment',
+        );
+      })
+      .catch((error) => {
+        dbErrorHandler(
+          req,
+          res,
+          error,
+          'Oops! Nothing came through - SubjectEquipment',
+        );
       });
   },
 );

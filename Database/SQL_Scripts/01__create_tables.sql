@@ -204,7 +204,7 @@ CREATE TABLE IF NOT EXISTS SubjectEquipment (
 
     CONSTRAINT `FK_SubjectEquipment_Equipment` FOREIGN KEY (equipmentId)
                 REFERENCES Equipment(id)
-        ON DELETE CASCADE
+        ON DELETE NO ACTION
         ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
