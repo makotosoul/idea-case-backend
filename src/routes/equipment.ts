@@ -180,11 +180,11 @@ equipment.get(
     db_knex('SubjectEquipment')
       .count('subjectId')
       .where('equipmentId', equipmentId)
-      .then((subjectId) => {
+      .then((subjectCount) => {
         successHandler(
           req,
           res,
-          subjectId,
+          subjectCount,
           'getSubjectCount successful - SubjectEquipment',
         );
       })
