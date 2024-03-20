@@ -419,4 +419,39 @@ space.get(
       });
   },
 );
+
+//fetching first five names of allocrounds of a selected space by id
+space.get(
+  '/:id/firstFiveAllocNames',
+  [authenticator, admin, planner, statist, roleChecker, validate],
+  (req: Request, res: Response) => {
+    const spaceId = req.params.id;
+    db_knex('Allocspace')
+      .join(
+        'AllocSubject',
+        'Allocspace.allocRoundId',
+        'AllocSubject.allocRoundId',
+      )
+      .join('Allocround', 'Allocspace.allocRoundId', 'Allocround.id')
+      .select('Allocround.name')
+      .where('spaceId', spaceId)
+      .limit(5)
+      .then((allocRoundNames) => {
+        successHandler(
+          req,
+          res,
+          allocRoundNames,
+          'Successfully recived the first five names of allocspace by space id from database',
+        );
+      })
+      .catch((error) => {
+        dbErrorHandler(
+          req,
+          res,
+          error,
+          'Failed to get the first five names of allocspace by space id from database',
+        );
+      });
+  },
+);
 export default space;
