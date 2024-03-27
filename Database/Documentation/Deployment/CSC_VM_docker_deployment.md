@@ -59,7 +59,7 @@ echo \
 sudo apt update
 ```
 
-Install the latest Docker packages:
+Install the latest Docker packages including Docker Compose:
 ```sh
 sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 ```
@@ -85,7 +85,7 @@ Enable if not enabled
 sudo systemctl enable docker
 ```
 
-## Get the source code for the app
+## Get the source code
 
 Check if git is already installed
 ```sh
