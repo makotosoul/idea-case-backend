@@ -100,10 +100,9 @@ sudo apt install git
 
 This is a very simple way to install git. More detailed info here: https://www.digitalocean.com/community/tutorials/how-to-install-git-on-ubuntu-22-04
 
-Create the directory for the source code and set permissions
+Create the directory for the source code
 ```sh
 cd ~
-sudo chmod 700 .
 mkdir siba
 ```
 
