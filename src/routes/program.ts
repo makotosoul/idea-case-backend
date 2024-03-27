@@ -227,6 +227,37 @@ program.post(
   },
 );
 
+// edit program by id
+program.put(
+  '/',
+  validateProgramPut,
+  [authenticator, admin, roleChecker, validate],
+  (req: Request, res: Response) => {
+    const id = req.body.id;
+    const name = req.body.name;
+    const departmentId = req.body.departmentId;
+
+    db_knex('Program')
+      .where('id', id)
+      .update({ name, departmentId })
+      .then((result) => {
+        if (result === 0) {
+          requestErrorHandler(
+            req,
+            res,
+            `Nothing to update for Program with ID ${id}`,
+          );
+        } else {
+          successHandler(req, res, result, 'Update successful - Program');
+          logger.info(`Program ${name} updated`);
+        }
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Oops! Update failed - Program');
+      });
+  },
+);
+
 // delete a program with id
 program.delete(
   '/:id',
