@@ -124,7 +124,7 @@ git pull
 
 ## Deploy the frontend with Docker
 
-Instructions based on this: https://github.com/haagahelia/siba-fe?tab=readme-ov-file#beginning
+Some parts are based on this: https://github.com/haagahelia/siba-fe?tab=readme-ov-file#beginning
 
 Create the frontend .env file for environment variables and set permissions
 ```sh
