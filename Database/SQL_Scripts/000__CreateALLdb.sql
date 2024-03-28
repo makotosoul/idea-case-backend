@@ -201,6 +201,8 @@ CREATE TABLE IF NOT EXISTS AllocRound (
     userId          INTEGER         NOT NULL,
     description     VARCHAR(16000)  NOT NULL,
     lastModified    TIMESTAMP       NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+    lastCalcSuccs   TIMESTAMP       DEFAULT NULL,
+    lastCalcFail    TIMESTAMP       DEFAULT NULL,
     isAllocated     BOOLEAN     DEFAULT 0,
     processOn       BOOLEAN     DEFAULT 0,
     abortProcess    BOOLEAN     DEFAULT 0,
@@ -686,7 +688,7 @@ BEGIN
 		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
 		SET @full_error = CONCAT("Error: ", @errno, " (", @sqlstate, "): ", @text);
 		CALL LogAllocation(logId, "Allocation", "Error", (SELECT @full_error));
-		UPDATE AllocRound SET abortProcess = 0, processOn = 0 WHERE id = allocRid;
+		UPDATE AllocRound SET abortProcess = 0, processOn = 0, lastCalcFail = current_timestamp() WHERE id = allocRid;
 		RESIGNAL SET MESSAGE_TEXT = @full_error;
 	END;
 
@@ -696,6 +698,7 @@ BEGIN
 		GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
 		SET @full_error = CONCAT("Error: ", @errno, " (", @sqlstate, "): ", @text);
 		CALL LogAllocation(logId, "Allocation", "Error", (SELECT @full_error));
+		UPDATE AllocRound SET lastCalcFail = current_timestamp() WHERE id = allocRid;
 		RESIGNAL SET MESSAGE_TEXT = @full_error;
 	END;
 
@@ -705,6 +708,7 @@ BEGIN
 			SET errors := errors +1;
 			GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
 			SET @full_error = CONCAT("ERROR ", @errno, " (", @sqlstate, "): ", @text);
+			UPDATE AllocRound SET lastCalcFail = current_timestamp() WHERE id = allocRid;
 			CALL LogAllocation(logId, "Allocation", "Error", (SELECT @full_error));
 		END;
 
@@ -722,18 +726,21 @@ BEGIN
 	IF is_allocated = 1 THEN
 		SET @message_text = CONCAT("The allocRound: ", allocRid, " is already allocated.");
 		SIGNAL alreadyAllocated SET MESSAGE_TEXT = @message_text, MYSQL_ERRNO = 1192;
+		UPDATE AllocRound SET lastCalcFail = current_timestamp() WHERE id = allocRid;
 	END IF;
 	-- IF AllocRound require reset before allocation
 	SET reset_required = (SELECT requireReset FROM AllocRound WHERE id = allocRid);
 	IF reset_required = TRUE THEN
 		SET @message_text = CONCAT("The allocRound: ", allocRid, " require reset before allocation.");
 		SIGNAL require_reset SET MESSAGE_TEXT = @message_text, MYSQL_ERRNO = 1192;
+		UPDATE AllocRound SET lastCalcFail = current_timestamp() WHERE id = allocRid;
 	END IF;
 	-- IF Allocation already running with allocRound id raise error
 	SET procedure_active = (SELECT processOn FROM AllocRound WHERE id = allocRid);
 	IF procedure_active = 1 THEN
 		SET @message_text = CONCAT("The allocation with allocRound:", allocRid, " is already running.");
 		SIGNAL processBusy SET MESSAGE_TEXT = @message_text, MYSQL_ERRNO = 1192;
+		UPDATE AllocRound SET lastCalcFail = current_timestamp() WHERE id = allocRid;
 	END IF;
 	-- SET procedure running
 	UPDATE AllocRound SET processOn = 1 WHERE id = allocRid;
@@ -778,7 +785,7 @@ BEGIN
 	UPDATE AllocRound SET isAllocated = 1 WHERE id = allocRid;
 	CALL LogAllocation(logId, "Allocation", "End", CONCAT("Errors: ", (SELECT errors)));
 
-	UPDATE AllocRound SET processOn = 0 WHERE id = allocRid;
+	UPDATE AllocRound SET processOn = 0, lastCalcSuccs = current_timestamp() WHERE id = allocRid;
 
 END;
 //

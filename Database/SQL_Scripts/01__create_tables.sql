@@ -142,6 +142,8 @@ CREATE TABLE IF NOT EXISTS AllocRound (
     userId          INTEGER         NOT NULL,
     description     VARCHAR(16000)  NOT NULL,
     lastModified    TIMESTAMP       NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+    lastCalcSuccs   TIMESTAMP       DEFAULT NULL,
+    lastCalcFail    TIMESTAMP       DEFAULT NULL,
     isAllocated     BOOLEAN     DEFAULT 0,
     processOn       BOOLEAN     DEFAULT 0,
     abortProcess    BOOLEAN     DEFAULT 0,
