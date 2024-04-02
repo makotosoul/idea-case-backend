@@ -317,7 +317,10 @@ allocation.get(
         'ar.id as allocId',
         'ar.name as allocation',
         db_knex.raw(
-          `DATE_FORMAT(lastModified,"${timestampFormatString}") as "lastModified"`,
+          `DATE_FORMAT(lastCalcSuccs,"${timestampFormatString}") as "lastCalcSuccs"`,
+        ),
+        db_knex.raw(
+          `DATE_FORMAT(lastCalcFail,"${timestampFormatString}") as "lastCalcFail"`,
         ),
         'd.name as department',
         'p.name as program',
@@ -350,7 +353,10 @@ allocation.get(
             'ar.id as allocId',
             'ar.name as allocation',
             db_knex.raw(
-              `DATE_FORMAT(lastModified,"${timestampFormatString}") as "lastModified"`,
+              `DATE_FORMAT(lastCalcSuccs,"${timestampFormatString}") as "lastCalcSuccs"`,
+            ),
+            db_knex.raw(
+              `DATE_FORMAT(lastCalcFail,"${timestampFormatString}") as "lastCalcFail"`,
             ),
             'd.name as department',
             'p.name as program',
@@ -388,7 +394,10 @@ allocation.get(
         'ar.id as allocId',
         'ar.name as allocation',
         db_knex.raw(
-          `DATE_FORMAT(lastModified,"${timestampFormatString}") as "lastModified"`,
+          `DATE_FORMAT(lastCalcSuccs,"${timestampFormatString}") as "lastCalcSuccs"`,
+        ),
+        db_knex.raw(
+          `DATE_FORMAT(lastCalcFail,"${timestampFormatString}") as "lastCalcFail"`,
         ),
         'd.name as department',
         'p.name as program',
@@ -423,7 +432,10 @@ allocation.get(
             'ar.id as allocId',
             'ar.name as allocation',
             db_knex.raw(
-              `DATE_FORMAT(lastModified,"${timestampFormatString}") as "lastModified"`,
+              `DATE_FORMAT(lastCalcSuccs,"${timestampFormatString}") as "lastCalcSuccs"`,
+            ),
+            db_knex.raw(
+              `DATE_FORMAT(lastCalcFail,"${timestampFormatString}") as "lastCalcFail"`,
             ),
             'd.name as department',
             'p.name as program',
@@ -464,7 +476,10 @@ allocation.get(
         'ar.id as allocId',
         'ar.name as allocation',
         db_knex.raw(
-          `DATE_FORMAT(lastModified,"${timestampFormatString}") as "lastModified"`,
+          `DATE_FORMAT(lastCalcSuccs,"${timestampFormatString}") as "lastCalcSuccs"`,
+        ),
+        db_knex.raw(
+          `DATE_FORMAT(lastCalcFail,"${timestampFormatString}") as "lastCalcFail"`,
         ),
         'd.name as department',
         'p.name as program',
@@ -497,7 +512,10 @@ allocation.get(
             'ar.id as allocId',
             'ar.name as allocation',
             db_knex.raw(
-              `DATE_FORMAT(lastModified,"${timestampFormatString}") as "lastModified"`,
+              `DATE_FORMAT(lastCalcSuccs,"${timestampFormatString}") as "lastCalcSuccs"`,
+            ),
+            db_knex.raw(
+              `DATE_FORMAT(lastCalcFail,"${timestampFormatString}") as "lastCalcFail"`,
             ),
             'd.name as department',
             'p.name as program',
