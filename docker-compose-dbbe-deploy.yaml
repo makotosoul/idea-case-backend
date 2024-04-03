@@ -24,7 +24,7 @@ services:
     environment:
     - DB_HOST=siba_db_deployment
     ports:
-      - '${BE_SERVER_PORT}:${BE_SERVER_PORT}'
+      - '3000:3000'
     volumes:
       - .:/app
       - /app/node_modules
