@@ -317,14 +317,17 @@ allocation.get(
         'ar.id as allocId',
         'ar.name as allocation',
         db_knex.raw(
-          `DATE_FORMAT(lastModified,"${timestampFormatString}") as "lastModified"`,
+          `DATE_FORMAT(lastCalcSuccs,"${timestampFormatString}") as "lastCalcSuccs"`,
+        ),
+        db_knex.raw(
+          `DATE_FORMAT(lastCalcFail,"${timestampFormatString}") as "lastCalcFail"`,
         ),
         'd.name as department',
         'p.name as program',
         's.name as lesson',
         'sp.name as room',
         db_knex.raw(
-          'TRUNCATE((EXTRACT(hour from a.totalTime) + (extract(minute from a.totalTime)/60)), 2) as hours',
+          'TRUNCATE((HOUR(a.totalTime) + (extract(minute from a.totalTime)/60)), 2) as hours',
         ),
       )
       .from('AllocSpace as a')
@@ -350,7 +353,10 @@ allocation.get(
             'ar.id as allocId',
             'ar.name as allocation',
             db_knex.raw(
-              `DATE_FORMAT(lastModified,"${timestampFormatString}") as "lastModified"`,
+              `DATE_FORMAT(lastCalcSuccs,"${timestampFormatString}") as "lastCalcSuccs"`,
+            ),
+            db_knex.raw(
+              `DATE_FORMAT(lastCalcFail,"${timestampFormatString}") as "lastCalcFail"`,
             ),
             'd.name as department',
             'p.name as program',
@@ -388,14 +394,17 @@ allocation.get(
         'ar.id as allocId',
         'ar.name as allocation',
         db_knex.raw(
-          `DATE_FORMAT(lastModified,"${timestampFormatString}") as "lastModified"`,
+          `DATE_FORMAT(lastCalcSuccs,"${timestampFormatString}") as "lastCalcSuccs"`,
+        ),
+        db_knex.raw(
+          `DATE_FORMAT(lastCalcFail,"${timestampFormatString}") as "lastCalcFail"`,
         ),
         'd.name as department',
         'p.name as program',
         's.name as lesson',
         'sp.name as room',
         db_knex.raw(
-          'TRUNCATE((EXTRACT(hour from a.totalTime) + (extract(minute from a.totalTime)/60)), 2) as hours',
+          'TRUNCATE((HOUR(a.totalTime) + (extract(minute from a.totalTime)/60)), 2) as hours',
         ),
       )
       .from('DepartmentPlanner as dp')
@@ -423,7 +432,10 @@ allocation.get(
             'ar.id as allocId',
             'ar.name as allocation',
             db_knex.raw(
-              `DATE_FORMAT(lastModified,"${timestampFormatString}") as "lastModified"`,
+              `DATE_FORMAT(lastCalcSuccs,"${timestampFormatString}") as "lastCalcSuccs"`,
+            ),
+            db_knex.raw(
+              `DATE_FORMAT(lastCalcFail,"${timestampFormatString}") as "lastCalcFail"`,
             ),
             'd.name as department',
             'p.name as program',
@@ -464,14 +476,17 @@ allocation.get(
         'ar.id as allocId',
         'ar.name as allocation',
         db_knex.raw(
-          `DATE_FORMAT(lastModified,"${timestampFormatString}") as "lastModified"`,
+          `DATE_FORMAT(lastCalcSuccs,"${timestampFormatString}") as "lastCalcSuccs"`,
+        ),
+        db_knex.raw(
+          `DATE_FORMAT(lastCalcFail,"${timestampFormatString}") as "lastCalcFail"`,
         ),
         'd.name as department',
         'p.name as program',
         's.name as lesson',
         'sp.name as room',
         db_knex.raw(
-          'TRUNCATE((EXTRACT(hour from a.totalTime) + (extract(minute from a.totalTime)/60)), 2) as hours',
+          'TRUNCATE((HOUR(a.totalTime) + (extract(minute from a.totalTime)/60)), 2) as hours',
         ),
       )
       .from('AllocSpace as a')
@@ -497,7 +512,10 @@ allocation.get(
             'ar.id as allocId',
             'ar.name as allocation',
             db_knex.raw(
-              `DATE_FORMAT(lastModified,"${timestampFormatString}") as "lastModified"`,
+              `DATE_FORMAT(lastCalcSuccs,"${timestampFormatString}") as "lastCalcSuccs"`,
+            ),
+            db_knex.raw(
+              `DATE_FORMAT(lastCalcFail,"${timestampFormatString}") as "lastCalcFail"`,
             ),
             'd.name as department',
             'p.name as program',
