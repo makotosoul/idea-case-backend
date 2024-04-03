@@ -5,9 +5,8 @@ services:
     image: mariadb:latest
     container_name: siba_db_container
     env_file:
-      - .env.db
-    environment:
-      - MARIADB_ROOT_PASSWORD='${MARIADB_PASSWORD}'
+      - .env.db.credentials
+      - .env.db.root
     ports:
       - '3306:3306'
     volumes:
@@ -21,7 +20,7 @@ services:
     build: .
     env_file:
       - .env.be
-      - .env.db
+      - .env.db.credentials
     depends_on:
       - siba_db_deployment
     environment:
