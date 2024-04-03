@@ -10,11 +10,9 @@ Some parts of this documentation are based on this: https://github.com/haagaheli
 
 ## Security Groups and firewall
 
-Updates coming to this section when the backend is deployed.
-
 CSC cloud Pouta security groups used:
 
-![security_groups](./CSC_VM_security_groups_01.JPG)
+![security_groups](./CSC_VM_security_groups_april2024.JPG)
 
 - Port 22 is for SSH
 - Port 80 is for the Nginx frontend
@@ -205,7 +203,7 @@ Add the following environment variables to the .env file
 VITE_BE_SERVER_BASE_URL=http://<VMIPADDRESS>:3000/api
 PORT=80
 ```
-Replace `<VMIPADDRESS>` with the public IP address of the virtual machine and `<backendportnumber>` with the port of the backend. This is the backend address the frontend will use to make requests. NOTE: Add it after the backend is deployed.
+Replace `<VMIPADDRESS>` with the public IP address of the virtual machine. This is the backend API address the frontend will use to make requests.
 
 Run the frontend Docker container that uses Nginx web server to serve the React application
 ```sh
@@ -218,9 +216,7 @@ Check if the container started
 sudo docker ps
 ```
 
-Now the frontend should be available at `http://<VMIPADDRESS>` where `<VMIPADDRESS>` is the public IP address of the virtual machine. The frontend is served through port 80.
-
-Note that the connection is currently insecure.
+The frontend should now be available at `http://<VMIPADDRESS>` where `<VMIPADDRESS>` is the public IP address of the virtual machine. The frontend is served through port 80.
 
 To stop and remove the container, run
 ```sh
