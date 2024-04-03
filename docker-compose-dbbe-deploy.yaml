@@ -5,7 +5,7 @@ services:
     image: mariadb:latest
     container_name: siba_db_container
     env_file:
-      - .env.db.credentials
+      - .env.db
       - .env.db.root
     ports:
       - '3306:3306'
@@ -20,11 +20,11 @@ services:
     build: .
     env_file:
       - .env.be
-      - .env.db.credentials
+      - .env.db
     depends_on:
       - siba_db_deployment
     environment:
-    - DB_HOST=siba_db_deployment
+      - DB_HOST=siba_db_deployment
     ports:
       - '3000:3000'
     volumes:
