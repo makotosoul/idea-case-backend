@@ -142,7 +142,7 @@ MARIADB_DATABASE=casedb
 MARIADB_USER=<YOUR_DATABASE_USER>
 MARIADB_PASSWORD=<YOUR_DATABASE_USER_PASSWORD>
 ```
-Replace the values inside <> with your actual values. This is used both in the database and backend containers.
+Replace the values with your actual values. This is used both in the database and backend containers.
 
 Add the following environment variable to the `.env.db.root` file
 ```sh
@@ -162,7 +162,7 @@ DB_CONNECTION_POOL_MAX=7
 SECRET_TOKEN=<YOUR_SECRET_TOKEN>
 TOKEN_EXPIRATION_SECONDS=3600
 ```
-Replace the values inside <> with your actual values. This is used only in the backend container.
+Replace the values with your actual values. This is used only in the backend container.
 
 Start the database and backend containers
 ```sh
@@ -175,7 +175,7 @@ Check if the containers started
 sudo docker ps
 ```
 
-The backend API should now be accessible at `http://<VMIPADDRESS>:3000/api` where `<VMIPADDRESS>` is the public IP address of the virtual machine. The database is not exposed outside the VM, but can be exposed by opening port 3306.
+The backend API should now be accessible at `http://<VMIPADDRESS>:3000/api` where `<VMIPADDRESS>` is the public IP address of the virtual machine. The backend listens in port 3000 and that port is opened with firewall rules. The database is not exposed outside the VM, but can be exposed by opening port 3306.
 
 To stop and remove the containers, run
 ```sh
