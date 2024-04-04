@@ -1,6 +1,6 @@
 # CSC cloud Ubuntu VM Siba deployment with Docker
 
-Updated: 3.4.2024
+Updated: 4.4.2024 (April 4 2024)
 
 This documentation explains how to deploy the Siba project to the CSC cloud cPouta Ubuntu virtual machine using Docker. It is assumed that the user has the VM running and can connect to it with SSH. Some Linux understanding can also be helpful.
 
