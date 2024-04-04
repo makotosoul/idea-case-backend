@@ -1,6 +1,6 @@
 # CSC cloud Ubuntu VM Siba deployment with Docker
 
-Updated: 27.3.2024
+Updated: 4.4.2024 (April 4 2024)
 
 This documentation explains how to deploy the Siba project to the CSC cloud cPouta Ubuntu virtual machine using Docker. It is assumed that the user has the VM running and can connect to it with SSH. Some Linux understanding can also be helpful.
 
@@ -10,14 +10,13 @@ Some parts of this documentation are based on this: https://github.com/haagaheli
 
 ## Security Groups and firewall
 
-Updates coming to this section when the backend is deployed.
-
 CSC cloud Pouta security groups used:
 
-![security_groups](./CSC_VM_security_groups_01.JPG)
+![security_groups](./CSC_VM_security_groups_april2024.JPG)
 
 - Port 22 is for SSH
-- Port 80 is for the Nginx frontend deployment.
+- Port 80 is for the Nginx frontend
+- Port 3000 is for the backend API
 
 Pouta Security Groups are used to setup firewall rules in this deployment. Another option to manage firewall is to use ufw inside the Ubuntu VM.
 
@@ -121,6 +120,73 @@ cd ~/siba/siba-fe
 git pull
 ```
 
+## Deploy the database and backend with Docker
+
+In order to prevent unnecessary environment variables from ending up in the containers, we want to create multiple environment variable files and load only what we need.
+
+Create `.env.db`, `.env.db.root` and `.env.be` files for environment variables and set permissions
+```sh
+cd ~/siba/Siba_be
+touch .env.db
+touch .env.db.root
+touch .env.be
+sudo chmod 644 .env.db
+sudo chmod 644 .env.db.root
+sudo chmod 644 .env.be
+```
+The docker compose script that is used expects the file names above.
+
+Add the following environment variables to the `.env.db` file
+```sh
+MARIADB_DATABASE=casedb
+MARIADB_USER=<YOUR_DATABASE_USER>
+MARIADB_PASSWORD=<YOUR_DATABASE_USER_PASSWORD>
+```
+Replace the values with your actual values. This is used both in the database and backend containers.
+
+Add the following environment variable to the `.env.db.root` file
+```sh
+MARIADB_ROOT_PASSWORD=<YOUR_ROOT_PASSWORD>
+```
+Replace the value with your desired database root user password. This is used only in the database container.
+
+Add the following environment variables to the `.env.be` file
+```sh
+BE_API_URL_PREFIX=/api
+BE_SERVER_PORT=3000
+DB_DRIVER_MODULE=mysql
+DB_PORT=3306
+DB_MULTIPLE_STATEMENTS=true
+DB_CONNECTION_POOL_MIN=1
+DB_CONNECTION_POOL_MAX=7
+SECRET_TOKEN=<YOUR_SECRET_TOKEN>
+TOKEN_EXPIRATION_SECONDS=3600
+```
+Replace the values with your actual values. This is used only in the backend container.
+
+Start the database and backend containers
+```sh
+sudo docker compose -f ~/siba/Siba_be/docker-compose-dbbe-deploy.yaml up -d
+```
+With -d the container will be run in the background. This way you can keep using the same terminal to run other commands.
+
+Check if the containers started
+```sh
+sudo docker ps
+```
+
+The backend API should now be accessible at `http://<VMIPADDRESS>:3000/api` where `<VMIPADDRESS>` is the public IP address of the virtual machine. The backend listens in port 3000 and that port is opened with firewall rules. The database is not exposed outside the VM, but can be exposed by opening port 3306.
+
+To stop and remove the containers, run
+```sh
+sudo docker compose -f ~/siba/Siba_be/docker-compose-dbbe-deploy.yaml down
+```
+
+If you need to rebuild the backend image before starting containers, pass `--build` to the command
+```sh
+sudo docker compose -f ~/siba/Siba_be/docker-compose-dbbe-deploy.yaml up -d --build
+```
+
 ## Deploy the frontend with Docker
 
 Some parts are based on this: https://github.com/haagahelia/siba-fe?tab=readme-ov-file#beginning
@@ -134,30 +200,57 @@ sudo chmod 644 .env
 
 Add the following environment variables to the .env file
 ```sh
-VITE_BE_SERVER_BASE_URL=http://<backendaddress>:<backendportnumber>/api
+VITE_BE_SERVER_BASE_URL=http://<VMIPADDRESS>:3000/api
 PORT=80
 ```
-Replace `<backendaddress>` with the public IP address of the virtual machine and `<backendportnumber>` with the port of the backend. This is the backend address the frontend will use to make requests. NOTE: Add it after the backend is deployed.
+Replace `<VMIPADDRESS>` with the public IP address of the virtual machine. This is the backend API address the frontend will use to make requests.
 
 Run the frontend Docker container that uses Nginx web server to serve the React application
 ```sh
 sudo docker compose -f ~/siba/siba-fe/docker-compose-fe-nginx.yaml up -d
 ```
+With -d the container will be run in the background. This way you can keep using the same terminal to run other commands.
 
 Check if the container started
 ```sh
 sudo docker ps
 ```
 
-Now the frontend should be available at `http://<VMIPADDRESS>:80` where `<VMIPADDRESS>` is the public IP address of the virtual machine.
-
-Note that the connection is currently insecure.
+The frontend should now be available at `http://<VMIPADDRESS>` where `<VMIPADDRESS>` is the public IP address of the virtual machine. The frontend is served through port 80.
 
 To stop and remove the container, run
 ```sh
 sudo docker compose -f ~/siba/siba-fe/docker-compose-fe-nginx.yaml down
 ```
 
-## Deploy the database and backend with Docker
+If you need to rebuild the frontend image before starting container, pass `--build` to the command
+```sh
+sudo docker compose -f ~/siba/siba-fe/docker-compose-fe-nginx.yaml up -d --build
+```
 
-Coming later
+## Removing Docker volumes
+
+Sometimes removing the volume the Docker compose script creates is needed.
+
+View volumes
+```sh
+sudo docker volume ls
+```
+
+Example of removing the volume
+```sh
+sudo docker volume rm siba_be_mariadb_data
+```
+Replace the volume name with the actual volume.
+
+## Other useful commands
+
+Go inside a container to view the file system, environment variables etc.
+```sh
+sudo docker exec -it <container id or name> sh
+```
+
+View container logs. Useful for debugging.
+```sh
+sudo docker logs <container id or name>
+```
