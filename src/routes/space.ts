@@ -398,7 +398,7 @@ space.get(
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     const spaceId = req.params.id;
-    db_knex('Allocspace')
+    db_knex('AllocSpace')
       .count('allocRoundId')
       .where('spaceId', spaceId)
       .then((allocRoundId) => {
@@ -426,14 +426,14 @@ space.get(
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     const spaceId = req.params.id;
-    db_knex('Allocspace')
+    db_knex('AllocSpace')
       .join(
         'AllocSubject',
-        'Allocspace.allocRoundId',
+        'AllocSpace.allocRoundId',
         'AllocSubject.allocRoundId',
       )
-      .join('Allocround', 'Allocspace.allocRoundId', 'Allocround.id')
-      .select('Allocround.name')
+      .join('AllocRound', 'AllocSpace.allocRoundId', 'AllocRound.id')
+      .select('AllocRound.name')
       .where('spaceId', spaceId)
       .limit(5)
       .then((allocRoundNames) => {
