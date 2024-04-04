@@ -208,7 +208,7 @@ equipment.get(
     const equipmentId = req.params.id;
     db_knex('Equipment')
       .join('SubjectEquipment', 'Equipment.id', 'SubjectEquipment.equipmentId')
-      .join('Subject', 'Subjectequipment.subjectId', 'Subject.id')
+      .join('Subject', 'SubjectEquipment.subjectId', 'Subject.id')
       .select('Subject.name')
       .where('equipmentId', equipmentId)
       .limit(5)
