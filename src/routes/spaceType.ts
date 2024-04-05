@@ -31,14 +31,14 @@ function handleErrorBasedOnErrno(
       requestErrorHandler(
         req,
         res,
-        `Conflict: SpaceType with the name ${req.body.name} already exists!`,
+        `Conflict: SpaceType with the name ${req.body.name} or acronym ${req.body.acronym} already exists!`,
       );
       break;
     case 1054:
       requestErrorHandler(
         req,
         res,
-        "error in spelling [either in 'name' and/or in 'description'].",
+        "error in spelling [either in 'name', 'acronym' and/or in 'description'].",
       );
       break;
     default:
@@ -165,32 +165,28 @@ spaceType.put(
   validateSpaceTypePut,
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
-    if (!req.body.name) {
-      requestErrorHandler(req, res, 'Space type name is missing.');
-    } else {
-      db_knex('SpaceType')
-        .where('id', req.body.id)
-        .update(req.body)
-        .then((rowsAffected) => {
-          if (rowsAffected === 1) {
-            successHandler(
-              req,
-              res,
-              rowsAffected,
-              `Update space type successful! Count of modified rows: ${rowsAffected}`,
-            );
-          } else {
-            requestErrorHandler(
-              req,
-              res,
-              `Update space type not successful, ${rowsAffected} row modified`,
-            );
-          }
-        })
-        .catch((error) => {
-          handleErrorBasedOnErrno(req, res, error, 'error updating space type');
-        });
-    }
+    db_knex('SpaceType')
+      .where('id', req.body.id)
+      .update(req.body)
+      .then((rowsAffected) => {
+        if (rowsAffected === 1) {
+          successHandler(
+            req,
+            res,
+            rowsAffected,
+            `Update space type successful! Count of modified rows: ${rowsAffected}`,
+          );
+        } else {
+          requestErrorHandler(
+            req,
+            res,
+            `Update space type not successful, ${rowsAffected} row modified`,
+          );
+        }
+      })
+      .catch((error) => {
+        handleErrorBasedOnErrno(req, res, error, 'error updating space type');
+      });
   },
 );
 

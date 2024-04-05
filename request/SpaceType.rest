@@ -24,6 +24,7 @@ Content-Type: application/json
 
 {
     "name": "testType",
+    "acronym": "T1",
     "description": "a test spaceType"
 }
 
@@ -37,7 +38,8 @@ Authorization: Basic {{token}}
 Content-Type: application/json
 
 {
-    "name": "No desc spaceType"
+    "name": "No desc spaceType",
+    "acronym": "T2"
 }
 
 ### 6. Create building with empty string description
@@ -47,6 +49,7 @@ Content-Type: application/json
 
 {
     "name": "Empty string desc spaceType",
+    "acronym": "T3",
     "description": ""
 }
 
@@ -58,11 +61,13 @@ Content-Type: application/json
 [
     {
     "name": "multi1",
+    "acronym": "T4",
     "description": "descriptiondescription"
     },
 
     {
-    "name": "multi2"
+    "name": "multi2",
+    "acronym": "T5"
     }
 ]
 
@@ -74,6 +79,7 @@ Content-Type: application/json
 {
     "id": {{nextId}},
     "name": "Updated name",
+    "acronym": "T6",
     "description": "Updated Description"
 }
 

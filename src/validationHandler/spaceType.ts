@@ -1,7 +1,9 @@
 import {
   createIdValidatorChain,
+  validateAcronymObl,
   validateDescription,
   validateIdObl,
+  validateMultiAcronymObl,
   validateMultiDescription,
   validateMultiNameObl,
   validateNameObl,
@@ -11,6 +13,7 @@ export const validateSpaceTypeId = [...createIdValidatorChain('spaceTypeId')];
 
 export const validateSpaceTypePost = [
   ...validateNameObl,
+  ...validateAcronymObl,
   ...validateDescription,
 ];
 
@@ -25,5 +28,6 @@ export const validateSpaceTypePut = [
 // => MultiPost!!!
 export const validateSpaceTypeMultiPost = [
   ...validateMultiNameObl,
+  ...validateMultiAcronymObl,
   ...validateMultiDescription,
 ];
