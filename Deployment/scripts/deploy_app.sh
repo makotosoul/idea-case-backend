@@ -4,8 +4,10 @@ pwd=$(pwd)
 
 # Get the latest code changes from git repositories
 cd ~/siba/siba-fe
+git switch main
 git pull
 cd ~/siba/Siba_be
+git switch main
 git pull
 
 # Stop and remove current containers
