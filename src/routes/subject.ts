@@ -317,4 +317,39 @@ subject.delete(
   },
 );
 
+subject.get(
+  '/bySpaceType/:spaceTypeId',
+  [authenticator, admin, planner, roleChecker, validate],
+  (req: Request, res: Response) => {
+    const { spaceTypeId } = req.params;
+    db_knex('Subject')
+      .where({ spaceTypeId })
+      .then((subjects) => {
+        if (subjects.length > 0) {
+          successHandler(
+            req,
+            res,
+            subjects,
+            `Subjects found for space type ID: ${spaceTypeId}`,
+          );
+        } else {
+          successHandler(
+            req,
+            res,
+            [],
+            `No subjects found for space type ID: ${spaceTypeId}`,
+          );
+        }
+      })
+      .catch((error) => {
+        dbErrorHandler(
+          req,
+          res,
+          error,
+          'Failed to fetch subjects by space type ID',
+        );
+      });
+  },
+);
+
 export default subject;
