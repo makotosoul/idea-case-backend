@@ -241,7 +241,7 @@ Example of removing the volume
 ```sh
 sudo docker volume rm siba_be_mariadb_data
 ```
-Replace the volume name with the actual volume.
+Replace the volume name with the actual volume. WARNING: This will reset the data in the database!
 
 ## Other useful commands
 
