@@ -71,6 +71,27 @@ export const createNameValidatorChain = (
     .bail(),
 ];
 
+export const createAcronymValidatorChain = (
+  fieldName: string,
+): ValidationChain[] => [
+  check(`${fieldName}`)
+    .isLength({ min: 1, max: 255 })
+    .withMessage(`${fieldName} must be between 1-255 characters long`)
+    .bail()
+    .matches(/^[A-Za-zäöåÄÖÅ0-9]*$/)
+    .withMessage(`${fieldName} must contain only letters and numbers`)
+    .bail()
+    .customSanitizer((value, { req }) => {
+      const capitalizedValue = value.toUpperCase();
+      req.body[`${fieldName}`] = capitalizedValue;
+      return capitalizedValue;
+    })
+    .trim()
+    .notEmpty()
+    .withMessage(`${fieldName} cannot be empty`)
+    .bail(),
+];
+
 export const createVariableValidatorChain = (
   fieldName: string,
 ): ValidationChain[] => [
@@ -181,6 +202,27 @@ export const createMultiVariableValidatorChain = (
     .bail(),
 ];
 
+export const createMultiAcronymValidatorChain = (
+  fieldName: string,
+): ValidationChain[] => [
+  body(`*.${fieldName}`)
+    .isLength({ min: 1, max: 255 })
+    .withMessage(`${fieldName} must be between 1-255 characters long`)
+    .bail()
+    .matches(/^[A-Za-zäöåÄÖÅ0-9]*$/)
+    .withMessage(`${fieldName} must contain only letters and numbers`)
+    .bail()
+    // .customSanitizer((value, { req }) => {
+    //   const capitalizedValue = value.toUpperCase();
+    //   req.body[`${fieldName}`] = capitalizedValue;
+    //   return capitalizedValue;
+    // })
+    .trim()
+    .notEmpty()
+    .withMessage(`${fieldName} cannot be empty`)
+    .bail(),
+];
+
 export const createMultiDescriptionValidatorChain = (
   fieldName: string,
 ): ValidationChain[] => [
@@ -283,6 +325,8 @@ export const validateIdObl = [...createIdValidatorChain('id')];
 
 export const validateNameObl = [...createNameValidatorChain('name')];
 
+export const validateAcronymObl = [...createAcronymValidatorChain('acronym')];
+
 export const validateVariableObl = [
   ...createVariableValidatorChain('variable'),
 ];
@@ -299,6 +343,10 @@ export const validateMultiNameObl = [...createMultiNameValidatorChain('name')];
 
 export const validateMultiVariableObl = [
   ...createMultiVariableValidatorChain('variable'),
+];
+
+export const validateMultiAcronymObl = [
+  ...createMultiAcronymValidatorChain('acronym'),
 ];
 
 export const validateMultiDescription = [
