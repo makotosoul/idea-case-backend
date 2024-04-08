@@ -79,7 +79,12 @@ sudo systemctl status docker
 ps -ef | grep docker
 ```
 
-Enable if not enabled
+Start it if it's not running
+```sh
+sudo systemctl start docker
+```
+
+This makes sure the Docker daemon starts automatically on system reboots
 ```sh
 sudo systemctl enable docker
 ```
@@ -227,6 +232,28 @@ If you need to rebuild the frontend image before starting container, pass `--bui
 ```sh
 sudo docker compose -f ~/siba/siba-fe/docker-compose-fe-nginx.yaml up -d --build
 ```
+
+## Upgrading the deployment
+
+Make sure to do the steps above if deploying for the first time. After directories, .env files, etc. are setup, you can deploy the latest changes of the whole app by running only one script.
+
+```sh
+bash ~/siba/Siba_be/Deployment/scripts/deploy_whole_app.sh
+```
+
+There are also scripts to deploy only the backend or frontend changes.
+
+To deploy only the backend changes:
+```sh
+bash ~/siba/Siba_be/Deployment/scripts/deploy_backend.sh
+```
+
+To deploy only the frontend changes:
+```sh
+bash ~/siba/Siba_be/Deployment/scripts/deploy_frontend.sh
+```
+
+The above scripts pull the latest changes from the git repositories, stop and remove running containers, and then rebuild the new images and start containers.
 
 ## Removing Docker volumes
 
