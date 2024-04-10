@@ -28,14 +28,19 @@ allocation.get(
     allocationService
       .getRoomsByAllocId(Number(id))
       .then((data) => {
-        successHandler(req, res, data, 'getById succesful - Allocation');
+        successHandler(
+          req,
+          res,
+          data,
+          'getRoomsByAllocId succesful - Allocation',
+        );
       })
       .catch((err) => {
         dbErrorHandler(
           req,
           res,
           err,
-          'Oops! Nothing came through - Allocation getById',
+          'Oops! Nothing came through - Allocation getRoomsByAllocId',
         );
       });
   },
