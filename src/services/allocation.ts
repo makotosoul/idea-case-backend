@@ -29,7 +29,7 @@ const getById = async (allocRoundId: number): Promise<string> => {
         `COUNT(*) FROM AllocSubject WHERE isAllocated = 1 AND AllocRound = ${allocRoundId} AS 'allocated'`,
       ),
     )
-    .from('AllocRound')
+    .from('AllocRound as ar')
     .where('ar.id', `${allocRoundId}`)
     .then((data) => {
       return data;
