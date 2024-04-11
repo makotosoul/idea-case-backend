@@ -1,7 +1,9 @@
-import { check } from 'express-validator';
+import { body, check } from 'express-validator';
 import {
   createBoolValidatorChain,
   createIdValidatorChain,
+  createMultiBoolValidatorChain,
+  createMultiEmailValidatorChain,
   validateIdObl,
 } from './index.js';
 
@@ -13,5 +15,10 @@ export const validateUserPost = [
   ...createBoolValidatorChain('isPlanner'),
   ...createBoolValidatorChain('isStatist'),
 ];
-
+export const validateMultiUserPost = [
+  ...createMultiEmailValidatorChain('email'),
+  ...createMultiBoolValidatorChain('isAdmin'),
+  ...createMultiBoolValidatorChain('isPlanner'),
+  ...createMultiBoolValidatorChain('isStatist'),
+];
 export const validateUserPut = [...validateIdObl, ...validateUserPost];
