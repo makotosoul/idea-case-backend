@@ -253,7 +253,7 @@ To deploy only the frontend changes:
 bash ~/siba/Siba_be/Deployment/scripts/deploy_frontend.sh
 ```
 
-The above scripts pull the latest changes from the git repositories, stop and remove running containers, and then rebuild the new images and start containers.
+The above scripts pull the latest changes from the git repositories, stop and remove running containers, and then rebuild the new images and start containers. New database changes are also applied by resetting the database. 
 
 ## Removing Docker volumes
 
