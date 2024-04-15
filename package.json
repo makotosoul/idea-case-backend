@@ -16,7 +16,7 @@
     "precommit"
   ],
   "nano-staged": {
-    "*.{js,ts}": "biome check --apply"
+    "*.{js,ts}": "biome check --apply ./src"
   },
   "author": "",
   "license": "ISC",
