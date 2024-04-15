@@ -241,7 +241,7 @@ CREATE TABLE IF NOT EXISTS Subject (
 
     CONSTRAINT `FK_Subject_SpaceType` FOREIGN KEY (SpaceTypeId)
         REFERENCES SpaceType(id)
-        ON DELETE NO ACTION
+        ON DELETE SET NULL
         ON UPDATE CASCADE,
 
     CONSTRAINT `FK_Subject_AllocRound` FOREIGN KEY (allocRoundId)
@@ -747,9 +747,9 @@ BEGIN
 	UPDATE AllocRound SET processOn = 1 WHERE id = allocRid;
 
 	/* ONLY FOR DEMO PURPOSES */
-	IF (allocRid = 10004) THEN
+	IF (allocRid >= 10004) THEN
 		INSERT INTO AllocSubject(subjectId, allocRoundId)
-		SELECT id, 10004 FROM Subject;
+		SELECT id, allocRid FROM Subject;
 	END IF;
 	/* DEMO PART ENDS */
 
@@ -836,8 +836,8 @@ BEGIN
 	-- Delete all allocation data and reset variables
 	DELETE FROM AllocSpace WHERE allocRoundId = allocRid;
 	DELETE FROM AllocSubjectSuitableSpace WHERE allocRoundId = allocRid;
-    IF (allocRid = 10004) THEN
-        DELETE FROM AllocSubject WHERE allocRoundId = 10004;
+    IF (allocRid >= 10004) THEN
+        DELETE FROM AllocSubject WHERE allocRoundId = allocRid;
     ELSE
 	    UPDATE AllocSubject SET isAllocated = 0, priority = null, cantAllocate = 0 WHERE allocRoundId = allocRid;
     END IF;
