@@ -13,16 +13,16 @@ const customFormat = format.combine(
   format.timestamp({ format: 'YYYYMMDD|HH:mm:ss' }),
   format.splat(),
   format.printf((info) => {
-    return `${
-      info.timestamp
-    }|${info.level.toLocaleUpperCase()}|${info.message}`;
+    return `${info.timestamp}|${info.level.toLocaleUpperCase()}|${
+      info.message
+    }`;
   }),
 );
 
 // Which log levels we want to show / see
 function filterOnly(level: string) {
   const LEVEL = 'level';
-  return format(function (info, http) {
+  return format((info, http) => {
     if (info[LEVEL] === level) {
       return info;
     }
