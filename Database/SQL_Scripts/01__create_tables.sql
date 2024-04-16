@@ -239,7 +239,7 @@ CREATE TABLE IF NOT EXISTS AllocSpace (
     allocRoundId    INTEGER     NOT NULL,
     subjectId       INTEGER     NOT NULL,
     spaceId         INTEGER     NOT NULL,
-    totalTime       TIME,
+    totalTime       BIGINT,
 
     PRIMARY KEY(subjectId, allocRoundId, spaceId),
 
