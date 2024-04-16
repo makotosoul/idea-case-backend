@@ -187,7 +187,7 @@ BEGIN
 							GROUP BY sp.id
 							HAVING
 							((SELECT TIME_TO_SEC(TIMEDIFF(availableTo, availableFrom)) *5 FROM Space WHERE id = sp.id) -
-								(SELECT IFNULL(SUM(TIME_TO_SEC(totalTime)), 0) FROM AllocSpace asp WHERE asp.allocRoundId = allocRid AND spaceId = sp.id)
+								(SELECT IFNULL(SUM(totalTime), 0) FROM AllocSpace asp WHERE asp.allocRoundId = allocRid AND spaceId = sp.id)
 								>
 								(sessionSeconds * (sessions - i - allocated)))
 							ORDER BY sp.personLimit ASC, sp.area ASC
@@ -202,8 +202,8 @@ BEGIN
 			INSERT INTO AllocSpace
 					(subjectId, allocRoundId, spaceId, totalTime)
 				VALUES
-					(subId, allocRid, spaceTo, SEC_TO_TIME((sessionSeconds * (sessions - i - allocated))))
-				ON DUPLICATE KEY UPDATE totalTime = ADDTIME(totalTime, (SEC_TO_TIME(sessionSeconds * (sessions - i - allocated))));
+					(subId, allocRid, spaceTo, (sessionSeconds * (sessions - i - allocated)))
+				ON DUPLICATE KEY UPDATE totalTime = totalTime + (sessionSeconds * (sessions - i - allocated));
 				-- LOG HERE
 				CALL LogAllocation(logId, "Space-allocation", "OK", CONCAT("Subject : ", subId, " - Allocate ", sessions - i - allocated, " of ", sessions, " sessions to space: ", spaceTo));
 				SET allocated := allocated + (sessions - i - allocated);
@@ -231,11 +231,11 @@ BEGIN
 			AND alpa.allocRoundId = allocRid
 			GROUP BY alpa.spaceId
 			ORDER BY (CEILING((TIME_TO_SEC(TIMEDIFF(spa.availableTO, spa.availableFrom))) *5) -
-			(SELECT IFNULL((SUM(CEILING(TIME_TO_SEC(totalTime)))), 0) FROM AllocSpace asp WHERE asp.allocRoundId = allocRid AND spaceId = alpa.spaceId)) DESC
+			(SELECT IFNULL(SUM(totalTime), 0) FROM AllocSpace asp WHERE asp.allocRoundId = allocRid AND spaceId = alpa.spaceId)) DESC
 			LIMIT 1
 		);
    		INSERT INTO AllocSpace (subjectId, allocRoundId, spaceId, totalTime)
-   			VALUES (subId, allocRid, spaceTo, SEC_TO_TIME(sessionSeconds * sessions));
+   			VALUES (subId, allocRid, spaceTo, sessionSeconds * sessions);
    		UPDATE AllocSubject asu SET isAllocated = 1 WHERE asu.subjectId = subId AND asu.allocRoundId = allocRid;
    		-- LOG HERE
 		CALL LogAllocation(logId, "Space-allocation", "Warning", CONCAT("Subject : ", subId, " - Allocate ", sessions, " of ", sessions, " sessions to space: ", spaceTo, " - All suitable spaces are full."));
@@ -243,7 +243,7 @@ BEGIN
    	ELSEIF allocated < sessions AND suitableSpaces = TRUE THEN -- if there is free time for some of the sessions but not all, add rest to same space than others
    		SET spaceTo := (SELECT spaceId FROM AllocSpace asp WHERE asp.subjectId = subId AND asp.allocRoundId = allocRid ORDER BY totalTime ASC LIMIT 1);
 
-		UPDATE AllocSpace asp SET totalTime=ADDTIME(totalTime,(SEC_TO_TIME(sessionSeconds * (sessions - allocated))))
+		UPDATE AllocSpace asp SET totalTime= totalTime + (sessionSeconds * (sessions - allocated))
 		WHERE asp.subjectId=subID AND asp.spaceId = spaceTO AND asp.allocRoundId = allocRid;
 		UPDATE AllocSubject asu SET isAllocated = 1 WHERE asu.subjectId = subId AND asu.allocRoundId = allocRid;
 		-- LOG HERE
@@ -347,12 +347,8 @@ BEGIN
 	-- SET procedure running
 	UPDATE AllocRound SET processOn = 1 WHERE id = allocRid;
 
-	/* ONLY FOR DEMO PURPOSES */
-	IF (allocRid = 10004) THEN
-		INSERT INTO AllocSubject(subjectId, allocRoundId)
-		SELECT id, 10004 FROM Subject;
-	END IF;
-	/* DEMO PART ENDS */
+	INSERT INTO AllocSubject(subjectId, allocRoundId)
+	SELECT id, allocRid FROM Subject;
 
 	UPDATE AllocRound SET requireReset = TRUE WHERE id = allocRid;
 
@@ -437,11 +433,7 @@ BEGIN
 	-- Delete all allocation data and reset variables
 	DELETE FROM AllocSpace WHERE allocRoundId = allocRid;
 	DELETE FROM AllocSubjectSuitableSpace WHERE allocRoundId = allocRid;
-    IF (allocRid = 10004) THEN
-        DELETE FROM AllocSubject WHERE allocRoundId = 10004;
-    ELSE
-	    UPDATE AllocSubject SET isAllocated = 0, priority = null, cantAllocate = 0 WHERE allocRoundId = allocRid;
-    END IF;
+    DELETE FROM AllocSubject WHERE allocRoundId = allocRid;
     UPDATE AllocRound SET isAllocated = 0, requireReset = FALSE WHERE id = allocRid;
 END;
 //

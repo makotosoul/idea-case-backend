@@ -331,9 +331,7 @@ allocation.get(
         'p.name as program',
         's.name as lesson',
         'sp.name as room',
-        db_knex.raw(
-          'TRUNCATE((HOUR(a.totalTime) + (extract(minute from a.totalTime)/60)), 2) as hours',
-        ),
+        db_knex.raw('TRUNCATE((totalTime / 60) / 60, 2) as hours'),
       )
       .from('AllocSpace as a')
       .innerJoin('AllocRound as ar', 'a.allocRoundId', 'ar.id')
@@ -408,9 +406,7 @@ allocation.get(
         'p.name as program',
         's.name as lesson',
         'sp.name as room',
-        db_knex.raw(
-          'TRUNCATE((HOUR(a.totalTime) + (extract(minute from a.totalTime)/60)), 2) as hours',
-        ),
+        db_knex.raw('TRUNCATE((totalTime / 60) / 60, 2) as hours'),
       )
       .from('DepartmentPlanner as dp')
       .innerJoin('Department as d', 'dp.departmentId', 'd.id')
@@ -490,9 +486,7 @@ allocation.get(
         'p.name as program',
         's.name as lesson',
         'sp.name as room',
-        db_knex.raw(
-          'TRUNCATE((HOUR(a.totalTime) + (extract(minute from a.totalTime)/60)), 2) as hours',
-        ),
+        db_knex.raw('TRUNCATE((totalTime / 60) / 60, 2) as hours'),
       )
       .from('AllocSpace as a')
       .innerJoin('AllocRound as ar', 'a.allocRoundId', 'ar.id')

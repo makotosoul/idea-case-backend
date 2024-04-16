@@ -182,7 +182,7 @@ CREATE TABLE IF NOT EXISTS Subject (
 
     CONSTRAINT `FK_Subject_SpaceType` FOREIGN KEY (SpaceTypeId)
         REFERENCES SpaceType(id)
-        ON DELETE SET NULL
+        ON DELETE NO ACTION
         ON UPDATE CASCADE,
 
     CONSTRAINT `FK_Subject_AllocRound` FOREIGN KEY (allocRoundId)
@@ -239,7 +239,7 @@ CREATE TABLE IF NOT EXISTS AllocSpace (
     allocRoundId    INTEGER     NOT NULL,
     subjectId       INTEGER     NOT NULL,
     spaceId         INTEGER     NOT NULL,
-    totalTime       TIME,
+    totalTime       BIGINT,
 
     PRIMARY KEY(subjectId, allocRoundId, spaceId),
 
