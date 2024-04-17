@@ -253,7 +253,44 @@ To deploy only the frontend changes:
 bash ~/siba/Siba_be/Deployment/scripts/deploy_frontend.sh
 ```
 
-The above scripts pull the latest changes from the git repositories, stop and remove running containers, and then rebuild the new images and start containers. New database changes are also applied by resetting the database. 
+The above scripts pull the latest changes from the git repositories, stop and remove running containers, and then rebuild the new images and start containers. New database changes are also applied by resetting the database.
+
+## Secure the deployment with HTTPS
+
+This deployment uses a free SSL/TLS certificate obtained from Let's Encrypt. Let's Encrypt certificates require a domain name.
+
+Certbot was used to manage Let's Encrypt certificates. https://github.com/certbot/certbot
+
+There are many ways to install Certbot, one example below:
+```sh
+sudo apt-get remove certbot
+sudo snap install --classic certbot
+sudo ln -s /snap/bin/certbot /usr/bin/certbot
+```
+
+There are also many ways to get a certificate with Certbot, but this deployment used this:
+```sh
+sudo certbot certonly -d <YOUR_DOMAIN_NAME>
+```
+Replace <YOUR_DOMAIN_NAME> with your server's domain name. For example: example.com
+
+It is probably a good idea to follow the official documentations, because this may not work in all environments.
+
+Read this documentation about CSC cloud Pouta DNS names: https://docs.csc.fi/cloud/pouta/additional-services/#dns-services-in-cpouta
+
+Answer the questions it will ask you. After everything went OK, it should tell you where the certificate file is. The location should be something like this:
+
+- certificate file: `/etc/letsencrypt/live/<YOUR_DOMAIN_NAME>/fullchain.pem`
+- private key: `/etc/letsencrypt/live/<YOUR_DOMAIN_NAME>/privkey.pem`
+
+<YOUR_DOMAIN_NAME> is the server's domain name that you used earlier. Check /etc/letsencrypt/live/ for all possible options. If you generate several certificates for the same domain they may have some additions like `<YOUR_DOMAIN_NAME>-0001`.
+
+Next update the frontend's .env file with the following environment variables:
+```sh
+SSL_CERT_PATH=<PATH_TO_YOUR_CERTIFICATE>
+SSL_KEY_PATH=<PATH_TO_YOUR_PRIVATE_KEY>
+```
+Update the values with your certificate file paths.
 
 ## Removing Docker volumes
 
