@@ -45,6 +45,8 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - "${SSL_CERT_PATH}:/etc/nginx/ssl/fullchain.pem"
       - "${SSL_KEY_PATH}:/etc/nginx/ssl/privkey.pem"
+    networks:
+      - db_be_network
 
 networks:
   db_be_network:
