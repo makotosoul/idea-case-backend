@@ -12,8 +12,6 @@ services:
     volumes:
       - ./Database/SQL_Scripts/000__CreateALLdb.sql:/docker-entrypoint-initdb.d/init.sql
       - mariadb_data:/var/lib/mysql
-    networks:
-      - db_be_network
 
   siba_be_deployment:
     container_name: siba_be_container
@@ -30,11 +28,9 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
-    networks:
-      - db_be_network
 
   reverseproxy:
-    env_file: .env.reverseproxy
+    env_file: .env
     image: nginx:alpine
     container_name: siba_reverse_proxy
     depends_on:
@@ -45,12 +41,6 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - "${SSL_CERT_PATH}:/etc/nginx/ssl/fullchain.pem"
       - "${SSL_KEY_PATH}:/etc/nginx/ssl/privkey.pem"
-    networks:
-      - db_be_network
-
-networks:
-  db_be_network:
-    driver: bridge
 
 volumes:
   mariadb_data:
