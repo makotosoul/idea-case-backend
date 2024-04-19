@@ -158,9 +158,10 @@ Answer the questions it will ask you. After everything went OK, it should tell y
 
 # About reverse proxy
 
-The backend uses Nginx as reverse proxy to do [SSL termination](https://docs.digitalocean.com/glossary/ssl-termination/). Basically it decrypts incoming encrypted traffic and then forwards the request to the backend container. The backend container then returns the response to the reverse proxy, which encrypts it and sends it back to the client. This process works in a private network inside the virtual machine.
+The backend uses Nginx as reverse proxy to do [SSL termination](https://docs.digitalocean.com/glossary/ssl-termination/). Basically it decrypts incoming encrypted traffic and then forwards the request to the backend container. The backend container then returns the response to the reverse proxy, which encrypts it and sends it back to the client. This process works in a private network inside the virtual machine. The reverse proxy needs to have the SSL certificate and private key so it can do this process.
 
-The reverse proxy needs to have the SSL certificate and private key so it can do this process. You should read more about the topic if you want to know more as this documentation doesn't focus on it.
+You should read more about the topic if you want to know more as this documentation doesn't focus on it.
+- https://en.wikipedia.org/wiki/TLS_termination_proxy
 
 Reference for the implementation:
 - https://gist.github.com/dahlsailrunner/679e6dec5fd769f30bce90447ae80081
