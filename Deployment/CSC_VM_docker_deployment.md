@@ -292,6 +292,24 @@ SSL_KEY_PATH=<PATH_TO_YOUR_PRIVATE_KEY>
 ```
 Update the values with your certificate file paths.
 
+The backend uses Nginx as reverse proxy to do [SSL termination](https://docs.digitalocean.com/glossary/ssl-termination/). Basically it decrypts incoming encrypted traffic and then forwards the request to the backend container. The backend container then returns the response to the reverse proxy, which encrypts it and sends it back to the client. This process works in a private network inside the virtual machine.
+
+The reverse proxy needs to have the SSL certificate and private key so it can do this process.
+
+Create .env file to the root of the backend
+```sh
+cd ~/siba/Siba_be
+touch .env
+sudo chmod 644 .env
+```
+
+Add the following environment variables to the file:
+```sh
+SSL_CERT_PATH=<PATH_TO_YOUR_CERTIFICATE>
+SSL_KEY_PATH=<PATH_TO_YOUR_PRIVATE_KEY>
+```
+Update the values with your certificate file paths.
+
 ## Removing Docker volumes
 
 Sometimes removing the volume the Docker compose script creates is needed.

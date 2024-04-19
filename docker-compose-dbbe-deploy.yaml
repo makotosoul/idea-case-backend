@@ -33,10 +33,10 @@ services:
     networks:
       - db_be_network
 
-  reverseproxy:
+  siba_be_reverseproxy:
     env_file: .env
     image: nginx:alpine
-    container_name: siba_reverse_proxy
+    container_name: siba_be_reverse_proxy_container
     depends_on:
       - siba_be_deployment
     ports:
