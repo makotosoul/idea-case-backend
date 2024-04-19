@@ -26,10 +26,25 @@ services:
     environment:
       - DB_HOST=siba_db_deployment
     ports:
-      - '3000:3000'
+      - '3001:3001'
     volumes:
       - .:/app
       - /app/node_modules
+    networks:
+      - db_be_network
+
+  siba_be_reverseproxy:
+    env_file: .env
+    image: nginx:alpine
+    container_name: siba_be_reverse_proxy_container
+    depends_on:
+      - siba_be_deployment
+    ports:
+      - "3000:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - "${SSL_CERT_PATH}:/etc/nginx/ssl/fullchain.pem"
+      - "${SSL_KEY_PATH}:/etc/nginx/ssl/privkey.pem"
     networks:
       - db_be_network
 
