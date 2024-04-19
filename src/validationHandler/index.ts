@@ -295,6 +295,12 @@ export const createMultiBoolValidatorChain = (
     .bail(),
 ];
 
+export const createMultiEmailValidatorChain = (
+  fieldName: string,
+): ValidationChain[] => [
+  body(`*.${fieldName}`).notEmpty().withMessage('Email cannot be empty').bail(),
+];
+
 export const createFloatValidatorChain = (
   fieldName: string,
 ): ValidationChain[] => [

@@ -13,8 +13,11 @@ import {
   requestErrorHandler,
   successHandler,
 } from '../responseHandler/index.js';
+import { DepartmentPlanner } from '../types/custom.js';
+import logger from '../utils/logger.js';
 import { validate, validateIdObl } from '../validationHandler/index.js';
 import {
+  validateMultiUserPost,
   validateUserPost,
   validateUserPut,
 } from '../validationHandler/user.js';
@@ -53,6 +56,64 @@ user.post(
         } else {
           dbErrorHandler(req, res, error, 'Some DB error while adding user');
         }
+      });
+  },
+);
+
+// add multiple users
+user.post(
+  '/multi',
+  validateMultiUserPost,
+  [authenticator, admin, roleChecker, validate],
+  async (req: Request, res: Response) => {
+    const userDepartmentPlanner: DepartmentPlanner[] = [];
+    // insert user data
+    for (const userData of req.body) {
+      // securing password
+      const hashedPassword = bcrypt.hashSync(userData.password, 10);
+      userData.password = hashedPassword;
+      // inserting user data
+      const [userID] = await db_knex('User').insert({
+        email: userData.email,
+        password: userData.password,
+        isAdmin: userData.isAdmin,
+        isPlanner: userData.isPlanner,
+        isStatist: userData.isStatist,
+      });
+      // get user id of inserted users
+      const [getUserId] = await db_knex('User')
+        .select('id')
+        .where('email', userData.email);
+
+      // get dept id's
+      const [getDeptId] = await db_knex('Department')
+        .select('id')
+        .where('name', userData.department);
+      console.log('--------', getUserId, getDeptId, '--------');
+
+      userDepartmentPlanner.push({
+        userId: getUserId.id,
+        departmentId: getDeptId.id,
+      });
+    }
+    // insert departmentplanner data
+    db_knex('Departmentplanner')
+      .insert(userDepartmentPlanner)
+      .then((result) => {
+        if (result.length === 0) {
+          requestErrorHandler(req, res, 'Nothing to insert');
+        } else {
+          successHandler(
+            req,
+            res,
+            { insertId: result[0] }, // Assuming auto-incremented ID
+            'Create successful - Subject',
+          );
+          logger.info(`deprtment planner ${userDepartmentPlanner} created`);
+        }
+      })
+      .catch((error) => {
+        dbErrorHandler(req, res, error, 'Oops! Create failed - Subject');
       });
   },
 );

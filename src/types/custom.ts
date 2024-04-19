@@ -1,3 +1,5 @@
+import department from '../routes/department.js';
+
 export type RoleName = 'admin' | 'planner' | 'statist';
 
 export type RolePropertyName = 'isAdmin' | 'isPlanner' | 'isStatist';
@@ -16,6 +18,11 @@ export type User = {
   // was like this:
   //[key in RolePropertyName]: RoleRequired;
 };
+
+export interface DepartmentPlanner {
+  userId: number;
+  departmentId: number;
+}
 
 export interface Subject {
   name: string;
