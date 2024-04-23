@@ -47,6 +47,6 @@
     "pre-commit": "^1.2.2",
     "rimraf": "^5.0.5",
     "tsc-watch": "^6.0.4",
-    "typescript": "^5.3.3"
+    "typescript": "^5.4.5"
   }
 }

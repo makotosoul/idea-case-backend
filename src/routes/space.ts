@@ -399,7 +399,7 @@ space.get(
   (req: Request, res: Response) => {
     const spaceId = req.params.id;
     db_knex('AllocSpace')
-      .count('allocRoundId')
+      .countDistinct('allocRoundId as count')
       .where('spaceId', spaceId)
       .then((allocRoundId) => {
         successHandler(
@@ -420,28 +420,23 @@ space.get(
   },
 );
 
-//fetching first five names of allocrounds of a selected space by id
+//fetching allocation rounds associated with space by id
 space.get(
-  '/:id/firstFiveAllocNames',
+  '/:id/allocRoundsAssociatedWithSpace',
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     const spaceId = req.params.id;
     db_knex('AllocSpace')
-      .join(
-        'AllocSubject',
-        'AllocSpace.allocRoundId',
-        'AllocSubject.allocRoundId',
-      )
       .join('AllocRound', 'AllocSpace.allocRoundId', 'AllocRound.id')
-      .select('AllocRound.name')
-      .where('spaceId', spaceId)
+      .distinct('AllocRound.name')
+      .where('AllocSpace.spaceId', spaceId)
       .limit(5)
       .then((allocRoundNames) => {
         successHandler(
           req,
           res,
           allocRoundNames,
-          'Successfully recived the first five names of allocspace by space id from database',
+          'Successfully recived the allocRounds associated with space by ID',
         );
       })
       .catch((error) => {
@@ -449,7 +444,7 @@ space.get(
           req,
           res,
           error,
-          'Failed to get the first five names of allocspace by space id from database',
+          'Failed to get the allocRounds associated with space by ID from database',
         );
       });
   },
