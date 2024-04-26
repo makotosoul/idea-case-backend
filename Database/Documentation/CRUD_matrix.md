@@ -5,6 +5,7 @@ R = Read, list
 U = Update
 D = Delete
 X = Execute procedure/trigger
+? = Confirmation from Customer needed
 ```
 
 |                          | Admin                | Planner(ownDep) | Plan.(in general) | Statist |
@@ -14,8 +15,8 @@ X = Execute procedure/trigger
 | AllocRoundCurrentUser    | (Automatic?) R       |                 | R                 | R       |
 | </br>                    |                      |                 |                   |         |
 | Building                 | CRUD                 |                 | R                 | R       |
-| Space ('Room')           | CRUD                 |                 | R                 | R       |
-| SpaceEquipment           | CRUD                 |                 | R                 | R       |
+| Space ('Room')           | CRUD                 |                 | R ?               | R       |
+| SpaceEquipment           | CRUD                 |                 | R ?               | R       |
 | SpaceType                | CRUD                 |                 | R                 | R       |
 | </br>                    |                      |                 |                   |         |
 | Equipment                | CRUD                 |                 | CRUD              | R       |
