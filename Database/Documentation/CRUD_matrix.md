@@ -9,7 +9,7 @@ X = Execute procedure/trigger
 ```
 
 |                          | Admin                | Planner(ownDep) | Plan.(in general) | Statist |
-| ------------------------ | -------------------- | --------------- | ----------------- | ------- |
+| :------------------------: | :--------------------: | :---------------: | :-----------------: | :-------: |
 | AllocRound               | CRUD                 |                 | R                 | R       |
 | Alloc\*(other tables)    | X (Only stored proc) |                 | R                 | R       |
 | AllocRoundCurrentUser    | (Automatic?) R       |                 | R                 | R       |
