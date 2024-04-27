@@ -79,10 +79,10 @@ const getRoomsByAllocId = async (
     .select({
       allocatedHours: db_knex.raw(
         `(SELECT IFNULL(CAST(SUM((as2.totalTime / 60) / 60) AS DECIMAL(10,2)), 0)
-            FROM AllocSpace as as2
-            WHERE spaceId = id
-            AND allocRoundId = ?
-        )`,
+             FROM AllocSpace as as2
+             WHERE spaceId = id
+             AND allocRoundId = ?
+         )`,
         [allocRoundId],
       ),
     })
@@ -92,7 +92,8 @@ const getRoomsByAllocId = async (
       ),
     })
     .select('spaceTypeId')
-    .orderByRaw('allocatedHours / requiredHours DESC'); // Sort by allocation percentage
+    .orderByRaw('(allocatedHours / requiredHours) DESC') // Sort by allocation percentage
+    .orderBy('name');
 };
 
 /* Get allocated rooms by Program.id and AllocRound.id */
