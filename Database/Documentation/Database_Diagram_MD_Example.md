@@ -1,27 +1,30 @@
 ```mermaid
 
 erDiagram
-    Building ||--o{ Space: has
-    Space |o--o{ AllocSpace : in
-    Space ||--o{AllocSubjectSuitableSpace : in
-    Space |o--o{ SpaceEquipment : in
+    Building ||--|{ Space: has
+    Space ||--|{ AllocSpace : in
+    Space ||--|{AllocSubjectSuitableSpace : in
+    Space ||--|{ SpaceEquipment : in
     Equipment ||--|{SpaceEquipment : in
-    Equipment ||--o{SubjectEquipment : is
-    AllocSubject |o--o{ AllocSpace : has
-    AllocSubject ||--o{ AllocSubjectSuitableSpace : has
-    Subject |o--o| AllocSubject : in
-    Subject ||--o{SubjectEquipment : has
-    Program ||--o{ Subject : has
-    SpaceType ||--o{ Subject : has
-    SpaceType ||--o{ Space :has
-    Department ||--o{ Program : has
-    Department ||--|| DepartmentPlanner :has
-    User ||--o| DepartmentPlanner :is
-    User }|--o| AllocRound :in
-    User ||--|| AllocCurrentRoundUser : is
-    AllocRound ||--|| AllocCurrentRoundUser : has
-    AllocRound }|--|{ Subject :has
-    AllocRound }|--o{ AllocSubject :has
+    Equipment ||--|{SubjectEquipment : is
+    AllocSubject ||--|{ AllocSpace : has
+    AllocSubject ||--|{ AllocSubjectSuitableSpace : has
+    Subject ||--|| AllocSubject : in
+    Subject ||--|{SubjectEquipment : has
+    Program ||--|{ Subject : has
+    SpaceType |o--|{ Subject : has
+    SpaceType ||--|{ Space :has
+    Department ||--|{ Program : has
+    Department ||--|{ DepartmentPlanner :has
+    User ||--|{ DepartmentPlanner :is
+    User ||--|{ AllocRound :in
+    User ||--|{ AllocCurrentRoundUser : is
+    AllocRound ||--|{ AllocCurrentRoundUser : has
+    AllocRound ||--|{ Subject :has
+    AllocRound ||--|{ AllocSubject :has
+
+    log_event }|--|| log_list : has
+    log_list }|--o| log_type : has
 
     User {
         int id PK
@@ -157,6 +160,36 @@ erDiagram
         int id PK
         varchar name UK
         int departmentId FK
+    }
+
+    log_event {
+        int id PK
+        int log_id FK
+        varchar stage
+        varchar status
+        varchar information
+        timestamp created_at
+    }
+
+    log_list {
+        int id PK
+        int log_type FK
+        timestamp created_at
+    }
+
+    log_type {
+        int id PK
+        varchar name UK
+    }
+
+    GlobalSetting {
+        int id PK
+        varchar variable UK
+        varchar description
+        int numberValue
+        varchar textValue
+        tinyint booleanValue
+        decimal decimalValue
     }
 
 
