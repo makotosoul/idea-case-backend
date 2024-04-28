@@ -93,7 +93,7 @@ const getRoomsByAllocId = async (
     })
     .select('spaceTypeId')
     .orderByRaw('(allocatedHours / requiredHours) DESC') // Sort by allocation percentage
-    .orderBy('name');
+    .orderBy('name'); // Then sort by name
 };
 
 /* Get allocated rooms by Program.id and AllocRound.id */
