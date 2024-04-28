@@ -5,7 +5,9 @@ USE casedb; /* UPDATED 2024-02-26 */
 INSERT INTO GlobalSetting(variable, description, numberValue, textValue) VALUES
     ('highPriority', 'High priority value', 800, NULL),
     ("allocation-debug", "Is the allocation logging on? numberValue : 0 = OFF, 1 = ON", 1, NULL),
-    ("items-per-page", "The number of items to display per page in lists. Default is 15.", 15, NULL);
+    ("items-per-page", "The number of items to display per page in lists. Default is 15.", 15, NULL),
+    ('spaceUnderUsage','The limit under which to show space usage as yellow',20,NULL),
+    ('spaceOverUsage','The limit over which to show space usage as red or other prob color',30,NULL);
 
 /* --- Insert: Department --- */
 INSERT INTO Department(name, description) VALUES
