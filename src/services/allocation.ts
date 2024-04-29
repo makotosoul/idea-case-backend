@@ -43,25 +43,25 @@ const getById = async (allocRoundId: number): Promise<string> => {
 const getAllSubjectsById = async (allocRoundId: number) => {
   return db_knex
     .select(
-      's.id',
-      's.name',
-      'as2.isAllocated',
-      'as2.cantAllocate',
-      'as2.priority',
+      'sub.id',
+      'sub.name',
+      'asu.isAllocated',
+      'asu.cantAllocate',
+      'asu.priority',
       db_knex.raw(
-        `IFNULL((SELECT CAST((al_sp.totalTime / 60) / 60) AS DECIMAL(10,2))
-        FROM AllocSpace al_sp
-        WHERE al_sp.allocRoundId = ${allocRoundId} AND al_sp.subjectId = s.id
-        GROUP BY al_sp.subjectId), 0) AS "AllocatedHours",
-        CAST(((HOUR(s.sessionLength) + EXTRACT(MINUTE FROM s.sessionLength)/60) * s.groupCount * s.sessionCount) AS DECIMAL(10,2)) AS "requiredHours"`,
+        `IFNULL((SELECT CAST((asp.totalTime / 60) / 60) AS DECIMAL(10,2))
+        FROM AllocSpace asp
+        WHERE asp.allocRoundId = ${allocRoundId} AND asp.subjectId = s.id
+        GROUP BY asp.subjectId), 0) AS "AllocatedHours",
+        CAST(((HOUR(sub.sessionLength) + EXTRACT(MINUTE FROM sub.sessionLength)/60) * sub.groupCount * sub.sessionCount) AS DECIMAL(10,2)) AS "requiredHours"`,
       ),
     )
-    .from('Subject as s')
-    .innerJoin('AllocSubject as as2', 's.id', 'as2.subjectId')
-    .innerJoin('AllocSpace as al_sp', 's.id', 'al_sp.subjectId')
-    .where('as2.allocRoundId', allocRoundId)
-    .groupBy('s.id')
-    .orderBy('as2.priority', 'asc')
+    .from('Subject as sub')
+    .innerJoin('AllocSubject as asu', 'sub.id', 'asu.subjectId')
+    .innerJoin('AllocSpace as asp', 'sub.id', 'asp.subjectId')
+    .where('asu.allocRoundId', allocRoundId)
+    .groupBy('sub.id')
+    .orderBy('asu.priority', 'asc')
     .then((data) => {
       return data;
     })
@@ -78,8 +78,8 @@ const getRoomsByAllocId = async (
     .select('id', 'name')
     .select({
       allocatedHours: db_knex.raw(
-        `(SELECT IFNULL(CAST(SUM((as2.totalTime / 60) / 60) AS DECIMAL(10,2)), 0)
-             FROM AllocSpace as as2
+        `(SELECT IFNULL(CAST(SUM((asp.totalTime / 60) / 60) AS DECIMAL(10,2)), 0)
+             FROM AllocSpace as asp
              WHERE spaceId = id
              AND allocRoundId = ?
          )`,
@@ -88,7 +88,7 @@ const getRoomsByAllocId = async (
     })
     .select({
       requiredHours: db_knex.raw(
-        'HOUR(TIMEDIFF(Space.availableTO, Space.availableFrom))*5',
+        'HOUR(TIMEDIFF(Space.availableTo, Space.availableFrom))*5',
       ),
     })
     .select('spaceTypeId')
@@ -103,19 +103,19 @@ const getAllocatedRoomsByProgram = async (
 ): Promise<AllocatedRoomsByProgramType> => {
   return db_knex
     .distinct(
-      's.id',
-      's.name',
+      'sp.id',
+      'sp.name',
       db_knex.raw(
-        'CAST(SUM((as2.totalTime / 60) / 60) AS DECIMAL(10,2)) AS allocatedHours',
+        'CAST(SUM((asp.totalTime / 60) / 60) AS DECIMAL(10,2)) AS allocatedHours',
       ),
     )
-    .from('AllocSpace as as2')
-    .leftJoin('Space as s', 'as2.spaceId', 's.id')
-    .leftJoin('Subject as s2', 'as2.subjectId', 's2.id')
-    .leftJoin('Program as p', 's2.programId', 'p.id')
+    .from('AllocSpace as asp')
+    .leftJoin('Space as sp', 'asp.spaceId', 'sp.id')
+    .leftJoin('Subject as sub', 'asp.subjectId', 'sub.id')
+    .leftJoin('Program as p', 's.programId', 'p.id')
     .where('p.id', programId)
-    .andWhere('as2.allocRoundId', allocRoundId)
-    .groupBy('s.id');
+    .andWhere('asp.allocRoundId', allocRoundId)
+    .groupBy('sp.id');
 };
 
 /* Get allocated rooms by Subject.id and AllocRound.id */
@@ -125,18 +125,18 @@ const getAllocatedRoomsBySubject = (
 ): Promise<string> => {
   return db_knex
     .distinct(
-      's.id',
-      's.name',
+      'sp.id',
+      'sp.name',
       db_knex.raw(
-        'cast(sum((aspace.totalTime / 60) / 60) as decimal(10,2)) as allocatedHours',
+        'cast(sum((asp.totalTime / 60) / 60) as decimal(10,2)) as allocatedHours',
       ),
     )
-    .from('AllocSpace as aspace')
-    .leftJoin('Space as s', 'aspace.spaceId', 's.id')
-    .leftJoin('Subject as sub', 'aspace.subjectId', 'sub.id')
-    .where('aspace.subjectId', subjectId)
-    .andWhere('aspace.allocRoundId', allocRoundId)
-    .groupBy('s.id');
+    .from('AllocSpace as asp')
+    .leftJoin('Space as sp', 'asp.spaceId', 'sp.id')
+    .leftJoin('Subject as sub', 'asp.subjectId', 'sub.id')
+    .where('asp.subjectId', subjectId)
+    .andWhere('asp.allocRoundId', allocRoundId)
+    .groupBy('sp.id');
 };
 
 /* Get subjects by Program.id and AllocRound.id */
@@ -146,27 +146,27 @@ const getSubjectsByProgram = (
 ): Promise<AllocatedSubjectsByProgramType> => {
   return db_knex
     .select(
-      'alsub.subjectId as id',
+      'asu.subjectId as id',
       'sub.name',
       db_knex.raw(
-        'IFNULL(CAST(SUM((alspace.totalTime / 60) / 60) as decimal(10,2)), 0) AS allocatedHours',
+        'IFNULL(CAST(SUM((asp.totalTime / 60) / 60) as decimal(10,2)), 0) AS allocatedHours',
       ),
       db_knex.raw(
         'CAST((sub.groupCount * (HOUR(sub.sessionLength) + EXTRACT(MINUTE FROM sub.sessionLength)/60) * sub.sessionCount) AS DECIMAL(10,2)) as requiredHours',
       ),
     )
-    .from('AllocSubject as alsub')
-    .join('Subject as sub', 'alsub.subjectId', 'sub.id')
+    .from('AllocSubject as asu')
+    .join('Subject as sub', 'asu.subjectId', 'sub.id')
     .join('Program as p', 'sub.programId', 'p.id')
-    .leftJoin('AllocSpace as alspace', function () {
-      this.on('alsub.subjectId', 'alspace.subjectId').andOn(
-        'alsub.allocRoundId',
-        'alspace.allocRoundId',
+    .leftJoin('AllocSpace as asp', function () {
+      this.on('asu.subjectId', 'asp.subjectId').andOn(
+        'asu.allocRoundId',
+        'asp.allocRoundId',
       );
     })
     .where('p.id', programId)
-    .andWhere('alsub.allocRoundId', allocRoundId)
-    .groupBy('alsub.subjectId');
+    .andWhere('asu.allocRoundId', allocRoundId)
+    .groupBy('asu.subjectId');
 };
 
 /* Get subjects by Room.id and AllocRound.id */
@@ -176,16 +176,16 @@ const getAllocatedSubjectsByRoom = async (
 ): Promise<string> => {
   return db_knex
     .select(
-      'su.id',
-      'su.name',
+      'sub.id',
+      'sub.name',
       // EXTRACT(HOUR FROM ...) returns hours from 0 to 23 in certain MariaDB versions.
       // Use HOUR instead to get more than 24 hours. https://mariadb.com/kb/en/extract/
       db_knex.raw('TRUNCATE((totalTime / 60) / 60, 2) as totalTime'),
     )
-    .from('AllocSpace as allocSp')
-    .innerJoin('Subject as su', 'su.id', 'allocSp.subjectId')
-    .where('allocSp.spaceId', roomId)
-    .andWhere('allocSp.allocRoundId', allocRoundId)
+    .from('AllocSpace as asp')
+    .innerJoin('Subject as sub', 'sub.id', 'asp.subjectId')
+    .where('asp.spaceId', roomId)
+    .andWhere('asp.allocRoundId', allocRoundId)
     .then((data) => {
       return data;
     })
@@ -215,18 +215,18 @@ const getUnAllocableSubjects = async (
 ): Promise<string> => {
   return db_knex
     .select(
-      'all_sub.subjectId',
-      's.name',
-      's.groupSize',
-      's.area',
+      'asu.subjectId',
+      'sub.name',
+      'sub.groupSize',
+      'sub.area',
       'st.name as spaceType',
-      's.allocRoundId',
+      'sub.allocRoundId',
     )
-    .from('AllocSubject as all_sub')
-    .join('Subject as s', 'all_sub.subjectId', 's.id')
-    .join('SpaceType as st', 's.spaceTypeId', 'st.id')
+    .from('AllocSubject as asu')
+    .join('Subject as sub', 'asu.subjectId', 'sub.id')
+    .join('SpaceType as st', 'sub.spaceTypeId', 'st.id')
     .where('cantAllocate', '1')
-    .andWhere('s.allocRoundId', allocRoundId)
+    .andWhere('sub.allocRoundId', allocRoundId)
     .then((data) => {
       return data;
     })
@@ -238,27 +238,27 @@ const getUnAllocableSubjects = async (
 const getSpacesForSubject = async (subjectId: number): Promise<string> => {
   return db_knex
     .select(
-      's.id',
-      's.name',
-      's.area',
-      db_knex.raw(`getMissingItemAmount(${subjectId}, s.id) as missingItems`),
+      'sp.id',
+      'sp.name',
+      'sp.area',
+      db_knex.raw(`getMissingItemAmount(${subjectId}, sp.id) as missingItems`),
       db_knex.raw(
-        `IF(s.area >= (SELECT area FROM Subject WHERE id = ${subjectId}), TRUE, FALSE) AS areaOk`,
+        `IF(sp.area >= (SELECT area FROM Subject WHERE id = ${subjectId}), TRUE, FALSE) AS areaOk`,
       ),
-      's.personLimit',
+      'sp.personLimit',
       db_knex.raw(
-        `IF(s.personLimit >= (SELECT groupSize FROM Subject WHERE id = ${subjectId}), TRUE, FALSE) AS personLimitOk`,
+        `IF(sp.personLimit >= (SELECT groupSize FROM Subject WHERE id = ${subjectId}), TRUE, FALSE) AS personLimitOk`,
       ),
-      's.inUse',
+      'sp.inUse',
       'st.name as spaceType',
       db_knex.raw(
         `IF(st.id = (SELECT spaceTypeId FROM Subject WHERE id = ${subjectId}), TRUE, FALSE) AS spaceTypeOk`,
       ),
     )
-    .from('Space as s')
-    .leftJoin('SpaceEquipment as se', 's.id', 'se.spaceId')
-    .leftJoin('SpaceType as st', 's.spaceTypeId', 'st.id')
-    .groupBy('s.id')
+    .from('Space as sp')
+    .leftJoin('SpaceEquipment as se', 'sp.id', 'se.spaceId')
+    .leftJoin('SpaceType as st', 'sp.spaceTypeId', 'st.id')
+    .groupBy('sp.id')
     .orderByRaw(
       `FIELD(st.id, (SELECT spaceTypeId FROM Subject WHERE id = ${subjectId})) DESC`,
     )
@@ -281,14 +281,14 @@ const getMissingEquipmentForRoom = async (
 ): Promise<string> => {
   return db_knex
     .select('e.id', 'e.name')
-    .from('SubjectEquipment as sub_eq')
-    .join('Equipment as e', 'sub_eq.equipmentId', 'e.id')
+    .from('SubjectEquipment as subeq')
+    .join('Equipment as e', 'subeq.equipmentId', 'e.id')
     .where('subjectId', subjectId)
     .except(
       db_knex
-        .select('e2.id', 'e2.name')
-        .from('SpaceEquipment as sp_eq')
-        .join('Equipment as e2', 'sp_eq.equipmentId', 'e2.id')
+        .select('e.id', 'e.name')
+        .from('SpaceEquipment as speq')
+        .join('Equipment as e', 'speq.equipmentId', 'e.id')
         .where('spaceId', spaceId),
     )
     .then((data) => {
