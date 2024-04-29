@@ -4,6 +4,7 @@ import {
   AllocatedSubjectsByProgramType,
   RoomsByAllocId,
 } from '../types/custom.js';
+import { timestampFormatString } from '../validationHandler/index.js';
 
 /* Get all the allocations */
 const getAll = (): Promise<string> => {
@@ -112,7 +113,7 @@ const getAllocatedRoomsByProgram = async (
     .from('AllocSpace as asp')
     .leftJoin('Space as sp', 'asp.spaceId', 'sp.id')
     .leftJoin('Subject as sub', 'asp.subjectId', 'sub.id')
-    .leftJoin('Program as p', 's.programId', 'p.id')
+    .leftJoin('Program as p', 'sub.programId', 'p.id')
     .where('p.id', programId)
     .andWhere('asp.allocRoundId', allocRoundId)
     .groupBy('sp.id');
@@ -299,6 +300,201 @@ const getMissingEquipmentForRoom = async (
     });
 };
 
+const allocationReport = async (allocRoundId: number) => {
+  return db_knex
+    .distinct(
+      db_knex.raw(
+        `CASE WHEN asu.isAllocated = 1 THEN 'Yes' ELSE 'No' END AS Successful`,
+      ),
+      'ar.id as allocId',
+      'ar.name as allocation',
+      db_knex.raw(
+        `DATE_FORMAT(lastCalcSuccs,"${timestampFormatString}") as "lastCalcSuccs"`,
+      ),
+      db_knex.raw(
+        `DATE_FORMAT(lastCalcFail,"${timestampFormatString}") as "lastCalcFail"`,
+      ),
+      'd.name as department',
+      'p.name as program',
+      'sub.name as lesson',
+      'sp.name as room',
+      db_knex.raw('TRUNCATE((totalTime / 60) / 60, 2) as hours'),
+    )
+    .from('AllocSpace as asp')
+    .innerJoin('AllocRound as ar', 'asp.allocRoundId', 'ar.id')
+    .innerJoin('Space as sp', 'asp.spaceId', 'sp.id')
+    .innerJoin('Subject as sub', 'asp.subjectId', 'sub.id')
+    .innerJoin('Program as p', 'sub.programId', 'p.id')
+    .innerJoin('Department as d', 'p.departmentId', 'd.id')
+    .innerJoin('AllocSubject as asu', 'asp.allocRoundId', 'asu.allocRoundId')
+    .where('asp.allocRoundId', allocRoundId)
+    .andWhere('asu.isAllocated', 1)
+    .orderBy([
+      { column: 'department' },
+      { column: 'program' },
+      { column: 'lesson' },
+    ])
+    .union(
+      db_knex
+        .select(
+          db_knex.raw(
+            `CASE WHEN asu.isAllocated = 1 THEN 'Yes' ELSE 'No' END AS Successful`,
+          ),
+          'ar.id as allocId',
+          'ar.name as allocation',
+          db_knex.raw(
+            `DATE_FORMAT(lastCalcSuccs,"${timestampFormatString}") as "lastCalcSuccs"`,
+          ),
+          db_knex.raw(
+            `DATE_FORMAT(lastCalcFail,"${timestampFormatString}") as "lastCalcFail"`,
+          ),
+          'd.name as department',
+          'p.name as program',
+          'sub.name as lesson',
+          db_knex.raw('NULL as room'),
+          db_knex.raw('NULL as hours'),
+        )
+        .from('AllocSubject as asu')
+        .innerJoin('Subject as sub', 'asu.subjectId', 'sub.id')
+        .innerJoin('AllocRound as ar', 'asu.allocRoundId', 'ar.id')
+        .innerJoin('Program as p', 'sub.programId', 'p.id')
+        .innerJoin('Department as d', 'p.departmentId', 'd.id')
+        .where('asu.allocRoundId', allocRoundId)
+        .andWhere('asu.cantAllocate', 1),
+    );
+};
+
+const plannerReport = async (allocRoundId: number, userId: number) => {
+  return db_knex
+    .distinct(
+      db_knex.raw(
+        `CASE WHEN asu.isAllocated = 1 THEN 'Yes' ELSE 'No' END AS Successful`,
+      ),
+      'ar.id as allocId',
+      'ar.name as allocation',
+      db_knex.raw(
+        `DATE_FORMAT(lastCalcSuccs,"${timestampFormatString}") as "lastCalcSuccs"`,
+      ),
+      db_knex.raw(
+        `DATE_FORMAT(lastCalcFail,"${timestampFormatString}") as "lastCalcFail"`,
+      ),
+      'd.name as department',
+      'p.name as program',
+      'sub.name as lesson',
+      'sp.name as room',
+      db_knex.raw('TRUNCATE((totalTime / 60) / 60, 2) as hours'),
+    )
+    .from('DepartmentPlanner as dp')
+    .innerJoin('Department as d', 'dp.departmentId', 'd.id')
+    .innerJoin('Program as p', 'd.id', 'p.departmentId')
+    .innerJoin('Subject as sub', 'p.id', 'sub.programId')
+    .innerJoin('AllocSpace as asp', 'sub.id', 'asp.subjectId')
+    .innerJoin('AllocRound as ar', 'asp.allocRoundId', 'ar.id')
+    .innerJoin('AllocSubject as asu', 'ar.id', 'asu.allocRoundId')
+    .innerJoin('Space as sp', 'asp.spaceId', 'sp.id')
+    .where('dp.userId', userId)
+    .andWhere('asp.allocRoundId', allocRoundId)
+    .andWhere('asu.isAllocated', 1)
+    .orderBy([
+      { column: 'department' },
+      { column: 'program' },
+      { column: 'lesson' },
+    ])
+    .union(
+      db_knex
+        .select(
+          db_knex.raw(
+            `CASE WHEN asu.isAllocated = 1 THEN 'Yes' ELSE 'No' END AS Successful`,
+          ),
+          'ar.id as allocId',
+          'ar.name as allocation',
+          db_knex.raw(
+            `DATE_FORMAT(lastCalcSuccs,"${timestampFormatString}") as "lastCalcSuccs"`,
+          ),
+          db_knex.raw(
+            `DATE_FORMAT(lastCalcFail,"${timestampFormatString}") as "lastCalcFail"`,
+          ),
+          'd.name as department',
+          'p.name as program',
+          'sub.name as lesson',
+          db_knex.raw('NULL as room'),
+          db_knex.raw('NULL as hours'),
+        )
+        .from('AllocSubject as asu')
+        .innerJoin('Subject as sub', 'asu.subjectId', 'sub.id')
+        .innerJoin('AllocRound as ar', 'asu.allocRoundId', 'ar.id')
+        .innerJoin('Program as p', 'sub.programId', 'p.id')
+        .innerJoin('Department as d', 'p.departmentId', 'd.id')
+        .innerJoin('DepartmentPlanner as dp', 'd.id', 'dp.departmentId')
+        .where('asu.allocRoundId', allocRoundId)
+        .andWhere('asu.cantAllocate', 1)
+        .andWhere('dp.userId', userId),
+    );
+};
+
+const fullReport = async () => {
+  return db_knex
+    .distinct(
+      db_knex.raw(
+        `CASE WHEN asu.isAllocated = 1 THEN 'Yes' ELSE 'No' END AS Successful`,
+      ),
+      'ar.id as allocId',
+      'ar.name as allocation',
+      db_knex.raw(
+        `DATE_FORMAT(lastCalcSuccs,"${timestampFormatString}") as "lastCalcSuccs"`,
+      ),
+      db_knex.raw(
+        `DATE_FORMAT(lastCalcFail,"${timestampFormatString}") as "lastCalcFail"`,
+      ),
+      'd.name as department',
+      'p.name as program',
+      'sub.name as lesson',
+      'sp.name as room',
+      db_knex.raw('TRUNCATE((totalTime / 60) / 60, 2) as hours'),
+    )
+    .from('AllocSpace as asp')
+    .innerJoin('AllocRound as ar', 'asp.allocRoundId', 'ar.id')
+    .innerJoin('AllocSubject as asu', 'ar.id', 'asu.allocRoundId')
+    .innerJoin('Space as sp', 'asp.spaceId', 'sp.id')
+    .innerJoin('Subject as sub', 'asp.subjectId', 'sub.id')
+    .innerJoin('Program as p', 'sub.programId', 'p.id')
+    .innerJoin('Department as d', 'p.departmentId', 'd.id')
+    .where('asu.isAllocated', 1)
+    .orderBy([
+      { column: 'allocId' },
+      { column: 'department' },
+      { column: 'program' },
+      { column: 'lesson' },
+    ])
+    .union(
+      db_knex
+        .select(
+          db_knex.raw(
+            `CASE WHEN asu.isAllocated = 1 THEN 'Yes' ELSE 'No' END AS Successful`,
+          ),
+          'ar.id as allocId',
+          'ar.name as allocation',
+          db_knex.raw(
+            `DATE_FORMAT(lastCalcSuccs,"${timestampFormatString}") as "lastCalcSuccs"`,
+          ),
+          db_knex.raw(
+            `DATE_FORMAT(lastCalcFail,"${timestampFormatString}") as "lastCalcFail"`,
+          ),
+          'd.name as department',
+          'p.name as program',
+          'sub.name as lesson',
+          db_knex.raw('NULL as room'),
+          db_knex.raw('NULL as hours'),
+        )
+        .from('AllocSubject as asu')
+        .innerJoin('Subject as sub', 'asu.subjectId', 'sub.id')
+        .innerJoin('AllocRound as ar', 'asu.allocRoundId', 'ar.id')
+        .innerJoin('Program as p', 'sub.programId', 'p.id')
+        .innerJoin('Department as d', 'p.departmentId', 'd.id')
+        .where('asu.cantAllocate', 1),
+    );
+};
+
 export default {
   getAll,
   getById,
@@ -314,4 +510,7 @@ export default {
   getMissingEquipmentForRoom,
   getAllocatedSubjectsByRoom,
   abortAllocation,
+  allocationReport,
+  plannerReport,
+  fullReport,
 };

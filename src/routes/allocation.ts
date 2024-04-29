@@ -261,7 +261,7 @@ allocation.post(
   async (req: Request, res: Response) => {
     const allocRoundId = req.body.allocRoundId;
     allocationService
-      .abortAllocation(allocRoundId)
+      .abortAllocation(Number(allocRoundId))
       .then(() => {
         successHandler(
           req,
@@ -314,67 +314,9 @@ allocation.get(
   '/report/:allocRoundId',
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
-    db_knex
-      .distinct(
-        db_knex.raw(
-          `CASE WHEN als.isAllocated = 1 THEN 'Yes' ELSE 'No' END AS Successful`,
-        ),
-        'ar.id as allocId',
-        'ar.name as allocation',
-        db_knex.raw(
-          `DATE_FORMAT(lastCalcSuccs,"${timestampFormatString}") as "lastCalcSuccs"`,
-        ),
-        db_knex.raw(
-          `DATE_FORMAT(lastCalcFail,"${timestampFormatString}") as "lastCalcFail"`,
-        ),
-        'd.name as department',
-        'p.name as program',
-        's.name as lesson',
-        'sp.name as room',
-        db_knex.raw('TRUNCATE((totalTime / 60) / 60, 2) as hours'),
-      )
-      .from('AllocSpace as a')
-      .innerJoin('AllocRound as ar', 'a.allocRoundId', 'ar.id')
-      .innerJoin('Space as sp', 'a.spaceId', 'sp.id')
-      .innerJoin('Subject as s', 'a.subjectId', 's.id')
-      .innerJoin('Program as p', 's.programId', 'p.id')
-      .innerJoin('Department as d', 'p.departmentId', 'd.id')
-      .innerJoin('AllocSubject as als', 'a.allocRoundId', 'als.allocRoundId')
-      .where('a.allocRoundId', req.params.allocRoundId)
-      .andWhere('als.isAllocated', 1)
-      .orderBy([
-        { column: 'department' },
-        { column: 'program' },
-        { column: 'lesson' },
-      ])
-      .union(
-        db_knex
-          .select(
-            db_knex.raw(
-              `CASE WHEN als.isAllocated = 1 THEN 'Yes' ELSE 'No' END AS Successful`,
-            ),
-            'ar.id as allocId',
-            'ar.name as allocation',
-            db_knex.raw(
-              `DATE_FORMAT(lastCalcSuccs,"${timestampFormatString}") as "lastCalcSuccs"`,
-            ),
-            db_knex.raw(
-              `DATE_FORMAT(lastCalcFail,"${timestampFormatString}") as "lastCalcFail"`,
-            ),
-            'd.name as department',
-            'p.name as program',
-            's.name as lesson',
-            db_knex.raw('NULL as room'),
-            db_knex.raw('NULL as hours'),
-          )
-          .from('AllocSubject as als')
-          .innerJoin('Subject as s', 'als.subjectId', 's.id')
-          .innerJoin('AllocRound as ar', 'als.allocRoundId', 'ar.id')
-          .innerJoin('Program as p', 's.programId', 'p.id')
-          .innerJoin('Department as d', 'p.departmentId', 'd.id')
-          .where('als.allocRoundId', req.params.allocRoundId)
-          .andWhere('als.cantAllocate', 1),
-      )
+    const allocRoundId = req.params.allocRoundId;
+    allocationService
+      .allocationReport(Number(allocRoundId))
       .then((data) => {
         successHandler(req, res, data, 'getAll succesful - Report');
       })
@@ -389,71 +331,10 @@ allocation.get(
   '/plannerreport/:allocRoundId',
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
-    db_knex
-      .distinct(
-        db_knex.raw(
-          `CASE WHEN als.isAllocated = 1 THEN 'Yes' ELSE 'No' END AS Successful`,
-        ),
-        'ar.id as allocId',
-        'ar.name as allocation',
-        db_knex.raw(
-          `DATE_FORMAT(lastCalcSuccs,"${timestampFormatString}") as "lastCalcSuccs"`,
-        ),
-        db_knex.raw(
-          `DATE_FORMAT(lastCalcFail,"${timestampFormatString}") as "lastCalcFail"`,
-        ),
-        'd.name as department',
-        'p.name as program',
-        's.name as lesson',
-        'sp.name as room',
-        db_knex.raw('TRUNCATE((totalTime / 60) / 60, 2) as hours'),
-      )
-      .from('DepartmentPlanner as dp')
-      .innerJoin('Department as d', 'dp.departmentId', 'd.id')
-      .innerJoin('Program as p', 'd.id', 'p.departmentId')
-      .innerJoin('Subject as s', 'p.id', 's.programId')
-      .innerJoin('AllocSpace as a', 's.id', 'a.subjectId')
-      .innerJoin('AllocRound as ar', 'a.allocRoundId', 'ar.id')
-      .innerJoin('AllocSubject as als', 'ar.id', 'als.allocRoundId')
-      .innerJoin('Space as sp', 'a.spaceId', 'sp.id')
-      .where('dp.userId', req.user.id)
-      .andWhere('a.allocRoundId', req.params.allocRoundId)
-      .andWhere('als.isAllocated', 1)
-      .orderBy([
-        { column: 'department' },
-        { column: 'program' },
-        { column: 'lesson' },
-      ])
-      .union(
-        db_knex
-          .select(
-            db_knex.raw(
-              `CASE WHEN als.isAllocated = 1 THEN 'Yes' ELSE 'No' END AS Successful`,
-            ),
-            'ar.id as allocId',
-            'ar.name as allocation',
-            db_knex.raw(
-              `DATE_FORMAT(lastCalcSuccs,"${timestampFormatString}") as "lastCalcSuccs"`,
-            ),
-            db_knex.raw(
-              `DATE_FORMAT(lastCalcFail,"${timestampFormatString}") as "lastCalcFail"`,
-            ),
-            'd.name as department',
-            'p.name as program',
-            's.name as lesson',
-            db_knex.raw('NULL as room'),
-            db_knex.raw('NULL as hours'),
-          )
-          .from('AllocSubject as als')
-          .innerJoin('Subject as s', 'als.subjectId', 's.id')
-          .innerJoin('AllocRound as ar', 'als.allocRoundId', 'ar.id')
-          .innerJoin('Program as p', 's.programId', 'p.id')
-          .innerJoin('Department as d', 'p.departmentId', 'd.id')
-          .innerJoin('DepartmentPlanner as dp', 'd.id', 'dp.departmentId')
-          .where('als.allocRoundId', req.params.allocRoundId)
-          .andWhere('als.cantAllocate', 1)
-          .andWhere('dp.userId', req.user.id),
-      )
+    const allocRoundId = req.params.allocRoundId;
+    const userId = req.user.id;
+    allocationService
+      .plannerReport(Number(allocRoundId), Number(userId))
       .then((data) => {
         successHandler(req, res, data, 'getAll succesful - Report');
       })
@@ -469,66 +350,8 @@ allocation.get(
   '/report',
   [authenticator, admin, planner, statist, roleChecker, validate],
   (req: Request, res: Response) => {
-    db_knex
-      .distinct(
-        db_knex.raw(
-          `CASE WHEN als.isAllocated = 1 THEN 'Yes' ELSE 'No' END AS Successful`,
-        ),
-        'ar.id as allocId',
-        'ar.name as allocation',
-        db_knex.raw(
-          `DATE_FORMAT(lastCalcSuccs,"${timestampFormatString}") as "lastCalcSuccs"`,
-        ),
-        db_knex.raw(
-          `DATE_FORMAT(lastCalcFail,"${timestampFormatString}") as "lastCalcFail"`,
-        ),
-        'd.name as department',
-        'p.name as program',
-        's.name as lesson',
-        'sp.name as room',
-        db_knex.raw('TRUNCATE((totalTime / 60) / 60, 2) as hours'),
-      )
-      .from('AllocSpace as a')
-      .innerJoin('AllocRound as ar', 'a.allocRoundId', 'ar.id')
-      .innerJoin('AllocSubject as als', 'ar.id', 'als.allocRoundId')
-      .innerJoin('Space as sp', 'a.spaceId', 'sp.id')
-      .innerJoin('Subject as s', 'a.subjectId', 's.id')
-      .innerJoin('Program as p', 's.programId', 'p.id')
-      .innerJoin('Department as d', 'p.departmentId', 'd.id')
-      .where('als.isAllocated', 1)
-      .orderBy([
-        { column: 'allocId' },
-        { column: 'department' },
-        { column: 'program' },
-        { column: 'lesson' },
-      ])
-      .union(
-        db_knex
-          .select(
-            db_knex.raw(
-              `CASE WHEN als.isAllocated = 1 THEN 'Yes' ELSE 'No' END AS Successful`,
-            ),
-            'ar.id as allocId',
-            'ar.name as allocation',
-            db_knex.raw(
-              `DATE_FORMAT(lastCalcSuccs,"${timestampFormatString}") as "lastCalcSuccs"`,
-            ),
-            db_knex.raw(
-              `DATE_FORMAT(lastCalcFail,"${timestampFormatString}") as "lastCalcFail"`,
-            ),
-            'd.name as department',
-            'p.name as program',
-            's.name as lesson',
-            db_knex.raw('NULL as room'),
-            db_knex.raw('NULL as hours'),
-          )
-          .from('AllocSubject as als')
-          .innerJoin('Subject as s', 'als.subjectId', 's.id')
-          .innerJoin('AllocRound as ar', 'als.allocRoundId', 'ar.id')
-          .innerJoin('Program as p', 's.programId', 'p.id')
-          .innerJoin('Department as d', 'p.departmentId', 'd.id')
-          .where('als.cantAllocate', 1),
-      )
+    allocationService
+      .fullReport()
       .then((data) => {
         successHandler(req, res, data, 'getAll succesful - Report');
       })
