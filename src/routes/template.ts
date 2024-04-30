@@ -74,6 +74,21 @@ template.get(
 );
 
 template.get(
+  '/user',
+  [authenticator, admin, planner, roleChecker, validate],
+  (req: Request, res: Response) => {
+    res
+      .status(200)
+      .header({
+        'Content-Type':
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'Content-Disposition': 'attachment; filename=templaatti.xlsx',
+      })
+      .download('./templates/user_template.xlsx', 'user_templaatti.xlsx');
+  },
+);
+
+template.get(
   '/equipment',
   [authenticator, admin, planner, roleChecker, validate],
   (req: Request, res: Response) => {
