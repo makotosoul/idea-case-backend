@@ -1,3 +1,4 @@
+import { NextFunction, Request, Response } from 'express';
 import {
   createIdValidatorChain,
   validateDescriptionObl,
@@ -6,6 +7,21 @@ import {
 } from './index.js';
 import { validateUserId } from './user.js';
 
+const validateIsReadOnly = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { isReadOnly } = req.body;
+
+  if (isReadOnly !== undefined && typeof isReadOnly !== 'boolean') {
+    return res
+      .status(400)
+      .json({ message: 'isReadOnly must be a boolean value.' });
+  }
+  next();
+};
+
 export const validateAllocRoundId = [...createIdValidatorChain('allocRoundId')];
 export const validateCopiedAllocRoundId = [
   ...createIdValidatorChain('copiedAllocRoundId'),
@@ -13,6 +29,7 @@ export const validateCopiedAllocRoundId = [
 
 export const validateAllocRoundPost = [
   ...validateNameObl,
+  validateIsReadOnly,
   //...validateUserId,
   ...validateDescriptionObl,
 ];
