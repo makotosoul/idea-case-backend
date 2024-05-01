@@ -28,7 +28,7 @@ const allocround = express.Router();
 /* Get all allocations */
 allocround.get(
   '/',
-  [authenticator, admin, roleChecker, validate],
+  [authenticator, admin, statist, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('AllocRound')
       .select(
@@ -107,19 +107,13 @@ allocround.post(
   validateAllocRoundPost,
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
-    const { isReadOnly } = req.body;
-
-    // Check if the alloc round is read-only
-    if (isReadOnly) {
-      return res
-        .status(403)
-        .json({ message: 'Cannot create a read-only allocation round.' });
-    }
     const allocRound = {
       name: req.body.name,
       description: req.body.description,
       userId: userId,
+      isReadOnly: req.body.isReadOnly || false,
     };
+
     db_knex
       .insert(allocRound)
       .into('AllocRound')
@@ -155,7 +149,7 @@ allocround.post(
   async (req: Request, res: Response) => {
     const copiedAllocRoundId = Number(req.body.copiedAllocRoundId);
 
-    // Check if the original allocation round is read-only before proceeding
+    // Check if the original allocation round exists
     const original = await db_knex('AllocRound')
       .where('id', copiedAllocRoundId)
       .first();
@@ -166,16 +160,12 @@ allocround.post(
         `Original allocation round with ID ${copiedAllocRoundId} not found.`,
       );
     }
-    if (original.isReadOnly) {
-      return res
-        .status(403)
-        .json({ message: 'Cannot copy from a read-only allocation round.' });
-    }
 
     const allocRound = {
       name: req.body.name,
       description: req.body.description,
       userId: Number(req.body.userId),
+      isReadOnly: false,
     };
 
     /*
@@ -260,12 +250,10 @@ allocround.delete(
           );
         }
         if (allocRound.isReadOnly) {
-          return res
-            .status(403)
-            .json({
-              message:
-                'This allocation round is read-only and cannot be deleted.',
-            });
+          return res.status(403).json({
+            message:
+              'This allocation round is read-only and cannot be deleted.',
+          });
         }
 
         db_knex('AllocRound')
@@ -309,12 +297,10 @@ allocround.put(
           return requestErrorHandler(req, res, 'Allocation round not found.');
         }
         if (allocRound.isReadOnly) {
-          return res
-            .status(403)
-            .json({
-              message:
-                'This allocation round is read-only and cannot be updated.',
-            });
+          return res.status(403).json({
+            message:
+              'This allocation round is read-only and cannot be updated.',
+          });
         }
 
         const updateData = {

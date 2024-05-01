@@ -70,7 +70,7 @@ Authorization: Basic {{token}}
 GET {{host}}/allocRound/{{nextId}}
 Authorization: Basic {{token}}
 
-### 1. Create AllocRound with isReadOnly set to true
+### 11. Create AllocRound with isReadOnly set to true
 POST {{host}}/allocRound
 Authorization: Basic {{token}}
 Content-Type: application/json
@@ -82,7 +82,7 @@ Content-Type: application/json
     "isReadOnly": true
 }
 
-### 2. Update AllocRound with isReadOnly set to true
+### 12. Update AllocRound with isReadOnly set to true
 PUT {{host}}/allocRound
 Authorization: Basic {{token}}
 Content-Type: application/json
@@ -94,6 +94,6 @@ Content-Type: application/json
     "isReadOnly": true
 }
 
-### 3. Delete AllocRound with isReadOnly set to true
+### 13. Delete AllocRound with isReadOnly set to true
 DELETE {{host}}/allocRound/10012
 Authorization: Basic {{token}}
