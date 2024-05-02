@@ -186,6 +186,7 @@ CREATE TABLE IF NOT EXISTS AllocRound (
     processOn       BOOLEAN     DEFAULT 0,
     abortProcess    BOOLEAN     DEFAULT 0,
     requireReset    BOOLEAN     DEFAULT 0,
+    isReadOnly      BOOLEAN     DEFAULT 0,
 
     PRIMARY KEY(id),
 
