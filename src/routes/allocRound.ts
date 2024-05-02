@@ -45,6 +45,7 @@ allocround.get(
         'processOn',
         'abortProcess',
         'requireReset',
+        'isReadOnly',
       )
       .then((data) => {
         successHandler(req, res, data, 'getAll succesful - Allocation');
@@ -81,6 +82,7 @@ allocround.get(
         'processOn',
         'abortProcess',
         'requireReset',
+        'isReadOnly',
       )
       .where('id', req.params.id)
       .then((data) => {
@@ -109,7 +111,9 @@ allocround.post(
       name: req.body.name,
       description: req.body.description,
       userId: userId,
+      isReadOnly: req.body.isReadOnly || false,
     };
+
     db_knex
       .insert(allocRound)
       .into('AllocRound')
@@ -137,16 +141,31 @@ allocround.post(
   },
 );
 
+// Copy AllocRound
 allocround.post(
   '/copyAllocRound',
   validateAllocRoundCopyPost,
   [authenticator, admin, roleChecker, validate],
-  (req: Request, resp: Response) => {
+  async (req: Request, res: Response) => {
     const copiedAllocRoundId = Number(req.body.copiedAllocRoundId);
+
+    // Check if the original allocation round exists
+    const original = await db_knex('AllocRound')
+      .where('id', copiedAllocRoundId)
+      .first();
+    if (!original) {
+      return requestErrorHandler(
+        req,
+        res,
+        `Original allocation round with ID ${copiedAllocRoundId} not found.`,
+      );
+    }
+
     const allocRound = {
       name: req.body.name,
       description: req.body.description,
       userId: Number(req.body.userId),
+      isReadOnly: false,
     };
 
     /*
@@ -167,7 +186,7 @@ allocround.post(
           ])
           .then((result) => {
             logger.debug(`dbResp 1: ${result}`);
-            return db_knex.select(db_knex.raw('@outmsg'));
+            return trx.select(trx.raw('@outmsg'));
           });
       })
       .then((result) => {
@@ -177,21 +196,21 @@ allocround.post(
           if (typeof result === 'object' && result?.length === 1) {
             successHandler(
               req,
-              resp,
+              res,
               result[0]['@outmsg'], // was before [0][0][0]['@allocRid2 := last_insert_id()']
               'Adding the new alloc round based on existing was succesful 1.',
             );
           } else {
             requestErrorHandler(
               req,
-              resp,
+              res,
               `Something (1) went wrong when trying to create alloc round ${req.body.name} as copy of alloc round ${req.body.allocRid1}`,
             );
           }
         } else {
           requestErrorHandler(
             req,
-            resp,
+            res,
             `Something (2) went wrong when trying to create alloc round ${req.body.name} as copy of alloc round ${req.body.allocRid1}`,
           );
         }
@@ -200,46 +219,64 @@ allocround.post(
         if (error.errno === 1062) {
           requestErrorHandler(
             req,
-            resp,
+            res,
             `Conflict: (3) AllocRound with the name ${req.body.name} already exists 2!`,
           );
         } else if (error.errno === 1052) {
-          dbErrorHandler(req, resp, error, 'Error (4) in database column name');
+          dbErrorHandler(req, res, error, 'Error (4) in database column name');
         } else {
-          dbErrorHandler(req, resp, error, 'Error (5) at adding alloc round');
+          dbErrorHandler(req, res, error, 'Error (5) at adding alloc round');
         }
       });
   },
 );
-
-// Delete allocround round
+// Delete allocation round
 allocround.delete(
   '/:id',
   validateIdObl,
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
+    const { id } = req.params;
+
     db_knex('AllocRound')
-      .select()
-      .where('id', req.params.id)
-      .del()
-      .then((rowsAffected) => {
-        if (rowsAffected === 1) {
-          successHandler(
+      .where('id', id)
+      .first()
+      .then((allocRound) => {
+        if (!allocRound) {
+          return requestErrorHandler(
             req,
             res,
-            rowsAffected,
-            `Delete successful! Count of deleted rows: ${rowsAffected}`,
-          );
-        } else {
-          requestErrorHandler(
-            req,
-            res,
-            `Invalid AllocRound id:${req.params.id}`,
+            `Allocation round with ID ${id} not found.`,
           );
         }
+        if (allocRound.isReadOnly) {
+          return res.status(403).json({
+            message:
+              'This allocation round is read-only and cannot be deleted.',
+          });
+        }
+
+        db_knex('AllocRound')
+          .where('id', id)
+          .del()
+          .then((rowsAffected) => {
+            if (rowsAffected === 1) {
+              successHandler(
+                req,
+                res,
+                rowsAffected,
+                `Delete successful! Count of deleted rows: ${rowsAffected}`,
+              );
+            } else {
+              requestErrorHandler(req, res, `Invalid AllocRound ID: ${id}`);
+            }
+          })
+          .catch((error) => {
+            dbErrorHandler(req, res, error, 'Error deleting alloc round');
+          });
       })
       .catch((error) => {
-        dbErrorHandler(req, res, error, 'Error deleting alloc round failed');
+        dbErrorHandler(req, res, error, 'Error querying the database');
       });
   },
 );
@@ -250,23 +287,43 @@ allocround.put(
   validateAllocRoundPut,
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
-    const allocRound = {
-      name: req.body.name,
-      description: req.body.description,
-    };
+    const allocRoundId = req.body.id;
 
     db_knex('AllocRound')
-      .update(allocRound)
-      .where('id', req.body.id)
-      .then((rowsAffected) => {
-        if (rowsAffected === 1) {
-          successHandler(req, res, rowsAffected, 'Updated succesfully');
-        } else {
-          requestErrorHandler(req, res, 'Error');
+      .where('id', allocRoundId)
+      .first()
+      .then((allocRound) => {
+        if (!allocRound) {
+          return requestErrorHandler(req, res, 'Allocation round not found.');
         }
+        if (allocRound.isReadOnly) {
+          return res.status(403).json({
+            message:
+              'This allocation round is read-only and cannot be updated.',
+          });
+        }
+
+        const updateData = {
+          name: req.body.name,
+          description: req.body.description,
+        };
+
+        db_knex('AllocRound')
+          .where('id', allocRoundId)
+          .update(updateData)
+          .then((rowsAffected) => {
+            if (rowsAffected === 1) {
+              successHandler(req, res, rowsAffected, 'Updated succesfully');
+            } else {
+              requestErrorHandler(req, res, 'Error');
+            }
+          })
+          .catch((error) => {
+            dbErrorHandler(req, res, error, 'Error at updating AllocRound');
+          });
       })
       .catch((error) => {
-        dbErrorHandler(req, res, error, 'Error at updating AllocRound');
+        dbErrorHandler(req, res, error, 'Error querying the database');
       });
   },
 );

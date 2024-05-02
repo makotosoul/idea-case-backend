@@ -69,3 +69,31 @@ Authorization: Basic {{token}}
 ### 10. Confirm deletion (Trying to retrieve it should result in an empty array)
 GET {{host}}/allocRound/{{nextId}}
 Authorization: Basic {{token}}
+
+### 11. Create AllocRound with isReadOnly set to true
+POST {{host}}/allocRound
+Authorization: Basic {{token}}
+Content-Type: application/json
+
+{
+    "name": "Test AllocRound with isReadOnly",
+    "description": "This is a test alloc round with isReadOnly set to true.",
+    "userId": 201,
+    "isReadOnly": true
+}
+
+### 12. Update AllocRound with isReadOnly set to true
+PUT {{host}}/allocRound
+Authorization: Basic {{token}}
+Content-Type: application/json
+
+{
+    "id": 10012,
+    "name": "Updated AllocRound with isReadOnly",
+    "description": "Updated description",
+    "isReadOnly": true
+}
+
+### 13. Delete AllocRound with isReadOnly set to true
+DELETE {{host}}/allocRound/10012
+Authorization: Basic {{token}}
