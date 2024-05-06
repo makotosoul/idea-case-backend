@@ -17,6 +17,7 @@ import logger from '../utils/logger.js';
 import { validate, validateIdObl } from '../validationHandler/index.js';
 import {
   validateMultiSpacePost,
+  validateSpacePost,
   validateSpacePut,
 } from '../validationHandler/space.js';
 
@@ -145,6 +146,7 @@ space.get(
 // Adding a space
 space.post(
   '/',
+  validateSpacePost,
   [authenticator, admin, planner, roleChecker, validate],
   (req: Request, res: Response) => {
     const spaceData: Space = {

@@ -37,6 +37,7 @@ export const validateSpacePost = [
   ...validateBuildingId,
   ...validateSpaceTypeId,
   ...createBoolValidatorChain('inUse'),
+  ...createBoolValidatorChain('isLowNoise'),
 ];
 
 export const validateSpacePut = [...validateIdObl, ...validateSpacePost];

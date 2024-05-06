@@ -31,16 +31,17 @@ Content-Type: application/json
     "area": 77,
     "personLimit": 150,
     "buildingId": 402,
-    "availableFrom": "08:00:00",
-    "availableTo": "10:00:00",
-    "classesFrom": "08:00:00",
-    "classesTo": "10:00:00",
+    "availableFrom": "08:00",
+    "availableTo": "23:59",
+    "classesFrom": "08:00",
+    "classesTo": "10:00",
     "inUse": 1,
+    "isLowNoise": 0,
     "spaceTypeId": 5001
 }
 
 ### Set up the `nextId`. Use the id of newly created space 
-@nextId=1037
+@nextId=1039
 
 ### 6. Confirm the newly created space using the `nextId` (This will verify creation was successful and the correct ID was assigned)
 GET {{host}}/space/{{nextId}}
