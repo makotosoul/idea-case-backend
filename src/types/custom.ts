@@ -47,6 +47,7 @@ export interface Space {
   classesFrom: string;
   classesTo: string;
   inUse: number;
+  isLowNoise: number;
   spaceTypeId: number;
 }
 
