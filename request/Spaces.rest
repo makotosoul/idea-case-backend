@@ -62,6 +62,7 @@ Content-Type: application/json
     "classesFrom": "09:00",
     "classesTo": "11:00",
     "inUse": 1,
+    "isLowNoise": 1,
     "spaceTypeId": 5001
 }
 
