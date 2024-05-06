@@ -78,6 +78,7 @@ CREATE TABLE IF NOT EXISTS Space (
     classesFrom     TIME            NOT NULL,
     classesTo       TIME            NOT NULL,
 	inUse			BOOLEAN        DEFAULT 1,
+    isLowNoise      BOOLEAN         NOT NULL DEFAULT 0,
     spaceTypeId     INTEGER         NOT NULL,
 
     CONSTRAINT AK_UNIQUE_name_in_building UNIQUE(buildingId, name),
