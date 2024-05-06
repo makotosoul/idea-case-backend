@@ -76,25 +76,25 @@ const getRoomsByAllocId = async (
   allocRoundId: number,
 ): Promise<RoomsByAllocId[]> => {
   return db_knex<RoomsByAllocId[]>('Space')
-    .select('id', 'name')
+    .select('Space.id', 'Space.name', 'SpaceType.acronym AS spaceTypeAcronym')
     .select({
       allocatedHours: db_knex.raw(
         `(SELECT IFNULL(CAST(SUM((asp.totalTime / 60) / 60) AS DECIMAL(10,2)), 0)
              FROM AllocSpace as asp
-             WHERE spaceId = id
+             WHERE spaceId = Space.id
              AND allocRoundId = ?
          )`,
         [allocRoundId],
       ),
     })
+    .leftJoin('SpaceType as SpaceType', 'Space.spaceTypeId', 'SpaceType.id')
     .select({
       requiredHours: db_knex.raw(
         'HOUR(TIMEDIFF(Space.availableTo, Space.availableFrom))*5',
       ),
     })
-    .select('spaceTypeId')
     .orderByRaw('(allocatedHours / requiredHours) DESC') // Sort by allocation percentage
-    .orderBy('name'); // Then sort by name
+    .orderBy('Space.name'); // Then sort by name
 };
 
 /* Get allocated rooms by Program.id and AllocRound.id */
