@@ -17,6 +17,7 @@ import logger from '../utils/logger.js';
 import { validate, validateIdObl } from '../validationHandler/index.js';
 import {
   validateMultiSpacePost,
+  validateSpacePost,
   validateSpacePut,
 } from '../validationHandler/space.js';
 
@@ -40,6 +41,7 @@ space.get(
         db_knex.raw('TIME_FORMAT(s.classesFrom,"%H:%i") as "classesFrom"'),
         db_knex.raw('TIME_FORMAT(s.classesTo,"%H:%i") as "classesTo"'),
         's.inUse',
+        's.isLowNoise',
         's.spaceTypeId',
         'b.name AS buildingName',
         'st.name AS spaceTypeName',
@@ -115,6 +117,7 @@ space.get(
         db_knex.raw('TIME_FORMAT(s.classesFrom,"%H:%i") as "classesFrom"'),
         db_knex.raw('TIME_FORMAT(s.classesTo,"%H:%i") as "classesTo"'),
         's.inUse',
+        's.isLowNoise',
         's.spaceTypeId',
         'b.name AS buildingName',
         'st.name AS spaceTypeName',
@@ -144,9 +147,10 @@ space.get(
 // Adding a space
 space.post(
   '/',
+  validateSpacePost,
   [authenticator, admin, planner, roleChecker, validate],
   (req: Request, res: Response) => {
-    const spaceData = {
+    const spaceData: Space = {
       name: req.body.name,
       area: req.body.area,
       info: req.body.info,
@@ -157,6 +161,7 @@ space.post(
       classesFrom: req.body.classesFrom,
       classesTo: req.body.classesTo,
       inUse: req.body.inUse, //  || true, // Default to true if not provided
+      isLowNoise: req.body.isLowNoise,
       spaceTypeId: req.body.spaceTypeId,
     };
 
@@ -226,6 +231,7 @@ space.post(
         classesFrom: space.classesFrom,
         classesTo: space.classesTo,
         inUse: space.inUse,
+        isLowNoise: space.isLowNoise,
         spaceTypeId: spaceType.id,
       });
     }
@@ -286,7 +292,7 @@ space.put(
   [authenticator, admin, planner, roleChecker, validate],
   (req: Request, res: Response) => {
     const spaceId = req.body.id;
-    const updatedSpaceData = {
+    const updatedSpaceData: Space = {
       name: req.body.name,
       area: req.body.area,
       info: req.body.info,
@@ -297,6 +303,7 @@ space.put(
       classesFrom: req.body.classesFrom,
       classesTo: req.body.classesTo,
       inUse: req.body.inUse, // || true, // Default to true if not provided
+      isLowNoise: req.body.isLowNoise,
       spaceTypeId: req.body.spaceTypeId,
     };
 

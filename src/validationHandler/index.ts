@@ -240,7 +240,7 @@ export const createTimeValidatorChain = (
 ): ValidationChain[] => [
   check(`${fieldName}`)
     .matches(/^(0*[2][0-3]|0*[1][0-9]|0*[0-9]):([0-5][0-9])$/)
-    .withMessage('Accepted format: 00:00, from 00:00 to 29:59')
+    .withMessage('Accepted format: 00:00, from 00:00 to 23:59')
     .bail()
     .notEmpty()
     .withMessage('Cannot be empty')
@@ -252,7 +252,7 @@ export const createTimeLengthValidatorChainHoursAndMinutes = (
 ): ValidationChain[] => [
   check(`${fieldName}`)
     .matches(/^(0*[2][0-3]|0*[1][0-9]|0*[0-9]):([0-5][0-9])$/)
-    .withMessage('Accepted format: 00:00, from 00:00 to 29:59')
+    .withMessage('Accepted format: 00:00, from 00:00 to 23:59')
     .bail()
     .notEmpty()
     .withMessage('Cannot be empty')

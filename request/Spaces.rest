@@ -21,7 +21,6 @@ GET {{host}}/space/byBuilding/401
 Authorization: Basic {{token}}
 
 ### 5. Create new space (put returned id to the `nextId`)
-### The validation for spacePost is not used in dao!
 POST {{host}}/space
 Authorization: Basic {{token}}
 Content-Type: application/json
@@ -31,11 +30,12 @@ Content-Type: application/json
     "area": 77,
     "personLimit": 150,
     "buildingId": 402,
-    "availableFrom": "08:00:00",
-    "availableTo": "10:00:00",
-    "classesFrom": "08:00:00",
-    "classesTo": "10:00:00",
+    "availableFrom": "08:00",
+    "availableTo": "23:59",
+    "classesFrom": "08:00",
+    "classesTo": "10:00",
     "inUse": 1,
+    "isLowNoise": 0,
     "spaceTypeId": 5001
 }
 
@@ -62,6 +62,7 @@ Content-Type: application/json
     "classesFrom": "09:00",
     "classesTo": "11:00",
     "inUse": 1,
+    "isLowNoise": 1,
     "spaceTypeId": 5001
 }
 
