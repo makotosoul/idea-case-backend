@@ -41,7 +41,7 @@ Content-Type: application/json
 }
 
 ### Set up the `nextId`. Use the id of newly created space 
-@nextId=1039
+@nextId=1037
 
 ### 6. Confirm the newly created space using the `nextId` (This will verify creation was successful and the correct ID was assigned)
 GET {{host}}/space/{{nextId}}
