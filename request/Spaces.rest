@@ -21,7 +21,6 @@ GET {{host}}/space/byBuilding/401
 Authorization: Basic {{token}}
 
 ### 5. Create new space (put returned id to the `nextId`)
-### The validation for spacePost is not used in dao!
 POST {{host}}/space
 Authorization: Basic {{token}}
 Content-Type: application/json
