@@ -14,7 +14,7 @@ const validateIsReadOnly = (
 ) => {
   const { isReadOnly } = req.body;
 
-  if (isReadOnly !== undefined && typeof isReadOnly !== 'boolean') {
+  if (isReadOnly !== undefined && !(isReadOnly === 0 || isReadOnly === 1)) {
     return res
       .status(400)
       .json({ message: 'isReadOnly must be a boolean value.' });
