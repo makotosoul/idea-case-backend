@@ -288,6 +288,7 @@ allocround.put(
   [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     const allocRoundId = req.body.id;
+    let updateData = {};
 
     db_knex('AllocRound')
       .where('id', allocRoundId)
@@ -297,16 +298,16 @@ allocround.put(
           return requestErrorHandler(req, res, 'Allocation round not found.');
         }
         if (allocRound.isReadOnly) {
-          return res.status(403).json({
-            message:
-              'This allocation round is read-only and cannot be updated.',
-          });
+          updateData = {
+            isReadOnly: req.body.isReadOnly,
+          };
+        } else {
+          updateData = {
+            name: req.body.name,
+            isReadOnly: req.body.isReadOnly,
+            description: req.body.description,
+          };
         }
-
-        const updateData = {
-          name: req.body.name,
-          description: req.body.description,
-        };
 
         db_knex('AllocRound')
           .where('id', allocRoundId)
