@@ -106,14 +106,16 @@ const getAllocatedRoomsByProgram = async (
     .distinct(
       'sp.id',
       'sp.name',
+      'st.acronym as spaceTypeAcronym',
       db_knex.raw(
         'CAST(SUM((asp.totalTime / 60) / 60) AS DECIMAL(10,2)) AS allocatedHours',
       ),
     )
     .from('AllocSpace as asp')
-    .leftJoin('Space as sp', 'asp.spaceId', 'sp.id')
-    .leftJoin('Subject as sub', 'asp.subjectId', 'sub.id')
-    .leftJoin('Program as p', 'sub.programId', 'p.id')
+    .join('Space as sp', 'asp.spaceId', 'sp.id')
+    .join('Subject as sub', 'asp.subjectId', 'sub.id')
+    .join('Program as p', 'sub.programId', 'p.id')
+    .join('SpaceType as st', 'sp.spaceTypeId', 'st.id')
     .where('p.id', programId)
     .andWhere('asp.allocRoundId', allocRoundId)
     .groupBy('sp.id');
