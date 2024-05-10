@@ -1,11 +1,9 @@
 import express, { Request, Response } from 'express';
-import knex from 'knex';
 import { admin } from '../authorization/admin.js';
 import { planner } from '../authorization/planner.js';
 import { roleChecker } from '../authorization/roleChecker.js';
 import { statist } from '../authorization/statist.js';
 import { authenticator } from '../authorization/userValidation.js';
-import db from '../db/index.js';
 import db_knex from '../db/index_knex.js';
 import {
   dbErrorHandler,
