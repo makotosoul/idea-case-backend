@@ -303,11 +303,13 @@ subject.delete(
   [authenticator, admin, planner, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Subject')
+      .join('AllocRound', 'AllocRound.id', 'Subject.allocRoundId')
       .del()
-      .where('id', req.params.id)
+      .where('Subject.id', req.params.id)
+      .where('AllocRound.isReadOnly', false)
       .then((rowsAffected) => {
         if (rowsAffected !== 1) {
-          requestErrorHandler(req, res, `Invalid id: ${req.params.id}`);
+          requestErrorHandler(req, res, `Invalid id: ${req.params.id}. Or`);
         } else {
           successHandler(req, res, rowsAffected, 'Delete successful - Subject');
         }
