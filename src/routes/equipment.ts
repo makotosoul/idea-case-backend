@@ -29,6 +29,7 @@ equipment.get(
   (req: Request, res: Response) => {
     db_knex('Equipment')
       .select('id', 'name', 'priority', 'description', 'isMovable')
+      .orderBy('name', 'asc')
       .then((data) => {
         successHandler(req, res, data, 'getNames successful - Equipment');
       })

@@ -28,6 +28,7 @@ department.get(
   (req: Request, res: Response) => {
     db_knex('Department')
       .select('id', 'name', 'description')
+      .orderBy('name', 'asc')
       .then((data) => {
         successHandler(req, res, data, 'GetDeptData succesful -Department');
       })
