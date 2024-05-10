@@ -53,6 +53,7 @@ program.get(
       )
       .from('Program as p')
       .innerJoin('Department as d', 'p.departmentId', 'd.id') // Join with Department table
+      .orderBy('p.name', 'asc')
       .then((programs) => {
         successHandler(req, res, programs, 'getAll successful - Program');
       })

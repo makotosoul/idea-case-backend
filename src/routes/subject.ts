@@ -54,6 +54,7 @@ subject.get('/', [validate], (req: Request, res: Response) => {
     .from('Subject as s')
     .innerJoin('Program as p', 's.programId', 'p.id')
     .leftJoin('SpaceType as st', 's.spaceTypeId', 'st.id')
+    .orderBy('s.name', 'asc')
     .then((subjects) => {
       successHandler(req, res, subjects, 'getAll successful - Subject');
     })
