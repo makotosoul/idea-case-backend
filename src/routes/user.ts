@@ -84,17 +84,26 @@ user.post(
       const [getUserId] = await db_knex('User')
         .select('id')
         .where('email', userData.email);
-
+      // seperated by split string function and add multiple dept??
       // get dept id's
-      const [getDeptId] = await db_knex('Department')
-        .select('id')
-        .where('name', userData.department);
-      console.log('--------', getUserId, getDeptId, '--------');
+      const departmentNames: string[] = userData.department.split('/');
 
-      userDepartmentPlanner.push({
-        userId: getUserId.id,
-        departmentId: getDeptId.id,
-      });
+      // Loop through each department name
+      for (const departmentName of departmentNames) {
+        // Perform the database query to get the department ID
+        const [getDeptId] = await db_knex('Department')
+          .select('id')
+          .where('name', departmentName);
+
+        // Log the results to the console for debugging
+        console.log('--------', getUserId, getDeptId, '--------');
+
+        // Push the user ID and department ID into the userDepartmentPlanner array
+        userDepartmentPlanner.push({
+          userId: getUserId.id,
+          departmentId: getDeptId.id,
+        });
+      }
     }
     // insert departmentplanner data
     db_knex('Departmentplanner')
