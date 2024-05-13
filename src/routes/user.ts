@@ -107,7 +107,7 @@ user.post(
     }
     // If there are any records in userDepartmentPlanner, attempt to insert them
     if (userDepartmentPlanner.length > 0) {
-      db_knex('Departmentplanner')
+      db_knex('DepartmentPlanner')
         .insert(userDepartmentPlanner)
         .then((result) => {
           if (result.length === 0) {

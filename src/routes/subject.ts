@@ -52,6 +52,7 @@ subject.get('/', [validate], (req: Request, res: Response) => {
     .from('Subject as s')
     .innerJoin('Program as p', 's.programId', 'p.id')
     .leftJoin('SpaceType as st', 's.spaceTypeId', 'st.id')
+    .orderBy('s.name', 'asc')
     .then((subjects) => {
       successHandler(req, res, subjects, 'getAll successful - Subject');
     })
@@ -300,11 +301,13 @@ subject.delete(
   [authenticator, admin, planner, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('Subject')
+      .join('AllocRound', 'AllocRound.id', 'Subject.allocRoundId')
       .del()
-      .where('id', req.params.id)
+      .where('Subject.id', req.params.id)
+      .where('AllocRound.isReadOnly', false)
       .then((rowsAffected) => {
         if (rowsAffected !== 1) {
-          requestErrorHandler(req, res, `Invalid id: ${req.params.id}`);
+          requestErrorHandler(req, res, `Invalid id: ${req.params.id}. Or`);
         } else {
           successHandler(req, res, rowsAffected, 'Delete successful - Subject');
         }

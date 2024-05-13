@@ -48,6 +48,7 @@ space.get(
       .from('Space as s')
       .innerJoin('Building as b', 's.buildingId', 'b.id')
       .leftJoin('SpaceType as st', 's.spaceTypeId', 'st.id')
+      .orderBy('s.name', 'asc')
       .then((spaces) => {
         successHandler(req, res, spaces, 'getAll successful - Space');
       })
