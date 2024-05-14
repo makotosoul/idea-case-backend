@@ -64,7 +64,7 @@ subjectequipment.post(
   '/post',
   validateSubjectEquipmentPost,
   [authenticator, admin, planner, roleChecker, validate], // Only admin and planner can add subjectEquipment to a subject
-  (req: Request, res: Response) => {
+  async (req: Request, res: Response) => {
     const subjectId = req.body.subjectId;
     const equipmentId = req.body.equipmentId;
     const priority = req.body.priority;
@@ -77,33 +77,13 @@ subjectequipment.post(
       obligatory,
     };
 
-    if (!req.user.isAdmin) {
-      db_knex
-        .select('u.id as userId')
-        .from('User as u')
-        .innerJoin('DepartmentPlanner as dp', 'u.id', 'dp.userId')
-        .innerJoin('Department as d', 'dp.departmentId', 'd.id')
-        .innerJoin('Program as p', 'd.id', 'p.departmentId')
-        .innerJoin('Subject as s', 'p.id', 's.programId')
-        .where('s.id', req.body.subjectId)
-        .where('u.id', req.user.id)
-        .then((data) => {
-          if (data.length > 0) {
-            logger.verbose(
-              `User ${req.user.id} is planner for ${req.body.subjectId}`,
-            );
-          } else {
-            logger.error(
-              `User ${req.user.id} is NOT planner for ${req.body.subjectId}`,
-            );
-            requestErrorHandler(
-              req,
-              res,
-              'Request failed! User is not planner for the subject',
-            );
-            return;
-          }
-        })
+    try {
+      // Check if allocRound of the subject is Read only
+      const subjectData = await db_knex('Subject')
+        .join('AllocRound', 'AllocRound.id', 'Subject.allocRoundId')
+        .select()
+        .where('Subject.id', subjectId)
+        .andWhere('AllocRound.isReadOnly', false)
         .catch((error) => {
           logger.error('Oops! Create failed - SubjectEquipment');
           dbErrorHandler(
@@ -114,31 +94,79 @@ subjectequipment.post(
           );
           return;
         });
-    }
 
-    db_knex('SubjectEquipment')
-      .insert(subjectEquipmentData)
-      .returning('id') // Return the inserted ID
-      .then((result) => {
-        const insertId = result[0];
-        successHandler(
+      if (subjectData?.length === 0) {
+        logger.error('The subject is in NOT MODIFIABLE allocRound');
+        return requestErrorHandler(
           req,
           res,
-          { insertId },
-          'Create successful - SubjectEquipment',
+          'Request failed! The allocRound is not modifiable',
         );
-        logger.info(
-          `SubjectEquipment created subjectId ${subjectId} & ${equipmentId}`,
-        );
-      })
-      .catch((error) => {
-        dbErrorHandler(
-          req,
-          res,
-          error,
-          'Oops! Create failed - SubjectEquipment',
-        );
-      });
+      } else {
+        logger.verbose('The subject is in MODIFIABLE allocRound');
+      }
+
+      // Check if the user is planner of the depratment
+      if (!req.user.isAdmin) {
+        const plannerData = await db_knex
+          .select('u.id as userId')
+          .from('User as u')
+          .innerJoin('DepartmentPlanner as dp', 'u.id', 'dp.userId')
+          .innerJoin('Department as d', 'dp.departmentId', 'd.id')
+          .innerJoin('Program as p', 'd.id', 'p.departmentId')
+          .innerJoin('Subject as s', 'p.id', 's.programId')
+          .where('s.id', subjectId)
+          .where('u.id', req.user.id)
+          .catch((error) => {
+            logger.error('Oops! Creating failed - SubjectEquipment');
+            dbErrorHandler(
+              req,
+              res,
+              error,
+              '/post - SubjectEquipment - DB error!',
+            );
+            return;
+          });
+
+        if (plannerData?.length === 0) {
+          logger.error(`User ${req.user.id} is NOT planner for ${subjectId}`);
+          return requestErrorHandler(
+            req,
+            res,
+            'Request failed! User is not planner for the subject',
+          );
+        } else {
+          logger.verbose(`User ${req.user.id} is planner for ${subjectId}`);
+        }
+      }
+
+      //Post subjectEquipment
+      db_knex('SubjectEquipment')
+        .insert(subjectEquipmentData)
+        .returning('id') // Return the inserted ID
+        .then((result) => {
+          const insertId = result[0];
+          successHandler(
+            req,
+            res,
+            { insertId },
+            'Create successful - SubjectEquipment',
+          );
+          logger.info(
+            `SubjectEquipment created subjectId ${subjectId} & ${equipmentId}`,
+          );
+        })
+        .catch((error) => {
+          dbErrorHandler(
+            req,
+            res,
+            error,
+            'Oops! Create failed - SubjectEquipment',
+          );
+        });
+    } catch (error) {
+      requestErrorHandler(req, res, 'Error');
+    }
   },
 );
 
@@ -147,64 +175,95 @@ subjectequipment.put(
   '/update',
   validateSubjectEquipmentPost,
   [authenticator, admin, planner, roleChecker, validate], // Only admin and planner can update subjectEquipment to a subject
-  (req: Request, res: Response) => {
-    if (!req.user.isAdmin) {
-      db_knex
-        .select('u.id as userId')
-        .from('User as u')
-        .innerJoin('DepartmentPlanner as dp', 'u.id', 'dp.userId')
-        .innerJoin('Department as d', 'dp.departmentId', 'd.id')
-        .innerJoin('Program as p', 'd.id', 'p.departmentId')
-        .innerJoin('Subject as s', 'p.id', 's.programId')
-        .where('s.id', req.body.subjectId)
-        .where('u.id', req.user.id)
-        .then((data) => {
-          if (data.length > 0) {
-            logger.verbose(
-              `User ${req.user.id} is planner for ${req.body.subjectId}`,
-            );
-          } else {
-            logger.error(
-              `User ${req.user.id} is NOT planner for ${req.body.subjectId}`,
-            );
-            requestErrorHandler(
-              req,
-              res,
-              'Request failed! User is not planner for the subject',
-            );
-            return;
-          }
-        })
+  async (req: Request, res: Response) => {
+    try {
+      // Check if allocRound of the subject is Read only
+      const subjectData = await db_knex('Subject')
+        .join('AllocRound', 'AllocRound.id', 'Subject.allocRoundId')
+        .select()
+        .where('Subject.id', req.body.subjectId)
+        .andWhere('AllocRound.isReadOnly', false)
         .catch((error) => {
           logger.error('Oops! Update failed - SubjectEquipment');
           dbErrorHandler(
             req,
             res,
             error,
-            '/update - SubjectEquipment - DB error!',
+            '/put - SubjectEquipment - DB error!',
           );
           return;
         });
-    }
-    db_knex('SubjectEquipment')
-      .update(req.body)
-      .where('subjectId', req.body.subjectId)
-      .andWhere('equipmentId', req.body.equipmentId)
-      .then((rowsAffected) => {
-        if (rowsAffected === 1) {
-          successHandler(req, res, rowsAffected, 'Updated succesfully');
-        } else {
-          requestErrorHandler(req, res, 'Error');
-        }
-      })
-      .catch((error) => {
-        dbErrorHandler(
+
+      if (subjectData?.length === 0) {
+        logger.error('The subject is in NOT MODIFIABLE allocRound');
+        return requestErrorHandler(
           req,
           res,
-          error,
-          'Error while updating SubjectEquipment',
+          'Request failed! The allocRound is not modifiable',
         );
-      });
+      } else {
+        logger.verbose('The subject is in MODIFIABLE allocRound');
+      }
+
+      if (!req.user.isAdmin) {
+        const plannerData = await db_knex
+          .select('u.id as userId')
+          .from('User as u')
+          .innerJoin('DepartmentPlanner as dp', 'u.id', 'dp.userId')
+          .innerJoin('Department as d', 'dp.departmentId', 'd.id')
+          .innerJoin('Program as p', 'd.id', 'p.departmentId')
+          .innerJoin('Subject as s', 'p.id', 's.programId')
+          .where('s.id', req.body.subjectId)
+          .where('u.id', req.user.id)
+          .catch((error) => {
+            logger.error('Oops! Update failed - SubjectEquipment');
+            dbErrorHandler(
+              req,
+              res,
+              error,
+              '/put - SubjectEquipment - DB error!',
+            );
+            return;
+          });
+
+        if (plannerData?.length === 0) {
+          logger.error(
+            `User ${req.user.id} is NOT planner for ${req.body.subjectId}`,
+          );
+          return requestErrorHandler(
+            req,
+            res,
+            'Request failed! User is not planner for the subject',
+          );
+        } else {
+          logger.verbose(
+            `User ${req.user.id} is planner for ${req.body.subjectId}`,
+          );
+        }
+      }
+
+      // Update SubjectEquipment
+      const rowsAffected = await db_knex('SubjectEquipment')
+        .update(req.body)
+        .where('subjectId', req.body.subjectId)
+        .andWhere('equipmentId', req.body.equipmentId)
+        .catch((error) =>
+          dbErrorHandler(
+            req,
+            res,
+            error,
+            'Error while updating SubjectEquipment',
+          ),
+        );
+
+      if (rowsAffected === 1) {
+        successHandler(req, res, rowsAffected, 'Updated successfully');
+      } else {
+        return requestErrorHandler(req, res, 'Error');
+      }
+    } catch (error) {
+      requestErrorHandler(req, res, 'Error');
+    }
   },
 );
 
@@ -213,71 +272,98 @@ subjectequipment.delete(
   '/delete/:subjectId/:equipmentId',
   validateSubjectAndEquipmentId,
   [authenticator, admin, planner, roleChecker, validate], // Only admin and planner can delete subjectEquipment
-  (req: Request, res: Response) => {
+  async (req: Request, res: Response) => {
     const subjectId = req.params.subjectId;
     const equipmentId = req.params.equipmentId;
-    if (!req.user.isAdmin) {
-      db_knex
-        .select('u.id as userId')
-        .from('User as u')
-        .innerJoin('DepartmentPlanner as dp', 'u.id', 'dp.userId')
-        .innerJoin('Department as d', 'dp.departmentId', 'd.id')
-        .innerJoin('Program as p', 'd.id', 'p.departmentId')
-        .innerJoin('Subject as s', 'p.id', 's.programId')
-        .where('s.id', req.params.subjectId)
-        .where('u.id', req.user.id)
-        .then((data) => {
-          if (data.length > 0) {
-            logger.verbose(
-              `User ${req.user.id} is planner for ${req.params.subjectId}`,
-            );
-          } else {
-            logger.error(
-              `User ${req.user.id} is NOT planner for ${req.params.subjectId}`,
-            );
-            requestErrorHandler(
-              req,
-              res,
-              'Request failed! User is not planner for the subject',
-            );
-            return;
-          }
-        })
+
+    try {
+      // Check if allocRound of the subject is Read only
+      const subjectData = await db_knex('Subject')
+        .join('AllocRound', 'AllocRound.id', 'Subject.allocRoundId')
+        .select()
+        .where('Subject.id', subjectId)
+        .andWhere('AllocRound.isReadOnly', false)
         .catch((error) => {
           logger.error('Oops! Delete failed - SubjectEquipment');
           dbErrorHandler(
             req,
             res,
             error,
-            '/delete - SubjectEquipment - DB error!',
+            '/delete/:subjectId/:equipmentId - SubjectEquipment - DB error!',
           );
           return;
         });
-    }
-    db_knex('SubjectEquipment')
-      .del()
-      .where('subjectId', subjectId)
-      .andWhere('equipmentId', equipmentId)
-      .then((rowsAffected) => {
-        if (rowsAffected === 1) {
-          successHandler(
-            req,
-            res,
-            rowsAffected,
-            'Delete successful - SubjectEquipment',
-          );
-        } else {
-          requestErrorHandler(req, res, 'Nothing to delete');
-        }
-      })
-      .catch((error) => {
-        dbErrorHandler(
+
+      if (subjectData?.length === 0) {
+        logger.error('The subject is in NOT MODIFIABLE allocRound');
+        return requestErrorHandler(
           req,
           res,
-          error,
-          'Oops! Delete failed - SubjectEquipment',
+          'Request failed! The allocRound is not modifiable',
         );
-      });
+      } else {
+        logger.verbose('The subject is in MODIFIABLE allocRound');
+      }
+
+      if (!req.user.isAdmin) {
+        const plannerData = await db_knex
+          .select('u.id as userId')
+          .from('User as u')
+          .innerJoin('DepartmentPlanner as dp', 'u.id', 'dp.userId')
+          .innerJoin('Department as d', 'dp.departmentId', 'd.id')
+          .innerJoin('Program as p', 'd.id', 'p.departmentId')
+          .innerJoin('Subject as s', 'p.id', 's.programId')
+          .where('s.id', subjectId)
+          .where('u.id', req.user.id)
+          .catch((error) => {
+            logger.error('Oops! Delete failed - SubjectEquipment');
+            dbErrorHandler(
+              req,
+              res,
+              error,
+              '/delete/:subjectId/:equipmentId - SubjectEquipment - DB error!',
+            );
+            return;
+          });
+
+        if (plannerData?.length === 0) {
+          logger.error(`User ${req.user.id} is NOT planner for ${subjectId}`);
+          return requestErrorHandler(
+            req,
+            res,
+            'Request failed! User is not planner for the subject',
+          );
+        } else {
+          logger.verbose(`User ${req.user.id} is planner for ${subjectId}`);
+        }
+      }
+
+      const rowsAffected = await db_knex('SubjectEquipment')
+        .del()
+        .where('subjectId', subjectId)
+        .andWhere('equipmentId', equipmentId)
+        .catch((error) =>
+          dbErrorHandler(
+            req,
+            res,
+            error,
+            'Error while deleting SubjectEquipment',
+          ),
+        );
+
+      if (rowsAffected === 1) {
+        successHandler(
+          req,
+          res,
+          rowsAffected,
+          'Delete successful - SubjectEquipment',
+        );
+      } else {
+        return requestErrorHandler(req, res, 'Nothing to delete');
+      }
+    } catch (error) {
+      requestErrorHandler(req, res, 'Oops! Delete failed - SubjectEquipment');
+    }
   },
 );
 
