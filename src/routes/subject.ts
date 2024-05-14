@@ -280,14 +280,32 @@ subject.put(
   validateSubjectPut,
   [authenticator, admin, planner, roleChecker, validate],
   (req: Request, res: Response) => {
+    const editedSubject = {
+      'Subject.id': req.body.id,
+      'Subject.name': req.body.name,
+      'Subject.groupSize': req.body.groupSize,
+      'Subject.groupCount': req.body.groupCount,
+      'Subject.sessionLength': req.body.sessionLength,
+      'Subject.sessionCount': req.body.sessionCount,
+      'Subject.area': req.body.area,
+      'Subject.programId': req.body.programId,
+      'Subject.spaceTypeId': req.body.spaceTypeId,
+      'Subject.allocRoundId': req.body.allocRoundId,
+    };
     db_knex('Subject')
-      .update(req.body)
-      .where('id', req.body.id)
+      .join('AllocRound', 'AllocRound.id', 'Subject.allocRoundId')
+      .update(editedSubject)
+      .where('Subject.id', req.body.id)
+      .andWhere('AllocRound.isReadOnly', false)
       .then((rowsAffected) => {
         if (rowsAffected === 1) {
           successHandler(req, res, rowsAffected, 'Update successful - Subject');
         } else {
-          requestErrorHandler(req, res, 'Error');
+          requestErrorHandler(
+            req,
+            res,
+            `Invalid id: ${req.body.id}. Or that allocRound is read-only`,
+          );
         }
       })
       .catch((error) => {
@@ -309,7 +327,11 @@ subject.delete(
       .where('AllocRound.isReadOnly', false)
       .then((rowsAffected) => {
         if (rowsAffected !== 1) {
-          requestErrorHandler(req, res, `Invalid id: ${req.params.id}. Or`);
+          requestErrorHandler(
+            req,
+            res,
+            `Invalid id: ${req.params.id}. Or that allocRound is read-only`,
+          );
         } else {
           successHandler(req, res, rowsAffected, 'Delete successful - Subject');
         }
