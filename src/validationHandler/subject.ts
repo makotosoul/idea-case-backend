@@ -2,6 +2,7 @@ import { validateAllocRoundId } from './allocRound.js';
 import {
   createFloatValidatorChain,
   createIdValidatorChain,
+  createMultiBoolValidatorChain,
   createMultiFloatValidatorChain,
   createMultiNumberValidatorChain,
   createMultiTimeValidatorChain,
@@ -44,4 +45,5 @@ export const validateSubjectMultiPost = [
   ...createMultiNumberValidatorChain('groupSize'),
   ...createMultiTimeValidatorChain('sessionLength'),
   ...createMultiFloatValidatorChain('area'),
+  ...createMultiBoolValidatorChain('isNoisy'),
 ];

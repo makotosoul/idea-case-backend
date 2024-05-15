@@ -48,6 +48,7 @@ subject.get('/', [validate], (req: Request, res: Response) => {
       's.spaceTypeId',
       'st.name AS spaceTypeName',
       's.allocRoundId',
+      's.isNoisy',
     )
     .from('Subject as s')
     .innerJoin('Program as p', 's.programId', 'p.id')
@@ -84,6 +85,7 @@ subject.get(
         's.spaceTypeId',
         'st.name AS spaceTypeName',
         's.allocRoundId',
+        's.isNoisy',
       )
       .from('Subject as s')
       .where('allocRoundId', req.params.allocRoundId)
@@ -142,6 +144,7 @@ subject.get(
         's.spaceTypeId',
         'st.name AS spaceTypeName',
         's.allocRoundId',
+        's.isNoisy',
       )
       .from('Subject as s')
       .innerJoin('Program as p', 's.programId', 'p.id')
@@ -185,6 +188,7 @@ subject.post(
       programId: req.body.programId,
       spaceTypeId: req.body.spaceTypeId,
       allocRoundId: req.body.allocRoundId, // || 10004, // TODO!!!
+      isNoisy: req.body.isNoisy,
     };
 
     db_knex('Subject')
@@ -245,6 +249,7 @@ subject.post(
         area: subject.area,
         programId: program.id,
         spaceTypeId: spaceType.id,
+        isNoisy: subject.isNoisy,
         allocRoundId: Number(req.params.allocRoundId), //|| 10004, // TODO, first FE!!!
       });
     }
