@@ -34,6 +34,7 @@ export interface Subject {
   programId: number;
   spaceTypeId: number;
   allocRoundId: number;
+  isNoisy: boolean;
 }
 
 export interface Space {
