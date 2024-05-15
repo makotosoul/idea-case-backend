@@ -207,22 +207,6 @@ space.post(
         .select('id')
         .where('name', space.spaceType);
 
-      /*
-      if (!building || !spaceType) {
-        return !building
-          ? requestErrorHandler(
-              req,
-              res,
-              `Building ${building.buildingName} not found`,
-            )
-          : requestErrorHandler(
-              req,
-              res,
-              `Space type ${building.spaceType} not found`,
-            );
-      }
-      */
-
       if (!building) {
         return requestErrorHandler(
           req,
