@@ -100,8 +100,8 @@ BEGIN
 	SET priorityNow = (SELECT IFNULL(MAX(priority),0) FROM AllocSubject allSub WHERE allSub.allocRoundId = allocRid);
 
 	IF priority_option = 1 THEN -- subject_equipment.priority >= highPriority
-		INSERT INTO AllocSubject (subjectId, allocRoundId, priority)
-			SELECT allSub.subjectId, allSub.allocRoundId, ROW_NUMBER() OVER (ORDER BY MAX(sub_eqp.priority) DESC, Subject.groupSize ASC) + priorityNow as "row"
+		INSERT INTO AllocSubject (subjectId, allocRoundId, isNoisy, priority)
+			SELECT allSub.subjectId, allSub.allocRoundId, allSub.isNoisy, ROW_NUMBER() OVER (ORDER BY MAX(sub_eqp.priority) DESC, Subject.groupSize ASC) + priorityNow as "row"
     		FROM AllocSubject allSub
     		LEFT JOIN SubjectEquipment sub_eqp ON allSub.subjectId = sub_eqp.subjectId
     		JOIN Subject ON allSub.subjectId = Subject.id
@@ -110,8 +110,8 @@ BEGIN
     		GROUP BY allSub.subjectId
 		ON DUPLICATE KEY UPDATE priority = VALUES(priority);
 	ELSEIF priority_option = 2 THEN -- subject_equipment.priority < highPriority
-		INSERT INTO AllocSubject (subjectId, allocRoundId, priority)
-			SELECT allSub.subjectId, allSub.allocRoundId, ROW_NUMBER() OVER (ORDER BY MAX(sub_eqp.priority) DESC, Subject.groupSize ASC) + priorityNow as "row"
+		INSERT INTO AllocSubject (subjectId, allocRoundId, isNoisy, priority)
+			SELECT allSub.subjectId, allSub.allocRoundId, allSub.isNoisy, ROW_NUMBER() OVER (ORDER BY MAX(sub_eqp.priority) DESC, Subject.groupSize ASC) + priorityNow as "row"
        		FROM AllocSubject allSub
         	LEFT JOIN SubjectEquipment sub_eqp ON allSub.subjectId = sub_eqp.subjectId
         	JOIN Subject ON allSub.subjectId = Subject.id
@@ -122,8 +122,8 @@ BEGIN
         	ORDER BY sub_eqp.priority DESC
         ON DUPLICATE KEY UPDATE priority = VALUES(priority);
     ELSEIF priority_option = 3 THEN -- all others (subjects without equipment)
-    	INSERT INTO AllocSubject (subjectId, allocRoundId, priority)
-    		SELECT AllocSubject.subjectId, AllocSubject.allocRoundId, ROW_NUMBER() OVER (ORDER BY Subject.groupSize ASC) + priorityNow as "row"
+    	INSERT INTO AllocSubject (subjectId, allocRoundId, isNoisy, priority)
+    		SELECT AllocSubject.subjectId, AllocSubject.allocRoundId, allSub.isNoisy, ROW_NUMBER() OVER (ORDER BY Subject.groupSize ASC) + priorityNow as "row"
 			FROM AllocSubject
 			LEFT JOIN Subject ON AllocSubject.subjectId = Subject.id
 			WHERE priority IS NULL
@@ -142,8 +142,8 @@ DELIMITER //
 
 CREATE OR REPLACE PROCEDURE setSuitableRooms(allocRid INT, subId INT)
 BEGIN
-	INSERT INTO AllocSubjectSuitableSpace (allocRoundId, subjectId, spaceId, missingItems)
-		SELECT allocRid, subId, sp.id, getMissingItemAmount(subId, sp.id) AS "missingItems"
+	INSERT INTO AllocSubjectSuitableSpace (allocRoundId, subjectId, spaceId, missingItems, isLowNoise)
+		SELECT allocRid, subId, sp.id, getMissingItemAmount(subId, sp.id) AS "missingItems", isLowNoise
 		FROM Space sp
 		WHERE sp.personLimit >= (SELECT groupSize FROM Subject WHERE id=subId)
 		AND sp.area >= (SELECT s.area FROM Subject s WHERE id=subId)
@@ -157,7 +157,7 @@ DELIMITER ;
 /* --- Procedure 4: allocated space(s) to satisfy the subject's needs - until all needed hours have been allocated --- */
 DELIMITER //
 
-CREATE PROCEDURE allocateSpace(allocRid INT, subId INT, logId INT)
+CREATE PROCEDURE allocateSpace(allocRid INT, subId INT, logId INT, isNoisy BOOLEAN)
 BEGIN
 	DECLARE spaceTo INTEGER DEFAULT NULL;
 	DECLARE i INTEGER DEFAULT 0; -- loop index
@@ -171,28 +171,48 @@ BEGIN
    	SET allocated := 0; -- How many sessions allocated
    	SET sessionSeconds := (SELECT CEILING(TIME_TO_SEC(sessionLength)) FROM Subject WHERE id = subId); -- Session length in seconds
 
+	IF isNoisy = TRUE THEN
 	SET spaceTo := ( -- to check if subject can be allocated
+        	SELECT ass.spaceId FROM AllocSubjectSuitableSpace ass
+        	WHERE ass.missingItems = 0 AND ass.subjectId = subId AND ass.allocRoundId = allocRid AND ass.isLowNoise = FALSE
+ 			LIMIT 1);
+	ELSE 
+		SET spaceTo := ( -- to check if subject can be allocated
         	SELECT ass.spaceId FROM AllocSubjectSuitableSpace ass
         	WHERE ass.missingItems = 0 AND ass.subjectId = subId AND ass.allocRoundId = allocRid
  			LIMIT 1);
+	END IF;
 
 	IF spaceTo IS NULL THEN -- If can't find suitable spaces
 		SET suitableSpaces := FALSE;
    	ELSE -- Find for each session space with free time
    		SET i := 0;
    		WHILE loopOn DO -- Try add all sessions to the space
-   			SET spaceTo := (SELECT sp.id FROM AllocSubjectSuitableSpace ass
-							LEFT JOIN Space sp ON ass.spaceId = sp.id
-							WHERE ass.subjectId = subId AND ass.missingItems = 0 AND ass.allocRoundId = allocRid
-							GROUP BY sp.id
-							HAVING
-							((SELECT TIME_TO_SEC(TIMEDIFF(availableTo, availableFrom)) *5 FROM Space WHERE id = sp.id) -
-								(SELECT IFNULL(SUM(totalTime), 0) FROM AllocSpace asp WHERE asp.allocRoundId = allocRid AND spaceId = sp.id)
-								>
-								(sessionSeconds * (sessions - i - allocated)))
-							ORDER BY sp.personLimit ASC, sp.area ASC
-							LIMIT 1);
-
+			IF isNoisy = TRUE THEN
+				SET spaceTo := (SELECT sp.id FROM AllocSubjectSuitableSpace ass
+								LEFT JOIN Space sp ON ass.spaceId = sp.id
+								WHERE ass.subjectId = subId AND ass.missingItems = 0 AND ass.allocRoundId = allocRid AND ass.isLowNoise = FALSE
+								GROUP BY sp.id
+								HAVING
+								((SELECT TIME_TO_SEC(TIMEDIFF(availableTo, availableFrom)) *5 FROM Space WHERE id = sp.id) -
+									(SELECT IFNULL(SUM(totalTime), 0) FROM AllocSpace asp WHERE asp.allocRoundId = allocRid AND spaceId = sp.id)
+									>
+									(sessionSeconds * (sessions - i - allocated)))
+								ORDER BY sp.personLimit ASC, sp.area ASC
+								LIMIT 1);
+			ELSE
+				SET spaceTo := (SELECT sp.id FROM AllocSubjectSuitableSpace ass
+								LEFT JOIN Space sp ON ass.spaceId = sp.id
+								WHERE ass.subjectId = subId AND ass.missingItems = 0 AND ass.allocRoundId = allocRid
+								GROUP BY sp.id
+								HAVING
+								((SELECT TIME_TO_SEC(TIMEDIFF(availableTo, availableFrom)) *5 FROM Space WHERE id = sp.id) -
+									(SELECT IFNULL(SUM(totalTime), 0) FROM AllocSpace asp WHERE asp.allocRoundId = allocRid AND spaceId = sp.id)
+									>
+									(sessionSeconds * (sessions - i - allocated)))
+								ORDER BY sp.personLimit ASC, sp.area ASC
+								LIMIT 1);
+			END IF;
 			IF spaceTo IS NULL THEN -- If can't find space with freetime for specific amount sessions
 				SET i := i+1;
 				IF i = sessions - allocated THEN -- If checked all
@@ -259,15 +279,16 @@ DELIMITER //
 
 CREATE OR REPLACE PROCEDURE startAllocation(allocRid INT)
 BEGIN
-	DECLARE finished INTEGER DEFAULT 0; -- Marker for loop
-	DECLARE subId	INTEGER DEFAULT 0; -- SubjectId
-	DECLARE logId	INTEGER DEFAULT NULL;
-	DECLARE errors	INTEGER DEFAULT 0;
-	DECLARE debug	INTEGER DEFAULT 0;
-	DECLARE abort_round	BOOLEAN DEFAULT FALSE;
-	DECLARE reset_required	BOOLEAN DEFAULT FALSE;
+	DECLARE finished 			INTEGER DEFAULT 0; -- Marker for loop
+	DECLARE subId				INTEGER DEFAULT 0; -- SubjectId
+	DECLARE logId				INTEGER DEFAULT NULL;
+	DECLARE errors				INTEGER DEFAULT 0;
+	DECLARE debug				INTEGER DEFAULT 0;
+	DECLARE abort_round			BOOLEAN DEFAULT FALSE;
+	DECLARE reset_required		BOOLEAN DEFAULT FALSE;
 	DECLARE procedure_active	BOOLEAN DEFAULT FALSE;
-	DECLARE is_allocated 	BOOLEAN DEFAULT FALSE;
+	DECLARE is_allocated 		BOOLEAN DEFAULT FALSE;
+	DECLARE noisySubject		BOOLEAN DEFAULT 0;
 
 	-- Error Handling declarations
     DECLARE processBusy CONDITION FOR SQLSTATE '50000';
@@ -281,6 +302,12 @@ BEGIN
        	FROM AllocSubject allSub
         WHERE allSub.allocRoundId = allocRid
         ORDER BY priority ASC;
+	
+	DECLARE noisy CURSOR FOR
+		SELECT allSub.isNoisy
+		FROM AllocSubject allSub
+		WHERE allSub.allocRoundId = allocRid
+		ORDER BY priority ASC;
 
 	DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished = 1;
 
@@ -347,8 +374,8 @@ BEGIN
 	-- SET procedure running
 	UPDATE AllocRound SET processOn = 1 WHERE id = allocRid;
 
-	INSERT INTO AllocSubject(subjectId, allocRoundId)
-	SELECT id, allocRid FROM Subject;
+	INSERT INTO AllocSubject(subjectId, allocRoundId, isNoisy)
+		SELECT id, allocRid, isNoisy FROM Subject;
 
 	UPDATE AllocRound SET requireReset = TRUE WHERE id = allocRid;
 
@@ -357,9 +384,11 @@ BEGIN
 	CALL prioritizeSubjects(allocRid, 3, logId); -- without equipments ORDER BY groupSize ASC
 
 	OPEN subjects;
+	OPEN noisy;
 
 	subjectLoop : LOOP
 		FETCH subjects INTO subId;
+		FETCH noisy INTO noisySubject;
 		IF finished = 1 THEN LEAVE subjectLoop;
 		END IF;
 
@@ -374,11 +403,12 @@ BEGIN
 		CALL LogAllocation(logId, "Allocation", "Info", CONCAT("SubjectId: ", subId, " - Search for suitable spaces"));
 	    CALL setSuitableRooms(allocRid, subId);
 		-- SET cantAllocate or Insert subject to spaces
-        CALL allocateSpace(allocRid, subId, logId);
+        CALL allocateSpace(allocRid, subId, logId, noisySubject);
 
 	END LOOP subjectLoop;
 
 	CLOSE subjects;
+	CLOSE noisy;
 
 	UPDATE AllocRound SET isAllocated = 1 WHERE id = allocRid;
 	CALL LogAllocation(logId, "Allocation", "End", CONCAT("Errors: ", (SELECT errors)));

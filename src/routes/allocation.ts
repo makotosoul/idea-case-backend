@@ -4,17 +4,12 @@ import { planner } from '../authorization/planner.js';
 import { roleChecker } from '../authorization/roleChecker.js';
 import { statist } from '../authorization/statist.js';
 import { authenticator } from '../authorization/userValidation.js';
-import db_knex from '../db/index_knex.js';
 import { dbErrorHandler, successHandler } from '../responseHandler/index.js';
 import allocationService from '../services/allocation.js';
 import programService from '../services/program.js';
 import logger from '../utils/logger.js';
 import { validateAllocRoundId } from '../validationHandler/allocRound.js';
-import {
-  timestampFormatString,
-  validate,
-  validateIdObl,
-} from '../validationHandler/index.js';
+import { validate, validateIdObl } from '../validationHandler/index.js';
 import { validateAllocRoundIdAndSubjectId } from '../validationHandler/subject.js';
 
 const allocation = express.Router();

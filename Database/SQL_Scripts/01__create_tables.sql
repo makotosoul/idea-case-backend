@@ -220,6 +220,7 @@ CREATE TABLE IF NOT EXISTS SubjectEquipment (
 CREATE TABLE IF NOT EXISTS AllocSubject (
     allocRoundId    INTEGER     NOT NULL,
     subjectId       INTEGER     NOT NULL,
+    isNoisy         BOOLEAN     NOT NULL DEFAULT 0,
     isAllocated     BOOLEAN     NOT NULL DEFAULT 0,
     cantAllocate    BOOLEAN     NOT NULL DEFAULT 0,
     priority        INTEGER,
@@ -263,6 +264,7 @@ CREATE TABLE IF NOT EXISTS AllocSubjectSuitableSpace (
     subjectId       INTEGER     NOT NULL,
     spaceId         INTEGER     NOT NULL,
     missingItems    INTEGER,
+    isLowNoise      BOOLEAN    NOT NULL,
 
     PRIMARY KEY(allocRoundId, subjectId, spaceId),
 

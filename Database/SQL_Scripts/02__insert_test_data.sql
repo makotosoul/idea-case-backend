@@ -99,6 +99,10 @@ INSERT INTO `Space` (`name`, `area`, `personLimit`, `buildingId`, `availableFrom
     ('N310 Puhaltimet/Käyrätorvi', 55.5, 15, 402, '8:00:00', '21:00:00', '9:00:00', '19:00:00', 'Tilatyyppi: Musiikkiluokka', 5004), -- 1034
     ('N515 Iso Ryhmäopetusluokka', 70, 25, 402, '8:00:00', '21:00:00', '8:00:00', '21:00:00', 'Tilatyyppi: Musiikkiluokka', 5004), -- 1035
     ('N311 Puhaltimet/Jouset', 34, 8, 402, '8:00:00', '21:00:00', '8:00:00', '21:00:00', 'Tilatyyppi: Musiikkiluokka', 5004); -- 1036
+    
+/* --- Adding rooms that are low noise --- */
+INSERT INTO `Space` (`name`, `area`, `personLimit`, `buildingId`, `availableFrom`, `availableTo`, `classesFrom`, `classesTo`, `info`, `spaceTypeId`, `isLowNoise`) VALUES
+    ('N714 Teorialuokka', 200.0, 12, 401, '9:00:00', '22:00:00', '9:00:00', '17:00:00', 'Tilatyyppi: Luentoluokka', 5002, 1); -- 1037
 
 
 /* --- Insert: Equipment --- */
@@ -131,7 +135,8 @@ INSERT INTO `Equipment` (`name`, `isMovable`, `priority`, `description`) VALUES
     ('Dokumenttikamera', 0, 250, ''), -- 2026
     ('Sähkökitara', 1, 100, 'Sähkökitara'), -- 2027
     ('Käyrätorvi', 1, 100, 'Puhallin'), -- 2028
-    ('Cembalo', 0, 900, 'Pianon edeltäjä'); -- 2029
+    ('Cembalo', 0, 900, 'Pianon edeltäjä'), -- 2029
+    ('Saksofoni', 0, 100, 'Jazz-soitin'); -- 2030
 
 /* --- Insert: SpaceEquipment * --- */
 INSERT INTO `SpaceEquipment` (`spaceId`, `equipmentId`) VALUES
@@ -268,46 +273,50 @@ INSERT INTO AllocRound(name, isSeasonAlloc, userId, description) VALUES
 
 /* --- Insert: Subject * --- */
 INSERT INTO Subject(name, groupSize, groupCount, sessionLength, sessionCount, area, programId, spaceTypeId, allocRoundId) VALUES
-    ('Saksan kielen perusteet', 20, 2, '01:30:00', 2, 35, 3030, 5002, 10004),
-    ('Jazzimprovisoinnin ja -teorian perusteet', 17, 1, '02:30:00', 2, 35, 3005, 5004, 10004),
-    ('Piano yksilöopetus', 1, 1, '02:30:00', 2, 10, 3001, 5004, 10004),
-    ('Trumpetin ryhmäsoitto', 10, 1,'01:30:00', 3, 40, 3025, 5004, 10004),
-    ('Kirkkomusiikin ryhmäsoittoa', 5, 2, '02:30:00', 2, 30, 3014, 5004, 10004),
-    ('Ruotsin kielen oppitunti', 18, 2, '01:45:00', 1, 25, 3030, 5002, 10004),
-    ('Kitaran soiton perusteet', 11, 1, '01:30:00', 2, 25, 3003, 5004, 10004),
-    ('Kontrabassonsoitto, taso A', 1, 3, '01:00:00', 2, 10, 3012, 5004, 10004),
-    ('Kanteleensoitto (musiikin kandidaatti)', 1, 4, '01:00:00', 1, 10, 3004, 5004, 10004),
-    ('Yhteissoitto / kantele', 6, 1, '01:30:00', 1, 20, 3004, 5004, 10004),
-    ('Urkujensoitto (musiikin kandidaatti)', 1, 3, '01:30:00', 1, 20, 3028, 5004, 10004),
-    ('Yhteissoitto / kitara', 5, 1, '01:30:00', 1, 25, 3003, 5004, 10004),
-    ('Huilunsoitto, taso A', 1, 5, '01:00:00', 1, 10, 3025, 5004, 10004),
-    ('Fortepianonsoitto 1', 1, 7, '01:10:00', 2, 20, 3008, 5004, 10004),
-    ('Nokkahuilunsoitto, taso B', 1, 3, '01:00:00', 1, 10, 3025, 5004, 10004),
-    ('Viulunsoitto, taso D', 1, 12, '01:00:00', 1, 10, 3012, 5004, 10004),
-    ('Tuubansoitto, taso C', 1, 5, '01:00:00', 1, 15, 3025, 5004, 10004),
-    ('Harmonikansoitto (musiikin kandidaatti)', 1, 2, '01:00:00', 1, 15, 3010, 5004, 10004),
-    ('Jazz, rumpujensoitto, taso B', 1, 4, '01:00:00', 1, 15, 3016, 5004, 10004),
-    ('Kansanmusiikkiteoria 1', 20, 1, '01:00:00', 2, 30, 3013, 5002, 10004),
-    ('Kirkkomusiikin käytännöt 1', 20, 1, '03:00:00', 1, 30, 3014, 5002, 10004),
-    ('Nuottikirjoitus', 15, 1, '02:00:00', 1, 25, 3030, 5002, 10004),
-    ('Harpun orkesterikirjallisuus', 15, 1, '03:00:00', 1, 25, 3011, 5002, 10004),
-    ('Global Orchestra', 12, 2, '02:30:00', 2, 35, 3009, 5004, 10004),
-    ('Populaarimusiikin historia', 20, 1, '03:00:00', 1, 30, 3019, 5002, 10004),
-    ('Oppimaan oppiminen', 15, 2, '02:30:00', 1, 25, 3030, 5002, 10004),
-    ('Body Mapping', 25, 2, '02:30:00', 2, 35, 3030, 5002, 10004),
-    ('Muusikon Terveys', 20, 1, '02:30:00', 1, 30, 3030, 5002, 10004),
-    ('Pianomusiikin historia', 18, 1, '01:00:00', 1, 30, 3001, 5002, 10004),
-    ('Syventävä ensemblelaulu', 4, 3, '00:45:00', 1, 10, 3002, 5004, 10004),
-    ('Laulu, pääinstrumentti', 1, 10, '01:00:00', 1, 5, 3002, 5004, 10004),
-    ('The jazz line - melodisen jazzimprovisoinnin syventävät opinnot', 14, 1, '02:00:00', 1, 20, 3005, 5002, 10004),
-    ('Jazzensemble', 5, 1, '02:00:00', 1, 20, 3007, 5004, 10004),
-    ('Äänenkäyttö ja huolto / korrepetitiokoulutus', 4, 3, '01:00:00', 1, 10, 3015, 5004, 10004),
-    ('Prima vista / korrepetitiokoulutus', 2, 6, '01:00:00', 1, 15, 3015, 5004, 10004),
-    ('Musiikinhistorian lukupiiri', 10, 1, '01:00:00', 1 , 15, 3019, 5002, 10004),
-    ('Tohtoriseminaari (sävellys)', 17, 1, '02:00:00', 1, 30, 3019, 5002, 10003),
-    ('Musiikkiteknologian perusteet', 15, 1, '01:00:00', 1, 30, 3020, 5004, 10002),
-    ('Johtamisen pedagogiikka -luentosarja', 10, 1, '02:00:00', 1, 20, 3018, 5002, 10001);
+    ('Saksan kielen perusteet', 20, 2, '01:30:00', 2, 35, 3030, 5002, 10004), -- 4001
+    ('Jazzimprovisoinnin ja -teorian perusteet', 17, 1, '02:30:00', 2, 35, 3005, 5004, 10004), -- 4002
+    ('Piano yksilöopetus', 1, 1, '02:30:00', 2, 10, 3001, 5004, 10004), -- 4003
+    ('Trumpetin ryhmäsoitto', 10, 1,'01:30:00', 3, 40, 3025, 5004, 10004), -- 4004
+    ('Kirkkomusiikin ryhmäsoittoa', 5, 2, '02:30:00', 2, 30, 3014, 5004, 10004), -- 4005
+    ('Ruotsin kielen oppitunti', 18, 2, '01:45:00', 1, 25, 3030, 5002, 10004), -- 4006
+    ('Kitaran soiton perusteet', 11, 1, '01:30:00', 2, 25, 3003, 5004, 10004), -- 4007
+    ('Kontrabassonsoitto, taso A', 1, 3, '01:00:00', 2, 10, 3012, 5004, 10004), -- 4008
+    ('Kanteleensoitto (musiikin kandidaatti)', 1, 4, '01:00:00', 1, 10, 3004, 5004, 10004), -- 4009
+    ('Yhteissoitto / kantele', 6, 1, '01:30:00', 1, 20, 3004, 5004, 10004), -- 4010
+    ('Urkujensoitto (musiikin kandidaatti)', 1, 3, '01:30:00', 1, 20, 3028, 5004, 10004), -- 4011
+    ('Yhteissoitto / kitara', 5, 1, '01:30:00', 1, 25, 3003, 5004, 10004), -- 4012
+    ('Huilunsoitto, taso A', 1, 5, '01:00:00', 1, 10, 3025, 5004, 10004), -- 4013
+    ('Fortepianonsoitto 1', 1, 7, '01:10:00', 2, 20, 3008, 5004, 10004), -- 4014
+    ('Nokkahuilunsoitto, taso B', 1, 3, '01:00:00', 1, 10, 3025, 5004, 10004), -- 4015
+    ('Viulunsoitto, taso D', 1, 12, '01:00:00', 1, 10, 3012, 5004, 10004), -- 4016
+    ('Tuubansoitto, taso C', 1, 5, '01:00:00', 1, 15, 3025, 5004, 10004), -- 4017
+    ('Harmonikansoitto (musiikin kandidaatti)', 1, 2, '01:00:00', 1, 15, 3010, 5004, 10004), -- 4018
+    ('Jazz, rumpujensoitto, taso B', 1, 4, '01:00:00', 1, 15, 3016, 5004, 10004), -- 4019
+    ('Kansanmusiikkiteoria 1', 20, 1, '01:00:00', 2, 30, 3013, 5002, 10004), -- 4020
+    ('Kirkkomusiikin käytännöt 1', 20, 1, '03:00:00', 1, 30, 3014, 5002, 10004), -- 4021
+    ('Nuottikirjoitus', 15, 1, '02:00:00', 1, 25, 3030, 5002, 10004), -- 4022
+    ('Harpun orkesterikirjallisuus', 15, 1, '03:00:00', 1, 25, 3011, 5002, 10004), -- 4023
+    ('Global Orchestra', 12, 2, '02:30:00', 2, 35, 3009, 5004, 10004), -- 4024
+    ('Populaarimusiikin historia', 20, 1, '03:00:00', 1, 30, 3019, 5002, 10004), -- 4025
+    ('Oppimaan oppiminen', 15, 2, '02:30:00', 1, 25, 3030, 5002, 10004),-- 4025
+    ('Body Mapping', 25, 2, '02:30:00', 2, 35, 3030, 5002, 10004), -- 4026
+    ('Muusikon Terveys', 20, 1, '02:30:00', 1, 30, 3030, 5002, 10004), -- 4027
+    ('Pianomusiikin historia', 18, 1, '01:00:00', 1, 30, 3001, 5002, 10004), -- 4028
+    ('Syventävä ensemblelaulu', 4, 3, '00:45:00', 1, 10, 3002, 5004, 10004), -- 4029
+    ('Laulu, pääinstrumentti', 1, 10, '01:00:00', 1, 5, 3002, 5004, 10004), -- 4030
+    ('The jazz line - melodisen jazzimprovisoinnin syventävät opinnot', 14, 1, '02:00:00', 1, 20, 3005, 5002, 10004), -- 4030
+    ('Jazzensemble', 5, 1, '02:00:00', 1, 20, 3007, 5004, 10004), -- 4031
+    ('Äänenkäyttö ja huolto / korrepetitiokoulutus', 4, 3, '01:00:00', 1, 10, 3015, 5004, 10004), -- 4032
+    ('Prima vista / korrepetitiokoulutus', 2, 6, '01:00:00', 1, 15, 3015, 5004, 10004), -- 4033
+    ('Musiikinhistorian lukupiiri', 10, 1, '01:00:00', 1 , 15, 3019, 5002, 10004), -- 4034
+    ('Tohtoriseminaari (sävellys)', 17, 1, '02:00:00', 1, 30, 3019, 5002, 10003), -- 4035
+    ('Musiikkiteknologian perusteet', 15, 1, '01:00:00', 1, 30, 3020, 5004, 10002), -- 4036
+    ('Johtamisen pedagogiikka -luentosarja', 10, 1, '02:00:00', 1, 20, 3018, 5002, 10001), -- 4037
+    ('Kansanmusiikkiteoria 2', 20, 1, '01:00:00', 2, 30, 3013, 5002, 10004); -- 4038
 
+/* --- Inserting noisy subjects --- */
+INSERT INTO Subject(name, groupSize, groupCount, sessionLength, sessionCount, area, programId, spaceTypeId, allocRoundId, isNoisy) VALUES
+    ('Jazz, Saksofoninsoitto, taso A', 1, 4, '01:00:00', 1, 180, 3025, 5002, 10004, 1); /* 4039, Test for not allocating because noisy and only valid room is lowNoise */
 
 /* --- Insert: SubjectEquipment * --- */
 INSERT INTO SubjectEquipment(subjectId, equipmentId, priority) VALUES
@@ -338,7 +347,8 @@ INSERT INTO SubjectEquipment(subjectId, equipmentId, priority) VALUES
     (4019, 2004, 700),
     (4005, 2004, 600),
     (4024, 2004, 600),
-    (4033, 2004, 600);
+    (4033, 2004, 600),
+    (4039, 2030, 50); -- Noisy equipment
 
 /* --- Insert: AllocSubject * --- */
 INSERT INTO AllocSubject(subjectId, allocRoundId, isAllocated, allocatedDate, priority) VALUES

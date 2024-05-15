@@ -4,7 +4,6 @@ import { planner } from '../authorization/planner.js';
 import { roleChecker } from '../authorization/roleChecker.js';
 import { statist } from '../authorization/statist.js';
 import { authenticator } from '../authorization/userValidation.js';
-// knex available for new database operations
 import db_knex from '../db/index_knex.js';
 import {
   dbErrorHandler,
