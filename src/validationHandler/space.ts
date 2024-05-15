@@ -53,5 +53,6 @@ export const validateMultiSpacePost = [
   ...createMultiTimeValidatorChain('classesFrom'),
   ...createMultiTimeValidatorChain('classesTo'),
   ...createMultiBoolValidatorChain('inUse'),
+  ...createMultiBoolValidatorChain('isLowNoise'),
   ...createMultiNameValidatorChain('spaceType'),
 ];

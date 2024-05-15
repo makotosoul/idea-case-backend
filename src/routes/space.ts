@@ -188,13 +188,13 @@ space.post(
   },
 );
 
-// Adding multiple subjects/teachings using knex
+// Adding multiple spaces
 space.post(
   '/multi',
   validateMultiSpacePost,
   [authenticator, admin, planner, roleChecker, validate],
   async (req: Request, res: Response) => {
-    console.log(req.body);
+    logger.debug('multi space post req body:', req.body);
     const spaceData: Space[] = [];
 
     for (const space of req.body) {
@@ -205,18 +205,19 @@ space.post(
         .select('id')
         .where('name', space.spaceType);
 
-      if (!building || !space) {
-        return !building
-          ? requestErrorHandler(
-              req,
-              res,
-              `'Program ${building.buildingName} not found`,
-            )
-          : requestErrorHandler(
-              req,
-              res,
-              `Space ${building.spaceType} not found`,
-            );
+      if (!building) {
+        return requestErrorHandler(
+          req,
+          res,
+          `Building ${space.buildingName} not found`,
+        );
+      }
+      if (!spaceType) {
+        return requestErrorHandler(
+          req,
+          res,
+          `Space type ${space.spaceType} not found`,
+        );
       }
 
       spaceData.push({
@@ -235,7 +236,7 @@ space.post(
       });
     }
 
-    console.log(spaceData);
+    logger.debug('multi space post data to insert:', spaceData);
 
     db_knex('Space')
       .insert(spaceData)
