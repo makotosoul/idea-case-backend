@@ -263,7 +263,7 @@ CREATE TABLE IF NOT EXISTS AllocSubjectSuitableSpace (
     subjectId       INTEGER     NOT NULL,
     spaceId         INTEGER     NOT NULL,
     missingItems    INTEGER,
-    isLowNoise      BOOLEAN,    NOT NULL,
+    isLowNoise      BOOLEAN    NOT NULL,
 
     PRIMARY KEY(allocRoundId, subjectId, spaceId),
 
