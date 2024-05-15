@@ -142,8 +142,8 @@ DELIMITER //
 
 CREATE OR REPLACE PROCEDURE setSuitableRooms(allocRid INT, subId INT)
 BEGIN
-	INSERT INTO AllocSubjectSuitableSpace (allocRoundId, subjectId, spaceId, missingItems)
-		SELECT allocRid, subId, sp.id, getMissingItemAmount(subId, sp.id) AS "missingItems"
+	INSERT INTO AllocSubjectSuitableSpace (allocRoundId, subjectId, spaceId, missingItems, isLowNoise)
+		SELECT allocRid, subId, sp.id, getMissingItemAmount(subId, sp.id) AS "missingItems", isLowNoise
 		FROM Space sp
 		WHERE sp.personLimit >= (SELECT groupSize FROM Subject WHERE id=subId)
 		AND sp.area >= (SELECT s.area FROM Subject s WHERE id=subId)
@@ -157,7 +157,7 @@ DELIMITER ;
 /* --- Procedure 4: allocated space(s) to satisfy the subject's needs - until all needed hours have been allocated --- */
 DELIMITER //
 
-CREATE PROCEDURE allocateSpace(allocRid INT, subId INT, logId INT)
+CREATE PROCEDURE allocateSpace(allocRid INT, subId INT, logId INT, isNoisy BOOLEAN)
 BEGIN
 	DECLARE spaceTo INTEGER DEFAULT NULL;
 	DECLARE i INTEGER DEFAULT 0; -- loop index
@@ -171,28 +171,48 @@ BEGIN
    	SET allocated := 0; -- How many sessions allocated
    	SET sessionSeconds := (SELECT CEILING(TIME_TO_SEC(sessionLength)) FROM Subject WHERE id = subId); -- Session length in seconds
 
+	IF isNoisy = TRUE THEN
 	SET spaceTo := ( -- to check if subject can be allocated
+        	SELECT ass.spaceId FROM AllocSubjectSuitableSpace ass
+        	WHERE ass.missingItems = 0 AND ass.subjectId = subId AND ass.allocRoundId = allocRid AND ass.isLowNoise = FALSE
+ 			LIMIT 1);
+	ELSE 
+		SET spaceTo := ( -- to check if subject can be allocated
         	SELECT ass.spaceId FROM AllocSubjectSuitableSpace ass
         	WHERE ass.missingItems = 0 AND ass.subjectId = subId AND ass.allocRoundId = allocRid
  			LIMIT 1);
+	END IF;
 
 	IF spaceTo IS NULL THEN -- If can't find suitable spaces
 		SET suitableSpaces := FALSE;
    	ELSE -- Find for each session space with free time
    		SET i := 0;
    		WHILE loopOn DO -- Try add all sessions to the space
-   			SET spaceTo := (SELECT sp.id FROM AllocSubjectSuitableSpace ass
-							LEFT JOIN Space sp ON ass.spaceId = sp.id
-							WHERE ass.subjectId = subId AND ass.missingItems = 0 AND ass.allocRoundId = allocRid
-							GROUP BY sp.id
-							HAVING
-							((SELECT TIME_TO_SEC(TIMEDIFF(availableTo, availableFrom)) *5 FROM Space WHERE id = sp.id) -
-								(SELECT IFNULL(SUM(totalTime), 0) FROM AllocSpace asp WHERE asp.allocRoundId = allocRid AND spaceId = sp.id)
-								>
-								(sessionSeconds * (sessions - i - allocated)))
-							ORDER BY sp.personLimit ASC, sp.area ASC
-							LIMIT 1);
-
+			IF isNoisy = TRUE THEN
+				SET spaceTo := (SELECT sp.id FROM AllocSubjectSuitableSpace ass
+								LEFT JOIN Space sp ON ass.spaceId = sp.id
+								WHERE ass.subjectId = subId AND ass.missingItems = 0 AND ass.allocRoundId = allocRid AND ass.isLowNoise = FALSE
+								GROUP BY sp.id
+								HAVING
+								((SELECT TIME_TO_SEC(TIMEDIFF(availableTo, availableFrom)) *5 FROM Space WHERE id = sp.id) -
+									(SELECT IFNULL(SUM(totalTime), 0) FROM AllocSpace asp WHERE asp.allocRoundId = allocRid AND spaceId = sp.id)
+									>
+									(sessionSeconds * (sessions - i - allocated)))
+								ORDER BY sp.personLimit ASC, sp.area ASC
+								LIMIT 1);
+			ELSE
+				SET spaceTo := (SELECT sp.id FROM AllocSubjectSuitableSpace ass
+								LEFT JOIN Space sp ON ass.spaceId = sp.id
+								WHERE ass.subjectId = subId AND ass.missingItems = 0 AND ass.allocRoundId = allocRid
+								GROUP BY sp.id
+								HAVING
+								((SELECT TIME_TO_SEC(TIMEDIFF(availableTo, availableFrom)) *5 FROM Space WHERE id = sp.id) -
+									(SELECT IFNULL(SUM(totalTime), 0) FROM AllocSpace asp WHERE asp.allocRoundId = allocRid AND spaceId = sp.id)
+									>
+									(sessionSeconds * (sessions - i - allocated)))
+								ORDER BY sp.personLimit ASC, sp.area ASC
+								LIMIT 1);
+			END IF;
 			IF spaceTo IS NULL THEN -- If can't find space with freetime for specific amount sessions
 				SET i := i+1;
 				IF i = sessions - allocated THEN -- If checked all
@@ -268,6 +288,7 @@ BEGIN
 	DECLARE reset_required	BOOLEAN DEFAULT FALSE;
 	DECLARE procedure_active	BOOLEAN DEFAULT FALSE;
 	DECLARE is_allocated 	BOOLEAN DEFAULT FALSE;
+	DECLARE isNoisy		BOOLEAN DEFAULT FALSE;
 
 	-- Error Handling declarations
     DECLARE processBusy CONDITION FOR SQLSTATE '50000';
@@ -360,6 +381,7 @@ BEGIN
 
 	subjectLoop : LOOP
 		FETCH subjects INTO subId;
+		FETCH subjects INTO isNoisy;
 		IF finished = 1 THEN LEAVE subjectLoop;
 		END IF;
 
@@ -374,7 +396,7 @@ BEGIN
 		CALL LogAllocation(logId, "Allocation", "Info", CONCAT("SubjectId: ", subId, " - Search for suitable spaces"));
 	    CALL setSuitableRooms(allocRid, subId);
 		-- SET cantAllocate or Insert subject to spaces
-        CALL allocateSpace(allocRid, subId, logId);
+        CALL allocateSpace(allocRid, subId, logId, isNoisy);
 
 	END LOOP subjectLoop;
 
