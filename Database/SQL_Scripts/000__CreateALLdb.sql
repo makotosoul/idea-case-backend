@@ -279,6 +279,7 @@ CREATE TABLE IF NOT EXISTS SubjectEquipment (
 CREATE TABLE IF NOT EXISTS AllocSubject (
     allocRoundId    INTEGER     NOT NULL,
     subjectId       INTEGER     NOT NULL,
+    isNoisy         BOOLEAN     NOT NULL DEFAULT 0,
     isAllocated     BOOLEAN     NOT NULL DEFAULT 0,
     cantAllocate    BOOLEAN     NOT NULL DEFAULT 0,
     priority        INTEGER,
@@ -503,8 +504,8 @@ BEGIN
 	SET priorityNow = (SELECT IFNULL(MAX(priority),0) FROM AllocSubject allSub WHERE allSub.allocRoundId = allocRid);
 
 	IF priority_option = 1 THEN -- subject_equipment.priority >= highPriority
-		INSERT INTO AllocSubject (subjectId, allocRoundId, priority)
-			SELECT allSub.subjectId, allSub.allocRoundId, ROW_NUMBER() OVER (ORDER BY MAX(sub_eqp.priority) DESC, Subject.groupSize ASC) + priorityNow as "row"
+		INSERT INTO AllocSubject (subjectId, allocRoundId, isNoisy, priority)
+			SELECT allSub.subjectId, allSub.allocRoundId, allSub.isNoisy, ROW_NUMBER() OVER (ORDER BY MAX(sub_eqp.priority) DESC, Subject.groupSize ASC) + priorityNow as "row"
     		FROM AllocSubject allSub
     		LEFT JOIN SubjectEquipment sub_eqp ON allSub.subjectId = sub_eqp.subjectId
     		JOIN Subject ON allSub.subjectId = Subject.id
@@ -513,8 +514,8 @@ BEGIN
     		GROUP BY allSub.subjectId
 		ON DUPLICATE KEY UPDATE priority = VALUES(priority);
 	ELSEIF priority_option = 2 THEN -- subject_equipment.priority < highPriority
-		INSERT INTO AllocSubject (subjectId, allocRoundId, priority)
-			SELECT allSub.subjectId, allSub.allocRoundId, ROW_NUMBER() OVER (ORDER BY MAX(sub_eqp.priority) DESC, Subject.groupSize ASC) + priorityNow as "row"
+		INSERT INTO AllocSubject (subjectId, allocRoundId, isNoisy, priority)
+			SELECT allSub.subjectId, allSub.allocRoundId, allSub.isNoisy, ROW_NUMBER() OVER (ORDER BY MAX(sub_eqp.priority) DESC, Subject.groupSize ASC) + priorityNow as "row"
        		FROM AllocSubject allSub
         	LEFT JOIN SubjectEquipment sub_eqp ON allSub.subjectId = sub_eqp.subjectId
         	JOIN Subject ON allSub.subjectId = Subject.id
@@ -525,8 +526,8 @@ BEGIN
         	ORDER BY sub_eqp.priority DESC
         ON DUPLICATE KEY UPDATE priority = VALUES(priority);
     ELSEIF priority_option = 3 THEN -- all others (subjects without equipment)
-    	INSERT INTO AllocSubject (subjectId, allocRoundId, priority)
-    		SELECT AllocSubject.subjectId, AllocSubject.allocRoundId, ROW_NUMBER() OVER (ORDER BY Subject.groupSize ASC) + priorityNow as "row"
+    	INSERT INTO AllocSubject (subjectId, allocRoundId, isNoisy, priority)
+    		SELECT AllocSubject.subjectId, AllocSubject.allocRoundId, allSub.isNoisy, ROW_NUMBER() OVER (ORDER BY Subject.groupSize ASC) + priorityNow as "row"
 			FROM AllocSubject
 			LEFT JOIN Subject ON AllocSubject.subjectId = Subject.id
 			WHERE priority IS NULL
@@ -682,16 +683,16 @@ DELIMITER //
 
 CREATE OR REPLACE PROCEDURE startAllocation(allocRid INT)
 BEGIN
-	DECLARE finished INTEGER DEFAULT 0; -- Marker for loop
-	DECLARE subId	INTEGER DEFAULT 0; -- SubjectId
-	DECLARE logId	INTEGER DEFAULT NULL;
-	DECLARE errors	INTEGER DEFAULT 0;
-	DECLARE debug	INTEGER DEFAULT 0;
-	DECLARE abort_round	BOOLEAN DEFAULT FALSE;
-	DECLARE reset_required	BOOLEAN DEFAULT FALSE;
+	DECLARE finished 			INTEGER DEFAULT 0; -- Marker for loop
+	DECLARE subId				INTEGER DEFAULT 0; -- SubjectId
+	DECLARE logId				INTEGER DEFAULT NULL;
+	DECLARE errors				INTEGER DEFAULT 0;
+	DECLARE debug				INTEGER DEFAULT 0;
+	DECLARE abort_round			BOOLEAN DEFAULT FALSE;
+	DECLARE reset_required		BOOLEAN DEFAULT FALSE;
 	DECLARE procedure_active	BOOLEAN DEFAULT FALSE;
-	DECLARE is_allocated 	BOOLEAN DEFAULT FALSE;
-	DECLARE isNoisy		BOOLEAN DEFAULT FALSE;
+	DECLARE is_allocated 		BOOLEAN DEFAULT FALSE;
+	DECLARE noisySubject		BOOLEAN DEFAULT 0;
 
 	-- Error Handling declarations
     DECLARE processBusy CONDITION FOR SQLSTATE '50000';
@@ -705,6 +706,12 @@ BEGIN
        	FROM AllocSubject allSub
         WHERE allSub.allocRoundId = allocRid
         ORDER BY priority ASC;
+	
+	DECLARE noisy CURSOR FOR
+		SELECT allSub.isNoisy
+		FROM AllocSubject allSub
+		WHERE allSub.allocRoundId = allocRid
+		ORDER BY priority ASC;
 
 	DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished = 1;
 
@@ -771,8 +778,8 @@ BEGIN
 	-- SET procedure running
 	UPDATE AllocRound SET processOn = 1 WHERE id = allocRid;
 
-	INSERT INTO AllocSubject(subjectId, allocRoundId)
-	SELECT id, allocRid FROM Subject;
+	INSERT INTO AllocSubject(subjectId, allocRoundId, isNoisy)
+		SELECT id, allocRid, isNoisy FROM Subject;
 
 	UPDATE AllocRound SET requireReset = TRUE WHERE id = allocRid;
 
@@ -781,10 +788,11 @@ BEGIN
 	CALL prioritizeSubjects(allocRid, 3, logId); -- without equipments ORDER BY groupSize ASC
 
 	OPEN subjects;
+	OPEN noisy;
 
 	subjectLoop : LOOP
 		FETCH subjects INTO subId;
-		FETCH subjects INTO isNoisy;
+		FETCH noisy INTO noisySubject;
 		IF finished = 1 THEN LEAVE subjectLoop;
 		END IF;
 
@@ -799,11 +807,12 @@ BEGIN
 		CALL LogAllocation(logId, "Allocation", "Info", CONCAT("SubjectId: ", subId, " - Search for suitable spaces"));
 	    CALL setSuitableRooms(allocRid, subId);
 		-- SET cantAllocate or Insert subject to spaces
-        CALL allocateSpace(allocRid, subId, logId, isNoisy);
+        CALL allocateSpace(allocRid, subId, logId, noisySubject);
 
 	END LOOP subjectLoop;
 
 	CLOSE subjects;
+	CLOSE noisy;
 
 	UPDATE AllocRound SET isAllocated = 1 WHERE id = allocRid;
 	CALL LogAllocation(logId, "Allocation", "End", CONCAT("Errors: ", (SELECT errors)));
@@ -998,7 +1007,7 @@ INSERT INTO `Space` (`name`, `area`, `personLimit`, `buildingId`, `availableFrom
     
 /* --- Adding rooms that are low noise --- */
 INSERT INTO `Space` (`name`, `area`, `personLimit`, `buildingId`, `availableFrom`, `availableTo`, `classesFrom`, `classesTo`, `info`, `spaceTypeId`, `isLowNoise`) VALUES
-    ('N714 Teorialuokka', 20.0, 12, 401, '9:00:00', '22:00:00', '9:00:00', '17:00:00', 'Tilatyyppi: Luentoluokka', 5002, 1); -- 1037
+    ('N714 Teorialuokka', 200.0, 12, 401, '9:00:00', '22:00:00', '9:00:00', '17:00:00', 'Tilatyyppi: Luentoluokka', 5002, 1); -- 1037
 
 
 /* --- Insert: Equipment --- */
@@ -1032,7 +1041,7 @@ INSERT INTO `Equipment` (`name`, `isMovable`, `priority`, `description`) VALUES
     ('Sähkökitara', 1, 100, 'Sähkökitara'), -- 2027
     ('Käyrätorvi', 1, 100, 'Puhallin'), -- 2028
     ('Cembalo', 0, 900, 'Pianon edeltäjä'), -- 2029
-    ('Saksofoni', 0, 900, 'Jazz-soitin'); -- 2030
+    ('Saksofoni', 0, 100, 'Jazz-soitin'); -- 2030
 
 /* --- Insert: SpaceEquipment * --- */
 INSERT INTO `SpaceEquipment` (`spaceId`, `equipmentId`) VALUES
@@ -1212,7 +1221,7 @@ INSERT INTO Subject(name, groupSize, groupCount, sessionLength, sessionCount, ar
 
 /* --- Inserting noisy subjects --- */
 INSERT INTO Subject(name, groupSize, groupCount, sessionLength, sessionCount, area, programId, spaceTypeId, allocRoundId, isNoisy) VALUES
-    ('Jazz, Saksofoninsoitto, taso A', 1, 4, '01:00:00', 1, 15, 3016, 5002, 10004, 1); -- 4039, Test for not allocating because noisy and only valid room is lowNoise
+    ('Jazz, Saksofoninsoitto, taso A', 1, 4, '01:00:00', 1, 180, 3025, 5002, 10004, 1); /* 4039, Test for not allocating because noisy and only valid room is lowNoise */
 
 /* --- Insert: SubjectEquipment * --- */
 INSERT INTO SubjectEquipment(subjectId, equipmentId, priority) VALUES
@@ -1244,7 +1253,7 @@ INSERT INTO SubjectEquipment(subjectId, equipmentId, priority) VALUES
     (4005, 2004, 600),
     (4024, 2004, 600),
     (4033, 2004, 600),
-    (4039, 2030, 900);
+    (4039, 2030, 50); -- Noisy equipment
 
 /* --- Insert: AllocSubject * --- */
 INSERT INTO AllocSubject(subjectId, allocRoundId, isAllocated, allocatedDate, priority) VALUES

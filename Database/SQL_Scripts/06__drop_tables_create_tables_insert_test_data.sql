@@ -257,6 +257,7 @@ CREATE TABLE IF NOT EXISTS SubjectEquipment (
 CREATE TABLE IF NOT EXISTS AllocSubject (
     allocRoundId    INTEGER     NOT NULL,
     subjectId       INTEGER     NOT NULL,
+    isNoisy         BOOLEAN     NOT NULL DEFAULT 0,
     isAllocated     BOOLEAN     NOT NULL DEFAULT 0,
     cantAllocate    BOOLEAN     NOT NULL DEFAULT 0,
     priority        INTEGER,
@@ -483,7 +484,7 @@ INSERT INTO `Space` (`name`, `area`, `personLimit`, `buildingId`, `availableFrom
     
 /* --- Adding rooms that are low noise --- */
 INSERT INTO `Space` (`name`, `area`, `personLimit`, `buildingId`, `availableFrom`, `availableTo`, `classesFrom`, `classesTo`, `info`, `spaceTypeId`, `isLowNoise`) VALUES
-    ('N714 Teorialuokka', 20.0, 12, 401, '9:00:00', '22:00:00', '9:00:00', '17:00:00', 'Tilatyyppi: Luentoluokka', 5002, 1); -- 1037
+    ('N714 Teorialuokka', 200.0, 12, 401, '9:00:00', '22:00:00', '9:00:00', '17:00:00', 'Tilatyyppi: Luentoluokka', 5002, 1); -- 1037
 
 
 /* --- Insert: Equipment --- */
@@ -517,7 +518,7 @@ INSERT INTO `Equipment` (`name`, `isMovable`, `priority`, `description`) VALUES
     ('Sähkökitara', 1, 100, 'Sähkökitara'), -- 2027
     ('Käyrätorvi', 1, 100, 'Puhallin'), -- 2028
     ('Cembalo', 0, 900, 'Pianon edeltäjä'), -- 2029
-    ('Saksofoni', 0, 900, 'Jazz-soitin'); -- 2030
+    ('Saksofoni', 0, 100, 'Jazz-soitin'); -- 2030
 
 /* --- Insert: SpaceEquipment * --- */
 INSERT INTO `SpaceEquipment` (`spaceId`, `equipmentId`) VALUES
@@ -697,7 +698,7 @@ INSERT INTO Subject(name, groupSize, groupCount, sessionLength, sessionCount, ar
 
 /* --- Inserting noisy subjects --- */
 INSERT INTO Subject(name, groupSize, groupCount, sessionLength, sessionCount, area, programId, spaceTypeId, allocRoundId, isNoisy) VALUES
-    ('Jazz, Saksofoninsoitto, taso A', 1, 4, '01:00:00', 1, 15, 3016, 5002, 10004, 1); -- 4039, Test for not allocating because noisy and only valid room is lowNoise
+    ('Jazz, Saksofoninsoitto, taso A', 1, 4, '01:00:00', 1, 180, 3025, 5002, 10004, 1); /* 4039, Test for not allocating because noisy and only valid room is lowNoise */
 
 /* --- Insert: SubjectEquipment * --- */
 INSERT INTO SubjectEquipment(subjectId, equipmentId, priority) VALUES
@@ -729,7 +730,7 @@ INSERT INTO SubjectEquipment(subjectId, equipmentId, priority) VALUES
     (4005, 2004, 600),
     (4024, 2004, 600),
     (4033, 2004, 600),
-    (4039, 2030, 900);
+    (4039, 2030, 50); -- Noisy equipment
 
 /* --- Insert: AllocSubject * --- */
 INSERT INTO AllocSubject(subjectId, allocRoundId, isAllocated, allocatedDate, priority) VALUES
