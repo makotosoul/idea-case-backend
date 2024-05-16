@@ -340,6 +340,7 @@ subject.put(
       'Subject.programId': req.body.programId,
       'Subject.spaceTypeId': req.body.spaceTypeId,
       'Subject.allocRoundId': req.body.allocRoundId,
+      'Subject.isNoisy': req.body.isNoisy,
     };
     db_knex('Subject')
       .join('AllocRound', 'AllocRound.id', 'Subject.allocRoundId')
