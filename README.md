@@ -80,16 +80,18 @@ Backend side installation instructions
    BE_API_URL_PREFIX=/api
    BE_SERVER_PORT=3001
    DB_DRIVER_MODULE=mysql
+   BE_DEVELOPMENT_PHASE=true
    DB_HOST=localhost
    DB_PORT=3306
-   DB_USER=<<DB Username>>
-   DB_PASSWORD=<<DB password>>
-   DB_DATABASE=casedb
+   MARIADB_USER=<<DB Username>>
+   MARIADB_PASSWORD=<<DB password>>
+   MARIADB_DATABASE=casedb
    DB_DEBUG=true
    DB_MULTIPLE_STATEMENTS=true
    DB_CONNECTION_POOL_MIN=1
    DB_CONNECTION_POOL_MAX=7
    SECRET_TOKEN=<<Secret token here for the JWT>>
+   TOKEN_EXPIRATION_SECONDS=3600
    ```
 
    The secret_token has to be something of the length and format of: A3fs9t395dsgSDf3fRsTse349. But not that one! Hardening process should change it for the real deployment of the backend.
