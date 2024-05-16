@@ -232,6 +232,7 @@ const getUnAllocableSubjects = async (
       'sub.area',
       'st.name as spaceType',
       'sub.allocRoundId',
+      'sub.isNoisy',
     )
     .from('AllocSubject as asu')
     .join('Subject as sub', 'asu.subjectId', 'sub.id')
@@ -265,6 +266,7 @@ const getSpacesForSubject = async (subjectId: number): Promise<string> => {
       db_knex.raw(
         `IF(st.id = (SELECT spaceTypeId FROM Subject WHERE id = ${subjectId}), TRUE, FALSE) AS spaceTypeOk`,
       ),
+      'sp.isLowNoise',
     )
     .from('Space as sp')
     .leftJoin('SpaceEquipment as se', 'sp.id', 'se.spaceId')
