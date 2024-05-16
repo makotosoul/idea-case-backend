@@ -85,6 +85,7 @@ Backend side installation instructions
    DB_PORT=3306
    MARIADB_USER=<<DB Username>>
    MARIADB_PASSWORD=<<DB password>>
+   MARIADB_ROOT_PASSWORD=<<root password>>  # Needed when running with Docker. Otherwise not needed.
    MARIADB_DATABASE=casedb
    DB_DEBUG=true
    DB_MULTIPLE_STATEMENTS=true
@@ -125,7 +126,7 @@ Backend side installation instructions
 
 ### How to dockerize the local MariaDB database
 
-1. Edit the docker-compose-db.yaml file to the desired root password and secondary user/ user password
+1. Edit the .env file to set your desired root password, secondary user/password combination, and the host machine DB port
 
 2. Run this command to launch application:
 
@@ -147,11 +148,25 @@ Backend side installation instructions
 
 5. Access the DB directly using mysql terminal command:
 
-```sh
-mysql -u root -p
-```
+   ```sh
+   mysql -u root -p
+   ```
 
 6. Continue the configuration of the local DB as described in the step by step guide located in Database/Documentation/local_mariadb_windows_installation.md
+
+7. Reset the database data if needed by removing the created Docker volume:
+
+   ```sh
+   docker volume rm db_project_mariadb_volume
+   ```
+
+   Remove the container and restart it. Note! If the command doesn't work, check the right volume name from the Docker compose script or list all volumes with the following command:
+
+   ```sh
+   docker volume ls
+   ```
+
+   You can also check volumes with Docker Desktop.
 
 ### How to run mariadb database and nodejs backend using docker-compose
 
