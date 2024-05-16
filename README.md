@@ -126,7 +126,7 @@ Backend side installation instructions
 
 ### How to dockerize the local MariaDB database
 
-1. Edit the .env file to set your desired root password, secondary user/password combination, and the host machine DB port
+1. Edit the .env file to set your desired database name, root password, secondary user/password combination, and the host machine DB port
 
 2. Run this command to launch application:
 
