@@ -4,7 +4,11 @@ import { planner } from '../authorization/planner.js';
 import { roleChecker } from '../authorization/roleChecker.js';
 import { statist } from '../authorization/statist.js';
 import { authenticator } from '../authorization/userValidation.js';
-import { dbErrorHandler, successHandler } from '../responseHandler/index.js';
+import {
+  dbErrorHandler,
+  requestErrorHandler,
+  successHandler,
+} from '../responseHandler/index.js';
 import allocationService from '../services/allocation.js';
 import programService from '../services/program.js';
 import logger from '../utils/logger.js';
@@ -227,6 +231,21 @@ allocation.post(
   [authenticator, admin, planner, roleChecker, validate],
   async (req: Request, res: Response) => {
     const allocRoundId = req.body.allocRoundId;
+
+    // Check if alloc round is read only
+    const allocRoundIsReadOnly =
+      await allocationService.getAllocRoundModifiableById(allocRoundId);
+    if (allocRoundIsReadOnly.length === 0) {
+      logger.error('The allocRound is NOT MODIFIABLE allocRound');
+      return requestErrorHandler(
+        req,
+        res,
+        'Request failed! The allocRound is not modifiable',
+      );
+    } else {
+      logger.verbose('The allocRound is MODIFIABLE');
+    }
+
     allocationService
       .resetAllocation(allocRoundId)
       .then(() => {
@@ -255,6 +274,21 @@ allocation.post(
   [authenticator, admin, planner, roleChecker, validate],
   async (req: Request, res: Response) => {
     const allocRoundId = req.body.allocRoundId;
+
+    // Check if alloc round is read only
+    const allocRoundIsReadOnly =
+      await allocationService.getAllocRoundModifiableById(allocRoundId);
+    if (allocRoundIsReadOnly.length === 0) {
+      logger.error('The allocRound is NOT MODIFIABLE allocRound');
+      return requestErrorHandler(
+        req,
+        res,
+        'Request failed! The allocRound is not modifiable',
+      );
+    } else {
+      logger.verbose('The allocRound is MODIFIABLE');
+    }
+
     allocationService
       .abortAllocation(Number(allocRoundId))
       .then(() => {
@@ -283,6 +317,21 @@ allocation.post(
   [authenticator, admin, planner, roleChecker, validate],
   async (req: Request, res: Response) => {
     const allocRoundId = req.body.allocRoundId;
+
+    // Check if alloc round is read only
+    const allocRoundIsReadOnly =
+      await allocationService.getAllocRoundModifiableById(allocRoundId);
+    if (allocRoundIsReadOnly.length === 0) {
+      logger.error('The allocRound is NOT MODIFIABLE allocRound');
+      return requestErrorHandler(
+        req,
+        res,
+        'Request failed! The allocRound is not modifiable',
+      );
+    } else {
+      logger.verbose('The allocRound is MODIFIABLE');
+    }
+
     allocationService
       .startAllocation(allocRoundId)
       .then(() => {

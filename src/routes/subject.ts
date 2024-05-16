@@ -177,7 +177,7 @@ subject.post(
   '/',
   validateSubjectPost,
   [authenticator, admin, planner, roleChecker, validate],
-  (req: Request, res: Response) => {
+  async (req: Request, res: Response) => {
     const subjectData = {
       name: req.body.name,
       groupSize: req.body.groupSize,
@@ -190,6 +190,28 @@ subject.post(
       allocRoundId: req.body.allocRoundId, // || 10004, // TODO!!!
       isNoisy: req.body.isNoisy,
     };
+
+    // is AllocRound read only check
+    const isReadOnlyAllocRound = await db_knex('AllocRound')
+      .select()
+      .where('id', req.body.allocRoundId)
+      .andWhere('isReadOnly', false)
+      .catch((error) => {
+        logger.error('Oops! Create failed - Subject');
+        dbErrorHandler(req, res, error, '/post - SubjectEquipment - DB error!');
+        return;
+      });
+
+    if (isReadOnlyAllocRound?.length === 0) {
+      logger.error('The allocRound is NOT MODIFIABLE allocRound');
+      return requestErrorHandler(
+        req,
+        res,
+        'Request failed! The allocRound is not modifiable',
+      );
+    } else {
+      logger.verbose('The allocRound is MODIFIABLE');
+    }
 
     db_knex('Subject')
       .insert(subjectData)
@@ -219,8 +241,34 @@ subject.post(
   validateSubjectMultiPost,
   [authenticator, admin, planner, roleChecker, validate],
   async (req: Request, res: Response) => {
-    console.log(req.body);
     const subjectData: Subject[] = [];
+
+    // is AllocRound read only check
+    const isReadOnlyAllocRound = await db_knex('AllocRound')
+      .select()
+      .where('id', req.body.allocRoundId)
+      .andWhere('isReadOnly', false)
+      .catch((error) => {
+        logger.error('Oops! Create failed - Subject');
+        dbErrorHandler(
+          req,
+          res,
+          error,
+          '/multi/post - SubjectEquipment - DB error!',
+        );
+        return;
+      });
+
+    if (isReadOnlyAllocRound?.length === 0) {
+      logger.error('The allocRound is NOT MODIFIABLE allocRound');
+      return requestErrorHandler(
+        req,
+        res,
+        'Request failed! The allocRound is not modifiable',
+      );
+    } else {
+      logger.verbose('The allocRound is MODIFIABLE');
+    }
 
     for (const subject of req.body) {
       const [program] = await db_knex('Program')
@@ -253,8 +301,6 @@ subject.post(
         allocRoundId: Number(req.params.allocRoundId), //|| 10004, // TODO, first FE!!!
       });
     }
-
-    console.log(subjectData);
 
     db_knex('Subject')
       .insert(subjectData)

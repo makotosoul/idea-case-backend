@@ -71,6 +71,14 @@ const getAllSubjectsById = async (allocRoundId: number) => {
     });
 };
 
+/* Get allocation round by id checking is read only (0 rows return - is read only) */
+const getAllocRoundModifiableById = async (allocRoundId: number) => {
+  return db_knex('AllocRound')
+    .select()
+    .where('id', allocRoundId)
+    .andWhere('isReadOnly', false);
+};
+
 /* Get allocated rooms with allocation percentage */
 const getRoomsByAllocId = async (
   allocRoundId: number,
@@ -503,6 +511,7 @@ export default {
   getAll,
   getById,
   getAllSubjectsById,
+  getAllocRoundModifiableById,
   getRoomsByAllocId,
   getSubjectsByProgram,
   getAllocatedRoomsByProgram,
