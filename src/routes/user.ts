@@ -73,26 +73,39 @@ user.post(
       const hashedPassword = bcrypt.hashSync(userData.password, 10);
       userData.password = hashedPassword;
       // inserting user data
-      const [userID] = await db_knex('User').insert({
+      const dbInsertResult = await db_knex('User').insert({
         email: userData.email,
         password: userData.password,
-        isAdmin: userData.isAdmin,
-        isPlanner: userData.isPlanner,
-        isStatist: userData.isStatist,
+        isAdmin: userData.isAdmin.toString(),
+        isPlanner: userData.isPlanner.toString(),
+        isStatist: userData.isStatist.toString(),
       });
+
+      /*       logger.info(`dbInsertResult: ${dbInsertResult}`);
+      logger.info(`userData.isAdmin: ${userData.isAdmin}`);
+      logger.info(`userData.isPlanner: ${userData.isPlanner}`);
+      logger.info(`userData.isStatist: ${userData.isStatist}`); */
+
       // get user id of inserted users
       const [getUserId] = await db_knex('User')
         .select('id')
         .where('email', userData.email);
 
+      /// Decode department names field by replacing scarab back with comma
+      userData.departmentNames = userData.departmentNames.replace(/¤/g, ',');
+
       /// Split department names
-      const departmentNames: string[] = userData.department
-        ? userData.department.split('|')
+      const departmentNameArray: string[] = userData.departmentNames
+        ? userData.departmentNames.split('|')
         : [];
 
+      for (let i = 0; i < departmentNameArray.length; i++) {
+        departmentNameArray[i] = departmentNameArray[i].trim();
+      }
+
       // If departmentNames is empty, skip adding to userDepartmentPlanner
-      if (departmentNames.length > 0) {
-        for (const departmentName of departmentNames) {
+      if (departmentNameArray.length > 0) {
+        for (const departmentName of departmentNameArray) {
           const [getDeptId] = await db_knex('Department')
             .select('id')
             .where('name', departmentName);

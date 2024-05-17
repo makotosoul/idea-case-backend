@@ -4,6 +4,7 @@ import {
   createIdValidatorChain,
   createMultiBoolValidatorChain,
   createMultiEmailValidatorChain,
+  createMultiValueValidatorChain,
   validateIdObl,
 } from './index.js';
 
@@ -20,5 +21,6 @@ export const validateMultiUserPost = [
   ...createMultiBoolValidatorChain('isAdmin'),
   ...createMultiBoolValidatorChain('isPlanner'),
   ...createMultiBoolValidatorChain('isStatist'),
+  ...createMultiValueValidatorChain('departmentNames'),
 ];
 export const validateUserPut = [...validateIdObl, ...validateUserPost];

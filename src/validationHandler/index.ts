@@ -187,6 +187,20 @@ export const createMultiNameValidatorChain = (
     .bail(),
 ];
 
+export const createMultiValueValidatorChain = (
+  fieldName: string,
+): ValidationChain[] => [
+  body(`*.${fieldName}`)
+    .isLength({ min: 0, max: 255 })
+    .withMessage(`${fieldName} must be between 0-255 characters long`)
+    .bail()
+    .matches(/^[A-Za-zäöåÄÖÅ0-9\s/,-¤_|]*$/)
+    .withMessage(
+      `${fieldName} can contain only letters, numbers, spaces, and any of: , - ¤ | _ `,
+    )
+    .bail(),
+];
+
 export const createMultiVariableValidatorChain = (
   fieldName: string,
 ): ValidationChain[] => [
