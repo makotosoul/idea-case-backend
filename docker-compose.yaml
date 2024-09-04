@@ -1,4 +1,4 @@
-version: "3.8"     # Docker compose: https://docs.docker.com/compose/  YAML: https://yaml.org/spec/1.2.2/
+# Docker compose: https://docs.docker.com/compose/  YAML: https://yaml.org/spec/1.2.2/
 name: db_be_project
 
 services:
@@ -17,6 +17,8 @@ services:
   be_service:
     container_name: be_container
     env_file: .env
+    environment:
+      - DB_HOST=host.docker.internal
     build: .
     depends_on:
       - mariadb_service
