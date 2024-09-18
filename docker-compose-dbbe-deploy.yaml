@@ -1,4 +1,4 @@
-version: '3.8'
+name: dbbe_deploy_project
 
 services:
   siba_db_deployment:
@@ -7,8 +7,9 @@ services:
     env_file:
       - .env.db
       - .env.db.root
+      - .env.network
     ports:
-      - '3306:3306'
+      - '${DB_PORT}:3306'
     volumes:
       - ./Database/SQL_Scripts/000__CreateALLdb.sql:/docker-entrypoint-initdb.d/init.sql
       - mariadb_data:/var/lib/mysql
@@ -18,15 +19,16 @@ services:
   siba_be_deployment:
     container_name: siba_be_container
     build: .
-    env_file:
-      - .env.be
-      - .env.db
+    env_file: 
+     - .env.be
+     - .env.db
+     - .env.network
     depends_on:
       - siba_db_deployment
     environment:
       - DB_HOST=siba_db_deployment
     ports:
-      - '3001:3001'
+      - '${BE_SERVER_PORT}:${BE_SERVER_PORT}'
     volumes:
       - .:/app
       - /app/node_modules
