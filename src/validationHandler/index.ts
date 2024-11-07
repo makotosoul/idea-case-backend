@@ -71,6 +71,62 @@ export const createNameValidatorChain = (
     .bail(),
 ];
 
+//city name validate
+export const createCityNameValidatorChain = (
+  fieldName: string,
+): ValidationChain[] => [
+  check(`${fieldName}`)
+    .isLength({ min: 2, max: 200 })
+    .withMessage(`${fieldName} must be between 2-200 characters long`)
+    .bail()
+    .matches(/^[A-Za-zäöåÄÖÅ0-9\(\)\s\/,-]*$/)
+    .withMessage(`${fieldName} must contain only letters, numbers, and -`)
+    .bail()
+    .customSanitizer((value, { req }) => {
+      const capitalizedValue = value.charAt(0).toUpperCase() + value.slice(1);
+      req.body[`${fieldName}`] = capitalizedValue;
+      return capitalizedValue;
+    })
+    .custom((value) => {
+      if (value.charAt(0) !== value.charAt(0).toUpperCase()) {
+        throw new Error(`${fieldName} must start with a capital letter`);
+      }
+      return true;
+    })
+    .trim()
+    .notEmpty()
+    .withMessage(`${fieldName} cannot be empty`)
+    .bail(),
+];
+
+//city date validate
+export const createDateValidator = (
+  fieldName: string,
+): ValidationChain[] => [
+  check(`${fieldName}`)
+    .matches(/^d{2}\-d{2}\-d{2,4}$/)
+    .isDate()
+    .withMessage('Accepted format:YYYY-MM-DD')
+    .bail()
+    .notEmpty()
+    .withMessage('Cannot be empty')
+    .bail(),
+];
+
+//city averageTemp validate
+export const createAverageTempValidator = (
+  fieldName: string,
+): ValidationChain[] => [
+  body(`${fieldName}`)
+    .matches(/^[0-9]{1,2}(.[0-9]{1})?$/)
+    .withMessage('Must be a number')
+    .bail()
+    .isFloat()
+    .notEmpty()
+    .withMessage('Cannot be empty')
+    .bail(),
+];
+
 export const createAcronymValidatorChain = (
   fieldName: string,
 ): ValidationChain[] => [

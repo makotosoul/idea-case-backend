@@ -337,6 +337,26 @@ CREATE TABLE IF NOT EXISTS log_event (
         ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+CREATE TABLE IF NOT EXISTS Category (
+    id              INTEGER         NOT NULL    AUTO_INCREMENT,
+    name            VARCHAR(255)    UNIQUE NOT NULL,
+    description     VARCHAR(255),
+    budgetLimit     DECIMAL(19,4),
+    isActive 	    BOOLEAN,
+
+    PRIMARY KEY (id),
+    
+) ENGINE=InnoDB CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS City (
+    id              INTEGER         NOT NULL    AUTO_INCREMENT,
+    name            VARCHAR(200)    NOT NULL,
+    established     DATE,
+    averageTemp     DECIMAL(3,1),
+
+    PRIMARY KEY (id),
+    
+) ENGINE=InnoDB CHARSET=latin1;
 /* ---------------------------------------------------------- */
 /* ---------------------------------------------------------- */
 /* -------------------------- END --------------------------- */

@@ -1,0 +1,62 @@
+### Reset database in admin env before performing other tests
+GET {{host}}/resetDatabase
+Authorization: Basic {{token}}
+
+### 1. Get all Cities to have a general overview
+GET {{host}}/city
+Authorization: Basic {{token}}
+
+### Initial setup: Set the nextId after Testdata Reset
+### It should come after the last id in test data
+@nextId=14
+### Hard coded text to test the name regex function
+### However this should work with any given text provided that the name is in the db
+@text=burg
+### Hard coded date to test the date filter function
+### Should work with any date given in the correct format(YYYY-MM-DD) or any premade format for example ISO
+@date=0800-01-01
+### 3. Get subject by existing (known) ID
+GET {{host}}/city/1
+Authorization: Basic {{token}}
+
+### 4. Create new city (Assume that the created subject gets `nextId` or should be replaced with a returned ID to continue with the test)
+POST {{host}}/city
+Authorization: Basic {{token}}
+Content-Type: application/json
+
+{
+    "name": "Test name 2",
+    "averageTemp":"10.5",
+    "established":"2001-02-01"
+}
+### 5. Get city by nextId to confirm newly created city exists
+GET {{host}}/city/{{nextId}}
+Authorization: Basic {{token}}
+
+### 6. Update city by `nextId` (Test update operation)
+PUT {{host}}/city
+Authorization: Basic {{token}}
+Content-Type: application/json
+
+{
+    "id": {{nextId}},
+    "name": "Updated test name"
+}
+
+### 7. Confirm the update (Ensure the update took effect)
+GET {{host}}/city/{{nextId}}
+Authorization: Basic {{token}}
+
+### 8. Delete city (Test delete operation)
+DELETE {{host}}/city/{{nextId}}
+Authorization: Basic {{token}}
+
+### 9. Confirm deletion (Trying to retrieve it should result in a 400 error)
+GET {{host}}/city/{{nextId}}
+Authorization: Basic {{token}}
+
+### 10. What cities with "burg" in their name
+GET {{host}}/city/parameter/{{text}}
+
+### 11. What cities where established before the date
+GET {{host}}/city/before/{{date}}

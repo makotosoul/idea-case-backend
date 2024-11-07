@@ -29,6 +29,9 @@ DROP TABLE IF EXISTS User;
 DROP TABLE IF EXISTS Department;
 DROP TABLE IF EXISTS GlobalSetting;
 
+DROP TABLE IF EXISTS Category;
+DROP TABLE IF EXISTS City;
+
 /* ---------------------------------------------------------- */
 /* ---------------------------------------------------------- */
 /* -------------------------- END --------------------------- */

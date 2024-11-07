@@ -109,7 +109,8 @@ building.get(
 building.post(
   '/',
   validateBuildingPost,
-  [authenticator, admin, roleChecker, validate],
+  //[authenticator, admin, roleChecker, validate],
+  [validate],
   (req: Request, res: Response) => {
     db_knex('Building')
       .insert(req.body)

@@ -29,6 +29,9 @@ DROP TABLE IF EXISTS User;
 DROP TABLE IF EXISTS Department;
 DROP TABLE IF EXISTS GlobalSetting;
 
+DROP TABLE IF EXISTS Category;
+DROP TABLE IF EXISTS City;
+
 /* ---------------------------------------------------------- */
 /* ---------------------------------------------------------- */
 /* -------------------------- END --------------------------- */
@@ -374,6 +377,26 @@ CREATE TABLE IF NOT EXISTS log_event (
         ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+CREATE TABLE IF NOT EXISTS Category (
+    id              INTEGER         NOT NULL    AUTO_INCREMENT,
+    name            VARCHAR(255)    NOT NULL,
+    description     VARCHAR(255),
+    budgetLimit     DECIMAL(19,4),
+    isActive 	    BOOLEAN,
+
+    PRIMARY KEY (id),
+    
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS City (
+    id              INTEGER         NOT NULL    AUTO_INCREMENT,
+    name            VARCHAR(200)    NOT NULL,
+    established     DATE,
+    averageTemp     DECIMAL(3,1),
+
+    PRIMARY KEY (id),
+    
+) ENGINE=InnoDB CHARSET=latin1;
 /* ---------------------------------------------------------- */
 /* ---------------------------------------------------------- */
 /* -------------------------- END --------------------------- */
@@ -829,6 +852,32 @@ INSERT INTO AllocCurrentRoundUser(allocRoundId, userId) VALUES
 /* --- INSERT: LOG TYPE --- */
 INSERT INTO log_type(name) VALUES ("allocation");
 
+/* --- INSERT: CATEGORY --- */
+INSERT INTO Category(name) VALUES
+    (fantasy),
+    (history),
+    (modern);
+    (old),
+    (technology),
+    (comedy);
+    (comic),
+    (art),
+    (foreign);
+    (romance);
+
+INSERT INTO City(name,established,averageTemp) VALUES
+    (1, 'Paris', '0520-01-01', 12.3),
+    (2, 'London', '0043-01-01', 11.7),
+    (3, 'Rome', '0753-04-21', 15.5),
+    (4, 'Berlin', '1237-01-01', 9.9),
+    (5, 'Madrid', '0856-01-01', 14.5),
+    (6, 'Vienna', '0500-01-01', 10.8),
+    (7, 'Lisbon', '1147-01-01', 16.2),
+    (8, 'Amsterdam', '1275-10-27', 10.5),
+    (9, 'Prague', '0935-01-01', 9.0),
+    (10, 'Barcelona', '0150-01-01', 16.5);
+    (11, 'Hamburg', '0800-01-01', 9.5),
+    (12, 'Luxembourg', '0963-01-01', 10.2);
 /* ---------------------------------------------------------- */
 /* ---------------------------------------------------------- */
 /* -------------------------- END --------------------------- */
