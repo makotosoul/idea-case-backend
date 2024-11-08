@@ -4,7 +4,7 @@
             "host": "http://localhost:4678/api"
         },
         "adminEnv": {
-            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjAxLCJlbWFpbCI6ImFkbWluIiwiaXNBZG1pbiI6MSwiaXNQbGFubmVyIjowLCJpc1N0YXRpc3QiOjAsImlhdCI6MTcyNTI2Njg1MSwiZXhwIjoxNzI1MzUzMjUxfQ.dc4uTUL2Z9zZ_p8nqxNwTxQFCUvN5CRlQGOjsxgcGyE"
+            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjAxLCJlbWFpbCI6ImFkbWluIiwiaXNBZG1pbiI6MSwiaXNQbGFubmVyIjowLCJpc1N0YXRpc3QiOjAsImlhdCI6MTczMTA1NDkxOCwiZXhwIjoxNzMxMTQxMzE4fQ.699HjLGj0vWpzOh_62_iCzZJES9DztrqU8a9B91zBf8"
         },
         "plannerEnv": {
             "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjAyLCJlbWFpbCI6InBsYW5uZXIiLCJpc0FkbWluIjowLCJpc1BsYW5uZXIiOjEsImlzU3RhdGlzdCI6MCwiaWF0IjoxNzI1MjY3MDUwLCJleHAiOjE3MjUzNTM0NTB9.c2QC95WbSSGyEgsppGSJe6zjA0qjZF1FEJ7cn2pbyzM"

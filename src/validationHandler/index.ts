@@ -104,8 +104,7 @@ export const createDateValidator = (
   fieldName: string,
 ): ValidationChain[] => [
   check(`${fieldName}`)
-    .matches(/^d{2}\-d{2}\-d{2,4}$/)
-    .isDate()
+    .matches(/^[0-9]{4}\-[0-9]{2}\-[0-9]{2}$/)
     .withMessage('Accepted format:YYYY-MM-DD')
     .bail()
     .notEmpty()

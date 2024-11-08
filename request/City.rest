@@ -57,6 +57,13 @@ Authorization: Basic {{token}}
 
 ### 10. What cities with "burg" in their name
 GET {{host}}/city/parameter/{{text}}
+Authorization: Basic {{token}}
 
 ### 11. What cities where established before the date
 GET {{host}}/city/before/{{date}}
+Authorization: Basic {{token}}
+
+
+
+
+### purposefully wrong input for to test the validation

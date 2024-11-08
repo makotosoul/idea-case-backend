@@ -24,11 +24,12 @@ import {
     validateSubjectPost,
     validateSubjectPut,
 } from '../validationHandler/subject.js';
+import { validateCityDate, validateCityPost, validateCityPut } from '../validationHandler/city.js';
 
 const city = express.Router();
 
 //list all city order by id in asc order
-city.get('/', [validate], (req: Request, res: Response) => {
+city.get('/',   [authenticator, admin, roleChecker, validate], (req: Request, res: Response) => {
     db_knex.select('c.id', 'c.name', 'c.established', 'c.averageTemp')
         .from('City as c')
         .orderBy('c.id', 'asc')
@@ -42,7 +43,7 @@ city.get('/', [validate], (req: Request, res: Response) => {
 
 })
 
-//get a specifc category by id
+//get a specifc city by id
 city.get(
     '/:id',
     validateIdObl,
@@ -81,7 +82,8 @@ city.get(
 
 //creating a city
 city.post('/',
-    [validate],
+    validateCityPost,
+    [authenticator, admin, roleChecker, validate],
     (req: Request, res: Response) => {
         db_knex('City')
             .insert(req.body)
@@ -102,7 +104,8 @@ city.post('/',
 //updating a city
 city.put(
   '/',
-  [validate],
+  validateCityPut,
+    [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     if (!req.body.name) {
       requestErrorHandler(req, res, 'City name is missing.');
@@ -136,7 +139,8 @@ city.put(
 //deleting a city
 city.delete(
   '/:id',
-  [validate],
+  validateIdObl,
+    [authenticator, admin, roleChecker, validate],
   (req: Request, res: Response) => {
     db_knex('City')
       .select()
@@ -163,6 +167,7 @@ city.delete(
 //get a list of city by text
 city.get(
     '/parameter/:text',
+      [authenticator, admin, roleChecker, validate],
     (req: Request, res: Response) => {
         db_knex
             .select(
@@ -197,6 +202,8 @@ city.get(
 
 city.get(
     '/before/:date',
+    validateCityDate,
+  [authenticator, admin, roleChecker, validate],
     (req: Request, res: Response) => {
       const date = new Date(req.params.date)
         db_knex

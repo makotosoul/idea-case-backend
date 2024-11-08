@@ -12,5 +12,6 @@ export const validateCityPost = [
 ];
 
 // See how the PUT is usually just POST + id that exists for PUT already
-export const validateSubjectPut = [...validateIdObl, ...validateCityPost];
+export const validateCityPut = [...validateIdObl, ...validateCityPost];
 
+export const validateCityDate =[...createDateValidator('date')];
